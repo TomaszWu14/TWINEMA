@@ -1,5 +1,7 @@
 # Przekazanie — stan projektu i następny krok (F6)
 
+> **Następna sesja:** gotowy prompt startowy w [`docs/PROMPT_NASTEPNA_SESJA.md`](PROMPT_NASTEPNA_SESJA.md) (stan 2026-10-05).
+
 Plik dla kolejnej sesji (człowieka albo AI). Aktualny na 2026-10-05, po scaleniu F5 (PR #8–#11).
 
 ## Stan
