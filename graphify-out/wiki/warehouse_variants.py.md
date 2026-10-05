@@ -28,11 +28,11 @@
 - [day_demand](day_demand.md) (3 shared connections)
 - [test_ewm_service.py](test_ewm_service.py.md) (3 shared connections)
 - [layout-editor.js](layout-editor.js.md) (2 shared connections)
-- [test_container_inbound.py](test_container_inbound.py.md) (2 shared connections)
-- [compliance](compliance.md) (2 shared connections)
+- [parse_bay_numbers](parse_bay_numbers.md) (2 shared connections)
+- [SimViewTests](SimViewTests.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [EwmViewsTests](EwmViewsTests.md) (2 shared connections)
-- [BayTemplate](BayTemplate.md) (1 shared connections)
+- [test_bay_template_model.py](test_bay_template_model.py.md) (1 shared connections)
 
 ## Source Files
 

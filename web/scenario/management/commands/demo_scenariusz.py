@@ -2,16 +2,20 @@
 
 Dzień typowy: ~8 kontenerów 40' (≈45 palet po paletyzacji), 6–10 aut 33-paletowych (fizycznie 17–32 palet),
 solówki/busy, cross-dock; wydania autami 33-pal. i solówkami, ~2 200 paczek dziennie z odbiorem kurierów do 18:00,
-zwroty. Dzień szczytowy: wolumeny ×1,3. Obsada: 1–2 zmiany per proces. Idempotentnie — ponowne uruchomienie
-odtwarza plan.
+zwroty. Dzień szczytowy: wolumeny ×1,3. Obsada: 1–2 zmiany per proces, flota 14 wózków. Idempotentnie — ponowne
+uruchomienie odtwarza plan. Do symulacji dnia (S3a) tworzy też halę demo z generatora (3 doki paletowe IN), jeśli
+jej nie ma: dzień typowy ma najwyżej drobne ostrzeżenia, szczyt — wąskie gardła z podpowiedziami.
 """
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
-from scenario.models import (InboundStream, OutboundStream, PROFILE_DEFAULTS, Scenario, ScenarioDay, Shift,
-                             SHIFT_DEFAULTS)
+from scenario.models import InboundStream, OutboundStream, PROFILE_DEFAULTS, Scenario, ScenarioDay, Shift
+from twin.design_generator import generate
+from twin.models import WarehouseHallFeature, WarehouseModel, WarehouseModelRack
 
 NAME = "Centrum dystrybucyjne — rok bazowy (demo)"
+HALL = "Hala demo — scenariusz (generator)"
+FLEET = 14
 PEAK = 1.3
 # typ: (przyjazdy min/śr/max, palet min/śr/max, okno, % mono, % kontroli, min kontroli)
 PLAN = {
@@ -29,6 +33,29 @@ OUT = {
 }
 
 
+# proces: [(od, do, przerwa min, osób)] — obsada dobrana do dnia typowego (szczyt pokazuje braki)
+SHIFTS = {
+    "unload": [(6, 14, 30, 6), (14, 22, 30, 2)], "palletize": [(6, 14, 30, 8), (14, 22, 30, 5)],
+    "inspect": [(6, 14, 30, 2), (14, 22, 30, 1)], "pick": [(6, 14, 30, 10), (14, 22, 30, 8)],
+    "pack": [(6, 14, 30, 14), (14, 22, 30, 10)], "load": [(6, 14, 30, 3), (14, 22, 30, 5)],
+    "returns": [(6, 14, 30, 2)],
+}
+
+
+def demo_hall():
+    """Hala z generatora z 3 dokami paletowymi IN (preset ma 1 — przy 16+ autach paletowych to kolejka)."""
+    wm = WarehouseModel.objects.filter(name=HALL).first()
+    if wm:
+        return wm, False
+    g = generate(pallet_in_docks=3)
+    wm = WarehouseModel.objects.create(name=HALL, notes="Dane syntetyczne — hala do symulacji scenariusza demo.",
+                                       clear_height_m=g["params"]["clear_height_m"],
+                                       floor_width_m=g["floor"]["width"], floor_depth_m=g["floor"]["depth"])
+    WarehouseModelRack.objects.bulk_create([WarehouseModelRack(model=wm, **r) for r in g["racks"]])
+    WarehouseHallFeature.objects.bulk_create([WarehouseHallFeature(model=wm, **f) for f in g["features"]])
+    return wm, True
+
+
 def _r(v, k):
     return round(v * k)
 
@@ -39,7 +66,8 @@ class Command(BaseCommand):
     @transaction.atomic
     def handle(self, *args, **opts):
         sc, _ = Scenario.objects.update_or_create(name=NAME, defaults={
-            "description": "Dane syntetyczne. Szczyt = wolumeny ×1,3 (sezon).", "growth": 1.0, "seed": 42})
+            "description": "Dane syntetyczne. Szczyt = wolumeny ×1,3 (sezon).", "growth": 1.0, "seed": 42,
+            "fleet_units": FLEET})
         for kind, k in (("typical", 1.0), ("peak", PEAK)):
             day, _ = ScenarioDay.objects.get_or_create(scenario=sc, kind=kind)
             day.inbound.all().delete()
@@ -61,11 +89,13 @@ class Command(BaseCommand):
             day.save()
         sc.shifts.all().delete()
         Shift.objects.bulk_create(Shift(scenario=sc, process=p, start_h=a, end_h=b, break_min=br, people=n)
-                                  for p, rows in SHIFT_DEFAULTS.items() for a, b, br, n in rows)
+                                  for p, rows in SHIFTS.items() for a, b, br, n in rows)
         for day in sc.days.all():
             i, o = day.demand("avg"), day.outbound_demand("avg")
             self.stdout.write(f"{day.get_kind_display()}: IN {i['pallets_in']} palet (doki "
                               f"{i['docks_peak']['container']} kont. + {i['docks_peak']['pallet']} pal.), "
                               f"OUT {o['pallets_out']} palet (doki {o['docks_peak']}), {o['parcels']} paczek, "
                               f"{i['person_hours']['total']} + {sum(o['person_hours'].values()):.1f} osobogodzin")
+        wm, created = demo_hall()
+        self.stdout.write(f"Hala do symulacji: „{wm}” (id {wm.pk}{', utworzona' if created else ''}).")
         self.stdout.write(self.style.SUCCESS(f"Scenariusz „{sc}” gotowy (id {sc.pk})."))

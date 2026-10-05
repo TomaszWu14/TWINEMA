@@ -15,7 +15,7 @@
 
 ## Relationships
 
-- [Material](Material.md) (1 shared connections)
+- [test_dane.py](test_dane.py.md) (1 shared connections)
 
 ## Source Files
 

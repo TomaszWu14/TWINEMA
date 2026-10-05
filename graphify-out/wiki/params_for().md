@@ -11,10 +11,10 @@
 - _el() `EXTRACTED`
 - start() `EXTRACTED`
 - block_rows() `EXTRACTED`
+- add() `EXTRACTED`
 - clean_elements() `EXTRACTED`
 - _rack() `EXTRACTED`
 - load_variant() `EXTRACTED`
-- add() `EXTRACTED`
 - rebuild_all() `EXTRACTED`
 - .test_variant_summary() `EXTRACTED`
 - .test_every_element_has_label_and_params() `EXTRACTED`

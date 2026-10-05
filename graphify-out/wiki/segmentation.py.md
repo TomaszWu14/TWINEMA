@@ -15,8 +15,8 @@
 
 ## Relationships
 
-- [Material](Material.md) (2 shared connections)
-- [test_layout_structure.py](test_layout_structure.py.md) (1 shared connections)
+- [test_dane.py](test_dane.py.md) (2 shared connections)
+- [test_sim.py](test_sim.py.md) (1 shared connections)
 
 ## Source Files
 

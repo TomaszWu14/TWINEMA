@@ -33,8 +33,8 @@
 - [simulate](simulate.md) (8 shared connections)
 - [kpi_facts](kpi_facts.md) (4 shared connections)
 - [Agent](Agent.md) (3 shared connections)
-- [build_scene](build_scene.md) (3 shared connections)
-- [warehouse_design_sim.py](warehouse_design_sim.py.md) (2 shared connections)
+- [blender_scene.py](blender_scene.py.md) (3 shared connections)
+- [shared.py](shared.py.md) (2 shared connections)
 - [test_ml.py](test_ml.py.md) (2 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
 

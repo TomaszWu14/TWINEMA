@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/base.html" %}{% load static %}
 {% block title %}{{ sc.name }} — Scenariusze — {{ app_name }}{% endblock %}
 {% block extra_head %}
 <style>
@@ -32,7 +32,19 @@
   .sc-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:12px; }
   .sc-actions form { margin:0; }
   .sc-sub { font-weight:600; font-size:var(--fs-sm); margin:16px 0 6px; }
+  .sc-simform { display:grid; grid-template-columns:minmax(0,3fr) minmax(0,1.4fr) 110px auto; gap:10px; align-items:end; }
+  @media (max-width: 760px) { .sc-simform { grid-template-columns:1fr; } }
+  .sc-simform label { display:flex; flex-direction:column; gap:4px; font-size:var(--fs-xs); color:var(--fg-muted); }
+  .sc-bn { list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+  .sc-bn li { border:1px solid var(--border); border-left:4px solid var(--warning, #d68910); border-radius:var(--radius);
+              padding:8px 12px; background:var(--surface-2); }
+  .sc-bn li.is-error { border-left-color:var(--danger, #c0392b); }
+  .sc-bn .sc-bn-head { font-size:var(--fs-xs); color:var(--fg-muted); text-transform:uppercase; letter-spacing:.06em; }
+  .sc-bn .sc-bn-fix { font-weight:600; margin-top:2px; }
+  .sc-chart { width:100%; height:300px; margin-top:12px; }
+  .sc-simgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
 </style>
+{% if sim_runs %}<script src="{% static 'twin/vendor/echarts.min.js' %}"></script>{% endif %}
 {% endblock %}
 {% block content %}
 <nav class="breadcrumb" aria-label="Ścieżka"><a href="{% url 'scenario:list' %}">Scenariusze</a> / {{ sc.name }}</nav>
@@ -44,7 +56,7 @@
 </div>
 
 <ul class="sc-nav" aria-label="Sekcje scenariusza">
-  <li><a href="#sc-res-h">Wyniki</a></li><li><a href="#sc-staff-h">Obsada</a></li>
+  <li><a href="#sc-res-h">Wyniki</a></li><li><a href="#sc-staff-h">Obsada</a></li><li><a href="#sc-sim-h">Symulacja dnia</a></li>
   {% if form %}<li><a href="#sc-in-forms">Przyjęcia</a></li><li><a href="#sc-out-forms">Wydania, paczki, zwroty</a></li>
   <li><a href="#sc-shift-h">Zmiany</a></li><li><a href="#sc-par-h">Parametry i normy</a></li>{% endif %}
 </ul>
@@ -122,6 +134,64 @@
   </div>
   <p class="text-muted text-sm" style="margin:10px 0 0">▲ = niedobór (potrzeba więcej osób niż zakładana obsada). Osobogodziny procesu dzielone między jego zmiany proporcjonalnie do czasu pracy bez przerw.</p>
 </div></section>
+
+<section class="card" style="margin-top:16px" aria-labelledby="sc-sim-h"><div class="card-body">
+  <h2 class="sc-sec" id="sc-sim-h">Symulacja dnia na hali</h2>
+  <p class="text-muted text-sm" style="margin:0 0 12px">Każde auto, kontener, paleta i paczka ze scenariusza w czasie dnia na wybranym layoucie: kolejki przy dokach, pola odkładcze, ludzie na zmianach, wózki z ładowaniem. Kilkanaście przebiegów z losowym rozrzutem (ziarno {{ sc.seed }} — wynik powtarzalny): średnia i najgorszy przypadek (P95).</p>
+  {% if sim_form %}
+  <form class="sc-simform" method="post" action="{% url 'scenario:simulate' sc.pk %}" id="sc-simform">{% csrf_token %}
+    {% for f in sim_form %}<label for="{{ f.id_for_label }}">{{ f.label }} {{ f }}</label>{% endfor %}
+    <button class="btn btn-primary" type="submit">Uruchom symulację</button>
+  </form>
+  <p class="text-sm" id="sc-sim-live" role="status" aria-live="polite" style="margin:6px 0 0"></p>
+  {% endif %}
+  {% for v in sim_runs %}
+  <div style="margin-top:20px">
+    <p class="sc-sub" style="margin-top:0">{{ v.run.get_day_kind_display }} na „{{ v.run.model.name }}” · {{ v.run.runs }} przebiegów · {{ v.run.created_at|date:"d.m.Y H:i" }} · {{ v.run.duration_s|floatformat:"-1" }} s
+      · <a href="{% url 'scenario:run_events' v.run.pk %}">zdarzenia (JSON)</a></p>
+    {% for w in v.warnings %}<p class="text-sm" style="margin:0 0 6px">⚠ {{ w }}</p>{% endfor %}
+    <h3 class="sc-sub">Wąskie gardła {% if v.bottlenecks %}({{ v.bottlenecks|length }}{% if v.errors %}, krytyczne: {{ v.errors }}{% endif %}){% endif %}</h3>
+    {% if v.bottlenecks %}
+    <ul class="sc-bn">
+      {% for b in v.bottlenecks %}
+      <li class="{% if b.severity == 'error' %}is-error{% endif %}">
+        <div class="sc-bn-head">{% if b.severity == 'error' %}krytyczne{% else %}ostrzeżenie{% endif %} · {{ b.area }}{% if b.window %} · {{ b.window }}{% endif %}</div>
+        <div>{{ b.problem }}</div>
+        <div class="sc-bn-fix">→ {{ b.suggestion }}</div>
+      </li>
+      {% endfor %}
+    </ul>
+    <p class="text-muted text-sm" style="margin:6px 0 0">Podpowiedzi „+N” sprawdzone ponowną symulacją tego samego dnia — decyzja należy do Ciebie.</p>
+    {% else %}
+    <p class="text-sm is-ok" style="margin:0">Bez wąskich gardeł — dzień mieści się w layoucie i obsadzie.</p>
+    {% endif %}
+    <div class="sc-simgrid" style="margin-top:12px">
+      {% for title, cells in v.groups %}
+      <div>
+        <h3 class="sc-sub" style="margin-top:0">{{ title }}</h3>
+        <table class="sc-table"><caption class="sr-only">{{ title }}: średnia i najgorszy przypadek</caption>
+          <thead><tr><th scope="col">Wskaźnik</th><th scope="col">Średnio</th><th scope="col">Najgorzej</th></tr></thead>
+          <tbody>{% for c in cells %}<tr><th scope="row">{{ c.label }}{% if c.unit %} [{{ c.unit }}]{% endif %}</th><td>{{ c.mean }}</td><td>{{ c.worst }}</td></tr>{% endfor %}
+          {% if title == "Doki i pole odkładcze" %}
+            <tr><th scope="row">Doki: kontener. / palet. IN / OUT / kurier</th><td colspan="2">{{ v.docks.in_container }} / {{ v.docks.in_pallet }} / {{ v.docks.out }} / {{ v.docks.courier }}</td></tr>
+            {% for s in v.staging %}<tr><th scope="row">Pole {{ s.side }}: potrzeba / narysowane [m²]</th><td colspan="2" class="{% if s.need > s.drawn %}is-short{% else %}is-ok{% endif %}">{{ s.need|floatformat:"0g" }} / {{ s.drawn|floatformat:"0g" }}</td></tr>{% endfor %}
+          {% endif %}</tbody>
+        </table>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="sc-chart" id="sim-{{ v.run.pk }}" role="img" aria-label="Oś czasu dnia ({{ v.run.get_day_kind_display|lower }}): auta w kolejce, palety na polach odkładczych, wózki w pracy — wartości w tabeli poniżej"></div>
+    <details style="margin-top:8px"><summary class="text-sm">Oś czasu jako tabela (co godzinę)</summary>
+      <div class="sc-scroll"><table class="sc-table"><thead><tr><th scope="col">Godzina</th><th scope="col">Aut w kolejce</th><th scope="col">Palet: pole przyjęć</th><th scope="col">Palet: pole wydań</th><th scope="col">Wózków w pracy</th></tr></thead>
+        <tbody>{% for h in v.hourly %}<tr><th scope="row">{{ h.t }}</th><td>{{ h.queue }}</td><td>{{ h.staging_in }}</td><td>{{ h.staging_out }}</td><td>{{ h.fleet }}</td></tr>{% endfor %}</tbody></table></div>
+    </details>
+  </div>
+  {% empty %}
+  {% if not sim_form %}<p class="text-sm" style="margin:0">Symulacji jeszcze nie uruchomiono.</p>{% endif %}
+  {% endfor %}
+  <p class="text-muted text-sm" style="margin:12px 0 0">Pojemność (miejsca paletowe vs stan) i reguły rozmieszczenia (nośność, strefy specjalne) — następny etap (S3b).</p>
+</div></section>
+{{ sim_charts|json_script:"sc-sim-data" }}
 
 {% if form %}
 {% for d in day_forms %}
@@ -216,4 +286,33 @@
   {% endfor %}
 </div></section>
 {% endif %}
+{% endblock %}
+{% block extra_scripts %}
+<script>
+(function () {
+  var form = document.getElementById('sc-simform');
+  if (form) form.addEventListener('submit', function () {
+    form.querySelector('button').disabled = true;
+    document.getElementById('sc-sim-live').textContent = 'Symulacja trwa — kilkanaście przebiegów dnia, zwykle kilka sekund…';
+  });
+  var el = document.getElementById('sc-sim-data');
+  if (!el || typeof echarts === 'undefined') return;
+  var data = JSON.parse(el.textContent);
+  var css = getComputedStyle(document.documentElement);
+  var fg = css.getPropertyValue('--fg-muted').trim(), line = css.getPropertyValue('--border').trim();
+  Object.keys(data).forEach(function (id) {
+    var box = document.getElementById(id), d = data[id];
+    if (!box) return;
+    var chart = echarts.init(box);
+    chart.setOption({
+      textStyle: {color: fg}, grid: {left: 44, right: 16, top: 34, bottom: 40},
+      tooltip: {trigger: 'axis'}, legend: {textStyle: {color: fg}, top: 0},
+      xAxis: {type: 'category', data: d.t, axisLabel: {color: fg, interval: 7}, axisLine: {lineStyle: {color: line}}},
+      yAxis: {type: 'value', axisLabel: {color: fg}, splitLine: {lineStyle: {color: line}}},
+      series: d.series.map(function (s) { return {name: s.name, type: 'line', data: s.data, symbol: 'none', step: 'end'}; })
+    });
+    addEventListener('resize', function () { chart.resize(); });
+  });
+})();
+</script>
 {% endblock %}

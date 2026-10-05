@@ -1,6 +1,6 @@
 # WarehouseModelRack
 
-> God node · 22 connections · `web/twin/models.py`
+> God node · 24 connections · `web/twin/models.py`
 
 **Community:** [twin/models.py](twin-models.py.md)
 
@@ -11,6 +11,7 @@
 - warehouse_layout_save() `INFERRED`
 - _create_from_geometry() `EXTRACTED`
 - warehouse_model_upload() `EXTRACTED`
+- demo_hall() `EXTRACTED`
 - warehouse_model_paste() `EXTRACTED`
 - warehouse_model_copy() `INFERRED`
 
@@ -19,14 +20,15 @@
 - Meta `EXTRACTED`
 
 ### imports
-- shared.py `EXTRACTED`
+- [shared.py](shared.py.md) `EXTRACTED`
 - [ewm_service.py](ewm_service.py.md) `EXTRACTED`
 - test_design_calibration.py `EXTRACTED`
 - test_ewm_tasks_flow.py `EXTRACTED`
 - [test_ewm_service.py](test_ewm_service.py.md) `EXTRACTED`
 - test_blender_export.py `EXTRACTED`
-- test_flow_player.py `EXTRACTED`
-- test_bay_template_model.py `EXTRACTED`
+- demo_scenariusz.py `EXTRACTED`
+- [test_flow_player.py](test_flow_player.py.md) `EXTRACTED`
+- [test_bay_template_model.py](test_bay_template_model.py.md) `EXTRACTED`
 - test_bay_template_views.py `EXTRACTED`
 - test_layout_views.py `EXTRACTED`
 - [test_warehouse_model_view.py](test_warehouse_model_view.py.md) `EXTRACTED`

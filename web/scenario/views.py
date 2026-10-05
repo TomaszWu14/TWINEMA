@@ -8,9 +8,12 @@ from django.views.decorators.http import require_POST
 
 from core.roles import GROUP_ADMIN, GROUP_DESIGNER, any_role, designer, has_role
 
+from twin.models import WarehouseModel
+
 from .inbound import _hhmm
 from .models import InboundStream, OutboundStream, Scenario, ScenarioDay, Shift
 from .staffing import cutoff_risk, process_hours, staffing
+from .views_sim import SimForm, _sim_view
 
 KIND_LABEL = dict(InboundStream._meta.get_field("kind").choices)
 OUT_LABEL = dict(OutboundStream._meta.get_field("kind").choices)
@@ -53,7 +56,7 @@ class ScenarioForm(forms.ModelForm):
     class Meta:
         model = Scenario
         fields = ["name", "description", "growth", "seed", "shift_h", "work_days", *Scenario.NORM_FIELDS,
-                  "return_restock_pct"]
+                  "return_restock_pct", *Scenario.FLEET_FIELDS]
         widgets = {"description": forms.Textarea(attrs={"rows": 2})}
 
     def __init__(self, *args, **kwargs):
@@ -195,7 +198,16 @@ def scenario_detail(request, pk):
            "departure_rows": _arrival_rows(results, "out", OUT_LABEL), "staff_rows": _staff_rows(results, shifts),
            "hours_rows": _hours_rows(results),
            "ncols": 1 + 2 * len(results)}
+    sim_runs = []
+    for kind, _ in ScenarioDay.KIND_CHOICES:
+        run = sc.runs.defer("events").select_related("model").filter(day_kind=kind).first()
+        if run:
+            sim_runs.append(_sim_view(run))
+    ctx["sim_runs"] = sim_runs
+    ctx["sim_charts"] = {f"sim-{v['run'].pk}": v["chart"] for v in sim_runs}
     if has_role(request.user, GROUP_ADMIN, GROUP_DESIGNER):
+        last = sim_runs[0]["run"].model_id if sim_runs else None
+        ctx["sim_form"] = SimForm(initial={"model": last or getattr(WarehouseModel.objects.first(), "pk", None)})
         ctx["form"] = ScenarioForm(instance=sc)
         ctx["day_forms"] = [{"day": d, "inbound": StreamFormSet(queryset=d.inbound.all(), prefix=d.kind),
                              "outbound": OutFormSet(queryset=d.outbound.all(), prefix=f"{d.kind}-out"),
