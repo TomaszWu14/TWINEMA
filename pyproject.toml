@@ -1,0 +1,7 @@
+[tool.ruff]
+line-length = 120
+target-version = "py313"
+extend-exclude = ["**/migrations/**", "**/vendor/**"]
+
+[tool.ruff.lint]
+select = ["F", "E9", "B"]

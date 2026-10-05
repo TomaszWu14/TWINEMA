@@ -1,0 +1,33 @@
+# syntax=docker/dockerfile:1.7
+# Kolejność: od najrzadziej zmienianego. SHA commita (SOURCE_COMMIT) ZAWSZE na końcu —
+# Coolify podaje nowy przy każdym deployu, a ARG unieważnia cache wszystkiego po nim.
+ARG PYTHON_IMAGE=python:3.13-slim
+
+FROM ${PYTHON_IMAGE} AS builder
+ENV PATH="/opt/venv/bin:$PATH" VIRTUAL_ENV=/opt/venv UV_LINK_MODE=copy UV_COMPILE_BYTECODE=1
+COPY --from=ghcr.io/astral-sh/uv:0.12.19 /uv /usr/local/bin/uv
+RUN python -m venv /opt/venv
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=requirements.txt,target=/tmp/requirements.txt \
+    uv pip install -r /tmp/requirements.txt
+
+FROM ${PYTHON_IMAGE} AS runtime
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PATH="/opt/venv/bin:$PATH"
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates gosu \
+    && rm -rf /var/lib/apt/lists/*
+RUN useradd --system --uid 10001 --create-home --shell /usr/sbin/nologin app
+COPY --from=builder /opt/venv /opt/venv
+COPY --chmod=755 docker-entrypoint.sh ./
+COPY web/ ./web/
+WORKDIR /app/web
+RUN DJANGO_SECRET_KEY=build-only DJANGO_DEBUG=false DJANGO_ALLOWED_HOSTS=* \
+    python manage.py collectstatic --noinput
+
+EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
+    CMD curl -fsS http://127.0.0.1:8000/health/ || exit 1
+
+ARG SOURCE_COMMIT=""
+ENV GIT_SHA=${SOURCE_COMMIT}
+ENTRYPOINT ["/app/docker-entrypoint.sh"]

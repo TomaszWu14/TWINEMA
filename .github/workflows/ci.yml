@@ -1,0 +1,77 @@
+name: CI
+
+# Bramka PR → main. `test` = wymagany check w ochronie gałęzi; po zielonym `test`
+# job auto-merge uzbraja natywny auto-merge dla gałęzi claude/** (merge PRZEZ PR).
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    # Runner GitHuba (Postgres jako service container). Po rejestracji runnera na
+    # własnym serwerze: zmień na [self-hosted, linux, twinema] i Postgres z .env runnera.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: twinema
+          POSTGRES_PASSWORD: twinema
+          POSTGRES_DB: twinema
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U twinema" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - name: Ruff
+        run: ruff check .
+      - name: Django check + testy (Postgres)
+        working-directory: web
+        env:
+          DJANGO_SECRET_KEY: ci-test-secret
+          DJANGO_DEBUG: 'true'
+          DJANGO_ALLOWED_HOSTS: '*'
+          DATABASE_URL: postgresql://twinema:twinema@127.0.0.1:5432/twinema
+        run: |
+          python manage.py check
+          python manage.py makemigrations --check --dry-run
+          python manage.py test -v 1 --noinput
+      - name: Django deploy check
+        working-directory: web
+        env:
+          DJANGO_SECRET_KEY: a-sufficiently-long-random-ci-only-secret-key-0000000000
+          DJANGO_DEBUG: 'false'
+          DJANGO_ALLOWED_HOSTS: twinema.twapp.pl
+          DJANGO_SSL_REDIRECT: 'true'
+        run: python manage.py check --deploy --fail-level WARNING
+
+  auto-merge:
+    needs: test
+    if: >-
+      github.event_name == 'pull_request'
+      && startsWith(github.head_ref, 'claude/')
+      && github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      # AUTOMERGE_PAT (fine-grained: contents+PR write) — bez niego merge GITHUB_TOKENem
+      # nie wyzwala deploy.yml (GitHub tłumi workflowy z takich pushy).
+      - name: Uzbrój auto-merge
+        env:
+          GH_TOKEN: ${{ secrets.AUTOMERGE_PAT || secrets.GITHUB_TOKEN }}
+        run: gh pr merge --auto --merge "${{ github.event.pull_request.number }}" --repo "${{ github.repository }}"

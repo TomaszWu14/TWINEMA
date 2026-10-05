@@ -1,0 +1,16 @@
+.git
+.github
+.claude
+.venv
+venv
+docs
+tools
+*.md
+.env
+.env.*
+**/__pycache__
+**/*.pyc
+*.sqlite3
+web/staticfiles
+web/media
+web/*/tests
