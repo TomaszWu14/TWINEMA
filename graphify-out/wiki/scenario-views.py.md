@@ -24,7 +24,7 @@
 
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (7 shared connections)
 - [views_sim.py](views_sim.py.md) (4 shared connections)
-- [ml/views.py](ml-views.py.md) (2 shared connections)
+- [blender_stock.py](blender_stock.py.md) (2 shared connections)
 - [scene-builder.js](scene-builder.js.md) (2 shared connections)
 - [blender_scene.py](blender_scene.py.md) (1 shared connections)
 - [packaging.py](packaging.py.md) (1 shared connections)

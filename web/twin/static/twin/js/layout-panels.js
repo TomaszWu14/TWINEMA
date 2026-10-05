@@ -24,6 +24,14 @@ function equipmentSelect(racks) {
       ...Object.entries(CFG.equipment).map(([k, v]) => h('option', { value: k, selected: k === same }, v))));
 }
 
+/** Rola doku/bramy (S3b) — symulacja scenariusza wybiera po niej doki; puste = zgadywana z etykiety. */
+function dockRoleSelect(f) {
+  return h('label', { class: 'le-wide' }, 'Rola doku',
+    h('select', { class: 'form-control', onchange: (e) => change(() => { f.dock_role = e.target.value; }) },
+      h('option', { value: '', selected: !f.dock_role }, '— z etykiety —'),
+      ...Object.entries(CFG.dockRoles || {}).map(([k, v]) => h('option', { value: k, selected: k === f.dock_role }, v))));
+}
+
 function h(tag, attrs = {}, ...children) {
   const e = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
@@ -89,7 +97,9 @@ function renderProps() {
       field('Gniazda', r, 'n_bays', num('n_bays')), field('Poziomy', r, 'n_levels', num('n_levels')),
       field('Szer. gniazda [cm]', r, 'bay_width_cm', num('bay_width_cm')), field('Głębokość [cm]', r, 'depth_cm', num('depth_cm')),
       field('Wys. poziomu [cm]', r, 'level_height_cm', num('level_height_cm')), field('Kąt [°]', r, 'angle', { ...pos, min: -360, max: 360 }),
-      field('X [m]', r, 'x', pos), field('Y [m]', r, 'y', pos), equipmentSelect([r]));
+      field('X [m]', r, 'x', pos), field('Y [m]', r, 'y', pos),
+      field('Nośność miejsca [kg]', r, 'load_kg', { type: 'number', required: true, min: 50, max: 10000, step: 50 }),
+      equipmentSelect([r]));
   } else if (items.length === 1) {
     const f = items[0];
     const kind = h('select', { class: 'form-control', onchange: (e) => change(() => { f.kind = e.target.value; }) },
@@ -97,7 +107,8 @@ function renderProps() {
     form = h('div', { class: 'le-form' }, h('label', { class: 'le-wide' }, 'Rodzaj', kind),
       field('Etykieta', f, 'label', { maxlength: 100, wide: true }, text),
       field('Szerokość [m]', f, 'width', { ...pos, min: 0.1, max: 5000 }), field('Głębokość [m]', f, 'depth', { ...pos, min: 0.1, max: 5000 }),
-      field('X [m]', f, 'x', pos), field('Y [m]', f, 'y', pos), field('Kąt [°]', f, 'angle', { ...pos, min: -360, max: 360 }));
+      field('X [m]', f, 'x', pos), field('Y [m]', f, 'y', pos), field('Kąt [°]', f, 'angle', { ...pos, min: -360, max: 360 }),
+      f.kind === 'dock' || f.kind === 'gate' ? dockRoleSelect(f) : null);
   } else {
     const racks = items.filter((it) => it.n_bays !== undefined);
     form = h('div', { class: 'le-form' }, h('p', { class: 'text-sm le-wide', style: 'margin:0' }, `Zaznaczono ${items.length} elementów.`),

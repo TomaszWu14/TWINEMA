@@ -20,6 +20,20 @@ from ..staffing import span
 M2_PER_PALLET = 1.5             # paleta EUR 0,96 m² + odstępy i dojazd na polu odkładczym
 
 
+def cartons_for(pid, dist, default):
+    """Kartonów na paletę z kontenera: z rozkładu master daty [(kartonów, waga)] — deterministycznie per paleta
+    (ten sam pid → ta sama liczba), bez rozkładu norma scenariusza."""
+    if not dist:
+        return default
+    total = sum(w for _, w in dist)
+    x = zlib.crc32(pid.encode()) % 10_000 / 10_000 * total
+    for c, w in dist:
+        x -= w
+        if x < 0:
+            return c
+    return dist[-1][0]
+
+
 class Pool:
     """Ludzie procesu: jeden „slot” na osobę na zmianę, dostępny [początek, koniec).
     ponytail: przerwa rozłożona — czas zadania × długość / (długość − przerwa); osobny blok przerwy, gdy
@@ -160,7 +174,8 @@ def simulate_plan(plan, params, shifts, places):
                     ev(emerge, pid, "pallet", "staging", "staging_out")
                     push(emerge, "staged_out", (x, pid))
                 elif cont:
-                    push(emerge, "palletize", (v, pid, n["cartons_per_pallet"] / n["palletize_cartons_per_h"]))
+                    cartons = cartons_for(pid, n.get("cpp_dist"), n["cartons_per_pallet"])
+                    push(emerge, "palletize", (v, pid, cartons / n["palletize_cartons_per_h"]))
                 elif k >= round(v["pallets"] * v["mono_pct"] / 100):
                     push(emerge, "palletize", (v, pid, n["repack_min_per_pallet"] / 60))
                 else:

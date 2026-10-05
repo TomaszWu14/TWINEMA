@@ -1,4 +1,4 @@
-# designer
+# views_compare.py
 
 > 16 nodes · cohesion 0.21
 
@@ -24,7 +24,7 @@
 ## Relationships
 
 - [layout-panels.js](layout-panels.js.md) (6 shared connections)
-- [addressing.py](addressing.py.md) (4 shared connections)
+- [CompliancePureTests](CompliancePureTests.md) (4 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
 - [SimViewTests](SimViewTests.md) (2 shared connections)
 - [test_addressing.py](test_addressing.py.md) (1 shared connections)

@@ -4,12 +4,12 @@
 
 ## Key Concepts
 
+- **Material** (24 connections) — `web/masterdata/models.py`
 - **test_dane.py** (23 connections) — `web/masterdata/tests/test_dane.py`
-- **Material** (21 connections) — `web/masterdata/models.py`
-- **ImportLog** (17 connections) — `web/masterdata/models.py`
+- **ImportLog** (20 connections) — `web/masterdata/models.py`
+- **StockItem** (14 connections) — `web/masterdata/models.py`
 - **DaneViewTests** (12 connections) — `web/masterdata/tests/test_dane.py`
-- **masterdata/models.py** (10 connections) — `web/masterdata/models.py`
-- **StockItem** (10 connections) — `web/masterdata/models.py`
+- **masterdata/models.py** (11 connections) — `web/masterdata/models.py`
 - **ImportServiceTests** (10 connections) — `web/masterdata/tests/test_dane.py`
 - **_csv()** (8 connections) — `web/masterdata/tests/test_dane.py`
 - **DemoAndSceneTests** (6 connections) — `web/masterdata/tests/test_dane.py`
@@ -39,8 +39,8 @@
 - [views_sim.py](views_sim.py.md) (2 shared connections)
 - [rack_corners](rack_corners.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [ml/views.py](ml-views.py.md) (1 shared connections)
-- [roles.py](roles.py.md) (1 shared connections)
+- [blender_stock.py](blender_stock.py.md) (1 shared connections)
+- [Scenario](Scenario.md) (1 shared connections)
 - [importers.py](importers.py.md) (1 shared connections)
 - [blender_scene.py](blender_scene.py.md) (1 shared connections)
 - [scene-builder.js](scene-builder.js.md) (1 shared connections)
@@ -53,8 +53,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 126 (80%)
-- INFERRED: 31 (20%)
+- EXTRACTED: 131 (78%)
+- INFERRED: 37 (22%)
 - AMBIGUOUS: 0 (0%)
 
 ---

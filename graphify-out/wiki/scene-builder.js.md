@@ -23,10 +23,10 @@
 
 ## Relationships
 
-- [warehouse_model.py](warehouse_model.py.md) (11 shared connections)
+- [shared.py](shared.py.md) (11 shared connections)
 - [design_day.py](design_day.py.md) (11 shared connections)
-- [ml/views.py](ml-views.py.md) (7 shared connections)
-- [ml/services.py](ml-services.py.md) (4 shared connections)
+- [blender_stock.py](blender_stock.py.md) (7 shared connections)
+- [test_design_forecast.py](test_design_forecast.py.md) (4 shared connections)
 - [rack_corners](rack_corners.md) (2 shared connections)
 - [scenario/views.py](scenario-views.py.md) (2 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (1 shared connections)

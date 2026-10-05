@@ -1,0 +1,84 @@
+{% extends "core/base.html" %}{% load static %}
+{% block title %}Porównanie layout × scenariusz — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .sc-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:0 0 12px; }
+  .sc-pick { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:6px 16px; margin:0 0 12px; padding:0; list-style:none; }
+  .sc-pick label { display:flex; gap:8px; align-items:flex-start; font-size:var(--fs-sm); }
+  .sc-pick .sc-meta { display:block; font-size:var(--fs-xs); color:var(--fg-subtle); }
+  .sc-scroll { overflow-x:auto; }
+  .cmp { width:100%; border-collapse:collapse; font-size:var(--fs-sm); }
+  .cmp th, .cmp td { padding:6px 10px; border-bottom:1px solid var(--border); text-align:right; vertical-align:top; }
+  .cmp th:first-child { text-align:left; }
+  .cmp thead th { color:var(--fg-muted); font-weight:600; min-width:150px; }
+  .cmp td.best { background:var(--surface-2); }
+  .cmp td.best .num { color:var(--success-fg, var(--success, #27ae60)); font-weight:700; }
+  .cmp .delta { display:block; font-size:var(--fs-xs); }
+  .cmp .delta.good { color:var(--success-fg, var(--success, #27ae60)); }
+  .cmp .delta.bad { color:var(--danger-fg, var(--danger, #e74c3c)); }
+  .cmp .delta.neutral { color:var(--fg-subtle); }
+  #cmp-box:fullscreen, #cmp-box.is-pseudo-fs { background:var(--bg); padding:16px; }
+</style>
+{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Ścieżka"><a href="{% url 'scenario:list' %}">Scenariusze</a> / Porównanie</nav>
+<div class="page-header">
+  <div>
+    <div class="page-header__title">Porównanie layout × scenariusz</div>
+    <div class="page-header__sub">Wyniki symulacji obok siebie: pierwsza kolumna to punkt odniesienia (różnica w %), najlepsza wartość w wierszu jest wyróżniona.</div>
+  </div>
+</div>
+
+<section class="card" aria-labelledby="cmp-pick-h"><div class="card-body">
+  <h2 class="sc-sec" id="cmp-pick-h">Wybierz wyniki (do {{ max_cols }})</h2>
+  {% if runs %}
+  <form method="get">
+    <ul class="sc-pick">
+      {% for r in runs %}
+      <li><label><input type="checkbox" name="ids" value="{{ r.pk }}"{% if r.pk in chosen_ids %} checked{% endif %}>
+        <span>{{ r.scenario.name }} · {{ r.get_day_kind_display|lower }}
+          <span class="sc-meta">hala „{{ r.model.name }}” · {{ r.runs }} przebiegów · {{ r.created_at|date:"d.m.Y H:i" }}</span></span></label></li>
+      {% endfor %}
+    </ul>
+    <button class="btn btn-primary" type="submit">Porównaj</button>
+  </form>
+  <p class="text-muted text-sm" style="margin:8px 0 0">Brakuje kombinacji? Uruchom symulację na stronie scenariusza, wybierając inny model hali.</p>
+  {% else %}
+  <p class="text-sm" style="margin:0">Nie ma jeszcze wyników symulacji — uruchom ją na stronie <a href="{% url 'scenario:list' %}">scenariusza</a>.</p>
+  {% endif %}
+</div></section>
+
+{% if chosen %}
+<section class="card" style="margin-top:16px" aria-labelledby="cmp-h" id="cmp-box"><div class="card-body">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+    <h2 class="sc-sec" id="cmp-h" style="margin:0">Wyniki</h2>
+    <button type="button" class="btn btn-ghost btn-sm" aria-pressed="false" id="cmp-fs">Pełny ekran</button>
+  </div>
+  <div class="sc-scroll">
+    <table class="cmp">
+      <caption class="sr-only">Porównanie wskaźników wybranych symulacji; pierwsza kolumna to punkt odniesienia</caption>
+      <thead><tr><th scope="col">Wskaźnik</th>{% for l in labels %}<th scope="col">{{ l }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        {% for row in rows %}
+        <tr><th scope="row">{{ row.label }}{% if row.unit %} [{{ row.unit }}]{% endif %}</th>
+          {% for c in row.cells %}
+          <td class="{% if c.best %}best{% endif %}"><span class="num">{% if c.value is None %}—{% else %}{{ c.value|floatformat:"-1g" }}{% endif %}</span>{% if c.best %} <span class="sr-only">(najlepsze)</span>{% endif %}
+            {% if c.delta %}<span class="delta {% if c.good is True %}good{% elif c.good is False %}bad{% else %}neutral{% endif %}">{% if c.delta > 0 %}+{% endif %}{{ c.delta }}%</span>{% endif %}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <p style="margin:12px 0 0"><a class="btn btn-ghost btn-sm" href="?{{ query }}&amp;xlsx=1">Pobierz porównanie (xlsx)</a></p>
+</div></section>
+{% endif %}
+<p class="sr-only" id="cmp-fs-live" aria-live="polite"></p>
+{% endblock %}
+{% block extra_scripts %}
+<script type="module">
+import { bindFullscreenButton } from '{% static "twin/js/fullscreen.js" %}';
+const b = document.getElementById('cmp-fs');
+if (b) bindFullscreenButton(b, document.getElementById('cmp-box'), { live: document.getElementById('cmp-fs-live') });
+</script>
+{% endblock %}

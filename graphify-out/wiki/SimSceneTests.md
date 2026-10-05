@@ -1,4 +1,4 @@
-# test_design_sim_scene.py
+# SimSceneTests
 
 > 23 nodes · cohesion 0.11
 
@@ -34,7 +34,7 @@
 - [kpi_facts](kpi_facts.md) (4 shared connections)
 - [blender_route.py](blender_route.py.md) (3 shared connections)
 - [blender_scene.py](blender_scene.py.md) (3 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (2 shared connections)
+- [shared.py](shared.py.md) (2 shared connections)
 - [ForecastTests](ForecastTests.md) (2 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
 

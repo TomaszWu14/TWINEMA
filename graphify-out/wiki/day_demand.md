@@ -1,11 +1,11 @@
-# scenario/models.py
+# day_demand
 
-> 48 nodes · cohesion 0.07
+> 47 nodes · cohesion 0.07
 
 ## Key Concepts
 
 - **warehouse_model.py** (31 connections) — `web/twin/views/warehouse_model.py`
-- **rack_corners()** (22 connections) — `web/twin/blender_route.py`
+- **rack_corners()** (24 connections) — `web/twin/blender_route.py`
 - **test_model_geometry.py** (11 connections) — `web/twin/tests/test_model_geometry.py`
 - **parse_geometry_csv()** (9 connections) — `web/twin/model_geometry.py`
 - **active_master()** (8 connections) — `web/twin/ewm_service.py`
@@ -29,20 +29,20 @@
 - **warehouse_model_coords()** (3 connections) — `web/twin/views/warehouse_model.py`
 - **_num()** (2 connections) — `web/twin/model_geometry.py`
 - **.test_detects_geometry_header_not_location_codes()** (2 connections) — `web/twin/tests/test_model_geometry.py`
-- *... and 23 more nodes in this community*
+- *... and 22 more nodes in this community*
 
 ## Relationships
 
 - [twin/models.py](twin-models.py.md) (12 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (11 shared connections)
+- [shared.py](shared.py.md) (11 shared connections)
 - [kpi_facts](kpi_facts.md) (3 shared connections)
 - [test_layout.py](test_layout.py.md) (3 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
-- [ewm_service.py](ewm_service.py.md) (3 shared connections)
+- [warehouse_model_ewm.py](warehouse_model_ewm.py.md) (3 shared connections)
 - [layout-panels.js](layout-panels.js.md) (3 shared connections)
-- [ParseTests](ParseTests.md) (2 shared connections)
+- [test_placement.py](test_placement.py.md) (2 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [simulate_plan](simulate_plan.md) (1 shared connections)
+- [sim/__init__.py](sim-__init__.py.md) (1 shared connections)
 - [blender_scene.py](blender_scene.py.md) (1 shared connections)
 - [design_catalog.py](design_catalog.py.md) (1 shared connections)
 
@@ -57,7 +57,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 208 (96%)
+- EXTRACTED: 209 (96%)
 - INFERRED: 8 (4%)
 - AMBIGUOUS: 0 (0%)
 

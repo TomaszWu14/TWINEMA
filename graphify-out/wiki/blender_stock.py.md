@@ -1,4 +1,4 @@
-# ml/views.py
+# blender_stock.py
 
 > 23 nodes · cohesion 0.14
 
@@ -31,11 +31,11 @@
 ## Relationships
 
 - [scene-builder.js](scene-builder.js.md) (7 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (5 shared connections)
-- [roles.py](roles.py.md) (4 shared connections)
-- [ml/services.py](ml-services.py.md) (4 shared connections)
+- [shared.py](shared.py.md) (5 shared connections)
+- [Scenario](Scenario.md) (4 shared connections)
+- [test_design_forecast.py](test_design_forecast.py.md) (4 shared connections)
 - [forecast.py](forecast.py.md) (2 shared connections)
-- [test_deck.py](test_deck.py.md) (2 shared connections)
+- [build_deck](build_deck.md) (2 shared connections)
 - [scenario/views.py](scenario-views.py.md) (2 shared connections)
 - [test_voice.py](test_voice.py.md) (1 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (1 shared connections)

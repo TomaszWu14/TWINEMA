@@ -29,7 +29,7 @@
 
 - [layout-panels.js](layout-panels.js.md) (10 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
-- [designer](designer.md) (1 shared connections)
+- [views_compare.py](views_compare.py.md) (1 shared connections)
 
 ## Source Files
 

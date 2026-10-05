@@ -18,7 +18,7 @@
 
 ## Relationships
 
-- [warehouse_model.py](warehouse_model.py.md) (8 shared connections)
+- [shared.py](shared.py.md) (8 shared connections)
 - [blender_scene.py](blender_scene.py.md) (6 shared connections)
 - [scenario/views.py](scenario-views.py.md) (4 shared connections)
 - [packaging.py](packaging.py.md) (3 shared connections)
@@ -29,7 +29,7 @@
 - [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
 - [layout-editor.js](layout-editor.js.md) (1 shared connections)
 - [studio/api.py](studio-api.py.md) (1 shared connections)
-- [ml/views.py](ml-views.py.md) (1 shared connections)
+- [blender_stock.py](blender_stock.py.md) (1 shared connections)
 
 ## Source Files
 

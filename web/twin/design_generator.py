@@ -68,9 +68,9 @@ def _feature(kind, label, x, y, w, d):
             "width_m": round(w, 2), "depth_m": round(d, 2), "angle_deg": 0.0}
 
 
-def _docks(kind, label, n, x, y_start, start_no=1):
-    return [_feature(kind, f"{label} {start_no + i}", x, y_start + i * DOCK_PITCH_M, DOCK_D_M, DOCK_W_M)
-            for i in range(n)]
+def _docks(kind, label, n, x, y_start, role):
+    return [{**_feature(kind, f"{label} {i + 1}", x, y_start + i * DOCK_PITCH_M, DOCK_D_M, DOCK_W_M),
+             "dock_role": role} for i in range(n)]
 
 
 def generate(**overrides):
@@ -116,10 +116,11 @@ def generate(**overrides):
 
     # Ściana przyjęć (x = 0)
     y_in = (D - docks_in * DOCK_PITCH_M) / 2
-    f = _docks("dock", "Dok kontenerowy (przenośnik teleskopowy)", p["container_docks"], 0, y_in)
+    f = _docks("dock", "Dok kontenerowy (przenośnik teleskopowy)", p["container_docks"], 0, y_in, "in_container")
     f += [_feature("station", f"Paletyzacja {i + 1}", DOCK_D_M + 2, y_in + i * DOCK_PITCH_M, 4, DOCK_W_M)
           for i in range(p["container_docks"])]
-    f += _docks("dock", "Dok paletowy", p["pallet_in_docks"], 0, y_in + p["container_docks"] * DOCK_PITCH_M)
+    f += _docks("dock", "Dok paletowy", p["pallet_in_docks"], 0, y_in + p["container_docks"] * DOCK_PITCH_M,
+                "in_pallet")
     f.append(_feature("staging", "Bufor przyjęć", 13, WALL_M, INBOUND_BAND_M - 14, D - 2 * WALL_M))
     f.append(_feature("corridor", "Przejazd AGV — przyjęcia", INBOUND_BAND_M, 0, TRANSFER_M, D))
     f.append(_feature("corridor", "Przejazd — wydania", x_vna + length, 0, TRANSFER_M, D))
@@ -132,10 +133,11 @@ def generate(**overrides):
     # Ściana wydań (x = W)
     x_out = W - DOCK_D_M
     y_out = (D - docks_out * DOCK_PITCH_M) / 2
-    f += _docks("dock", "Dok FTL", p["out_docks"], x_out, y_out)
-    f += _docks("gate", "Brama busów (najazd, poziom 0)", p["van_gates"], x_out, y_out + p["out_docks"] * DOCK_PITCH_M)
+    f += _docks("dock", "Dok FTL", p["out_docks"], x_out, y_out, "out")
+    f += _docks("gate", "Brama busów (najazd, poziom 0)", p["van_gates"], x_out, y_out + p["out_docks"] * DOCK_PITCH_M,
+                "out")
     f += _docks("dock", "Dok paczek → kontener (przenośnik teleskopowy)", p["parcel_docks"], x_out,
-                y_out + (p["out_docks"] + p["van_gates"]) * DOCK_PITCH_M)
+                y_out + (p["out_docks"] + p["van_gates"]) * DOCK_PITCH_M, "courier")
     f.append(_feature("staging", "Bufor wydań", W - OUTBOUND_BAND_M, WALL_M, OUTBOUND_BAND_M - DOCK_D_M - 1,
                       D - 2 * WALL_M))
 

@@ -162,8 +162,10 @@ z wyliczonej palety, gdy puste), ręczna ABC (pierwszeństwo przed ABC z histori
 specjalne z E2b, kartonów/paletę z master daty zamiast średniej normy.
 S3a ✅: `scenario/sim/` — zdarzeniowa symulacja dnia na layoucie (doki z rolami z etykiet, ludzie na zmianach,
 flota z ładowaniem, pola odkładcze, cut-off kurierów), wiele przebiegów → średnia i P95, wąskie gardła
-z podpowiedzią „+N” z ponownej symulacji, zdarzenia przebiegu reprezentatywnego dla animacji (S4). S3b: pojemność
-vs stan, reguły rozmieszczenia (nośność, ADR/temperatura), tabela layout × scenariusz, eksport xlsx.
+z podpowiedzią „+N” z ponownej symulacji, zdarzenia przebiegu reprezentatywnego dla animacji (S4).
+S3b ✅: jawna rola doku (pole elementu hali, migracja z etykiet), nośność miejsca regału, pojemność vs stan × wzrost,
+strefy specjalne i nośność jako ostrzeżenia (zapotrzebowanie vs pojemność — stany nie mają przypisania do regałów
+projektu), kartonów/paletę z master daty w symulacji, tabela porównania layout × scenariusz, eksport xlsx.
 
 ---
 

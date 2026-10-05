@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **masterdata/services.py** (34 connections) — `web/masterdata/services.py`
+- **masterdata/services.py** (38 connections) — `web/masterdata/services.py`
 - **import_file()** (13 connections) — `web/masterdata/services.py`
 - **load_demo()** (10 connections) — `web/masterdata/services.py`
 - **_parse_loc_code()** (7 connections) — `web/twin/shared.py`
@@ -30,11 +30,11 @@
 - [masterdata/views.py](masterdata-views.py.md) (5 shared connections)
 - [LayoutApiTests](LayoutApiTests.md) (4 shared connections)
 - [test_ewm_service.py](test_ewm_service.py.md) (4 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (3 shared connections)
+- [shared.py](shared.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [rack_corners](rack_corners.md) (1 shared connections)
 - [views_sim.py](views_sim.py.md) (1 shared connections)
-- [ml/views.py](ml-views.py.md) (1 shared connections)
+- [blender_stock.py](blender_stock.py.md) (1 shared connections)
 - [ewm_levels.py](ewm_levels.py.md) (1 shared connections)
 - [packaging.py](packaging.py.md) (1 shared connections)
 
@@ -47,7 +47,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 96 (94%)
+- EXTRACTED: 100 (94%)
 - INFERRED: 6 (6%)
 - AMBIGUOUS: 0 (0%)
 

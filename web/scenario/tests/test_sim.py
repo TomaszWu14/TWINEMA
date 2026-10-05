@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from scenario.sim import FLEET_DEFAULTS, run_day, run_many
 from scenario.sim.engine import simulate_plan
-from scenario.sim.places import dock_role, places_from_features, with_extra_docks
+from scenario.sim.places import dock_role, needed_roles, places_from_features, with_extra_docks
 from scenario.sim.plan import build_plan, times_in_window
 from scenario.sim.report import aggregate, bottlenecks, run_report
 
@@ -126,9 +126,19 @@ class ManyRunsTests(TestCase):
 
 class PlacesTests(TestCase):
     def test_dock_roles_from_labels(self):
-        self.assertEqual([dock_role(x) for x in ("Dok kontenerowy (przenośnik)", "Dok paczek → kontener",
-                                                 "Dok paletowy", "Dok FTL", "Brama busów", "Dok wspólny 3")],
-                         ["in_container", "courier", "in_pallet", "out", "out", "shared"])
+        self.assertEqual([dock_role({"label": x}) for x in (
+            "Dok kontenerowy (przenośnik)", "Dok paczek → kontener", "Dok paletowy", "Dok FTL", "Brama busów",
+            "Dok wspólny 3")], ["in_container", "courier", "in_pallet", "out", "out", "shared"])
+
+    def test_explicit_role_beats_label_and_warns_only_needed(self):
+        f = {"id": 7, "kind": "dock", "label": "Dok FTL 1", "dock_role": "in_container", "width": 3, "depth": 4}
+        self.assertEqual(dock_role(f), "in_container")
+        day = {"inbound": [{"kind": "container40"}], "outbound": []}
+        pl = places_from_features([f], needed_roles(day))
+        self.assertEqual(pl["roles"]["in_container"], [7])
+        self.assertEqual(pl["warnings"], [])                       # wydań/kuriera scenariusz nie potrzebuje
+        pl = places_from_features([{**f, "dock_role": "out"}], needed_roles(day))
+        self.assertIn("kontenerowego", pl["warnings"][0])
 
     def test_fallback_and_staging_split(self):
         pl = places_from_features([{"id": 5, "kind": "dock", "label": "Dok FTL", "width": 3, "depth": 4},

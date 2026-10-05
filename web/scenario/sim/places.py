@@ -1,26 +1,30 @@
 """Miejsca z layoutu hali dla symulacji: role doków i powierzchnia pól odkładczych (czysty Python).
 
-Rolę doku/bramy czytamy z etykiety (generator i edytor nadają opisowe etykiety):
-  „kontener” → rozładunek kontenerów · „pacz…”/„kurier” → odbiór paczek · „wspóln” → dok wspólny IN+OUT ·
-  „przyj”/„paletowy”/„ IN” → przyjęcia palet · reszta (FTL, busy, „wyd”, „OUT”) → wydania.
+Rola doku/bramy: jawne pole `dock_role` elementu hali (S3b); puste → zgadywana z etykiety
+(`twin.layout.guess_dock_role`: „kontener”, „pacz…/kurier”, „wspóln”, „przyj/paletowy”, reszta → wydania).
 Pole odkładcze: „przyj”/„IN” → przyjęć, „wyd”/„OUT” → wydań, bez opisu → połowa na każdą stronę.
 Brak doków danej roli → zastępczo inne (hala bez doków kontenerowych dalej się liczy, ale z ostrzeżeniem).
 """
 
+from twin.layout import guess_dock_role
+
 ROLES = ("in_container", "in_pallet", "out", "courier")
+ROLE_LABELS = {"in_container": "kontenerowego (przyjęcia kontenerów)", "in_pallet": "paletowego IN (auta)",
+               "out": "wydań (auta OUT)", "courier": "kurierskiego (odbiór paczek)"}
 
 
-def dock_role(label):
-    s = f" {(label or '').lower()} "
-    if "wspóln" in s:
-        return "shared"
-    if "pacz" in s or "kurier" in s:
-        return "courier"
-    if "kontener" in s:
-        return "in_container"
-    if "przyj" in s or "paletowy" in s or " in " in s:
-        return "in_pallet"
-    return "out"
+def dock_role(f):
+    return f.get("dock_role") or guess_dock_role(f.get("label"))
+
+
+def needed_roles(day):
+    """Role doków, których wymaga dzień scenariusza (format `ScenarioDay.sim_day`)."""
+    need = set()
+    for s in day.get("inbound", []):
+        need.add("in_container" if s["kind"] == "container40" else "in_pallet")
+    for s in day.get("outbound", []):
+        need.add("courier" if s["kind"] == "courier" else "out")
+    return need
 
 
 def staging_side(label):
@@ -32,14 +36,15 @@ def staging_side(label):
     return None
 
 
-def places_from_features(features):
-    """features: dicty jak `twin.shared.hall_feature_dict` (kind, label, width, depth, id)."""
+def places_from_features(features, needed=None):
+    """features: dicty jak `twin.shared.hall_feature_dict` (kind, label, dock_role, width, depth, id).
+    needed: role wymagane przez scenariusz (`needed_roles`) — tylko ich brak daje ostrzeżenie; None = wszystkie."""
     docks, roles = [], {r: [] for r in ROLES}
     for i, f in enumerate(features):
         if f["kind"] not in ("dock", "gate"):
             continue
         did = f.get("id") or f"d{i + 1}"
-        role = dock_role(f.get("label"))
+        role = dock_role(f)
         docks.append({"id": did, "label": f.get("label") or "", "role": role})
         for r in (("in_container", "in_pallet", "out", "courier") if role == "shared" else (role,)):
             roles[r].append(did)
@@ -50,8 +55,9 @@ def places_from_features(features):
     for r in ROLES:
         if not roles[r]:
             alt = [d for a in fallback[r] for d in roles[a]] or every
-            if alt:
-                warnings.append(f"Brak doków roli „{r}” — symulacja używa zastępczo innych doków.")
+            if alt and (needed is None or r in needed):
+                warnings.append(f"Brak doku {ROLE_LABELS[r]}, a scenariusz go potrzebuje — symulacja używa "
+                                f"zastępczo innych doków. Ustaw rolę doku w edytorze lub w elementach hali.")
             roles[r] = alt
     if not every:
         docks = [{"id": "d0", "label": "Dok zastępczy", "role": "shared"}]

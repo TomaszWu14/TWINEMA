@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **generate()** (23 connections) — `web/twin/design_generator.py`
-- **design_generator.py** (18 connections) — `web/twin/design_generator.py`
+- **generate()** (25 connections) — `web/twin/design_generator.py`
+- **design_generator.py** (19 connections) — `web/twin/design_generator.py`
 - **test_model_edit.py** (15 connections) — `web/twin/tests/test_model_edit.py`
 - **GeneratorTests** (10 connections) — `web/twin/tests/test_design_generator.py`
 - **test_design_generator.py** (9 connections) — `web/twin/tests/test_design_generator.py`
@@ -34,13 +34,13 @@
 ## Relationships
 
 - [test_layout.py](test_layout.py.md) (7 shared connections)
-- [sim/__init__.py](sim-__init__.py.md) (5 shared connections)
+- [StockItem](StockItem.md) (5 shared connections)
 - [twin/models.py](twin-models.py.md) (4 shared connections)
-- [test_design_compare.py](test_design_compare.py.md) (3 shared connections)
+- [warehouse_compare.py](warehouse_compare.py.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
 - [segmentation.py](segmentation.py.md) (2 shared connections)
 - [design_catalog.py](design_catalog.py.md) (1 shared connections)
-- [detect](detect.md) (1 shared connections)
+- [ewm_service.py](ewm_service.py.md) (1 shared connections)
 
 ## Source Files
 
@@ -50,7 +50,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 115 (100%)
+- EXTRACTED: 118 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

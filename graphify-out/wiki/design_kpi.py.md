@@ -34,7 +34,7 @@
 ## Relationships
 
 - [design_catalog.py](design_catalog.py.md) (11 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (7 shared connections)
+- [shared.py](shared.py.md) (7 shared connections)
 - [layout-hall.js](layout-hall.js.md) (4 shared connections)
 - [blender_scene.py](blender_scene.py.md) (3 shared connections)
 - [kpi_facts](kpi_facts.md) (2 shared connections)
@@ -44,7 +44,7 @@
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
 - [views_sim.py](views_sim.py.md) (1 shared connections)
 - [packaging.py](packaging.py.md) (1 shared connections)
-- [simulate_plan](simulate_plan.md) (1 shared connections)
+- [sim/__init__.py](sim-__init__.py.md) (1 shared connections)
 
 ## Source Files
 

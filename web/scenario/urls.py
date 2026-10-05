@@ -1,12 +1,14 @@
 from django.urls import path
 
-from . import views, views_sim
+from . import views, views_compare, views_sim
 
 app_name = "scenario"
 
 urlpatterns = [
     path("scenariusze/<int:pk>/symulacja/", views_sim.scenario_simulate, name="simulate"),
     path("scenariusze/symulacja/<int:pk>/zdarzenia.json", views_sim.run_events, name="run_events"),
+    path("scenariusze/symulacja/<int:pk>/wyniki.xlsx", views_compare.run_xlsx, name="run_xlsx"),
+    path("scenariusze/porownanie/", views_compare.compare, name="compare"),
     path("scenariusze/", views.scenario_list, name="list"),
     path("scenariusze/nowy/", views.scenario_create, name="create"),
     path("scenariusze/<int:pk>/", views.scenario_detail, name="detail"),

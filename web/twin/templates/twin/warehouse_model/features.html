@@ -59,6 +59,7 @@
           <tr>
             <th>Typ</th>
             <th>Etykieta</th>
+            <th>Rola doku</th>
             <th>Prefiks kodów</th>
             <th>X&nbsp;[m]</th>
             <th>Y&nbsp;[m]</th>
@@ -82,6 +83,14 @@
               </select>
             </td>
             <td><input type="text" name="label" value="{{ f.label }}" placeholder="Nazwa"></td>
+            <td>
+              <select aria-label="Rola doku" name="dock_role">
+                <option value="">— (z etykiety)</option>
+                {% for val, disp in dock_role_choices %}
+                <option value="{{ val }}" {% if f.dock_role == val %}selected{% endif %}>{{ disp }}</option>
+                {% endfor %}
+              </select>
+            </td>
             <td><input type="text" name="zone_code" value="{{ f.zone_code }}" placeholder="np. ZWROTY" style="width:90px"></td>
             <td><input aria-label="X [m]" type="number" name="x_m" value="{{ f.x_m }}" step="0.1" min="0"></td>
             <td><input aria-label="Y [m]" type="number" name="y_m" value="{{ f.y_m }}" step="0.1" min="0"></td>
@@ -124,6 +133,14 @@
       </select>
     </td>
     <td><input type="text" name="label" placeholder="Nazwa"></td>
+    <td>
+      <select aria-label="Rola doku" name="dock_role">
+        <option value="">— (z etykiety)</option>
+        {% for val, disp in dock_role_choices %}
+        <option value="{{ val }}">{{ disp }}</option>
+        {% endfor %}
+      </select>
+    </td>
     <td><input type="text" name="zone_code" placeholder="np. ZWROTY" style="width:90px"></td>
     <td><input aria-label="X [m]" type="number" name="x_m" value="0" step="0.1" min="0"></td>
     <td><input aria-label="Y [m]" type="number" name="y_m" value="0" step="0.1" min="0"></td>

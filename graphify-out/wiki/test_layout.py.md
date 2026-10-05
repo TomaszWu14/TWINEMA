@@ -31,8 +31,8 @@
 ## Relationships
 
 - [Material](Material.md) (7 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (4 shared connections)
-- [scenario/models.py](scenario-models.py.md) (3 shared connections)
+- [shared.py](shared.py.md) (4 shared connections)
+- [day_demand](day_demand.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
 - [blender_scene.py](blender_scene.py.md) (1 shared connections)

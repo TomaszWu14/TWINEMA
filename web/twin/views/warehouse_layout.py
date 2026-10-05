@@ -76,6 +76,7 @@ def warehouse_layout_editor(request, pk):
         "limits": RACK_LIMITS, "featureColors": HALL_FEATURE_COLORS,
         "aisle": ELEMENTS["rack_std"]["aisle_m"],
         "equipment": dict(WarehouseModelRack.EQUIPMENT_CHOICES),
+        "dockRoles": dict(WarehouseHallFeature.DOCK_ROLE_CHOICES),
         "aisles": {"reach": ELEMENTS["rack_std"]["aisle_m"], "vna": ELEMENTS["rack_vna"]["aisle_m"],
                    "shelf": SHELF_AISLE_M},
     }
@@ -138,17 +139,22 @@ def warehouse_layout_save(request, pk):
             obj = racks[r["id"]] if r["id"] else WarehouseModelRack(model=wm)
             for f in RACK_FIELDS:
                 setattr(obj, f, r[f])
+            if r["load_kg"] is not None:
+                obj.load_kg = r["load_kg"]
             obj.x_m, obj.y_m, obj.angle_deg = r["x"], r["y"], r["angle"]
             (updated if r["id"] else created).append(obj)
-        WarehouseModelRack.objects.bulk_update(updated, [*RACK_FIELDS, "x_m", "y_m", "angle_deg"])
+        WarehouseModelRack.objects.bulk_update(updated, [*RACK_FIELDS, "load_kg", "x_m", "y_m", "angle_deg"])
         WarehouseModelRack.objects.bulk_create(created)
         f_updated, f_created = [], []
         for f in layout["features"]:
             obj = feats[f["id"]] if f["id"] else WarehouseHallFeature(model=wm)
             obj.kind, obj.label = f["kind"], f["label"]
+            if f["dock_role"] is not None:
+                obj.dock_role = f["dock_role"]
             obj.x_m, obj.y_m, obj.width_m, obj.depth_m, obj.angle_deg = f["x"], f["y"], f["width"], f["depth"], f["angle"]
             (f_updated if f["id"] else f_created).append(obj)
-        WarehouseHallFeature.objects.bulk_update(f_updated, ["kind", "label", "x_m", "y_m", "width_m", "depth_m",
+        WarehouseHallFeature.objects.bulk_update(f_updated, ["kind", "label", "dock_role", "x_m", "y_m", "width_m",
+                                                             "depth_m",
                                                              "angle_deg"])
         WarehouseHallFeature.objects.bulk_create(f_created)
         wm.floor_width_m, wm.floor_depth_m = layout["floor"]["width"], layout["floor"]["depth"]

@@ -1,6 +1,6 @@
 # WarehouseModel
 
-> God node · 37 connections · `web/twin/models.py`
+> God node · 38 connections · `web/twin/models.py`
 
 **Community:** [twin/models.py](twin-models.py.md)
 
@@ -16,21 +16,21 @@
 - [shared.py](shared.py.md) `EXTRACTED`
 - [test_dane.py](test_dane.py.md) `EXTRACTED`
 - [masterdata/views.py](masterdata-views.py.md) `EXTRACTED`
+- test_s3b_views.py `EXTRACTED`
 - [views_sim.py](views_sim.py.md) `EXTRACTED`
-- [test_design_calibration.py](test_design_calibration.py.md) `EXTRACTED`
-- [test_ewm_tasks_flow.py](test_ewm_tasks_flow.py.md) `EXTRACTED`
+- test_design_calibration.py `EXTRACTED`
+- test_ewm_tasks_flow.py `EXTRACTED`
 - [test_ewm_service.py](test_ewm_service.py.md) `EXTRACTED`
-- test_blender_export.py `EXTRACTED`
 - demo_scenariusz.py `EXTRACTED`
-- [test_deck.py](test_deck.py.md) `EXTRACTED`
+- test_blender_export.py `EXTRACTED`
+- test_deck.py `EXTRACTED`
 - test_model_edit.py `EXTRACTED`
 - test_render_montage.py `EXTRACTED`
 - render/views.py `EXTRACTED`
 - test_voice_views.py `EXTRACTED`
-- [test_flow_player.py](test_flow_player.py.md) `EXTRACTED`
+- test_flow_player.py `EXTRACTED`
 - test_model_geometry.py `EXTRACTED`
 - test_sim_views.py `EXTRACTED`
-- studio/tests/test_views.py `EXTRACTED`
 
 ### method
 - .rack_count() `EXTRACTED`
