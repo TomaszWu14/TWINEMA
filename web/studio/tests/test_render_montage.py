@@ -60,29 +60,40 @@ class RenderMontageTests(TestCase):
     def test_render_creates_jobs_with_voice_length_and_status(self):
         self._render()
         jobs = list(RenderJob.objects.order_by("pk"))
-        self.assertEqual([(j.preset, j.kind, j.resolution, j.seconds) for j in jobs],
-                         [("przelot", "video", "1920x1080", 5), ("plan", "video", "1920x1080", 2)])
-        self.assertEqual(jobs[0].title, "Film — ujęcie 1")
+        self.assertEqual([(j.preset, j.kind, j.resolution) for j in jobs],
+                         [("przelot", "video", "1920x1080"), ("przelot", "still", "1920x1080"),
+                          ("plan", "video", "1920x1080"), ("plan", "still", "1920x1080")])
+        self.assertEqual([jobs[0].seconds, jobs[2].seconds], [5, 2])
+        self.assertEqual([jobs[0].title, jobs[1].title], ["Film — ujęcie 1", "Film — kadr 1"])
         self.p.refresh_from_db()
         self.assertEqual(self.p.status, "render")
 
     def test_render_cache_same_scene_preset_length(self):
         self._render()
         self._render()                                        # drugi klik — nic nowego
-        self.assertEqual(RenderJob.objects.count(), 2)
+        self.assertEqual(RenderJob.objects.count(), 4)        # 2 klipy + 2 kadry
         other = Presentation.objects.create(model=self.wm, title="Inny film", status="audio", voice_id="lektor-testowy")
         s = self.p.shots.first()
         copy = Shot.objects.create(presentation=other, order=0, preset=s.preset, text=s.text, voice=s.voice)
         self.client.post(reverse("studio:render_shots", args=[other.pk]))
         copy.refresh_from_db()
-        self.assertEqual(copy.render_id, s.render_id)         # ten sam render z innej prezentacji
-        self.assertEqual(RenderJob.objects.count(), 2)
+        self.assertEqual((copy.render_id, copy.still_id), (s.render_id, s.still_id))   # z innej prezentacji
+        self.assertEqual(RenderJob.objects.count(), 4)
 
     def test_preset_change_needs_new_render(self):
         self._render()
         Shot.objects.filter(preset="plan").update(preset="orbita")
         self._render()
-        self.assertEqual(RenderJob.objects.count(), 3)
+        self.assertEqual(RenderJob.objects.count(), 6)        # nowy klip i nowy kadr tylko dla zmienionego
+
+    def test_failed_still_is_rerendered_video_kept(self):
+        self._render()
+        s = self.p.shots.first()
+        RenderJob.objects.filter(pk=s.still_id).update(status="error")
+        self._render()
+        s2 = Shot.objects.get(pk=s.pk)
+        self.assertNotEqual(s2.still_id, s.still_id)
+        self.assertEqual(s2.render_id, s.render_id)
 
     def test_render_blocked_without_voice(self):
         Shot.objects.update(voice=None)
@@ -160,4 +171,4 @@ class RenderMontageTests(TestCase):
         self._render()
         d = self.client.get(reverse("studio:status_json", args=[self.p.pk])).json()
         self.assertTrue(d["active"])
-        self.assertEqual(d["state"], "render|queued,queued|")
+        self.assertEqual(d["state"], "render|queued,queued|queued,queued|")

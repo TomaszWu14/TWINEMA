@@ -2,7 +2,7 @@
 
 > God node · 23 connections · `web/twin/ewm_tasks.py`
 
-**Community:** [WarehouseTask](WarehouseTask.md)
+**Community:** [SimulationViewTests](SimulationViewTests.md)
 
 ## Connections by Relation
 

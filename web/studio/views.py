@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.files.base import ContentFile
 from django.db import transaction
+from django.db.models import Prefetch
 from django.http import FileResponse, Http404, HttpResponse, JsonResponse, QueryDict
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -21,6 +22,7 @@ from twin.shared import hall_feature_dict
 from twin.views.warehouse_blender import _scene_from_request
 
 from . import script_ai, tts
+from .deck import build_deck
 from .models import RENDER_RESOLUTION, MontageJob, Presentation, Shot, VoiceTrack
 from .script import TARGET_WORDS, WORDS_PER_SECOND, kpi_facts, template_script
 from .voice import build_srt, cues, duration, offsets, words
@@ -66,7 +68,8 @@ def presentation_list(request):
     form.fields["model"].queryset = WarehouseModel.objects.all()
     return render(request, "studio/list.html", {
         "form": form,
-        "presentations": Presentation.objects.select_related("model", "created_by").prefetch_related("shots")[:50],
+        "presentations": Presentation.objects.select_related("model", "created_by").prefetch_related(
+            "shots", Prefetch("montages", MontageJob.objects.filter(status="done"), to_attr="films"))[:50],
     })
 
 
@@ -91,10 +94,11 @@ def presentation_create(request):
 def presentation_detail(request, pk):
     p = get_object_or_404(Presentation.objects.select_related("model"), pk=pk)
     formset = ShotFormSet(queryset=p.shots.all()) if p.is_draft else None
-    shots = list(p.shots.select_related("voice", "render"))
+    shots = list(p.shots.select_related("voice", "render", "still"))
     n_words = sum(len(s.text.split()) for s in shots)
     voiced = [s for s in shots if s.voice_ok]
     montage = p.montages.first()
+    jobs = [j for s in shots for j in (s.render, s.still) if j]
     return render(request, "studio/detail.html", {
         "p": p, "formset": formset, "shots": shots, "facts": kpi_facts(model_kpi(p.model)),
         "ai_enabled": script_ai.enabled(), "claude_model": settings.CLAUDE_MODEL,
@@ -102,9 +106,10 @@ def presentation_detail(request, pk):
         "voiced_count": len(voiced), "all_voiced": bool(shots) and len(voiced) == len(shots),
         "audio_seconds": round(sum(s.voice.duration_s for s in voiced)),
         "renders_done": sum(1 for s in shots if s.render_current and s.render.status == "done"),
+        "stills_done": sum(1 for s in shots if s.still and s.still.status == "done" and s.still.preset == s.preset),
         "can_montage": montage_ready(shots), "montage": montage,
         "montage_current": bool(montage and montage_ready(shots) and montage.input_key == montage_input_key(p, shots)),
-        "busy": any(s.render and s.render.status in ("queued", "running") for s in shots)
+        "busy": any(j.status in ("queued", "running") for j in jobs)
         or bool(montage and montage.status in ("queued", "running")),
         "worker_enabled": bool(settings.RENDER_WORKER_TOKEN),
         "words": n_words, "seconds": round(n_words / WORDS_PER_SECOND), "target_words": TARGET_WORDS,
@@ -273,34 +278,39 @@ def _sha(obj):
 @designer
 @require_POST
 def render_shots(request, pk):
-    """RenderJob z kolejki F3 dla każdego ujęcia. Cache: scena + preset + długość + rozdzielczość →
-    istniejący render (w kolejce, w toku albo gotowy) zamiast nowego."""
+    """Dla każdego ujęcia klip MP4 (film) i kadr PNG (deck) z kolejki F3 — jednym kliknięciem, bo
+    oba potrzebują tej samej sceny i kamery. Cache: scena + preset + długość/rodzaj + rozdzielczość →
+    istniejące zlecenie (w kolejce, w toku albo gotowe) zamiast nowego."""
     p = get_object_or_404(Presentation.objects.select_related("model"), pk=pk)
     if p.status not in ("audio", "render", "montage", "done") or not p.all_voiced():
         messages.error(request, "Najpierw nagraj lektora dla wszystkich kwestii.")
         return redirect("studio:detail", pk=pk)
     scene = _scene_from_request(SimpleNamespace(GET=QueryDict("")), p.model)
     created = reused = 0
-    for n, shot in enumerate(p.shots.select_related("voice", "render"), start=1):
-        key = _sha([scene, shot.preset, shot.render_seconds, RENDER_RESOLUTION])
-        if shot.render_key == key and shot.render and shot.render.status != "error":
-            continue
-        twin = (Shot.objects.filter(render_key=key, render__status__in=("queued", "running", "done"))
-                .select_related("render").first())
-        if twin:
-            job, reused = twin.render, reused + 1
-        else:
-            job = RenderJob.objects.create(model=p.model, preset=shot.preset, kind="video",
-                                           resolution=RENDER_RESOLUTION, seconds=shot.render_seconds,
-                                           title=f"{p.title} — ujęcie {n}"[:200], created_by=request.user)
-            created += 1
-        shot.render, shot.render_key = job, key
-        shot.save(update_fields=["render", "render_key"])
+    for n, shot in enumerate(p.shots.select_related("voice", "render", "still"), start=1):
+        for field, kind, key in (("render", "video", _sha([scene, shot.preset, shot.render_seconds, RENDER_RESOLUTION])),
+                                 ("still", "still", _sha([scene, shot.preset, "still", RENDER_RESOLUTION]))):
+            current = getattr(shot, field)
+            if getattr(shot, f"{field}_key") == key and current and current.status != "error":
+                continue
+            twin = (Shot.objects.filter(**{f"{field}_key": key, f"{field}__status__in": ("queued", "running", "done")})
+                    .select_related(field).first())
+            if twin:
+                job, reused = getattr(twin, field), reused + 1
+            else:
+                job = RenderJob.objects.create(
+                    model=p.model, preset=shot.preset, kind=kind, resolution=RENDER_RESOLUTION,
+                    seconds=shot.render_seconds, created_by=request.user,
+                    title=f"{p.title} — {'ujęcie' if kind == 'video' else 'kadr'} {n}"[:200])
+                created += 1
+            setattr(shot, field, job)
+            setattr(shot, f"{field}_key", key)
+            shot.save(update_fields=[field, f"{field}_key"])
     if p.status == "audio":
         p.status = "render"
         p.save(update_fields=["status", "updated_at"])
-    messages.success(request, f"Render ujęć: {created} nowych zleceń w kolejce, {reused} z gotowych renderów."
-                     if created or reused else "Wszystkie ujęcia mają aktualne rendery.")
+    messages.success(request, f"Render ujęć i kadrów: {created} nowych zleceń w kolejce, {reused} z gotowych renderów."
+                     if created or reused else "Wszystkie ujęcia mają aktualne klipy i kadry.")
     return redirect("studio:detail", pk=pk)
 
 
@@ -349,6 +359,29 @@ def status_json(request, pk):
     """Stan renderów i montażu — strona odpytuje i przeładowuje się, gdy coś się zmieni."""
     p = get_object_or_404(Presentation, pk=pk)
     renders = list(p.shots.exclude(render=None).values_list("render__status", flat=True))
+    stills = list(p.shots.exclude(still=None).values_list("still__status", flat=True))
     montage = p.montages.values_list("status", flat=True).first()
-    return JsonResponse({"state": f"{p.status}|{','.join(renders)}|{montage or ''}",
-                         "active": "queued" in renders or "running" in renders or montage in ("queued", "running")})
+    jobs = renders + stills + [montage]
+    return JsonResponse({"state": f"{p.status}|{','.join(renders)}|{','.join(stills)}|{montage or ''}",
+                         "active": "queued" in jobs or "running" in jobs})
+
+
+@any_role
+def deck_pdf(request, pk):
+    """Deck PDF: tytuł → liczby z KPI → ujęcie na stronę (kadr + kwestia) → koniec.
+    Brak gotowego kadru → miejsce zastępcze (deck da się pobrać na każdym etapie)."""
+    p = get_object_or_404(Presentation.objects.select_related("model"), pk=pk)
+    slides = []
+    for s in p.shots.select_related("still"):
+        image = None
+        if s.still and s.still.status == "done" and s.still.preset == s.preset and s.still.result:
+            with s.still.result.open("rb") as fh:
+                image = fh.read()
+        slides.append({"label": s.get_preset_display(), "text": s.text, "image": image})
+    pdf = build_deck(p.title, settings.APP_NAME, timezone.localdate().strftime("%d.%m.%Y"),
+                     kpi_facts(model_kpi(p.model)), slides)
+    resp = HttpResponse(pdf, content_type="application/pdf")
+    disp = "attachment" if request.GET.get("pobierz") else "inline"
+    resp["Content-Disposition"] = f'{disp}; filename="twinema_deck_{p.pk}.pdf"'
+    resp["X-Content-Type-Options"] = "nosniff"
+    return resp

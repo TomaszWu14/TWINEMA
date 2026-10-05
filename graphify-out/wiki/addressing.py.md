@@ -1,34 +1,44 @@
 # addressing.py
 
-> 11 nodes · cohesion 0.27
+> 20 nodes · cohesion 0.23
 
 ## Key Concepts
 
-- **test_ewm_detect.py** (10 connections) — `web/twin/tests/test_ewm_detect.py`
-- **.test_irregular_bay_gets_nearest_template_plus_skip_and_add()** (5 connections) — `web/twin/tests/test_ewm_detect.py`
-- **expand_proposal()** (4 connections) — `web/twin/tests/test_ewm_detect.py`
-- **DetectHeightsTests** (3 connections) — `web/twin/tests/test_ewm_detect.py`
-- **.test_level_heights_and_weights_are_medians_from_master()** (3 connections) — `web/twin/tests/test_ewm_detect.py`
-- **DetectIrregularBayTests** (3 connections) — `web/twin/tests/test_ewm_detect.py`
-- **rows_of()** (3 connections) — `web/twin/tests/test_ewm_detect.py`
-- **master_of()** (2 connections) — `web/twin/tests/test_ewm_detect.py`
-- **SimpleTestCase** (2 connections)
-- **„Wykryj z EWM”: propozycja szablonów, numeracji i wyjątków z kodów; round-trip…** (1 connections) — `web/twin/tests/test_ewm_detect.py`
-- **Propozycja → obiekty jak z bazy → rozwinięte kody per przejście.** (1 connections) — `web/twin/tests/test_ewm_detect.py`
+- **test_addressing.py** (15 connections) — `web/twin/tests/test_addressing.py`
+- **expand_row()** (14 connections) — `web/twin/addressing.py`
+- **row()** (11 connections) — `web/twin/tests/test_addressing.py`
+- **ExpandRowTests** (10 connections) — `web/twin/tests/test_addressing.py`
+- **codes()** (5 connections) — `web/twin/tests/test_addressing.py`
+- **.test_bay_skip_and_bay_template()** (5 connections) — `web/twin/tests/test_addressing.py`
+- **.test_split_and_unsplit()** (5 connections) — `web/twin/tests/test_addressing.py`
+- **.test_location_overrides()** (4 connections) — `web/twin/tests/test_addressing.py`
+- **.test_numbering_with_gaps()** (4 connections) — `web/twin/tests/test_addressing.py`
+- **.test_pick_template_with_halves()** (4 connections) — `web/twin/tests/test_addressing.py`
+- **ov()** (4 connections) — `web/twin/tests/test_addressing.py`
+- **ExpandModelTests** (3 connections) — `web/twin/tests/test_addressing.py`
+- **.test_duplicates_between_rows()** (3 connections) — `web/twin/tests/test_addressing.py`
+- **.test_geometry_along_and_z()** (3 connections) — `web/twin/tests/test_addressing.py`
+- **.test_reverse_mirrors_along()** (3 connections) — `web/twin/tests/test_addressing.py`
+- **.test_template_none_gives_nothing()** (3 connections) — `web/twin/tests/test_addressing.py`
+- **SimpleTestCase** (3 connections)
+- **Rząd + szablon domyślny + wyjątki → lista miejsc (dict). Klucze: code, bay,…** (1 connections) — `web/twin/addressing.py`
+- **lvl()** (1 connections) — `web/twin/tests/test_addressing.py`
+- **Generator adresów modelu magazynu: szablon gniazda + reguła rzędu + wyjątki…** (1 connections) — `web/twin/tests/test_addressing.py`
 
 ## Relationships
 
-- [load_groups](load_groups.md) (4 shared connections)
-- [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
-- [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (10 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
+- [load_groups](load_groups.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/tests/test_ewm_detect.py`
+- `web/twin/addressing.py`
+- `web/twin/tests/test_addressing.py`
 
 ## Audit Trail
 
-- EXTRACTED: 37 (100%)
+- EXTRACTED: 102 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
