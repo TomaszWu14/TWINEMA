@@ -23,11 +23,11 @@
 ## Relationships
 
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (7 shared connections)
-- [layout.py](layout.py.md) (4 shared connections)
-- [blender_stock.py](blender_stock.py.md) (2 shared connections)
-- [model_edit.py](model_edit.py.md) (2 shared connections)
+- [analyze](analyze.md) (4 shared connections)
+- [ml/services.py](ml-services.py.md) (2 shared connections)
+- [rack_corners](rack_corners.md) (2 shared connections)
 - [blender_scene.py](blender_scene.py.md) (1 shared connections)
-- [rack_corners](rack_corners.md) (1 shared connections)
+- [VoiceViewTests](VoiceViewTests.md) (1 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
 
 ## Source Files

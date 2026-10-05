@@ -1,6 +1,6 @@
 # EwmViewsTests
 
-> 9 nodes · cohesion 0.20
+> 8 nodes · cohesion 0.20
 
 ## Key Concepts
 
@@ -10,15 +10,14 @@
 - **WarehouseRackType** (6 connections) — `web/twin/models.py`
 - **.__str__()** (1 connections) — `web/twin/models.py`
 - **Named location type template — dimensions apply to all locations with matching…** (1 connections) — `web/twin/models.py`
-- **Wyjątek adresu: nadpisuje wynik szablonu dla jednego miejsca albo całego…** (1 connections) — `web/twin/models.py`
 - **.__str__()** (1 connections) — `web/twin/models.py`
 - **.__str__()** (1 connections) — `web/twin/models.py`
 
 ## Relationships
 
 - [twin/models.py](twin-models.py.md) (7 shared connections)
-- [shared.py](shared.py.md) (4 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (3 shared connections)
+- [test_ewm_service.py](test_ewm_service.py.md) (4 shared connections)
+- [shared.py](shared.py.md) (3 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
 - [BayTemplate](BayTemplate.md) (2 shared connections)
 - [design_kpi.py](design_kpi.py.md) (1 shared connections)
@@ -30,7 +29,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 37 (100%)
+- EXTRACTED: 36 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -133,8 +133,11 @@ E1: `twin/layout.py` (kolizje na obróconych prostokątach, regał w doku/bramie
 korytarzu = błąd, poza halą, duplikat adresu; alejki z `design_catalog.check_aisles`; KPI z `compute_kpi`),
 API `magazyn/model/<pk>/uklad.json` · `uklad/sprawdz/` · `uklad/zapisz/` (blokada optymistyczna po `version`).
 E2 ✅: ekran `magazyn/model/<pk>/edytor/` — plan SVG, bloki i pojedyncze elementy (ZALOZENIA E9), KPI i problemy
-na żywo, cofnij/ponów, zapis. Dalej E2b: słupy, wysokość w świetle, drogi pożarowe, podkład PNG/PDF, strefa
-ładowania i drogi ruchu (ZALOZENIA E4–E6).
+na żywo, cofnij/ponów, zapis.
+E2b ✅ (ZALOZENIA E3–E6): wysokość w świetle (zapas 0,5 m pod konstrukcją), siatka słupów z wyjątkami, droga
+pożarowa i strefa ładowania (blokują regały), drogi ruchu (ostrzeżenie), strefy specjalne temp/ADR/gabaryty/
+wartość (na razie oznaczenie — reguły rozmieszczenia w S3), podkład PNG/JPG kalibrowany dwoma punktami (PDF:
+zapisz stronę jako PNG — bez nowej zależności), sprzęt regału (reach/VNA/półki) wyznacza wymaganą alejkę.
 
 Scenariusze (założenia z burzy mózgów: `docs/ZALOZENIA.md`) przeplatają się z edytorem:
 **E1** → **S2a** scenariusz + plan przyjęć → **E2** → **E3** → S1 master data materiału, S2b wydania/paczki/

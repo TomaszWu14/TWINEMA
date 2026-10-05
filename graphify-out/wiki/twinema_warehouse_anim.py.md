@@ -1,6 +1,6 @@
 # twinema_warehouse_anim.py
 
-> 38 nodes · cohesion 0.14
+> 32 nodes · cohesion 0.14
 
 ## Key Concepts
 
@@ -29,7 +29,7 @@
 - **main()** (3 connections) — `tools/blender/twinema_warehouse_anim.py`
 - **pallet_color()** (3 connections) — `tools/blender/twinema_warehouse_anim.py`
 - **_pallet_mesh()** (3 connections) — `tools/blender/twinema_warehouse_anim.py`
-- *... and 13 more nodes in this community*
+- *... and 7 more nodes in this community*
 
 ## Relationships
 
@@ -41,7 +41,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 198 (100%)
+- EXTRACTED: 192 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

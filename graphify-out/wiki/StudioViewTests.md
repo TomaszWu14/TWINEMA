@@ -1,43 +1,48 @@
 # StudioViewTests
 
-> 13 nodes · cohesion 0.19
+> 16 nodes · cohesion 0.13
 
 ## Key Concepts
 
-- **_save()** (10 connections) — `web/twin/views/warehouse_generator.py`
-- **warehouse_generator.py** (8 connections) — `web/twin/views/warehouse_generator.py`
-- **CompareViewTests** (7 connections) — `web/twin/tests/test_design_compare.py`
-- **warehouse_model_generator()** (6 connections) — `web/twin/views/warehouse_generator.py`
-- **.setUpTestData()** (3 connections) — `web/twin/tests/test_design_compare.py`
-- **HallGeneratorForm** (3 connections) — `web/twin/views/warehouse_generator.py`
-- **_initial()** (2 connections) — `web/twin/views/warehouse_generator.py`
-- **.setUp()** (1 connections) — `web/twin/tests/test_design_compare.py`
-- **.test_links_from_profile()** (1 connections) — `web/twin/tests/test_design_compare.py`
-- **.test_two_variants_side_by_side()** (1 connections) — `web/twin/tests/test_design_compare.py`
+- **WarehouseTask** (15 connections) — `web/twin/models_tasks.py`
+- **ForecastViewTests** (8 connections) — `web/twin/tests/test_design_forecast.py`
+- **MlRunTests** (6 connections) — `web/ml/tests/test_ml.py`
+- **.setUpTestData()** (3 connections) — `web/twin/tests/test_design_forecast.py`
+- **.setUpTestData()** (3 connections) — `web/twin/tests/test_design_sim.py`
+- **.setUpTestData()** (2 connections) — `web/ml/tests/test_ml.py`
+- **Meta** (2 connections) — `web/twin/models_tasks.py`
+- **.test_home_lists_runs()** (1 connections) — `web/ml/tests/test_ml.py`
+- **.test_segmentation_run_and_csv()** (1 connections) — `web/ml/tests/test_ml.py`
+- **.test_viewer_cannot_run_designer_can_and_run_is_recorded()** (1 connections) — `web/ml/tests/test_ml.py`
 - **TestCase** (1 connections)
-- **.sections()** (1 connections) — `web/twin/views/warehouse_generator.py`
-- **_md_role** (1 connections)
+- **.__str__()** (1 connections) — `web/twin/models_tasks.py`
+- **.setUp()** (1 connections) — `web/twin/tests/test_design_forecast.py`
+- **.test_page_shows_multiplier_and_links()** (1 connections) — `web/twin/tests/test_design_forecast.py`
+- **.test_profile_links_to_forecast()** (1 connections) — `web/twin/tests/test_design_forecast.py`
+- **TestCase** (1 connections)
 
 ## Relationships
 
-- [GeneratorTests](GeneratorTests.md) (5 shared connections)
-- [test_design_compare.py](test_design_compare.py.md) (2 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (2 shared connections)
-- [twin/models.py](twin-models.py.md) (2 shared connections)
-- [ForecastTests](ForecastTests.md) (1 shared connections)
-- [simulate](simulate.md) (1 shared connections)
-- [draft_script](draft_script.md) (1 shared connections)
-- [segmentation.py](segmentation.py.md) (1 shared connections)
+- [WarehouseTask](WarehouseTask.md) (4 shared connections)
+- [shared.py](shared.py.md) (3 shared connections)
+- [warehouse_tasks.py](warehouse_tasks.py.md) (2 shared connections)
+- [simulate](simulate.md) (2 shared connections)
+- [test_ml.py](test_ml.py.md) (2 shared connections)
+- [roles.py](roles.py.md) (1 shared connections)
+- [ScenarioViewTests](ScenarioViewTests.md) (1 shared connections)
+- [test_layout_structure.py](test_layout_structure.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/tests/test_design_compare.py`
-- `web/twin/views/warehouse_generator.py`
+- `web/ml/tests/test_ml.py`
+- `web/twin/models_tasks.py`
+- `web/twin/tests/test_design_forecast.py`
+- `web/twin/tests/test_design_sim.py`
 
 ## Audit Trail
 
-- EXTRACTED: 42 (93%)
-- INFERRED: 3 (7%)
+- EXTRACTED: 39 (81%)
+- INFERRED: 9 (19%)
 - AMBIGUOUS: 0 (0%)
 
 ---

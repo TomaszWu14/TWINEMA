@@ -1,43 +1,43 @@
 # blender_route.py
 
-> 19 nodes · cohesion 0.19
+> 15 nodes · cohesion 0.23
 
 ## Key Concepts
 
-- **Agent** (22 connections) — `web/twin/blender_agents.py`
-- **._key()** (9 connections) — `web/twin/blender_agents.py`
-- **.move()** (7 connections) — `web/twin/blender_agents.py`
-- **.key()** (6 connections) — `web/twin/blender_agents.py`
-- **.wait()** (5 connections) — `web/twin/blender_agents.py`
-- **_r()** (5 connections) — `web/twin/blender_agents.py`
-- **.drop()** (4 connections) — `web/twin/blender_agents.py`
-- **.face()** (4 connections) — `web/twin/blender_agents.py`
-- **.pick_up()** (4 connections) — `web/twin/blender_agents.py`
-- **.wait_until()** (3 connections) — `web/twin/blender_agents.py`
-- **._carry_pose()** (2 connections) — `web/twin/blender_agents.py`
-- **.__init__()** (2 connections) — `web/twin/blender_agents.py`
-- **.lift_to()** (2 connections) — `web/twin/blender_agents.py`
-- **.as_dict()** (1 connections) — `web/twin/blender_agents.py`
-- **Postój do chwili `t` (realny znacznik zadania); zajęty agent nie cofa się w…** (1 connections) — `web/twin/blender_agents.py`
-- **Przejęcie ładunku: klatka „na miejscu" → po `handling` s ładunek jest na…** (1 connections) — `web/twin/blender_agents.py`
-- **Odłożenie ładunku w `pos` na wysokości `z` (np. gniazdo regału albo dok).** (1 connections) — `web/twin/blender_agents.py`
-- **Agent z osią czasu ruchu: rodzaj z `SPEED` (wózek, pracownik, kombi, AGV, EPT).** (1 connections) — `web/twin/blender_agents.py`
-- **Jazda/przejście trasą A* do `target`; trasa trafia też do mapy przepływów.** (1 connections) — `web/twin/blender_agents.py`
+- **Scan** (23 connections) — `web/twin/ewm_tasks.py`
+- **ScanFileTests** (8 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
+- **.__iter__()** (4 connections) — `web/twin/ewm_tasks.py`
+- **._file()** (4 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
+- **.columns()** (3 connections) — `web/twin/ewm_tasks.py`
+- **.stats()** (3 connections) — `web/twin/ewm_tasks.py`
+- **.test_cp1250_semicolon_csv_with_title_line()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
+- **.test_missing_columns_yield_nothing()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
+- **.test_xls_rejected_with_hint()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
+- **._count()** (2 connections) — `web/twin/ewm_tasks.py`
+- **.unmapped_headers()** (2 connections) — `web/twin/ewm_tasks.py`
+- **.test_xlsx_with_excel_date_and_time_cells()** (2 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
+- **Przebieg po pliku: nagłówek → mapowanie kolumn → wiersze sparsowane albo błędy,…** (1 connections) — `web/twin/ewm_tasks.py`
+- **Poprawne, nieanulowane zadania (dicty pól modelu).** (1 connections) — `web/twin/ewm_tasks.py`
+- **[(etykieta pola, nagłówek z pliku)] w kolejności pól.** (1 connections) — `web/twin/ewm_tasks.py`
 
 ## Relationships
 
-- [kpi_facts](kpi_facts.md) (10 shared connections)
-- [blender_scene.py](blender_scene.py.md) (4 shared connections)
-- [test_design_sim_scene.py](test_design_sim_scene.py.md) (3 shared connections)
+- [warehouse_tasks.py](warehouse_tasks.py.md) (4 shared connections)
+- [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (3 shared connections)
+- [Scan](Scan.md) (2 shared connections)
+- [studio/views.py](studio-views.py.md) (2 shared connections)
+- [Pochodzenie kodu](Pochodzenie_kodu.md) (2 shared connections)
+- [Shot](Shot.md) (2 shared connections)
 
 ## Source Files
 
-- `web/twin/blender_agents.py`
+- `web/twin/ewm_tasks.py`
+- `web/twin/tests/test_ewm_tasks_parser.py`
 
 ## Audit Trail
 
-- EXTRACTED: 79 (98%)
-- INFERRED: 2 (2%)
+- EXTRACTED: 57 (90%)
+- INFERRED: 6 (10%)
 - AMBIGUOUS: 0 (0%)
 
 ---

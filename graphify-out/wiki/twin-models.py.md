@@ -1,16 +1,16 @@
 # twin/models.py
 
-> 31 nodes · cohesion 0.11
+> 30 nodes · cohesion 0.11
 
 ## Key Concepts
 
-- **twin/models.py** (50 connections) — `web/twin/models.py`
-- **WarehouseModel** (32 connections) — `web/twin/models.py`
+- **twin/models.py** (52 connections) — `web/twin/models.py`
+- **WarehouseModel** (33 connections) — `web/twin/models.py`
 - **WarehouseModelRack** (22 connections) — `web/twin/models.py`
 - **test_design_calibration.py** (19 connections) — `web/twin/tests/test_design_calibration.py`
 - **test_ewm_tasks_flow.py** (19 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
 - **test_blender_export.py** (17 connections) — `web/twin/tests/test_blender_export.py`
-- **WarehouseHallFeature** (15 connections) — `web/twin/models.py`
+- **WarehouseHallFeature** (16 connections) — `web/twin/models.py`
 - **test_flow_player.py** (11 connections) — `web/twin/tests/test_flow_player.py`
 - **test_bay_template_views.py** (9 connections) — `web/twin/tests/test_bay_template_views.py`
 - **warehouse_model_upload()** (7 connections) — `web/twin/views/warehouse_model.py`
@@ -22,27 +22,27 @@
 - **twin/migrations/0001_initial.py** (2 connections) — `web/twin/migrations/0001_initial.py`
 - **Migration** (1 connections) — `web/twin/migrations/0001_initial.py`
 - **Modele cyfrowego bliźniaka magazynu: typy regałów, master lokalizacji, szablony…** (1 connections) — `web/twin/models.py`
-- **Element hali, którego siatka regałów nie odwzoruje: dok, brama, korytarz,…** (1 connections) — `web/twin/models.py`
 - **.__str__()** (1 connections) — `web/twin/models.py`
 - **.rack_count()** (1 connections) — `web/twin/models.py`
 - **.__str__()** (1 connections) — `web/twin/models.py`
 - **.__str__()** (1 connections) — `web/twin/models.py`
 - **.width_m()** (1 connections) — `web/twin/models.py`
 - **Ekran szablonów gniazd (CRUD, role) + kolumny szablon/numeracja/kierunek w…** (1 connections) — `web/twin/tests/test_bay_template_views.py`
-- *... and 6 more nodes in this community*
+- **Eksport modelu magazynu do animacji przepływów w Blenderze (tools/blender/).** (1 connections) — `web/twin/tests/test_blender_export.py`
+- *... and 5 more nodes in this community*
 
 ## Relationships
 
-- [scenario/models.py](scenario-models.py.md) (12 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (9 shared connections)
+- [day_demand](day_demand.md) (12 shared connections)
+- [shared.py](shared.py.md) (9 shared connections)
 - [EwmViewsTests](EwmViewsTests.md) (7 shared connections)
 - [roles.py](roles.py.md) (6 shared connections)
-- [shared.py](shared.py.md) (6 shared connections)
+- [test_ewm_service.py](test_ewm_service.py.md) (6 shared connections)
 - [test_outbound.py](test_outbound.py.md) (6 shared connections)
 - [BayTemplate](BayTemplate.md) (5 shared connections)
 - [blender_scene.py](blender_scene.py.md) (5 shared connections)
-- [GeneratorTests](GeneratorTests.md) (4 shared connections)
-- [resolve_moves](resolve_moves.md) (4 shared connections)
+- [build_scene](build_scene.md) (4 shared connections)
+- [._scene](_scene.md) (4 shared connections)
 - [simulate](simulate.md) (4 shared connections)
 - [render/views.py](render-views.py.md) (4 shared connections)
 
@@ -62,7 +62,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 228 (96%)
+- EXTRACTED: 231 (96%)
 - INFERRED: 10 (4%)
 - AMBIGUOUS: 0 (0%)
 
