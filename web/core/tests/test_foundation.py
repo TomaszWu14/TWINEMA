@@ -46,7 +46,7 @@ class AccessTests(TestCase):
     def test_home_lists_modules_for_logged_user(self):
         self.client.force_login(User.objects.create_user("ania", password="x"))
         r = self.client.get("/")
-        self.assertContains(r, "Studio prezentacji")
+        self.assertContains(r, "Prognozy i ML")
 
     def test_login_page_renders(self):
         self.assertContains(self.client.get("/login/"), "Zaloguj")

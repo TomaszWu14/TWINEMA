@@ -100,20 +100,23 @@ python tools/render_worker.py</div>
 {% else %}
 <div class="card"><div class="empty-state">Brak ujęć. Wybierz model hali i ujęcie powyżej.</div></div>
 {% endif %}
-<p class="text-muted text-sm" id="rj-live" aria-live="polite" style="margin-top:12px"></p>
+<p class="text-muted text-sm" style="margin-top:12px"><span id="rj-live" aria-live="polite"></span> <button type="button" class="btn btn-secondary btn-sm" id="rj-refresh" hidden>Odśwież</button></p>
 {% endblock %}
 {% block extra_scripts %}
 <script>
 (function () {
   var list = document.getElementById('rj-list');
   if (!list || list.dataset.active !== '1') return;
-  var url = list.dataset.statusUrl, last = null;
+  var url = list.dataset.statusUrl, last = null, btn = document.getElementById('rj-refresh');
+  btn.addEventListener('click', function () { location.reload(); });
+  // R4: bez automatycznego przeładowania (gubi przewinięcie i fokus) — komunikat + przycisk „Odśwież”
+  function offer(msg) { document.getElementById('rj-live').textContent = msg; btn.hidden = false; }
   function poll() {
     fetch(url, {credentials: 'same-origin'}).then(function (r) { return r.json(); }).then(function (d) {
       var now = d.active.join(',');
-      if (last !== null && now !== last) { document.getElementById('rj-live').textContent = 'Stan zleceń się zmienił — odświeżam…'; location.reload(); return; }
+      if (last !== null && now !== last) { offer('Stan zleceń się zmienił.'); return; }
       last = now;
-      if (d.active.length) setTimeout(poll, 8000); else location.reload();
+      if (d.active.length) setTimeout(poll, 8000); else offer('Wszystkie zlecenia zakończone.');
     }).catch(function () { setTimeout(poll, 15000); });
   }
   setTimeout(poll, 8000);
