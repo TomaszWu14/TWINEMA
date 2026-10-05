@@ -197,10 +197,11 @@ def build_pallets(racks, snapshot_rows=(), stock_items=(), activity=(), today=No
 # ─── ORM ─────────────────────────────────────────────────────────────────────
 
 def load_stock_inputs(snapshot=None, batch=None):
-    """Dane do `build_pallets`: (wiersze migawki, stany, aktywność). Moduł Dane (F2) dostarczy
-    migawki stanów; do tego czasu scena rysuje regały bez palet z importu.
-    ponytail: puste wejścia — pełny loader razem z modelem stanów w F2."""
-    return [], [], []
+    """Dane do `build_pallets`: (wiersze migawki, stany, aktywność). Stany = najnowszy import
+    stanów z modułu Dane; migawek zajętości i aktywności pickerów TWINEMA nie importuje."""
+    from masterdata.services import stock_for_scene
+
+    return [], stock_for_scene(), []
 
 
 def load_master_levels():
