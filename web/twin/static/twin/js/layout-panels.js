@@ -2,8 +2,9 @@
 // Panele z polami/przyciskami przebudowujemy tylko, gdy zmieniła się ich treść — fokus klawiatury zostaje.
 import { makeBlock, mode, nextRackIds, snap, zoneColors } from './layout-core.js';
 import { S, addItems, change, deleteSelected, duplicateSelected, keysAt, rotateSelected, selectZone, selected,
-  showKeys, viewCenter } from './layout-editor.js';
+  setView, showKeys, viewCenter } from './layout-editor.js';
 import { renderHall } from './layout-hall.js';
+import { renderSitePanel, siteProps } from './layout-site.js';
 
 const $ = (id) => document.getElementById(id);
 const CFG = JSON.parse($('le-config').textContent);
@@ -77,7 +78,7 @@ function field(label, item, key, { wide, ...attrs }, parse = Number) {
 
 function renderProps() {
   const box = $('le-props'), items = selected();
-  const sig = JSON.stringify([S.floor, items]);
+  const sig = JSON.stringify([S.floor, items, S.view]);
   if (!stale('props', sig, box)) return;
   const L = CFG.limits;
   const num = (k) => ({ type: 'number', required: true, min: L[k][0], max: L[k][1], step: 1 });
@@ -85,7 +86,9 @@ function renderProps() {
   const txt = (max) => ({ required: true, maxlength: max });
   const text = (v) => v.trim();
   let form;
-  if (!items.length) {
+  if (S.view === 'site') {
+    form = siteProps(items);
+  } else if (!items.length) {
     form = h('div', { class: 'le-form' },
       field('Szerokość hali [m]', S.floor, 'width', { ...pos, min: 1, max: 5000 }),
       field('Głębokość hali [m]', S.floor, 'depth', { ...pos, min: 1, max: 5000 }),
@@ -114,7 +117,12 @@ function renderProps() {
     form = h('div', { class: 'le-form' }, h('p', { class: 'text-sm le-wide', style: 'margin:0' }, `Zaznaczono ${items.length} elementów.`),
       racks.length ? equipmentSelect(racks) : null);
   }
-  const actions = items.length ? h('div', { style: 'display:flex;flex-wrap:wrap;gap:6px;margin-top:10px' },
+  const editable = items.filter((it) => !it._hall);
+  const actions = S.view === 'site' ? (editable.length ? h('div', { style: 'display:flex;flex-wrap:wrap;gap:6px;margin-top:10px' },
+    h('button', { type: 'button', class: 'btn btn-secondary btn-sm', onclick: () => rotateSelected(90) }, 'Obróć 90°'),
+    h('button', { type: 'button', class: 'btn btn-secondary btn-sm', onclick: duplicateSelected }, 'Duplikuj'),
+    h('button', { type: 'button', class: 'btn btn-ghost btn-sm', onclick: deleteSelected }, 'Usuń')) : null)
+    : items.length ? h('div', { style: 'display:flex;flex-wrap:wrap;gap:6px;margin-top:10px' },
     h('button', { type: 'button', class: 'btn btn-secondary btn-sm', onclick: () => rotateSelected(90) }, 'Obróć 90°'),
     h('button', { type: 'button', class: 'btn btn-secondary btn-sm', onclick: () => rotateSelected(-90) }, 'Obróć −90°'),
     h('button', { type: 'button', class: 'btn btn-secondary btn-sm', onclick: duplicateSelected }, 'Duplikuj'),
@@ -132,6 +140,12 @@ function renderKpi() {
     rows.push(['Wysokość użytkowa', `${fmt(hk.usable_m, 2)} m`]);
     for (const [z, v] of Object.entries(hk.zones)) rows.push([`Poziomy ${z} (maks.)`, `${v.levels} / ${v.max_levels}`]);
   }
+  const s = k.site;
+  if (s) {
+    rows.push(['Działka', `${fmt(s.plot_m2)} m²`], ['Zabudowa działki', `${fmt(s.coverage_pct, 1)} %`],
+      ['Biologicznie czynna', `${fmt(s.bio_pct, 1)} %`], ['Utwardzone', `${fmt(s.paved_pct, 1)} %`],
+      ['Rezerwa pod rozbudowę', `${fmt(s.reserve_m2)} m²`], ['Wysokość budynku', `~${fmt(s.building_height_m, 1)} m`]);
+  }
   $('le-kpi').replaceChildren(...rows.flatMap(([a, b]) => [h('dt', {}, a), h('dd', {}, b)]));
 }
 
@@ -142,7 +156,11 @@ function renderIssues() {
   const e = S.issues.filter((i) => i.severity === 'error').length;
   $('le-issue-count').textContent = S.issues.length ? `Problemy · błędy ${e}, ostrzeżenia ${S.issues.length - e}` : 'Problemy';
   box.replaceChildren(...(S.issues.length ? S.issues.map((it) => h('li', {},
-    h('button', { type: 'button', class: `is-${it.severity}`, onclick: () => showKeys(keysAt(it.racks, it.features)) },
+    h('button', { type: 'button', class: `is-${it.severity}`, onclick: () => {
+      const site = (it.areas?.length || it.hall) && !it.racks.length;          // problem działki → widok działki
+      if (site !== (S.view === 'site')) setView(site ? 'site' : 'hall');
+      showKeys(keysAt(it.racks, it.features, it.areas, it.hall));
+    } },
       `${it.severity === 'error' ? 'Błąd' : 'Ostrzeżenie'}: ${it.message}`)))
     : [h('li', { class: 'text-muted text-sm' }, 'Brak problemów.')]));
 }
@@ -190,4 +208,5 @@ export function renderPanels() {
   renderKpi();
   renderIssues();
   renderHall();
+  renderSitePanel();
 }

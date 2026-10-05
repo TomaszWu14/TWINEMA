@@ -50,7 +50,8 @@ def demo_hall():
     g = generate(pallet_in_docks=3)
     wm = WarehouseModel.objects.create(name=HALL, notes="Dane syntetyczne — hala do symulacji scenariusza demo.",
                                        clear_height_m=g["params"]["clear_height_m"],
-                                       floor_width_m=g["floor"]["width"], floor_depth_m=g["floor"]["depth"])
+                                       floor_width_m=g["floor"]["width"], floor_depth_m=g["floor"]["depth"],
+                                       site=g["site"])
     WarehouseModelRack.objects.bulk_create([WarehouseModelRack(model=wm, **r) for r in g["racks"]])
     WarehouseHallFeature.objects.bulk_create([WarehouseHallFeature(model=wm, **f) for f in g["features"]]
                                              + [WarehouseHallFeature(model=wm, **z) for z in demo_zones(g["racks"])])

@@ -6,8 +6,9 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { EDGE_KINDS, FLAT_KINDS, decorParts, effectiveQuality, extents, hallWalls, isoView, localToWorld, outward,
+import { EDGE_KINDS, FLAT_KINDS, decorParts, effectiveQuality, extents, hallWalls, isoView, localToWorld, outward, sitePlan,
   rackMatrices, steelMatrices, steelMode, wallHidden } from './scene-data.js';
+import { buildSite } from './scene-site.js';
 
 const YARD = 25;                                  // plac wokół hali [m]
 const QKEY = 'tw3d.quality';
@@ -252,14 +253,19 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
     content.add(decorGroup);
   }
 
-  function buildHall(floor, racks) {
-    const yard = new THREE.Mesh(track(new THREE.PlaneGeometry(ext.x + YARD * 2, ext.z + YARD * 2)), yardMat);
-    yardMat.map.repeat.set((ext.x + YARD * 2) / 8, (ext.z + YARD * 2) / 8);
-    yard.rotation.x = -Math.PI / 2; yard.position.set(ext.cx, -0.02, ext.cz); yard.receiveShadow = true;
+  function buildHall(floor, racks, site) {
+    const plan = sitePlan(site);
+    if (plan) buildSite(content, plan, { track, asphalt: yardMat.map });   // D1: teren działki zamiast placu
+    else {
+      const yard = new THREE.Mesh(track(new THREE.PlaneGeometry(ext.x + YARD * 2, ext.z + YARD * 2)), yardMat);
+      yardMat.map.repeat.set((ext.x + YARD * 2) / 8, (ext.z + YARD * 2) / 8);
+      yard.rotation.x = -Math.PI / 2; yard.position.set(ext.cx, -0.02, ext.cz); yard.receiveShadow = true;
+      content.add(yard);
+    }
     const slab = new THREE.Mesh(track(new THREE.PlaneGeometry(floor.width, floor.depth)), slabMat);
     slabMat.map.repeat.set(floor.width / 6, floor.depth / 6);
     slab.rotation.x = -Math.PI / 2; slab.position.set(floor.width / 2, 0, floor.depth / 2); slab.receiveShadow = true;
-    content.add(yard, slab);
+    content.add(slab);
     const rackH = racks.reduce((m, r) => Math.max(m, Math.max(1, r.n_levels) * r.level_h), 0);
     const h = Math.max(6, floor.clear_height ? floor.clear_height + 1.5 : rackH + 2.5);
     walls = hallWalls(floor).map((w) => {
@@ -361,7 +367,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
   function setData(data, { frame = false } = {}) {
     const t0 = performance.now();
     last = data;
-    const { floor, racks, features } = data;
+    const { floor, racks, features, site } = data;
     quality = effectiveQuality(readQuality(), racks);
     scene.remove(content);
     disposables.forEach((x) => x.dispose());
@@ -376,7 +382,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
       if (batches[k].length) content.add(instanced(mat, batches[k], high && mode !== 'xl'));
     });
     if (high) buildDecor(racks);
-    buildHall(floor, racks);
+    buildHall(floor, racks, site);
     features.forEach((f) => buildFeature(f, floor));
     key.castShadow = high;
     placeLights();

@@ -119,6 +119,7 @@ def run_play(request, pk):
         "has_events": bool(run.events),
         "data_json": safe_json({
             "floor": floor, "racks": racks, "features": features, "places": places, "bottlenecks": bns,
+            "site": wm.site or {},
             "timeline": {"step_s": 900, "fleet_busy": tl.get("fleet_busy", []), "people": people},
             "peak_t": peak * 900, "colors": {"staging": HALL_FEATURE_COLORS["staging"]},
         }),

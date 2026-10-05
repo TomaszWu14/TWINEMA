@@ -77,7 +77,7 @@ async function upload(fd) {
   render();
 }
 
-function h(tag, attrs = {}, ...children) {
+export function h(tag, attrs = {}, ...children) {
   const e = document.createElement(tag);
   for (const [k, v] of Object.entries(attrs)) {
     if (k.startsWith('on')) e.addEventListener(k.slice(2), v);
@@ -88,7 +88,7 @@ function h(tag, attrs = {}, ...children) {
 }
 
 /** Pole liczbowe zmieniające jedną wartość obiektu `obj()` (pobieranego przy zmianie — po cofnij obiekt jest nowy). */
-function num(label, obj, key, attrs, after) {
+export function num(label, obj, key, attrs, after) {
   const cur = obj()?.[key];
   return h('label', {}, label, h('input', { class: 'form-control', type: 'number', step: 0.1, value: cur ?? '', ...attrs,
     onchange: (e) => {

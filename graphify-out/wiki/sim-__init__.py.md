@@ -21,8 +21,8 @@
 ## Relationships
 
 - [Material](Material.md) (5 shared connections)
-- [test_design_compare.py](test_design_compare.py.md) (2 shared connections)
-- [shared.py](shared.py.md) (2 shared connections)
+- [detect](detect.md) (2 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [ForecastTests](ForecastTests.md) (1 shared connections)
 - [simulate](simulate.md) (1 shared connections)

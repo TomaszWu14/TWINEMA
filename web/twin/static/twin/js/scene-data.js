@@ -33,7 +33,8 @@ export function editorScene(S, featureColors = {}) {
     ...(S.colList || []).map((c) => ({ kind: 'column', label: '', x: c.x - c.size / 2, y: c.y - c.size / 2,
       width: c.size, depth: c.size, angle: 0, color: '#475569', height: h })),
   ];
-  return { floor: { width: S.floor.width, depth: S.floor.depth, clear_height: S.floor.clear_height || null }, racks, features };
+  return { floor: { width: S.floor.width, depth: S.floor.depth, clear_height: S.floor.clear_height || null }, racks, features,
+    site: S.site || null };
 }
 
 /** Obrys sceny: hala albo dalej (+2 m), jeśli narożniki regałów wychodzą poza nią. Z narożników, nie
@@ -206,4 +207,43 @@ export function effectiveQuality(stored, racks) {
   if (stored === 'fast' || stored === 'high') return stored;
   const n = racks.reduce((s, r) => s + Math.max(1, r.n_bays) * Math.max(1, r.n_levels), 0);
   return n > FAST_ABOVE ? 'fast' : 'high';
+}
+
+// ── Działka (D1, format twin/site.py) — w układzie HALI (scena 3D i animacja liczą w nim wszystko) ──
+const SITE_IN = { N: [0, 1], S: [0, -1], W: [1, 0], E: [-1, 0] };      // kierunek w głąb działki od granicy
+
+/** Punkt działki → punkt hali (odwrotność położenia hali na działce: narożnik + kąt, osie jak regał). */
+export function siteToHall(site, [px, py]) {
+  const t = ((site.hall?.angle || 0) * Math.PI) / 180, dx = px - (site.hall?.x || 0), dy = py - (site.hall?.y || 0);
+  return [dx * Math.cos(t) - dy * Math.sin(t), dx * Math.sin(t) + dy * Math.cos(t)];
+}
+
+const rectPts = (r) => [[0, 0], [r.width, 0], [r.width, r.depth], [0, r.depth]].map((p) => localToWorld(r, p));
+
+/** Działka → wielokąty w układzie hali: granica, linie zabudowy, elementy terenu, wjazdy ({at, dir}). */
+export function sitePlan(site) {
+  if (!site?.width) return null;
+  const toH = (p) => siteToHall(site, p), W = site.width, D = site.depth, sb = site.setback || {};
+  const off = (s) => (s === site.access_side ? sb.road : sb.other) || 0;
+  const b = [off('W'), off('N'), W - off('E'), D - off('S')];
+  const entries = (site.entries || []).map((e) => {
+    const at = { N: [e.pos, 0], S: [e.pos, D], W: [0, e.pos], E: [W, e.pos] }[e.side];
+    const d = SITE_IN[e.side], a = toH(at), c = toH([at[0] + d[0], at[1] + d[1]]);
+    return { kind: e.kind, width: e.width, side: e.side, at: a, dir: [c[0] - a[0], c[1] - a[1]] };
+  });
+  return {
+    plot: [[0, 0], [W, 0], [W, D], [0, D]].map(toH),
+    building: b[2] > b[0] && b[3] > b[1] ? [[b[0], b[1]], [b[2], b[1]], [b[2], b[3]], [b[0], b[3]]].map(toH) : null,
+    areas: (site.areas || []).map((a) => ({ kind: a.kind, label: a.label, pts: rectPts(a).map(toH), w: a.width, d: a.depth })),
+    entries,
+  };
+}
+
+/** Najbliższy wjazd danego rodzaju (brak osobowego → tir) do punktu hali; null bez działki/wjazdów. */
+export function nearestEntry(plan, [x, y], kind = 'truck') {
+  const all = plan?.entries || [];
+  const list = all.some((e) => e.kind === kind) ? all.filter((e) => e.kind === kind) : all.filter((e) => e.kind === 'truck');
+  let best = null;
+  for (const e of list) if (!best || Math.hypot(e.at[0] - x, e.at[1] - y) < Math.hypot(best.at[0] - x, best.at[1] - y)) best = e;
+  return best;
 }

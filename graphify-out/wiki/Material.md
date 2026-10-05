@@ -1,11 +1,11 @@
 # Material
 
-> 26 nodes · cohesion 0.12
+> 24 nodes · cohesion 0.12
 
 ## Key Concepts
 
-- **generate()** (25 connections) — `web/twin/design_generator.py`
-- **design_generator.py** (19 connections) — `web/twin/design_generator.py`
+- **generate()** (28 connections) — `web/twin/design_generator.py`
+- **design_generator.py** (22 connections) — `web/twin/design_generator.py`
 - **test_model_edit.py** (15 connections) — `web/twin/tests/test_model_edit.py`
 - **GeneratorTests** (10 connections) — `web/twin/tests/test_design_generator.py`
 - **test_design_generator.py** (9 connections) — `web/twin/tests/test_design_generator.py`
@@ -21,26 +21,24 @@
 - **.test_racks_inside_hall_and_not_overlapping()** (2 connections) — `web/twin/tests/test_design_generator.py`
 - **_rect()** (2 connections) — `web/twin/tests/test_design_generator.py`
 - **Generator hali od parametrów — nowy magazyn „od zera” (plan 2026-10-02, etap…** (1 connections) — `web/twin/design_generator.py`
-- **Poziomy składowania z podłogą: góra najwyższej palety ≤ wysokość − tryskacze.** (1 connections) — `web/twin/design_generator.py`
-- **[korytarz][A|B][korytarz]… — y każdego rzędu; A patrzy na korytarz przed, B za.** (1 connections) — `web/twin/design_generator.py`
 - **.test_capacity_meets_targets()** (1 connections) — `web/twin/tests/test_design_generator.py`
 - **.test_docks_on_opposite_walls()** (1 connections) — `web/twin/tests/test_design_generator.py`
 - **.test_hall_size_and_aspect()** (1 connections) — `web/twin/tests/test_design_generator.py`
 - **.test_vna_aisles_wide_enough()** (1 connections) — `web/twin/tests/test_design_generator.py`
 - **SimpleTestCase** (1 connections)
 - **Generator hali od parametrów (plan 2026-10-02, etap 1): pojemność, geometria,…** (1 connections) — `web/twin/tests/test_design_generator.py`
-- *... and 1 more nodes in this community*
+- **Edycja wariantu hali blokami (plan 2026-10-02, etap 4).** (1 connections) — `web/twin/tests/test_model_edit.py`
 
 ## Relationships
 
-- [check_layout](check_layout.md) (7 shared connections)
+- [clean_layout](clean_layout.md) (7 shared connections)
 - [sim/__init__.py](sim-__init__.py.md) (5 shared connections)
 - [twin/models.py](twin-models.py.md) (4 shared connections)
-- [test_design_compare.py](test_design_compare.py.md) (3 shared connections)
+- [detect](detect.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
 - [segmentation.py](segmentation.py.md) (2 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)
-- [addressing.py](addressing.py.md) (1 shared connections)
+- [test_addressing.py](test_addressing.py.md) (1 shared connections)
 
 ## Source Files
 
@@ -50,7 +48,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 118 (100%)
+- EXTRACTED: 122 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

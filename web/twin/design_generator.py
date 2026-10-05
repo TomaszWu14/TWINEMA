@@ -13,6 +13,7 @@ Wymiary hali wynikają z pojemności; liczba par rzędów VNA dobrana do proporc
 import math
 
 from .design_catalog import ELEMENTS, SHELF_AISLE_M
+from .site import default_site
 
 VNA = ELEMENTS["rack_vna"]["params"]
 VNA_AISLE = ELEMENTS["rack_vna"]["aisle_m"]
@@ -148,5 +149,6 @@ def generate(**overrides):
         "carton_locations": 2 * k1_pairs * k1_len * k1_per_bay, "k1_rows": 2 * k1_pairs,
         "docks_in": docks_in, "docks_out": docks_out,
     }
-    return {"floor": {"width": round(W, 2), "depth": round(D, 2)}, "racks": racks,
-            "features": f, "summary": summary, "params": p}
+    floor = {"width": round(W, 2), "depth": round(D, 2)}
+    return {"floor": floor, "racks": racks, "features": f, "summary": summary, "params": p,
+            "site": default_site({**floor, "clear_height": p["clear_height_m"]})}

@@ -13,7 +13,7 @@ __all__ = ["warehouse_model_copy", "warehouse_model_zones"]
 
 RACK_COPY_FIELDS = ("zone", "rack_id", "n_bays", "n_levels", "bay_width_cm", "depth_cm", "level_height_cm",
                     "x_m", "y_m", "angle_deg", "template_id", "bay_numbers", "reverse", "equipment")
-MODEL_COPY_FIELDS = ("notes", "floor_width_m", "floor_depth_m", "clear_height_m", "columns", "underlay_meta")
+MODEL_COPY_FIELDS = ("notes", "floor_width_m", "floor_depth_m", "clear_height_m", "columns", "underlay_meta", "site")
 FEATURE_COPY_FIELDS = ("kind", "label", "zone_code", "x_m", "y_m", "width_m", "depth_m", "angle_deg",
                        "color_hex", "notes")
 

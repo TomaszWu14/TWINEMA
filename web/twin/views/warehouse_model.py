@@ -281,6 +281,7 @@ def warehouse_model_view(request, pk):
         # (zone/rack_id/label regału) nie mógł wyjść z <script> (stored XSS).
         "racks_json": safe_json(racks_data),
         "features_json": safe_json(features_data),
+        "site_json": safe_json(wm.site or {}),          # D1: teren działki w 3D (pusty = plac wokół hali)
         "feature_legend": feature_legend,
         "zone_color": zone_color,
         "zones": zones,

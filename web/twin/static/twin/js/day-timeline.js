@@ -6,7 +6,8 @@ import { localToWorld } from './scene-data.js';
 export const VEHICLES = new Set(['container', 'truck', 'courier']);
 export const TRAVEL_S = 90;          // dojazd brama → dok / odjazd dok → brama
 export const MOVE_MAX_S = 120;       // przejazd palety regał → pole wydań (koniec ruchu znamy, początku nie)
-export const SLOT_M = 1.4;           // pitch palety na polu odkładczym (EUR 1,2 × 0,8 + odstęp)
+export const SLOT_M = 1.4;
+export const ENTER_S = 75;           // D1: przejazd od wjazdu działki do placu przed dokiem (i z powrotem)           // pitch palety na polu odkładczym (EUR 1,2 × 0,8 + odstęp)
 
 /** Pierwszy indeks i, dla którego arr[i] > t (wyszukiwanie binarne po posortowanej tablicy liczb). */
 export function upperBound(arr, t) {
@@ -46,17 +47,21 @@ export function buildTracks(events) {
 /** Indeks ostatniego zdarzenia ścieżki w chwili t (−1 = jeszcze nie zaczęła). */
 export const stepAt = (tr, t) => upperBound(tr.t, t) - 1;
 
-/** Pojazd w chwili t → null (poza sceną) | {phase: 'queue'|'in'|'dock'|'out', dock, p}. */
-export function vehicleAt(tr, t) {
+/** Pojazd w chwili t → null (poza sceną) | {phase: 'enter'|'queue'|'in'|'dock'|'out'|'leave', dock, p}.
+ *  `enterS` > 0 (hala na działce): po przyjeździe dojazd od wjazdu działki, po odjeździe powrót do wjazdu. */
+export function vehicleAt(tr, t, enterS = 0) {
   const tArr = tr.t[tr.what.indexOf('arrive')] ?? tr.t0;
   const iDock = tr.what.indexOf('dock'), iDep = tr.what.indexOf('depart');
   if (t < tArr || iDock < 0) return null;
   const dock = tr.place[iDock].slice(5), tDock = tr.t[iDock];
   const tDep = iDep >= 0 ? tr.t[iDep] : tDock + 1800;          // kurier bez „depart” (stary format): 30 min
-  if (t < tDock - TRAVEL_S && t >= tArr) return { phase: 'queue', dock, p: 0 };
+  const tQ = tDock - TRAVEL_S;
+  if (enterS && t < Math.min(tArr + enterS, tQ)) return { phase: 'enter', dock, p: (t - tArr) / Math.min(enterS, tQ - tArr) };
+  if (t < tQ && t >= tArr) return { phase: 'queue', dock, p: 0 };
   if (t < tDock) return { phase: 'in', dock, p: 1 - (tDock - t) / TRAVEL_S };
   if (t < tDep) return { phase: 'dock', dock, p: 0 };
   if (t < tDep + TRAVEL_S) return { phase: 'out', dock, p: (t - tDep) / TRAVEL_S };
+  if (enterS && t < tDep + TRAVEL_S + enterS) return { phase: 'leave', dock, p: (t - tDep - TRAVEL_S) / enterS };
   return null;
 }
 
@@ -198,8 +203,15 @@ export function queuePose(sides, d, i) {
   return dockPose(base, QUEUE_M);
 }
 
-/** Pojazd z `vehicleAt` → {x, y, yaw}: kolejka = miejsce `slot` w rzędzie, dojazd/odjazd = pas przed dokiem. */
-export function vehiclePose(v, d, kind, sides, slot = 0) {
+/** Pojazd z `vehicleAt` → {x, y, yaw}: kolejka = miejsce `slot` w rzędzie, dojazd/odjazd = pas przed dokiem,
+ *  enter/leave = prosto między wjazdem działki `entry` ([x, y] w układzie hali) a początkiem pasa doku. */
+export function vehiclePose(v, d, kind, sides, slot = 0, entry = null) {
+  if ((v.phase === 'enter' || v.phase === 'leave') && entry) {
+    // ponytail: odcinek prosty (może ściąć róg zieleni) — trasa po drogach działki, gdy będzie graf dróg
+    const lane = dockPose(d, QUEUE_M), [a, b] = v.phase === 'enter' ? [entry, [lane.x, lane.y]] : [[lane.x, lane.y], entry];
+    const p = Math.max(0, Math.min(1, v.p));
+    return { x: a[0] + (b[0] - a[0]) * p, y: a[1] + (b[1] - a[1]) * p, yaw: Math.atan2(-(b[1] - a[1]), b[0] - a[0]) };
+  }
   const stand = dockPose(d, STAND_M[kind] ?? STAND_M.truck);
   if (v.phase === 'queue') return queuePose(sides, d, slot);
   if (v.phase === 'dock') return stand;

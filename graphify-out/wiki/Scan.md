@@ -1,43 +1,45 @@
 # Scan
 
-> 15 nodes · cohesion 0.18
+> God node · 23 connections · `web/twin/ewm_tasks.py`
 
-## Key Concepts
+**Community:** [layout-core.js](layout-core.js.md)
 
-- **ewm_tasks.py** (22 connections) — `web/twin/ewm_tasks.py`
-- **iter_table()** (6 connections) — `web/twin/ewm_tasks.py`
-- **norm_header()** (4 connections) — `web/twin/ewm_tasks.py`
-- **_parse_dt()** (4 connections) — `web/twin/ewm_tasks.py`
-- **is_cancelled()** (3 connections) — `web/twin/ewm_tasks.py`
-- **kind_from_word()** (3 connections) — `web/twin/ewm_tasks.py`
-- **_parse_time()** (3 connections) — `web/twin/ewm_tasks.py`
-- **.close()** (3 connections) — `web/twin/ewm_tasks.py`
-- **_text()** (3 connections) — `web/twin/ewm_tasks.py`
-- **_delimiter()** (2 connections) — `web/twin/ewm_tasks.py`
-- **_encoding()** (2 connections) — `web/twin/ewm_tasks.py`
-- **Parser eksportu zadań magazynowych EWM (WT) z monitora magazynu (/SCWM/MON) →…** (1 connections) — `web/twin/ewm_tasks.py`
-- **→ (datetime naiwny, czy_ma_czas) albo None; ValueError przy nieczytelnym…** (1 connections) — `web/twin/ewm_tasks.py`
-- **Wiersze pliku jako listy wartości — strumieniowo, bez ładowania całości do…** (1 connections) — `web/twin/ewm_tasks.py`
-- **Zwalnia plik (Windows nie skasuje otwartego pliku; openpyxl trzyma uchwyt).** (1 connections) — `web/twin/ewm_tasks.py`
+## Connections by Relation
 
-## Relationships
+### calls
+- run_import() `EXTRACTED`
+- ewm_tasks_preview() `EXTRACTED`
+- .test_cp1250_semicolon_csv_with_title_line() `EXTRACTED`
+- .test_missing_columns_yield_nothing() `EXTRACTED`
+- .test_xls_rejected_with_hint() `EXTRACTED`
+- .test_xlsx_with_excel_date_and_time_cells() `EXTRACTED`
 
-- [studio/views.py](studio-views.py.md) (6 shared connections)
-- [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (5 shared connections)
-- [Pochodzenie kodu](Pochodzenie_kodu.md) (3 shared connections)
-- [studio/models.py](studio-models.py.md) (3 shared connections)
-- [layout-core.js](layout-core.js.md) (2 shared connections)
-- [warehouse_tasks.py](warehouse_tasks.py.md) (2 shared connections)
+### contains
+- [ewm_tasks.py](ewm_tasks.py.md) `EXTRACTED`
 
-## Source Files
+### imports
+- [warehouse_tasks.py](warehouse_tasks.py.md) `EXTRACTED`
+- ewm_tasks_import.py `EXTRACTED`
+- test_ewm_tasks_parser.py `EXTRACTED`
 
-- `web/twin/ewm_tasks.py`
+### method
+- .__init__() `EXTRACTED`
+- .__iter__() `EXTRACTED`
+- .close() `EXTRACTED`
+- .columns() `EXTRACTED`
+- .stats() `EXTRACTED`
+- ._count() `EXTRACTED`
+- .unmapped_headers() `EXTRACTED`
 
-## Audit Trail
+### rationale_for
+- Przebieg po pliku: nagłówek → mapowanie kolumn → wiersze sparsowane albo błędy,… `EXTRACTED`
 
-- EXTRACTED: 59 (100%)
-- INFERRED: 0 (0%)
-- AMBIGUOUS: 0 (0%)
+### uses
+- ValueParsingTests `INFERRED`
+- RowTests `INFERRED`
+- ScanFileTests `INFERRED`
+- HeaderAliasTests `INFERRED`
+- KindMappingTests `INFERRED`
 
 ---
 

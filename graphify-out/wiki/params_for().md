@@ -27,7 +27,7 @@
 
 ### imports
 - design_kpi.py `EXTRACTED`
-- [test_design_variants.py](test_design_variants.py.md) `EXTRACTED`
+- test_design_variants.py `EXTRACTED`
 - test_design_catalog.py `EXTRACTED`
 
 ### rationale_for

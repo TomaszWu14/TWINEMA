@@ -1,4 +1,4 @@
-# VoiceViewTests
+# synthesize
 
 > 11 nodes · cohesion 0.33
 
