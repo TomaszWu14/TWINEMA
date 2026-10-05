@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { COLOR_MODES, EDGE_KINDS, FLAT_KINDS, camAt, colorLegend, contactShadowPart, decorParts, effectiveQuality, extents,
+import { COLOR_MODES, EDGE_KINDS, FLAT_KINDS, camAt, colorLegend, contactShadowPart, decorParts, depthRange, effectiveQuality, extents,
   hallWalls, isoView, localToWorld, outward, rackMatrices, rackOutline, rackTint, sitePlan, steelMatrices, steelMode,
   wallHidden } from './scene-data.js';
 import { buildSite } from './scene-site.js';
@@ -363,6 +363,10 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
   function cameraDependent() {
     const d = camera.position.distanceTo(controls.target);
     scene.fog.near = d * 1.4 + 20; scene.fog.far = d * 4.5 + 200;
+    // G2c: near ∝ odległość (bez z-fightingu warstw przy posadzce); obrysy wygaszane z daleka (aliasing 1-px linii)
+    const z = depthRange(d, ext.diag);
+    if (z.near !== camera.near || z.far !== camera.far) Object.assign(camera, z).updateProjectionMatrix();
+    matOutline.opacity = Math.max(0.25, Math.min(0.85, 0.85 - (d - 120) / 600));
     for (const { w, m } of walls) m.visible = !wallHidden(w, camera.position.x, camera.position.z);
     for (const l of nearLabels) l.visible = camera.position.distanceTo(l.getWorldPosition(_lw)) < LABEL_NEAR_M;
   }
@@ -434,11 +438,9 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
   legend.style.cssText = 'list-style:none;margin:0;padding:6px 10px;border-radius:8px;background:rgba(15,23,42,.78);'
     + 'color:#e2e8f0;font:12px/1.5 system-ui,sans-serif;display:flex;flex-wrap:wrap;gap:4px 12px';
   legend.hidden = true;
-  const row = document.createElement('div');
-  row.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap';
+  const row = Object.assign(document.createElement('div'), { style: 'display:flex;gap:6px;flex-wrap:wrap' });
   const cSel = document.createElement('select');
-  cSel.className = 'form-control';
-  cSel.setAttribute('aria-label', 'Kolorowanie regałów');
+  cSel.className = 'form-control'; cSel.setAttribute('aria-label', 'Kolorowanie regałów');
   cSel.style.cssText = 'width:auto;padding:2px 8px;height:auto;font-size:13px';
   for (const [k, l] of Object.entries(COLOR_MODES)) cSel.add(new Option(`Kolory: ${l.toLowerCase()}`, k, false, k === colorMode));
   cSel.addEventListener('change', () => setColorMode(cSel.value));
