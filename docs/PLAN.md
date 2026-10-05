@@ -140,6 +140,11 @@ zwroty/cross-dock, S2c obsada i zmiany → **S3** symulacja scenariusza (wiele p
 S2a: aplikacja `scenario` — `Scenario` (mnożnik wzrostu, ziarno, zmiana, normy wydajności), dzień typowy
 i szczytowy, `InboundStream` (kontener 40' / auto 33-pal. / solówka-bus, min/śr/max, okno awizacji, % mono,
 % kontroli); `scenario/inbound.py` liczy deterministycznie palety/dzień, doki w szczycie, osobogodziny, stanowiska.
+S2b ✅ (S2b + S2c razem): `OutboundStream` (auta OUT jak przyjęcia: 33-pal., solówka/bus, kurier, cross-dock;
+okno załadunku z cut-off), profil dnia (zamówienia, linie, paczki, zwroty, % palet pełnych), cross-dock także
+jako strumień przyjęć (bez składowania), `Shift` (1–3 zmiany per proces, przerwy, osoby); `scenario/outbound.py`
+i `scenario/staffing.py` — palety OUT, doki OUT, osobogodziny 7 procesów, obsada potrzebna vs zakładana per zmiana
+(podział wg zakładanej zdolności zmian), ryzyko cut-off paczek. Godziny w formularzach jako GG:MM.
 
 ---
 

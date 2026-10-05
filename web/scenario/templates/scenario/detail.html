@@ -3,23 +3,35 @@
 {% block extra_head %}
 <style>
   .sc-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:0 0 12px; }
-  .sc-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-bottom:16px; }
+  .sc-nav { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 16px; padding:0; list-style:none; }
+  .sc-nav a { display:block; padding:6px 12px; border:1px solid var(--border); border-radius:999px; font-size:var(--fs-sm);
+              color:var(--fg-muted); text-decoration:none; }
+  .sc-nav a:hover, .sc-nav a:focus-visible { border-color:var(--primary); color:var(--fg); }
+  .sc-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:16px; }
   .sc-kpi { background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:10px 12px; }
   .sc-kpi b { display:block; font-size:var(--fs-xl, 1.5rem); font-family:var(--font-mono); }
   .sc-kpi span { font-size:var(--fs-xs); color:var(--fg-muted); }
+  .sc-kpi.is-bad { border-color:var(--danger, #c0392b); }
+  .sc-kpi.is-bad b { color:var(--danger-fg, var(--danger, #e74c3c)); }
   .sc-table { width:100%; border-collapse:collapse; font-size:var(--fs-sm); }
   .sc-table th, .sc-table td { padding:6px 8px; border-bottom:1px solid var(--border); text-align:right; }
   .sc-table th:first-child, .sc-table td:first-child { text-align:left; }
   .sc-table thead th { color:var(--fg-muted); font-weight:600; }
   .sc-table .sc-grp td { color:var(--fg-subtle); font-size:var(--fs-xs); text-transform:uppercase; letter-spacing:.08em; text-align:left; }
+  .sc-table .is-short { color:var(--danger-fg, var(--danger, #e74c3c)); font-weight:600; }
+  .sc-table .is-ok { color:var(--success-fg, var(--success, #27ae60)); }
   .sc-scroll { overflow-x:auto; }
   .sc-params { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px 14px; }
   .sc-params label, .sc-row label { display:flex; flex-direction:column; gap:4px; font-size:var(--fs-xs); color:var(--fg-muted); }
   .sc-params .sc-wide { grid-column:1 / -1; }
-  .sc-row { display:grid; grid-template-columns:170px repeat(11, minmax(64px,1fr)) 60px; gap:6px; align-items:end;
-            padding:8px 0; border-top:1px solid var(--border); min-width:1100px; margin:0; border-left:0; border-right:0; border-bottom:0; }
+  .sc-row { display:grid; gap:6px; align-items:end; padding:8px 0; border-top:1px solid var(--border);
+            margin:0; border-left:0; border-right:0; border-bottom:0; }
+  .sc-row--in { grid-template-columns:170px repeat(11, minmax(64px,1fr)) 60px; min-width:1100px; }
+  .sc-row--out { grid-template-columns:190px repeat(8, minmax(70px,1fr)) 60px; min-width:900px; }
+  .sc-row--shift { grid-template-columns:230px repeat(4, minmax(80px,1fr)) 60px; min-width:640px; }
   .sc-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:12px; }
   .sc-actions form { margin:0; }
+  .sc-sub { font-weight:600; font-size:var(--fs-sm); margin:16px 0 6px; }
 </style>
 {% endblock %}
 {% block content %}
@@ -27,47 +39,156 @@
 <div class="page-header">
   <div>
     <div class="page-header__title">{{ sc.name }}</div>
-    <div class="page-header__sub">{% if sc.description %}{{ sc.description }} · {% endif %}mnożnik wzrostu ×{{ sc.growth|floatformat:"-2" }} · zmiana {{ sc.shift_h|floatformat:"-1" }} h · ziarno {{ sc.seed }}</div>
+    <div class="page-header__sub">{% if sc.description %}{{ sc.description }} · {% endif %}mnożnik wzrostu ×{{ sc.growth|floatformat:"-2" }} · zmiana {{ sc.shift_h|floatformat:"-1" }} h · {{ sc.work_days }} dni/tydz. · ziarno {{ sc.seed }}</div>
   </div>
 </div>
 
+<ul class="sc-nav" aria-label="Sekcje scenariusza">
+  <li><a href="#sc-res-h">Wyniki</a></li><li><a href="#sc-staff-h">Obsada</a></li>
+  {% if form %}<li><a href="#sc-in-forms">Przyjęcia</a></li><li><a href="#sc-out-forms">Wydania, paczki, zwroty</a></li>
+  <li><a href="#sc-shift-h">Zmiany</a></li><li><a href="#sc-par-h">Parametry i normy</a></li>{% endif %}
+</ul>
+
 <section class="card" aria-labelledby="sc-res-h"><div class="card-body">
-  <h2 class="sc-sec" id="sc-res-h">Przyjęcia — zapotrzebowanie dnia</h2>
-  <div class="sc-kpis">
-    {% for r in results %}
-      <div class="sc-kpi"><span>{{ r.day.get_kind_display }}: palet IN (śr. / max)</span><b>{{ r.avg.pallets_in|floatformat:"0g" }} / {{ r.max.pallets_in|floatformat:"0g" }}</b></div>
-      <div class="sc-kpi"><span>{{ r.day.get_kind_display }}: doki w szczycie (kont. + pal., max)</span><b>{{ r.max.docks_peak.container }} + {{ r.max.docks_peak.pallet }}</b></div>
-    {% endfor %}
+  <h2 class="sc-sec" id="sc-res-h">Przepustowość dnia</h2>
+  {% for r in results %}
+  <div class="sc-kpis" role="group" aria-label="{{ r.day.get_kind_display }} — wartości maksymalne">
+    <div class="sc-kpi"><span>{{ r.day.get_kind_display }}: palet IN / OUT (śr.)</span><b>{{ r.avg.in.pallets_in|floatformat:"0g" }} / {{ r.avg.out.pallets_out|floatformat:"0g" }}</b></div>
+    <div class="sc-kpi"><span>Paczek (śr. / max)</span><b>{{ r.avg.out.parcels|floatformat:"0g" }} / {{ r.max.out.parcels|floatformat:"0g" }}</b></div>
+    <div class="sc-kpi"><span>Doki IN w szczycie (kont. + pal., max)</span><b>{{ r.max.in.docks_peak.container }} + {{ r.max.in.docks_peak.pallet }}</b></div>
+    <div class="sc-kpi"><span>Doki OUT w szczycie (max)</span><b>{{ r.max.out.docks_peak }}</b></div>
+    <div class="sc-kpi{% if r.max.short %} is-bad{% endif %}"><span>Obsada przy max</span><b>{% if r.max.short %}niedobór: {{ r.max.short|length }}{% else %}wystarcza{% endif %}</b></div>
+    {% if r.max.cutoff %}<div class="sc-kpi{% if not r.max.cutoff.ok %} is-bad{% endif %}"><span>Paczki przed cut-off (max)</span><b>{% if r.max.cutoff.ok %}zdąży{% else %}−{{ r.max.cutoff.missing_h|floatformat:"1" }} h{% endif %}</b></div>{% endif %}
   </div>
+  {% endfor %}
   <div class="sc-scroll">
   <table class="sc-table">
-    <caption class="sr-only">Wyniki planu przyjęć: dzień typowy i szczytowy, wartości średnie i maksymalne</caption>
+    <caption class="sr-only">Wyniki scenariusza: dzień typowy i szczytowy, wartości średnie i maksymalne</caption>
     <thead><tr><th scope="col">Wskaźnik</th>
       {% for r in results %}<th scope="col">{{ r.day.get_kind_display }} — śr.</th><th scope="col">{{ r.day.get_kind_display }} — max</th>{% endfor %}</tr></thead>
     <tbody>
-      <tr class="sc-grp"><td colspan="5">Wolumen</td></tr>
-      <tr><th scope="row">Palet przyjętych / dzień</th>{% for r in results %}<td>{{ r.avg.pallets_in|floatformat:"0g" }}</td><td>{{ r.max.pallets_in|floatformat:"0g" }}</td>{% endfor %}</tr>
-      <tr><th scope="row">Kartonów z kontenerów</th>{% for r in results %}<td>{{ r.avg.cartons_in|floatformat:"0g" }}</td><td>{{ r.max.cartons_in|floatformat:"0g" }}</td>{% endfor %}</tr>
+      <tr class="sc-grp"><td colspan="{{ ncols }}">Przyjęcia</td></tr>
+      <tr><th scope="row">Palet przyjętych / dzień</th>{% for r in results %}<td>{{ r.avg.in.pallets_in|floatformat:"0g" }}</td><td>{{ r.max.in.pallets_in|floatformat:"0g" }}</td>{% endfor %}</tr>
+      <tr><th scope="row">w tym cross-dock (bez składowania)</th>{% for r in results %}<td>{{ r.avg.in.pallets_xdock|floatformat:"0g" }}</td><td>{{ r.max.in.pallets_xdock|floatformat:"0g" }}</td>{% endfor %}</tr>
+      <tr><th scope="row">Kartonów z kontenerów</th>{% for r in results %}<td>{{ r.avg.in.cartons_in|floatformat:"0g" }}</td><td>{{ r.max.in.cartons_in|floatformat:"0g" }}</td>{% endfor %}</tr>
       {% for row in arrival_rows %}
       <tr><th scope="row">Przyjazdy: {{ row.label }}</th>{% for x in row.cells %}<td>{% if x %}{{ x.arrivals }} × {{ x.pallets_per|floatformat:"-1" }} pal. <span class="text-muted">({{ x.unload_min }} min)</span>{% else %}—{% endif %}</td>{% endfor %}</tr>
       {% endfor %}
-      <tr class="sc-grp"><td colspan="5">Doki (jednoczesne rozładunki)</td></tr>
-      <tr><th scope="row">Doki kontenerowe w szczycie</th>{% for r in results %}<td>{{ r.avg.docks_peak.container }}{% if r.avg.docks_peak_at.container %} ({{ r.avg.docks_peak_at.container }}){% endif %}</td><td>{{ r.max.docks_peak.container }}{% if r.max.docks_peak_at.container %} ({{ r.max.docks_peak_at.container }}){% endif %}</td>{% endfor %}</tr>
-      <tr><th scope="row">Doki paletowe w szczycie</th>{% for r in results %}<td>{{ r.avg.docks_peak.pallet }}{% if r.avg.docks_peak_at.pallet %} ({{ r.avg.docks_peak_at.pallet }}){% endif %}</td><td>{{ r.max.docks_peak.pallet }}{% if r.max.docks_peak_at.pallet %} ({{ r.max.docks_peak_at.pallet }}){% endif %}</td>{% endfor %}</tr>
-      <tr class="sc-grp"><td colspan="5">Osobogodziny</td></tr>
-      <tr><th scope="row">Rozładunek</th>{% for r in results %}<td>{{ r.avg.person_hours.unload }}</td><td>{{ r.max.person_hours.unload }}</td>{% endfor %}</tr>
-      <tr><th scope="row">Paletyzacja (kontenery)</th>{% for r in results %}<td>{{ r.avg.person_hours.palletize }}</td><td>{{ r.max.person_hours.palletize }}</td>{% endfor %}</tr>
-      <tr><th scope="row">Przepakowanie palet mieszanych</th>{% for r in results %}<td>{{ r.avg.person_hours.repack }}</td><td>{{ r.max.person_hours.repack }}</td>{% endfor %}</tr>
-      <tr><th scope="row">Kontrola</th>{% for r in results %}<td>{{ r.avg.person_hours.inspect }}</td><td>{{ r.max.person_hours.inspect }}</td>{% endfor %}</tr>
-      <tr><th scope="row"><b>Razem</b></th>{% for r in results %}<td><b>{{ r.avg.person_hours.total }}</b></td><td><b>{{ r.max.person_hours.total }}</b></td>{% endfor %}</tr>
-      <tr><th scope="row">Stanowiska paletyzacji (zmiana {{ sc.shift_h|floatformat:"-1" }} h)</th>{% for r in results %}<td>{{ r.avg.palletize_stations }}</td><td>{{ r.max.palletize_stations }}</td>{% endfor %}</tr>
+      <tr class="sc-grp"><td colspan="{{ ncols }}">Wydania, paczki, zwroty</td></tr>
+      <tr><th scope="row">Palet wydanych / dzień</th>{% for r in results %}<td>{{ r.avg.out.pallets_out|floatformat:"0g" }}</td><td>{{ r.max.out.pallets_out|floatformat:"0g" }}</td>{% endfor %}</tr>
+      <tr><th scope="row">pełne / kompletowane</th>{% for r in results %}<td>{{ r.avg.out.pallets_full|floatformat:"0g" }} / {{ r.avg.out.pallets_picked|floatformat:"0g" }}</td><td>{{ r.max.out.pallets_full|floatformat:"0g" }} / {{ r.max.out.pallets_picked|floatformat:"0g" }}</td>{% endfor %}</tr>
+      <tr><th scope="row">Zamówień / linii kompletacji</th>{% for r in results %}<td>{{ r.avg.out.orders|floatformat:"0g" }} / {{ r.avg.out.lines|floatformat:"0g" }}</td><td>{{ r.max.out.orders|floatformat:"0g" }} / {{ r.max.out.lines|floatformat:"0g" }}</td>{% endfor %}</tr>
+      <tr><th scope="row">Paczek / dzień</th>{% for r in results %}<td>{{ r.avg.out.parcels|floatformat:"0g" }}</td><td>{{ r.max.out.parcels|floatformat:"0g" }}</td>{% endfor %}</tr>
+      <tr><th scope="row">Zwrotów (na skład)</th>{% for r in results %}<td>{{ r.avg.out.returns|floatformat:"0g" }} ({{ r.avg.out.returns_restock|floatformat:"0g" }})</td><td>{{ r.max.out.returns|floatformat:"0g" }} ({{ r.max.out.returns_restock|floatformat:"0g" }})</td>{% endfor %}</tr>
+      {% for row in departure_rows %}
+      <tr><th scope="row">Wyjazdy: {{ row.label }}</th>{% for x in row.cells %}<td>{% if x %}{{ x.departures }}{% if x.pallets_per %} × {{ x.pallets_per|floatformat:"-1" }} pal.{% endif %} <span class="text-muted">(cut-off {{ x.cutoff }})</span>{% else %}—{% endif %}</td>{% endfor %}</tr>
+      {% endfor %}
+      <tr class="sc-grp"><td colspan="{{ ncols }}">Doki (jednoczesne rozładunki / załadunki)</td></tr>
+      <tr><th scope="row">Doki kontenerowe IN</th>{% for r in results %}<td>{{ r.avg.in.docks_peak.container }}{% if r.avg.in.docks_peak_at.container %} ({{ r.avg.in.docks_peak_at.container }}){% endif %}</td><td>{{ r.max.in.docks_peak.container }}{% if r.max.in.docks_peak_at.container %} ({{ r.max.in.docks_peak_at.container }}){% endif %}</td>{% endfor %}</tr>
+      <tr><th scope="row">Doki paletowe IN</th>{% for r in results %}<td>{{ r.avg.in.docks_peak.pallet }}{% if r.avg.in.docks_peak_at.pallet %} ({{ r.avg.in.docks_peak_at.pallet }}){% endif %}</td><td>{{ r.max.in.docks_peak.pallet }}{% if r.max.in.docks_peak_at.pallet %} ({{ r.max.in.docks_peak_at.pallet }}){% endif %}</td>{% endfor %}</tr>
+      <tr><th scope="row">Doki OUT</th>{% for r in results %}<td>{{ r.avg.out.docks_peak }}{% if r.avg.out.docks_peak_at %} ({{ r.avg.out.docks_peak_at }}){% endif %}</td><td>{{ r.max.out.docks_peak }}{% if r.max.out.docks_peak_at %} ({{ r.max.out.docks_peak_at }}){% endif %}</td>{% endfor %}</tr>
+      <tr class="sc-grp"><td colspan="{{ ncols }}">Osobogodziny</td></tr>
+      {% for row in hours_rows %}
+      <tr><th scope="row">{{ row.label }}</th>{% for h in row.cells %}<td>{{ h|floatformat:"1" }}</td>{% endfor %}</tr>
+      {% endfor %}
+      <tr><th scope="row">Stanowiska paletyzacji (zmiana {{ sc.shift_h|floatformat:"-1" }} h)</th>{% for r in results %}<td>{{ r.avg.in.palletize_stations }}</td><td>{{ r.max.in.palletize_stations }}</td>{% endfor %}</tr>
+      <tr class="sc-grp"><td colspan="{{ ncols }}">Paczki przed ostatnim odbiorem kuriera</td></tr>
+      <tr><th scope="row">Pakowanie: potrzeba / zdolność do cut-off [h]</th>{% for r in results %}
+        <td>{% if r.avg.cutoff %}<span class="{% if r.avg.cutoff.ok %}is-ok{% else %}is-short{% endif %}">{{ r.avg.cutoff.demand_h|floatformat:"1" }} / {{ r.avg.cutoff.capacity_h|floatformat:"1" }}</span>{% else %}—{% endif %}</td>
+        <td>{% if r.max.cutoff %}<span class="{% if r.max.cutoff.ok %}is-ok{% else %}is-short{% endif %}">{{ r.max.cutoff.demand_h|floatformat:"1" }} / {{ r.max.cutoff.capacity_h|floatformat:"1" }}</span>{% else %}—{% endif %}</td>{% endfor %}</tr>
     </tbody>
   </table>
   </div>
-  <p class="text-muted text-sm" style="margin:10px 0 0">Oszacowanie deterministyczne: przyjazdy równo w oknach awizacji, dok zajęty przez czas rozładunku z norm. Mnożnik wzrostu dokłada przyjazdy (zaokrąglenie w górę). Kolejki i losowy rozrzut policzy symulacja dnia.</p>
+  <p class="text-muted text-sm" style="margin:10px 0 0">Oszacowanie deterministyczne: auta równo w oknach (przyjęcia: okno awizacji; wydania: od początku załadunku do cut-off), dok zajęty przez czas z norm. Mnożnik wzrostu dokłada auta (w górę) i zwiększa zamówienia, paczki i zwroty. Kolejki i losowy rozrzut policzy symulacja dnia.</p>
+</div></section>
+
+<section class="card" style="margin-top:16px" aria-labelledby="sc-staff-h"><div class="card-body">
+  <h2 class="sc-sec" id="sc-staff-h">Obsada: zakładana vs potrzebna</h2>
+  <div class="sc-scroll">
+  <table class="sc-table">
+    <caption class="sr-only">Obsada na zmianę: zakładana liczba osób i potrzebna dla dnia typowego i szczytowego</caption>
+    <thead><tr><th scope="col">Proces</th><th scope="col">Zmiana</th><th scope="col">Zakładana</th>
+      {% for r in results %}<th scope="col">Potrzebna: {{ r.day.get_kind_display|lower }} śr.</th><th scope="col">Potrzebna: {{ r.day.get_kind_display|lower }} max</th>{% endfor %}</tr></thead>
+    <tbody>
+      {% for row in staff_rows %}
+      <tr>{% if row.first %}<th scope="row" rowspan="{{ row.span }}">{{ row.label }}</th>{% endif %}
+        <td>{% if row.shift %}{{ row.when }}{% else %}<span class="text-muted">brak zmian</span>{% endif %}</td>
+        <td>{% if row.shift %}{{ row.shift.people }}{% else %}0{% endif %}</td>
+        {% for c in row.cells %}<td class="{% if c.short %}is-short{% endif %}">{{ c.needed }}{% if c.short %} <span class="sr-only">(niedobór)</span>▲{% endif %}</td>{% endfor %}
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <p class="text-muted text-sm" style="margin:10px 0 0">▲ = niedobór (potrzeba więcej osób niż zakładana obsada). Osobogodziny procesu dzielone między jego zmiany proporcjonalnie do czasu pracy bez przerw.</p>
 </div></section>
 
 {% if form %}
+{% for d in day_forms %}
+<section class="card" style="margin-top:16px" aria-labelledby="sc-in-{{ d.day.kind }}"{% if forloop.first %} id="sc-in-forms"{% endif %}><div class="card-body">
+  <h2 class="sc-sec" id="sc-in-{{ d.day.kind }}">Plan przyjęć — {{ d.day.get_kind_display|lower }}</h2>
+  <form method="post" action="{% url 'scenario:day_save' sc.pk d.day.kind %}">{% csrf_token %}
+    {{ d.inbound.management_form }}
+    <div class="sc-scroll">
+    {% for f in d.inbound %}
+      <fieldset class="sc-row sc-row--in">
+        <legend class="sr-only">{% if f.instance.pk %}Strumień {{ forloop.counter }}{% else %}Nowy strumień (opcjonalnie){% endif %}</legend>
+        {{ f.id }}
+        {% for field in f.visible_fields %}{% if field.name != "DELETE" %}<label for="{{ field.id_for_label }}">{{ field.label }} {{ field }}</label>{% endif %}{% endfor %}
+        {% if f.instance.pk %}<label for="{{ f.DELETE.id_for_label }}">Usuń {{ f.DELETE }}</label>{% else %}<span></span>{% endif %}
+      </fieldset>
+    {% endfor %}
+    </div>
+    <div class="sc-actions"><button class="btn btn-primary" type="submit">Zapisz plan przyjęć</button>
+      <span class="text-muted text-sm">Godziny jako GG:MM (np. 06:00, 13:30). Kontener: palet po paletyzacji. Cross-dock: palety prosto na pole odkładcze wydań.</span></div>
+  </form>
+</div></section>
+{% endfor %}
+
+{% for d in day_forms %}
+<section class="card" style="margin-top:16px" aria-labelledby="sc-out-{{ d.day.kind }}"{% if forloop.first %} id="sc-out-forms"{% endif %}><div class="card-body">
+  <h2 class="sc-sec" id="sc-out-{{ d.day.kind }}">Wydania, paczki, zwroty — {{ d.day.get_kind_display|lower }}</h2>
+  <form method="post" action="{% url 'scenario:outbound_save' sc.pk d.day.kind %}">{% csrf_token %}
+    <div class="sc-params">
+      {% for f in d.profile %}<label for="{{ f.id_for_label }}">{{ f.label }} {{ f }}</label>{% endfor %}
+    </div>
+    <p class="sc-sub">Auta wyjazdowe</p>
+    {{ d.outbound.management_form }}
+    <div class="sc-scroll">
+    {% for f in d.outbound %}
+      <fieldset class="sc-row sc-row--out">
+        <legend class="sr-only">{% if f.instance.pk %}Wyjazdy {{ forloop.counter }}{% else %}Nowy strumień wyjazdów (opcjonalnie){% endif %}</legend>
+        {{ f.id }}
+        {% for field in f.visible_fields %}{% if field.name != "DELETE" %}<label for="{{ field.id_for_label }}">{{ field.label }} {{ field }}</label>{% endif %}{% endfor %}
+        {% if f.instance.pk %}<label for="{{ f.DELETE.id_for_label }}">Usuń {{ f.DELETE }}</label>{% else %}<span></span>{% endif %}
+      </fieldset>
+    {% endfor %}
+    </div>
+    <div class="sc-actions"><button class="btn btn-primary" type="submit">Zapisz wydania</button>
+      <span class="text-muted text-sm">Cut-off = odjazd auta / odbiór kuriera. Kurier: liczba odbiorów, palet 0.</span></div>
+  </form>
+</div></section>
+{% endfor %}
+
+<section class="card" style="margin-top:16px" aria-labelledby="sc-shift-h"><div class="card-body">
+  <h2 class="sc-sec" id="sc-shift-h">Zmiany i zakładana obsada</h2>
+  <form method="post" action="{% url 'scenario:shifts_save' sc.pk %}">{% csrf_token %}
+    {{ shift_fs.management_form }}
+    <div class="sc-scroll">
+    {% for f in shift_fs %}
+      <fieldset class="sc-row sc-row--shift">
+        <legend class="sr-only">{% if f.instance.pk %}Zmiana {{ forloop.counter }}{% else %}Nowa zmiana (opcjonalnie){% endif %}</legend>
+        {{ f.id }}
+        {% for field in f.visible_fields %}{% if field.name != "DELETE" %}<label for="{{ field.id_for_label }}">{{ field.label }} {{ field }}</label>{% endif %}{% endfor %}
+        {% if f.instance.pk %}<label for="{{ f.DELETE.id_for_label }}">Usuń {{ f.DELETE }}</label>{% else %}<span></span>{% endif %}
+      </fieldset>
+    {% endfor %}
+    </div>
+    <div class="sc-actions"><button class="btn btn-primary" type="submit">Zapisz obsadę</button>
+      <span class="text-muted text-sm">1–3 zmiany na proces; koniec przed początkiem = zmiana przez północ (np. 22:00–06:00).</span></div>
+  </form>
+</div></section>
+
 <section class="card" style="margin-top:16px" aria-labelledby="sc-par-h"><div class="card-body">
   <h2 class="sc-sec" id="sc-par-h">Parametry i normy wydajności</h2>
   <form method="post" action="{% url 'scenario:save' sc.pk %}">{% csrf_token %}
@@ -78,37 +199,19 @@
   </form>
 </div></section>
 
-{% for day, fs in formsets %}
-<section class="card" style="margin-top:16px" aria-labelledby="sc-day-{{ day.kind }}"><div class="card-body">
-  <h2 class="sc-sec" id="sc-day-{{ day.kind }}">Plan przyjęć — {{ day.get_kind_display|lower }}</h2>
-  <form method="post" action="{% url 'scenario:day_save' sc.pk day.kind %}">{% csrf_token %}
-    {{ fs.management_form }}
-    <div class="sc-scroll">
-    {% for f in fs %}
-      <fieldset class="sc-row">
-        <legend class="sr-only">{% if f.instance.pk %}Strumień {{ forloop.counter }}{% else %}Nowy strumień (opcjonalnie){% endif %}</legend>
-        {{ f.id }}
-        {% for field in f.visible_fields %}{% if field.name != "DELETE" %}<label for="{{ field.id_for_label }}">{{ field.label }} {{ field }}</label>{% endif %}{% endfor %}
-        {% if f.instance.pk %}<label for="{{ f.DELETE.id_for_label }}">Usuń {{ f.DELETE }}</label>{% else %}<span></span>{% endif %}
-      </fieldset>
-    {% endfor %}
-    </div>
-    <div class="sc-actions"><button class="btn btn-primary" type="submit">Zapisz plan przyjęć</button>
-      <span class="text-muted text-sm">Godziny okna jako liczby (np. 6 = 6:00, 13,5 = 13:30). Kontener: palet po paletyzacji.</span></div>
-  </form>
-</div></section>
-{% endfor %}
-
 <div class="sc-actions" style="margin-top:16px">
   <form method="post" action="{% url 'scenario:copy' sc.pk %}">{% csrf_token %}<button class="btn btn-ghost" type="submit">Kopiuj scenariusz</button></form>
   <form method="post" action="{% url 'scenario:delete' sc.pk %}">{% csrf_token %}<button class="btn btn-ghost btn-sm" type="submit">Usuń scenariusz</button></form>
 </div>
 {% else %}
 <section class="card" style="margin-top:16px" aria-labelledby="sc-plan-h"><div class="card-body">
-  <h2 class="sc-sec" id="sc-plan-h">Założenia przyjęć</h2>
+  <h2 class="sc-sec" id="sc-plan-h">Założenia przyjęć i wydań</h2>
   {% for r in results %}
-  <p class="text-sm" style="margin:0 0 6px"><b>{{ r.day.get_kind_display }}:</b>
+  <p class="text-sm" style="margin:0 0 6px"><b>{{ r.day.get_kind_display }} — przyjęcia:</b>
     {% for s in r.day.inbound.all %}{{ s.get_kind_display }} {{ s.arrivals_avg|floatformat:"-1" }}/dzień ({{ s.arrivals_min|floatformat:"-1" }}–{{ s.arrivals_max|floatformat:"-1" }}), {{ s.pallets_avg|floatformat:"-1" }} pal.{% if not forloop.last %} · {% endif %}{% endfor %}</p>
+  <p class="text-sm" style="margin:0 0 10px"><b>{{ r.day.get_kind_display }} — wydania:</b>
+    {% for s in r.day.outbound.all %}{{ s.get_kind_display }} {{ s.departures_avg|floatformat:"-1" }}/dzień{% if s.pallets_avg %}, {{ s.pallets_avg|floatformat:"-1" }} pal.{% endif %}{% if not forloop.last %} · {% endif %}{% endfor %}
+    · zamówień {{ r.day.orders_avg|floatformat:"0g" }}, paczek {{ r.day.parcels_avg|floatformat:"0g" }}, zwrotów {{ r.day.returns_avg|floatformat:"0g" }}</p>
   {% endfor %}
 </div></section>
 {% endif %}
