@@ -1,5 +1,7 @@
 # TWINEMA
 
+<img src="web/core/static/core/brand/logo.svg" alt="TWINEMA — digital twin, 3D motion" width="420">
+
 **Cyfrowy bliźniak magazynu, który da się pokazać jak film.**
 
 TWINEMA łączy projektowanie centrum dystrybucyjnego w 3D z symulacją pracy i produkcją
