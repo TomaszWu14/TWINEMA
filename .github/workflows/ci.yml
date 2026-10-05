@@ -37,6 +37,11 @@ jobs:
       - run: pip install -r requirements-dev.txt
       - name: Ruff
         run: ruff check .
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Testy JS (czyste moduły edytora, sceny i odtwarzaczy)
+        run: node --test web/twin/tests/js/*.test.mjs
       - name: Django check + testy (Postgres)
         working-directory: web
         env:
