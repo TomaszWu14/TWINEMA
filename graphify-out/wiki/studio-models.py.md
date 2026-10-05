@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **parse_row()** (16 connections) — `web/twin/ewm_tasks.py`
+- **parse_row()** (15 connections) — `web/twin/ewm_tasks.py`
 - **RowTests** (8 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
 - **._row()** (4 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
 - **.test_bad_rows_raise_with_polish_reason()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
@@ -18,9 +18,8 @@
 - [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (4 shared connections)
 - [Scan](Scan.md) (3 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (2 shared connections)
-- [SimulationViewTests](SimulationViewTests.md) (2 shared connections)
+- [WarehouseTask](WarehouseTask.md) (2 shared connections)
 - [studio/views.py](studio-views.py.md) (2 shared connections)
-- [ValueError](ValueError.md) (1 shared connections)
 
 ## Source Files
 
@@ -29,8 +28,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 38 (95%)
-- INFERRED: 2 (5%)
+- EXTRACTED: 38 (97%)
+- INFERRED: 1 (3%)
 - AMBIGUOUS: 0 (0%)
 
 ---

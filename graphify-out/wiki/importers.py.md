@@ -1,10 +1,9 @@
-# ValueError
+# importers.py
 
-> 22 nodes · cohesion 0.18
+> 21 nodes · cohesion 0.18
 
 ## Key Concepts
 
-- **ValueError** (21 connections)
 - **importers.py** (21 connections) — `web/masterdata/importers.py`
 - **parse_location()** (7 connections) — `web/masterdata/importers.py`
 - **_code()** (6 connections) — `web/masterdata/importers.py`
@@ -30,17 +29,9 @@
 ## Relationships
 
 - [test_voice.py](test_voice.py.md) (6 shared connections)
-- [params_for](params_for.md) (2 shared connections)
-- [twinema_warehouse_anim.py](twinema_warehouse_anim.py.md) (2 shared connections)
-- [design_catalog.py](design_catalog.py.md) (2 shared connections)
-- [warehouse_tasks.py](warehouse_tasks.py.md) (2 shared connections)
-- [Scan](Scan.md) (2 shared connections)
 - [masterdata/views.py](masterdata-views.py.md) (2 shared connections)
-- [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)
-- [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
-- [generate](generate.md) (1 shared connections)
-- [design_kpi.py](design_kpi.py.md) (1 shared connections)
-- [studio/models.py](studio-models.py.md) (1 shared connections)
+- [test_dane.py](test_dane.py.md) (1 shared connections)
+- [twinema_montage.py](twinema_montage.py.md) (1 shared connections)
 
 ## Source Files
 
@@ -48,8 +39,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 88 (79%)
-- INFERRED: 23 (21%)
+- EXTRACTED: 84 (93%)
+- INFERRED: 6 (7%)
 - AMBIGUOUS: 0 (0%)
 
 ---

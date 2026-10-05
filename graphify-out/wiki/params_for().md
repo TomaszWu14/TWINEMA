@@ -1,20 +1,19 @@
 # params_for()
 
-> God node · 20 connections · `web/twin/design_catalog.py`
+> God node · 19 connections · `web/twin/design_catalog.py`
 
 **Community:** [design_catalog.py](design_catalog.py.md)
 
 ## Connections by Relation
 
 ### calls
-- [ValueError](ValueError.md) `INFERRED`
 - rack_to_element() `EXTRACTED`
 - _el() `EXTRACTED`
 - start() `EXTRACTED`
 - block_rows() `EXTRACTED`
 - clean_elements() `EXTRACTED`
-- load_variant() `EXTRACTED`
 - _rack() `EXTRACTED`
+- load_variant() `EXTRACTED`
 - add() `EXTRACTED`
 - rebuild_all() `EXTRACTED`
 - .test_variant_summary() `EXTRACTED`

@@ -1,4 +1,4 @@
-# warehouse_model_ewm.py
+# ewm_service.py
 
 > 17 nodes · cohesion 0.18
 
@@ -25,7 +25,7 @@
 ## Relationships
 
 - [warehouse_variants.py](warehouse_variants.py.md) (8 shared connections)
-- [rack_corners](rack_corners.md) (3 shared connections)
+- [test_model_geometry.py](test_model_geometry.py.md) (3 shared connections)
 - [warehouse_blender.py](warehouse_blender.py.md) (2 shared connections)
 - [ewm_tasks.py](ewm_tasks.py.md) (1 shared connections)
 

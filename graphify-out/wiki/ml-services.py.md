@@ -1,4 +1,4 @@
-# ml/views.py
+# ml/services.py
 
 > 23 nodes · cohesion 0.14
 
@@ -30,15 +30,15 @@
 
 ## Relationships
 
-- [build_scene](build_scene.md) (7 shared connections)
+- [design_calibration.py](design_calibration.py.md) (7 shared connections)
 - [warehouse_blender.py](warehouse_blender.py.md) (5 shared connections)
-- [context_processors.py](context_processors.py.md) (4 shared connections)
+- [roles.py](roles.py.md) (4 shared connections)
 - [test_design_forecast.py](test_design_forecast.py.md) (4 shared connections)
 - [forecast.py](forecast.py.md) (2 shared connections)
 - [test_deck.py](test_deck.py.md) (2 shared connections)
 - [SlotLocator](SlotLocator.md) (2 shared connections)
 - [test_dane.py](test_dane.py.md) (1 shared connections)
-- [blender_route.py](blender_route.py.md) (1 shared connections)
+- [Item](Item.md) (1 shared connections)
 
 ## Source Files
 

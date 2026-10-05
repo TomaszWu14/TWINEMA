@@ -1,6 +1,6 @@
 # ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie
 
-> 13 nodes · cohesion 0.28
+> 12 nodes · cohesion 0.28
 
 ## Key Concepts
 
@@ -15,18 +15,17 @@
 - **.test_master_level_overrides_letter()** (2 connections) — `web/twin/tests/test_blender_stock.py`
 - **.test_shelves_bcd_stack_vertically_in_level_one()** (2 connections) — `web/twin/tests/test_blender_stock.py`
 - **.test_unknown_rack_is_none()** (2 connections) — `web/twin/tests/test_blender_stock.py`
-- **Czy punkt leży w obrysie regału poszerzonym o `margin` [m].** (1 connections) — `web/twin/blender_route.py`
 - **Kod lokalizacji → gniazdo w regale modelu (środek palety, wysokość, obrót).…** (1 connections) — `web/twin/blender_stock.py`
 
 ## Relationships
 
 - [SlotLocator](SlotLocator.md) (7 shared connections)
 - [blender_stock.py](blender_stock.py.md) (4 shared connections)
-- [FloorGrid](FloorGrid.md) (3 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (3 shared connections)
 - [test_equipment_agents.py](test_equipment_agents.py.md) (3 shared connections)
 - [CalibrationViewTests](CalibrationViewTests.md) (3 shared connections)
-- [._scene](_scene.md) (3 shared connections)
+- [resolve_moves](resolve_moves.md) (3 shared connections)
 - [ParseTests](ParseTests.md) (2 shared connections)
 - [warehouse_tasks.py](warehouse_tasks.py.md) (2 shared connections)
 - [warehouse_blender.py](warehouse_blender.py.md) (2 shared connections)
@@ -41,7 +40,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 74 (89%)
+- EXTRACTED: 73 (89%)
 - INFERRED: 9 (11%)
 - AMBIGUOUS: 0 (0%)
 

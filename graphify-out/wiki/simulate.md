@@ -44,7 +44,7 @@
 - [ForecastTests](ForecastTests.md) (3 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (2 shared connections)
 - [StudioViewTests](StudioViewTests.md) (2 shared connections)
-- [test_design_calibration.py](test_design_calibration.py.md) (1 shared connections)
+- [calibrate](calibrate.md) (1 shared connections)
 
 ## Source Files
 

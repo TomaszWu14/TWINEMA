@@ -1,10 +1,10 @@
 # kpi_facts
 
-> 18 nodes · cohesion 0.17
+> 16 nodes · cohesion 0.17
 
 ## Key Concepts
 
-- **blender_route.py** (27 connections) — `web/twin/blender_route.py`
+- **blender_route.py** (32 connections) — `web/twin/blender_route.py`
 - **Item** (15 connections) — `web/twin/blender_agents.py`
 - **blender_agents.py** (14 connections) — `web/twin/blender_agents.py`
 - **blender_containers.py** (13 connections) — `web/twin/blender_containers.py`
@@ -20,8 +20,6 @@
 - **Przyjęcie kontenera z kartonami luzem (plan 2026-10-02, etap 2b) — czysty…** (1 connections) — `web/twin/blender_containers.py`
 - **docks: [(środek doku kontenerowego)], stations: [(środek stanowiska…** (1 connections) — `web/twin/blender_containers.py`
 - **Geometria i trasowanie dla eksportu animacji przepływów do Blendera. Czysty…** (1 connections) — `web/twin/blender_route.py`
-- **Kierunek jazdy w układzie hali [°] (0 = +x, 90 = +y).** (1 connections) — `web/twin/blender_route.py`
-- **Najbliższy `new` ± 360° względem `prev` — bez obrotów o 350° między klatkami.** (1 connections) — `web/twin/blender_route.py`
 
 ## Relationships
 
@@ -31,8 +29,8 @@
 - [simulate](simulate.md) (4 shared connections)
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) (4 shared connections)
 - [ParseTests](ParseTests.md) (4 shared connections)
-- [FloorGrid](FloorGrid.md) (3 shared connections)
-- [rack_corners](rack_corners.md) (3 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (3 shared connections)
+- [test_model_geometry.py](test_model_geometry.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [design_kpi.py](design_kpi.py.md) (2 shared connections)
 - [design_catalog.py](design_catalog.py.md) (1 shared connections)
@@ -46,7 +44,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 106 (98%)
+- EXTRACTED: 109 (98%)
 - INFERRED: 2 (2%)
 - AMBIGUOUS: 0 (0%)
 

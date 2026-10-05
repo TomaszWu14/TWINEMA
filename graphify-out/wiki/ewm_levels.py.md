@@ -28,10 +28,10 @@
 
 ## Relationships
 
-- [blender_route.py](blender_route.py.md) (3 shared connections)
+- [Item](Item.md) (3 shared connections)
 - [warehouse_blender.py](warehouse_blender.py.md) (3 shared connections)
 - [blender_stock.py](blender_stock.py.md) (2 shared connections)
-- [rack_corners](rack_corners.md) (1 shared connections)
+- [test_model_geometry.py](test_model_geometry.py.md) (1 shared connections)
 - [test_voice.py](test_voice.py.md) (1 shared connections)
 
 ## Source Files

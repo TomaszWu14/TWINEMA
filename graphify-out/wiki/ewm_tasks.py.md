@@ -14,11 +14,11 @@
 
 ## Relationships
 
-- [EwmViewsTests](EwmViewsTests.md) (3 shared connections)
+- [test_ewm_service.py](test_ewm_service.py.md) (3 shared connections)
 - [load_groups](load_groups.md) (2 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
-- [warehouse_model_ewm.py](warehouse_model_ewm.py.md) (1 shared connections)
+- [ewm_service.py](ewm_service.py.md) (1 shared connections)
 
 ## Source Files
 

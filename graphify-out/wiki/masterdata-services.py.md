@@ -5,7 +5,7 @@
 ## Key Concepts
 
 - **addressing.py** (18 connections) — `web/twin/addressing.py`
-- **parse_bay_numbers()** (11 connections) — `web/twin/addressing.py`
+- **parse_bay_numbers()** (10 connections) — `web/twin/addressing.py`
 - **format_bay_numbers()** (6 connections) — `web/twin/addressing.py`
 - **row_bay_numbers()** (6 connections) — `web/twin/addressing.py`
 - **ParseTests** (6 connections) — `web/twin/tests/test_addressing.py`
@@ -25,15 +25,14 @@
 
 ## Relationships
 
-- [addressing.py](addressing.py.md) (10 shared connections)
+- [test_addressing.py](test_addressing.py.md) (10 shared connections)
 - [load_groups](load_groups.md) (6 shared connections)
-- [render/views.py](render-views.py.md) (3 shared connections)
+- [LayoutApiTests](LayoutApiTests.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (3 shared connections)
-- [rack_corners](rack_corners.md) (3 shared connections)
+- [test_model_geometry.py](test_model_geometry.py.md) (3 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
 - [ewm_tasks.py](ewm_tasks.py.md) (1 shared connections)
 - [test_container_inbound.py](test_container_inbound.py.md) (1 shared connections)
-- [ValueError](ValueError.md) (1 shared connections)
 
 ## Source Files
 
@@ -43,8 +42,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 73 (99%)
-- INFERRED: 1 (1%)
+- EXTRACTED: 73 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

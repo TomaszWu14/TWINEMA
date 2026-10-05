@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **check_aisles()** (9 connections) — `web/twin/design_catalog.py`
+- **check_aisles()** (13 connections) — `web/twin/design_catalog.py`
 - **AisleCheckTests** (7 connections) — `web/twin/tests/test_design_catalog.py`
 - **_rack()** (7 connections) — `web/twin/tests/test_design_catalog.py`
 - **.test_variant_summary()** (4 connections) — `web/twin/tests/test_design_catalog.py`
@@ -20,7 +20,8 @@
 
 ## Relationships
 
-- [design_catalog.py](design_catalog.py.md) (12 shared connections)
+- [design_catalog.py](design_catalog.py.md) (13 shared connections)
+- [test_model_geometry.py](test_model_geometry.py.md) (1 shared connections)
 
 ## Source Files
 
@@ -29,7 +30,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 50 (100%)
+- EXTRACTED: 54 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

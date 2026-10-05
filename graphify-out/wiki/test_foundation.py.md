@@ -13,7 +13,6 @@
 - **AppEnv** (4 connections) — `web/twinema/config.py`
 - **settings.py** (4 connections) — `web/twinema/settings.py`
 - **HealthTests** (3 connections) — `web/core/tests/test_foundation.py`
-- **._cross_field_checks()** (3 connections) — `web/twinema/config.py`
 - **core/__init__.py** (2 connections) — `web/core/__init__.py`
 - **.test_production_boots_with_real_secret()** (2 connections) — `web/core/tests/test_foundation.py`
 - **.test_production_refuses_dev_secret()** (2 connections) — `web/core/tests/test_foundation.py`
@@ -22,6 +21,7 @@
 - **core/urls.py** (2 connections) — `web/core/urls.py`
 - **core/views.py** (2 connections) — `web/core/views.py`
 - **home()** (2 connections) — `web/core/views.py`
+- **._cross_field_checks()** (2 connections) — `web/twinema/config.py`
 - **_db_from_url()** (2 connections) — `web/twinema/settings.py`
 - **BaseSettings** (1 connections)
 - **login_required** (1 connections)
@@ -33,8 +33,7 @@
 
 ## Relationships
 
-- [context_processors.py](context_processors.py.md) (1 shared connections)
-- [ValueError](ValueError.md) (1 shared connections)
+- [roles.py](roles.py.md) (1 shared connections)
 
 ## Source Files
 
@@ -47,8 +46,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 77 (99%)
-- INFERRED: 1 (1%)
+- EXTRACTED: 77 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

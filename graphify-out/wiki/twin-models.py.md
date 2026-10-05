@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
-- **twin/models.py** (49 connections) — `web/twin/models.py`
-- **WarehouseModel** (31 connections) — `web/twin/models.py`
-- **WarehouseModelRack** (20 connections) — `web/twin/models.py`
+- **twin/models.py** (50 connections) — `web/twin/models.py`
+- **WarehouseModel** (32 connections) — `web/twin/models.py`
+- **WarehouseModelRack** (22 connections) — `web/twin/models.py`
 - **test_design_calibration.py** (19 connections) — `web/twin/tests/test_design_calibration.py`
 - **test_ewm_tasks_flow.py** (19 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
 - **test_blender_export.py** (17 connections) — `web/twin/tests/test_blender_export.py`
-- **WarehouseHallFeature** (13 connections) — `web/twin/models.py`
+- **WarehouseHallFeature** (15 connections) — `web/twin/models.py`
 - **test_flow_player.py** (11 connections) — `web/twin/tests/test_flow_player.py`
 - **test_bay_template_views.py** (9 connections) — `web/twin/tests/test_bay_template_views.py`
 - **warehouse_model_upload()** (7 connections) — `web/twin/views/warehouse_model.py`
@@ -33,18 +33,18 @@
 
 ## Relationships
 
-- [rack_corners](rack_corners.md) (12 shared connections)
+- [test_model_geometry.py](test_model_geometry.py.md) (12 shared connections)
 - [warehouse_blender.py](warehouse_blender.py.md) (9 shared connections)
-- [test_ml.py](test_ml.py.md) (7 shared connections)
-- [context_processors.py](context_processors.py.md) (6 shared connections)
-- [EwmViewsTests](EwmViewsTests.md) (6 shared connections)
-- [FloorGrid](FloorGrid.md) (6 shared connections)
+- [EwmViewsTests](EwmViewsTests.md) (7 shared connections)
+- [roles.py](roles.py.md) (6 shared connections)
+- [test_ewm_service.py](test_ewm_service.py.md) (6 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (6 shared connections)
 - [BayTemplate](BayTemplate.md) (5 shared connections)
 - [blender_scene.py](blender_scene.py.md) (5 shared connections)
 - [generate](generate.md) (4 shared connections)
-- [test_design_calibration.py](test_design_calibration.py.md) (4 shared connections)
+- [calibrate](calibrate.md) (4 shared connections)
 - [simulate](simulate.md) (4 shared connections)
-- [._scene](_scene.md) (4 shared connections)
+- [resolve_moves](resolve_moves.md) (4 shared connections)
 
 ## Source Files
 
@@ -62,8 +62,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 224 (97%)
-- INFERRED: 8 (3%)
+- EXTRACTED: 228 (96%)
+- INFERRED: 10 (4%)
 - AMBIGUOUS: 0 (0%)
 
 ---
