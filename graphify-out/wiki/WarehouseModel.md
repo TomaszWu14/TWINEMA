@@ -13,16 +13,16 @@
 ### imports
 - [studio/views.py](studio-views.py.md) `EXTRACTED`
 - [shared.py](shared.py.md) `EXTRACTED`
-- [test_dane.py](test_dane.py.md) `EXTRACTED`
-- [test_design_calibration.py](test_design_calibration.py.md) `EXTRACTED`
+- test_dane.py `EXTRACTED`
+- test_design_calibration.py `EXTRACTED`
 - test_ewm_tasks_flow.py `EXTRACTED`
-- [test_ewm_service.py](test_ewm_service.py.md) `EXTRACTED`
+- test_ewm_service.py `EXTRACTED`
 - test_blender_export.py `EXTRACTED`
 - [masterdata/views.py](masterdata-views.py.md) `EXTRACTED`
 - test_deck.py `EXTRACTED`
 - test_model_edit.py `EXTRACTED`
 - test_render_montage.py `EXTRACTED`
-- render/views.py `EXTRACTED`
+- [render/views.py](render-views.py.md) `EXTRACTED`
 - test_voice_views.py `EXTRACTED`
 - test_flow_player.py `EXTRACTED`
 - test_model_geometry.py `EXTRACTED`

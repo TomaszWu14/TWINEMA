@@ -20,10 +20,10 @@
 
 ### imports
 - [shared.py](shared.py.md) `EXTRACTED`
-- [ewm_service.py](ewm_service.py.md) `EXTRACTED`
-- [test_design_calibration.py](test_design_calibration.py.md) `EXTRACTED`
+- ewm_service.py `EXTRACTED`
+- test_design_calibration.py `EXTRACTED`
 - test_ewm_tasks_flow.py `EXTRACTED`
-- [test_ewm_service.py](test_ewm_service.py.md) `EXTRACTED`
+- test_ewm_service.py `EXTRACTED`
 - test_blender_export.py `EXTRACTED`
 - test_flow_player.py `EXTRACTED`
 - test_bay_template_model.py `EXTRACTED`
