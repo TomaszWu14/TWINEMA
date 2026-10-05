@@ -18,7 +18,7 @@
 
 ## Relationships
 
-- [site.py](site.py.md) (4 shared connections)
+- [check_site](check_site.md) (4 shared connections)
 
 ## Source Files
 

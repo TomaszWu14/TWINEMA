@@ -16,7 +16,8 @@
     <div class="page-header__sub">Wózki, AGV/AMR, przenośniki: prędkości, podnoszenie, udźwig, wymagana alejka i bateria.
       Parametry zasilają walidację layoutu (alejka, wysokość, udźwig) i symulację dnia (czas ruchu palety, ładowanie).</div>
   </div>
-  {% if is_designer %}<a class="btn btn-primary" href="{% url 'equipment:create' %}">Dodaj własny model</a>{% endif %}
+  {% if is_designer %}<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-ghost" href="{% url 'equipment:rates' %}">Stawki kosztowe</a>
+    <a class="btn btn-primary" href="{% url 'equipment:create' %}">Dodaj własny model</a></div>{% endif %}
 </div>
 
 <nav class="eq-filters" aria-label="Filtr typu sprzętu">

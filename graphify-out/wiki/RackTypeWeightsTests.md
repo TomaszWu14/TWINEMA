@@ -17,10 +17,10 @@
 
 ## Relationships
 
-- [site.py](site.py.md) (1 shared connections)
+- [check_site](check_site.md) (1 shared connections)
 - [test_ewm_service.py](test_ewm_service.py.md) (1 shared connections)
 - [twin/models.py](twin-models.py.md) (1 shared connections)
-- [shared.py](shared.py.md) (1 shared connections)
+- [load_groups](load_groups.md) (1 shared connections)
 
 ## Source Files
 

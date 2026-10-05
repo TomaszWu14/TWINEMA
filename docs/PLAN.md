@@ -180,6 +180,8 @@ w 3D, auta w animacji dnia wjeżdżają od bramy działki. Dalej: K1 katalog spr
 K1 ✅: katalog sprzętu (`equipment`, `/sprzet/`) — klasy systemowe (anonimowe) + własne modele; Ast, maks. podnoszenie
 i udźwig na wysokości walidują layout, flota scenariusza z katalogu liczy czas ruchu palety i ładowanie. Koszty
 (CAPEX/OPEX) — pola są, UI później. Dalej: tryb prezentacji 3D.
+C1 ✅: koszty CAPEX/OPEX wariantu jako widełki (stawki `/sprzet/stawki/` + koszty sprzętu w katalogu) — karta w wyniku
+symulacji, wiersze w porównaniu layout × scenariusz, arkusz w xlsx; OPEX na paletę/paczkę/zamówienie.
 
 ---
 

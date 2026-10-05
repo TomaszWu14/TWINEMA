@@ -1,4 +1,4 @@
-# test_equipment_agents.py
+# EquipmentAgentsTests
 
 > 16 nodes · cohesion 0.20
 
