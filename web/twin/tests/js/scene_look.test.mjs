@@ -72,3 +72,14 @@ test('jakość: wybór użytkownika wygrywa, bez wyboru szybka dla bardzo dużyc
   assert.equal(effectiveQuality('high', big), 'high');
   assert.equal(effectiveQuality('fast', [VNA]), 'fast');
 });
+
+test('zakres głębi (G2c): warstwy 1,2 cm nad posadzką rozróżnialne z każdej odległości — bez migotania', async () => {
+  const { depthRange, depthStep } = await import('../../static/twin/js/scene-data.js');
+  assert.ok(depthStep(300, 0.05) > 0.05, 'stary near = 0,05 m: ~10 cm rozdzielczości na 300 m (przyczyna stroboskopu)');
+  for (const d of [3, 20, 80, 300, 900]) {
+    const { near, far } = depthRange(d, 500);
+    assert.ok(depthStep(d, near) < 0.005, `odległość ${d} m: ${depthStep(d, near)} m`);
+    assert.ok(depthStep(d + 250, near) < 0.01, `dalszy brzeg hali (+250 m) przy ${d} m`);
+    assert.ok(near <= Math.max(0.5, d / 20) && far > d * 4, 'cel i hala w kadrze nie są obcinane (orbita: min. 1,5 m od celu)');
+  }
+});
