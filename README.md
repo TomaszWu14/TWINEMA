@@ -15,7 +15,7 @@ w Blenderze → film z lektorem (ElevenLabs) i deck PDF.
 | Dane | importy materiałów, mastera lokalizacji i stanów z raportem odrzuceń; dane demo | F2 ✅ |
 | Model hali | generator hali, regały, strefy, pola odkładcze, warianty, widok 3D | F1 |
 | Symulacja | dzień projektowy, flota, kalibracja, porównanie wariantów | F1 |
-| Prognozy i ML | wzrost wolumenów, segmentacja SKU, czas cyklu | F4 |
+| Prognozy i ML | Holt-Winters i spółka kontra baseline (MAPE), segmentacja materiałów k-means | F4 ✅ |
 | Render 3D | kolejka ujęć, worker Blendera na PC (HTTPS + token), presety kamery, PNG/MP4 w aplikacji | F3 ✅ |
 | Studio prezentacji | scenariusz, lektor, montaż — MP4 + PDF | F5 |
 
@@ -30,7 +30,7 @@ python manage.py migrate && python manage.py create_roles
 python manage.py createsuperuser
 python manage.py runserver 8090
 sh scripts/fetch_vendor.sh                           # raz: three.js + ECharts do static (bez CDN)
-python ../tools/ewm_demo_tasks.py demo.xlsx --scale 0.05   # syntetyczne zadania do importu
+python ../tools/ewm_demo_tasks.py demo.xlsx --weeks 30 --scale 0.05   # syntetyczne zadania (prognoza ML: ≥ 16 pełnych tygodni)
 python manage.py demo_dane --model 1                  # materiały + stan demo na regałach modelu
 ```
 

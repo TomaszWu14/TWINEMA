@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "masterdata",
     "twin",
     "render",
+    "ml",
 ]
 
 MIDDLEWARE = [

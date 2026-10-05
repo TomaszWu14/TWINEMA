@@ -8,7 +8,7 @@
 > projekt z zewnątrz (rekruterzy). Scenariusz referencyjny: **budowa nowego centrum
 > dystrybucyjnego** — dane demonstracyjne, bez nazw firm i danych klientów.
 
-Status: F0 ✅, F1 ✅ (przeszczep rdzenia), F2 ✅ (Dane), F3 ✅ (Render) — 2026-10-05. Następna: F4 (ML) / F5 (Studio).
+Status: F0 ✅, F1 ✅ (przeszczep rdzenia), F2 ✅ (Dane), F3 ✅ (Render), F4 ✅ (ML v1) — 2026-10-05. Następna: F5 (Studio).
 
 ---
 
@@ -59,7 +59,8 @@ web/
                importy xlsx/csv z aliasami kolumn, wzory plików, dane demo (`manage.py demo_dane --model N`)
   twin/        F1: model hali, regały, elementy, szablony gniazd, warianty, import zadań, dzień projektowy,
                symulacja, kalibracja, prognoza, porównanie, eksport sceny — logika w czystym Pythonie
-  ml/          F4: forecast, sku_segmentation, cycle_time + ModelRun (wersja, metryka)
+  ml/          F4: forecast (SES/Holt/Holt tłumiony/Holt-Winters vs trend log, wybór po MAPE),
+               segmentation (k-means na rotacji + objętości, vs ABC×XYZ), ModelRun; ML3 (czas cyklu) → F6
   render/      F3: RenderJob (kolejka), API workera (token + jednorazowy claim, walidacja PNG/MP4),
                ekran ujęć z podglądem; presety kamery w tools/blender/twinema_render.py
   studio/      F5: Presentation, Shot, Script, VoiceTrack; pipeline TTS → render → ffmpeg
