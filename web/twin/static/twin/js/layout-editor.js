@@ -4,6 +4,7 @@
 import { History, bbox, corners, rotateGroup, snap, svgTransform, zoneColors } from './layout-core.js';
 import { renderPanels } from './layout-panels.js';
 import { deleteSelectedColumn, drawColumns, drawUnderlay, hallPointer } from './layout-hall.js';
+import { initPreview, preview3d } from './layout-preview.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const CFG = JSON.parse(document.getElementById('le-config').textContent);
@@ -287,6 +288,7 @@ export function render() {
   $('le-undo').disabled = !history.past.length;
   $('le-redo').disabled = !history.future.length;
   renderPanels();
+  preview3d();
 }
 
 // ── mysz / dotyk ───────────────────────────────────────────────────────────────────────────
@@ -400,4 +402,5 @@ $('le-reload').addEventListener('click', reload);
 $('le-fit').addEventListener('click', () => { fit(); render(); });
 $('le-zoomin').addEventListener('click', () => zoom(1 / 1.3));
 $('le-zoomout').addEventListener('click', () => zoom(1.3));
+initPreview();
 reload().catch(() => status('Nie udało się wczytać planu — odśwież stronę.', 'error'));

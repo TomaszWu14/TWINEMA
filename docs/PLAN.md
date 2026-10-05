@@ -138,6 +138,10 @@ E2b ✅ (ZALOZENIA E3–E6): wysokość w świetle (zapas 0,5 m pod konstrukcją
 pożarowa i strefa ładowania (blokują regały), drogi ruchu (ostrzeżenie), strefy specjalne temp/ADR/gabaryty/
 wartość (na razie oznaczenie — reguły rozmieszczenia w S3), podkład PNG/JPG kalibrowany dwoma punktami (PDF:
 zapisz stronę jako PNG — bez nowej zależności), sprzęt regału (reach/VNA/półki) wyznacza wymaganą alejkę.
+E3 ✅: podgląd 3D obok planu (układ 2D | 2D + 3D | 3D), ta sama scena co widok modelu — wspólny moduł
+`static/twin/js/scene-builder.js` (+ czyste `scene-data.js`); przebudowa 300 ms po zmianie (1000 regałów ≈ 0,1 s),
+zaznaczenie podświetlone w 3D, ujęcia z góry / izometria / do zaznaczenia. „Utwórz przyszły layout (kopia)” →
+edytor (kopia niesie słupy, wysokość, podkład, sprzęt) → „Zobacz animację przepływów”.
 
 Scenariusze (założenia z burzy mózgów: `docs/ZALOZENIA.md`) przeplatają się z edytorem:
 **E1** → **S2a** scenariusz + plan przyjęć → **E2** → **E3** → S1 master data materiału, S2b wydania/paczki/

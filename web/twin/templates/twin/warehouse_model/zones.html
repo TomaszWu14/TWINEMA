@@ -53,7 +53,7 @@
         <td><input type="checkbox" name="del_{{ z.zone }}" value="1" aria-label="Usuń strefę {{ z.zone }}"></td>
       </tr>{% empty %}<tr><td colspan="7" class="text-muted">Model nie ma regałów.</td></tr>{% endfor %}</tbody>
     </table></div>
-    <p class="zn-note">Hala rośnie sama, gdy regały wyjdą poza obrys. Po zapisie sprawdzane są kolizje regałów (ostrzeżenie, nie blokada). Chcesz zachować oryginał? Najpierw „Kopiuj jako wariant” w widoku modelu.</p>
+    <p class="zn-note">Hala rośnie sama, gdy regały wyjdą poza obrys. Po zapisie sprawdzane są kolizje regałów (ostrzeżenie, nie blokada). Chcesz zachować oryginał? Najpierw „Utwórz przyszły layout (kopia)” w widoku modelu.</p>
     <div style="display:flex;gap:10px">
       <button type="submit" class="btn btn-primary">Zapisz i pokaż w 3D</button>
       <a href="{% url 'twin:warehouse_model_view' wm.pk %}" class="btn btn-secondary">Anuluj</a>

@@ -89,9 +89,13 @@ class InstancingGuardTests(TestCase):
                                           level_height_cm=200, x_m=0, y_m=0)
         r = self.client.get(reverse("twin:warehouse_model_view", args=[wm.pk]))
         self.assertEqual(r.status_code, 200)
-        body = r.content.decode()
-        self.assertIn("InstancedMesh", body)
-        self.assertIn("_steelBatches", body)
-        # Stara ścieżka (Mesh per element stali w put()) nie może wrócić —
-        # marker unikalny dla starego put(); Meshe hall-features (kilka szt.) są OK.
-        self.assertNotIn("group.add(m); return m;", body)
+        # Scena 3D siedzi we wspólnym module (widok modelu + podgląd w edytorze) — szablon go importuje.
+        self.assertContains(r, "twin/js/scene-builder.js")
+        from pathlib import Path
+        js = (Path(__file__).resolve().parent.parent / "static" / "twin" / "js")
+        builder = (js / "scene-builder.js").read_text(encoding="utf-8")
+        self.assertIn("new THREE.InstancedMesh(_unitBox", builder)
+        self.assertIn("steelMatrices(racks, mode)", builder)
+        # Stara ścieżka (Mesh per element stali) nie może wrócić: stal tylko jako macierze instancji.
+        self.assertNotIn("new THREE.Mesh(new THREE.BoxGeometry(sx", builder)
+        self.assertNotIn("group.add(m); return m;", builder)

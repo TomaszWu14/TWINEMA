@@ -70,7 +70,11 @@ class GeometryUploadTests(TestCase):
         # w planie 2D był lustrzanym odbiciem widoku 3D.
         self.assertContains(r, "rotate(${-r.angle})")
         self.assertContains(r, "rotate(${-f.angle})")
-        self.assertContains(r, "LITE_STEEL")
+        # Tryb lekki stali dla dużych hal — we wspólnym module sceny (scene-data.steelMode).
+        self.assertContains(r, "twin/js/scene-builder.js")
+        from pathlib import Path
+        data = (Path(__file__).resolve().parent.parent / "static/twin/js/scene-data.js").read_text(encoding="utf-8")
+        self.assertIn("n > 3000 ? 'lite'", data)
 
     def test_bad_row_creates_nothing(self):
         r = self._upload(CSV + "B0;03;abc;1;0;5;270;110;4\n")

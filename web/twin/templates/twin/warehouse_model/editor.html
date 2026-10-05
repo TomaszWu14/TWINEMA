@@ -11,7 +11,18 @@
   .le-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:0 0 10px; }
   .le-canvas { position:relative; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
   .le-canvas:focus-within { outline:2px solid var(--focus); outline-offset:2px; }
-  #le-svg { display:block; width:100%; height:calc(100vh - 230px); min-height:440px; touch-action:none; user-select:none; cursor:default; }
+  #le-svg { display:block; width:100%; height:calc(100vh - 270px); min-height:440px; touch-action:none; user-select:none; cursor:default; }
+  .le-main { min-width:0; display:grid; gap:8px; }
+  .le-modes { display:flex; gap:6px; flex-wrap:wrap; }
+  .le-modes [aria-pressed="true"] { background:var(--primary); color:var(--primary-fg, #fff); border-color:var(--primary); }
+  .le-stage { display:grid; grid-template-columns:minmax(0,1fr); gap:8px; }
+  .le-stage[data-mode="split"] { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+  @media (max-width: 1150px) { .le-stage[data-mode="split"] { grid-template-columns:1fr; } }
+  .le-stage[data-mode="2d"] .le-pane-3d, .le-stage[data-mode="3d"] .le-pane-2d { display:none; }
+  .le-pane-3d { height:calc(100vh - 270px); min-height:440px; background:#0f172a; }
+  #le-3d-canvas { display:block; width:100% !important; height:100% !important; }
+  .le-3d-hint { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); font-size:var(--fs-xs);
+                color:rgba(255,255,255,.6); pointer-events:none; white-space:nowrap; }
   #le-svg:focus { outline:none; }
   #le-svg.is-panning { cursor:grabbing; }
   .le-tools { position:absolute; top:8px; right:8px; display:flex; gap:6px; }
@@ -69,7 +80,8 @@
   <div class="page-header__actions">
     <button type="button" class="btn btn-ghost" id="le-undo" title="Cofnij (Ctrl+Z)" disabled>Cofnij</button>
     <button type="button" class="btn btn-ghost" id="le-redo" title="Ponów (Ctrl+Y)" disabled>Ponów</button>
-    <a href="{% url 'twin:warehouse_model_view' wm.pk %}" class="btn btn-secondary" id="le-3d">Widok 3D</a>
+    <a href="{% url 'twin:warehouse_model_view' wm.pk %}" class="btn btn-secondary" id="le-3d"
+       title="Widok modelu z animacją wózków i kompletacji — pokazuje zapisany plan">Zobacz animację przepływów</a>
     <button type="button" class="btn btn-primary" id="le-save" disabled>Zapisz</button>
   </div>
 </div>
@@ -114,14 +126,34 @@
     </div></div>
   </div>
 
-  <div class="le-canvas">
-    <svg id="le-svg" tabindex="0" role="application"
-         aria-label="Plan hali. Strzałki przesuwają zaznaczenie, R obraca, Delete usuwa, Ctrl+Z cofa."
-         aria-describedby="le-help"></svg>
-    <div class="le-tools">
-      <button type="button" class="btn btn-secondary btn-sm" id="le-zoomin" aria-label="Przybliż">+</button>
-      <button type="button" class="btn btn-secondary btn-sm" id="le-zoomout" aria-label="Oddal">−</button>
-      <button type="button" class="btn btn-secondary btn-sm" id="le-fit">Cała hala</button>
+  <div class="le-main">
+    <div class="le-modes" role="group" aria-label="Układ widoku">
+      <button type="button" class="btn btn-secondary btn-sm" data-le-mode="2d" aria-pressed="true">Plan 2D</button>
+      <button type="button" class="btn btn-secondary btn-sm" data-le-mode="split" aria-pressed="false">2D + 3D</button>
+      <button type="button" class="btn btn-secondary btn-sm" data-le-mode="3d" aria-pressed="false">Podgląd 3D</button>
+    </div>
+    <div class="le-stage" id="le-stage" data-mode="2d">
+      <div class="le-canvas le-pane-2d">
+        <svg id="le-svg" tabindex="0" role="application"
+             aria-label="Plan hali. Strzałki przesuwają zaznaczenie, R obraca, Delete usuwa, Ctrl+Z cofa."
+             aria-describedby="le-help"></svg>
+        <div class="le-tools">
+          <button type="button" class="btn btn-secondary btn-sm" id="le-zoomin" aria-label="Przybliż">+</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="le-zoomout" aria-label="Oddal">−</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="le-fit">Cała hala</button>
+        </div>
+      </div>
+      <div class="le-canvas le-pane-3d" id="le-3d-wrap"
+           role="img" aria-label="Podgląd 3D hali — odświeża się po każdej zmianie planu; zaznaczenie podświetlone na turkusowo.">
+        <canvas id="le-3d-canvas"></canvas>
+        {% include "twin/_3d_boot.html" with status_id="le-3d-status" %}
+        <div class="le-tools">
+          <button type="button" class="btn btn-secondary btn-sm" id="le-3d-top">Z góry</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="le-3d-iso">Izometria</button>
+          <button type="button" class="btn btn-secondary btn-sm" id="le-3d-sel" title="Przybliż kamerę do zaznaczonych elementów">Do zaznaczenia</button>
+        </div>
+        <div class="le-3d-hint">Obracaj: lewy przycisk · przesuń: prawy · zoom: kółko</div>
+      </div>
     </div>
   </div>
 
@@ -155,5 +187,6 @@
 {% endblock %}
 
 {% block extra_scripts %}
+<script type="importmap">{"imports":{"three":"{% static 'twin/vendor/three.module.js' %}","three/addons/":"{% static 'twin/vendor/addons/' %}"}}</script>
 <script type="module" src="{% static 'twin/js/layout-editor.js' %}"></script>
 {% endblock %}
