@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 15
     services:
       postgres:
-        image: postgres:17
+        image: postgres:17-alpine
         env:
           POSTGRES_USER: twinema
           POSTGRES_PASSWORD: twinema
@@ -47,7 +47,7 @@ jobs:
         run: |
           python manage.py check
           python manage.py makemigrations --check --dry-run
-          python manage.py test -v 1 --noinput
+          python manage.py test -v 1 --noinput --parallel 4
       - name: Django deploy check
         working-directory: web
         env:
