@@ -4,11 +4,11 @@
 
 ## Key Concepts
 
-- **roles.py** (31 connections) — `web/core/roles.py`
+- **roles.py** (35 connections) — `web/core/roles.py`
 - **test_ml.py** (11 connections) — `web/ml/tests/test_ml.py`
 - **test_render.py** (8 connections) — `web/render/tests/test_render.py`
+- **has_role()** (6 connections) — `web/core/roles.py`
 - **test_ewm_tasks_refresh.py** (6 connections) — `web/twin/tests/test_ewm_tasks_refresh.py`
-- **has_role()** (4 connections) — `web/core/roles.py`
 - **context_processors.py** (3 connections) — `web/core/context_processors.py`
 - **Command** (3 connections) — `web/core/management/commands/create_roles.py`
 - **MetaRefreshGuardTests** (3 connections) — `web/twin/tests/test_ewm_tasks_refresh.py`
@@ -30,14 +30,14 @@
 ## Relationships
 
 - [twin/models.py](twin-models.py.md) (6 shared connections)
-- [ml/services.py](ml-services.py.md) (4 shared connections)
-- [studio/api.py](studio-api.py.md) (3 shared connections)
+- [ml/views.py](ml-views.py.md) (4 shared connections)
+- [Equipment](Equipment.md) (3 shared connections)
 - [pre-push](pre-push.md) (2 shared connections)
 - [WorkerApiTests](WorkerApiTests.md) (2 shared connections)
 - [test_foundation.py](test_foundation.py.md) (1 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
 - [scenario/services.py](scenario-services.py.md) (1 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (1 shared connections)
+- [shared.py](shared.py.md) (1 shared connections)
 - [forecast.py](forecast.py.md) (1 shared connections)
 - [build_deck](build_deck.md) (1 shared connections)
 - [StudioViewTests](StudioViewTests.md) (1 shared connections)
@@ -53,7 +53,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 86 (100%)
+- EXTRACTED: 92 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

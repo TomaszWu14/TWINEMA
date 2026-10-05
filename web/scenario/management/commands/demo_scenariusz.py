@@ -9,6 +9,7 @@ jej nie ma: dzień typowy ma najwyżej drobne ostrzeżenia, szczyt — wąskie g
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
+from equipment.services import assign_classes, pick_class
 from scenario.models import InboundStream, OutboundStream, PROFILE_DEFAULTS, Scenario, ScenarioDay, Shift
 from twin.design_generator import generate
 from twin.models import WarehouseHallFeature, WarehouseModel, WarehouseModelRack
@@ -52,7 +53,7 @@ def demo_hall():
                                        clear_height_m=g["params"]["clear_height_m"],
                                        floor_width_m=g["floor"]["width"], floor_depth_m=g["floor"]["depth"],
                                        site=g["site"])
-    WarehouseModelRack.objects.bulk_create([WarehouseModelRack(model=wm, **r) for r in g["racks"]])
+    WarehouseModelRack.objects.bulk_create([WarehouseModelRack(model=wm, **r) for r in assign_classes(g["racks"])])
     WarehouseHallFeature.objects.bulk_create([WarehouseHallFeature(model=wm, **f) for f in g["features"]]
                                              + [WarehouseHallFeature(model=wm, **z) for z in demo_zones(g["racks"])])
     return wm, True
@@ -85,7 +86,7 @@ class Command(BaseCommand):
     def handle(self, *args, **opts):
         sc, _ = Scenario.objects.update_or_create(name=NAME, defaults={
             "description": "Dane syntetyczne. Szczyt = wolumeny ×1,3 (sezon).", "growth": 1.0, "seed": 42,
-            "fleet_units": FLEET})
+            "fleet_units": FLEET, "fleet_equipment": pick_class("vna", 0)})
         for kind, k in (("typical", 1.0), ("peak", PEAK)):
             day, _ = ScenarioDay.objects.get_or_create(scenario=sc, kind=kind)
             day.inbound.all().delete()

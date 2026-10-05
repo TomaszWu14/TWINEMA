@@ -25,6 +25,7 @@ KPI_SPEC = [
     ("staging_in_max", "Max palet na polu przyjęć", "", "high"), ("staging_out_max", "Max palet na polu wydań", "", "high"),
     ("fleet_util_pct", "Flota: wykorzystanie dnia", "%", "high"), ("fleet_peak_pct", "Flota: szczyt", "%", "high"),
     ("fleet_wait_p95_min", "Flota: czekanie zadań P95", "min", "high"), ("unfinished", "Zadań bez obsady", "", "high"),
+    ("fleet_charge_h", "Flota: godzin ładowania", "h", "high"), ("fleet_effective", "Flota efektywna (bez ładowania)", "", "low"),
 ] + [(f"util_{p}", f"{lbl}: wykorzystanie", "%", "high") for p, lbl in PROCS] \
   + [(f"wait_{p}_p95_min", f"{lbl}: czekanie P95", "min", "high") for p, lbl in PROCS]
 
@@ -81,6 +82,9 @@ def run_report(rec):
     kpi["fleet_util_pct"] = round(100 * sum(e - s for s, e in fleet.busy) / (n_units * 24))
     kpi["fleet_peak_pct"] = round(100 * max(fb) / n_units)
     kpi["fleet_wait_p95_min"] = round(p95([(s - r) * 60 for r, s, _ in fleet.waits]), 1)
+    charge_h = sum(min(e, 24) - s for s, e in fleet.charging if s < 24)
+    kpi["fleet_charge_h"] = round(charge_h, 1)
+    kpi["fleet_effective"] = round(n_units - charge_h / 24, 1)      # średnio wózków dostępnych (nie na ładowaniu)
     tl["people"] = {}
     for p, _ in PROCS:
         pool = pools[p]
@@ -190,7 +194,8 @@ def bottlenecks(agg, rep, places, shifts, rerun):
         k = _smallest(lambda k: rerun("fleet", k), lambda kp: kp["fleet_wait_p95_min"] <= 30, 6)
         add("error" if fw > 90 else "warning", "Flota wózków", "wózki / AGV",
             window(tl["fleet_busy"], lambda v: v >= tl["fleet_units"]),
-            f"Zadania czekają na wózek P95 {fw:g} min, szczyt wykorzystania {fp:g} %.",
+            f"Zadania czekają na wózek P95 {fw:g} min, szczyt wykorzystania {fp:g} %, "
+            f"ładowanie zabiera {agg['fleet_charge_h']['mean']:g} h wózko-godzin dziennie.",
             f"+{k} {'wózek' if k == 1 else 'wózki' if k < 5 else 'wózków'}." if k
             else "Nawet +6 wózków nie wystarcza — sprawdź normę czasu ruchu i ładowanie.")
     for p, label in PROCS:

@@ -1,4 +1,4 @@
-# roles.py
+# views_sim.py
 
 > 11 nodes · cohesion 0.18
 
@@ -18,18 +18,18 @@
 
 ## Relationships
 
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (8 shared connections)
+- [shared.py](shared.py.md) (8 shared connections)
 - [blender_scene.py](blender_scene.py.md) (6 shared connections)
-- [Scenario](Scenario.md) (4 shared connections)
+- [scenario/views.py](scenario-views.py.md) (4 shared connections)
 - [packaging.py](packaging.py.md) (3 shared connections)
 - [ewm_levels.py](ewm_levels.py.md) (3 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [test_voice.py](test_voice.py.md) (1 shared connections)
+- [studio/api.py](studio-api.py.md) (1 shared connections)
 - [scenario/services.py](scenario-services.py.md) (1 shared connections)
 - [layout-editor.js](layout-editor.js.md) (1 shared connections)
-- [studio/api.py](studio-api.py.md) (1 shared connections)
-- [ml/services.py](ml-services.py.md) (1 shared connections)
+- [Equipment](Equipment.md) (1 shared connections)
+- [ml/views.py](ml-views.py.md) (1 shared connections)
 
 ## Source Files
 

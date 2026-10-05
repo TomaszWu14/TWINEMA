@@ -24,8 +24,8 @@
 
 - [ewm_service.py](ewm_service.py.md) (8 shared connections)
 - [RenderJob](RenderJob.md) (3 shared connections)
-- [scenario/views.py](scenario-views.py.md) (3 shared connections)
-- [day_demand](day_demand.md) (3 shared connections)
+- [designer](designer.md) (3 shared connections)
+- [scenario/models.py](scenario-models.py.md) (3 shared connections)
 - [test_ewm_service.py](test_ewm_service.py.md) (3 shared connections)
 - [layout-panels.js](layout-panels.js.md) (2 shared connections)
 - [staffing.py](staffing.py.md) (2 shared connections)

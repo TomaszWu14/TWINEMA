@@ -24,7 +24,7 @@
 
 - [warehouse_tasks.py](warehouse_tasks.py.md) (4 shared connections)
 - [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (3 shared connections)
-- [ewm_tasks.py](ewm_tasks.py.md) (2 shared connections)
+- [warehouse_blender.py](warehouse_blender.py.md) (2 shared connections)
 - [studio/views.py](studio-views.py.md) (2 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (2 shared connections)
 - [studio/models.py](studio-models.py.md) (2 shared connections)

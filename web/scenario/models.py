@@ -86,6 +86,9 @@ class Scenario(models.Model):
     fleet_min_per_move = models.FloatField(default=4, verbose_name="Flota: min na ruch palety (z dojazdem)")
     battery_h = models.FloatField(default=6, verbose_name="Flota: praca na baterii [h]")
     charge_h = models.FloatField(default=1.5, verbose_name="Flota: ładowanie [h]")
+    # K1: typ floty z katalogu — wtedy czas ruchu liczony z prędkości/podnoszenia na layoucie, bateria z katalogu
+    fleet_equipment = models.ForeignKey("equipment.Equipment", on_delete=models.SET_NULL, null=True, blank=True,
+                                        related_name="scenarios", verbose_name="Flota: sprzęt z katalogu")
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

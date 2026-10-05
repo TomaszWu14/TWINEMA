@@ -3,7 +3,7 @@
 Format edytora (JSON, metry, konwencja repo: narożnik (x, y) + kąt w stopniach, y „w głąb” hali):
   {"floor": {"width", "depth", "clear_height"?},
    "racks":    [{"id"?, "zone", "rack_id", "x", "y", "angle", "n_bays", "n_levels",
-                 "bay_width_cm", "depth_cm", "level_height_cm", "equipment"?}],
+                 "bay_width_cm", "depth_cm", "level_height_cm", "equipment"?, "equipment_id"?}],
    "features": [{"id"?, "kind", "label", "x", "y", "width", "depth", "angle"}],
    "columns":  {"pitch_x", "pitch_y", "offset_x", "offset_y", "size", "removed": [[i, j]], "extra": [[x, y]]},
    "underlay": {"scale", "x", "y", "opacity"} | null,
@@ -18,8 +18,12 @@ Format edytora (JSON, metry, konwencja repo: narożnik (x, y) + kąt w stopniach
     regał na drodze ruchu (ostrzeżenie).
   • `analyze` — KPI jak w wariantach (`design_kpi.compute_kpi`) + problemy, w tym alejki
     z `design_catalog.check_aisles` (jedna reguła w repo; wymagana alejka zależy od sprzętu regału).
+    Z katalogiem sprzętu (K1, `catalog` = {id: parametry}): alejka Ast z katalogu, najwyższa belka ponad
+    maks. wysokość podnoszenia (błąd), nośność miejsca ponad udźwig sprzętu na tej wysokości (ostrzeżenie).
 """
 import math
+
+from equipment.catalog import RACK_CATEGORY, capacity_at
 
 from .blender_route import bbox, near_pairs, overlap_depth, rack_corners
 from .design_kpi import compute_kpi, rack_to_element
@@ -136,6 +140,9 @@ def clean_layout(data, feature_kinds):
         for k, (lo, hi) in RACK_LIMITS.items():
             row[k] = _int(r.get(k), f"Regał {i} {k}", lo, hi)
         row["equipment"] = r.get("equipment") or "reach"
+        eid = r.get("equipment_id")
+        row["equipment_id"] = None if eid in (None, "") else _int(eid, f"Regał {i} sprzęt z katalogu", 1, 2**31)
+        row["equipment_given"] = "equipment_id" in r          # stary klient bez pola = sprzęt w bazie bez zmian
         if row["equipment"] not in EQUIPMENT:
             raise LayoutError(f"Regał {i}: nieznany sprzęt {row['equipment']!r}.")
         # brak klucza = zostaw wartość z bazy (stary klient); None przy zapisie nie nadpisuje
@@ -211,6 +218,7 @@ def rack_row(r):
             "angle": r.angle_deg or 0.0, "n_bays": r.n_bays, "n_levels": r.n_levels,
             "bay_width_cm": r.bay_width_cm, "depth_cm": r.depth_cm, "level_height_cm": r.level_height_cm,
             "equipment": getattr(r, "equipment", None) or "reach",
+            "equipment_id": getattr(r, "equipment_model_id", None),
             "load_kg": getattr(r, "load_kg", None) or DEFAULT_LOAD_KG}
 
 
@@ -225,7 +233,7 @@ def rack_geom(r):
     return {"zone": r["zone"], "rack_id": r["rack_id"], "x": r["x"], "y": r["y"], "angle": r["angle"],
             "width": r["n_bays"] * r["bay_width_cm"] / 100, "depth": r["depth_cm"] / 100,
             "level_h": r["level_height_cm"] / 100, "n_bays": r["n_bays"], "n_levels": r["n_levels"],
-            "equipment": r.get("equipment") or "reach"}
+            "equipment": r.get("equipment") or "reach", "aisle_m": (r.get("_eq") or {}).get("aisle_m")}
 
 
 def _issue(code, severity, message, racks=(), features=()):
@@ -327,10 +335,47 @@ def height_kpi(layout):
     return {"clear_m": H, "usable_m": round(H - ROOF_GAP_M, 2), "zones": zones}
 
 
-def analyze(layout):
+def attach_equipment(layout, catalog):
+    """Regał z `equipment_id` z katalogu → `_eq` (parametry) i kategoria z typu sprzętu (reach/vna);
+    nieznane id (usunięty model) → bez sprzętu."""
+    for r in layout["racks"]:
+        eq = (catalog or {}).get(r.get("equipment_id"))
+        r["_eq"] = eq
+        if eq is None:
+            r["equipment_id"] = None
+        elif RACK_CATEGORY.get(eq["kind"]):
+            r["equipment"] = RACK_CATEGORY[eq["kind"]]
+
+
+def check_equipment(racks):
+    """Wysokość podnoszenia (błąd) i udźwig na wysokości vs nośność miejsca (ostrzeżenie, najgorszy poziom)."""
+    issues = []
+    for i, r in enumerate(racks):
+        eq = r.get("_eq")
+        if not eq:
+            continue
+        lh = r["level_height_cm"] / 100
+        top = (r["n_levels"] - 1) * lh
+        if eq.get("max_lift_m") is not None and top > eq["max_lift_m"] + 1e-6:
+            issues.append(_issue("lift", "error", f"Regał {_name(r)}: najwyższa belka {top:.2f} m, a „{eq['name']}” "
+                                                  f"podnosi do {eq['max_lift_m']:g} m.", [i]))
+            continue
+        load = r.get("load_kg") or DEFAULT_LOAD_KG
+        cap = capacity_at(eq["capacity_kg"], eq.get("lift_curve"), top)
+        if r["n_levels"] > 1 and load > cap + 1e-6:
+            low = next(k for k in range(r["n_levels"]) if load > capacity_at(eq["capacity_kg"], eq.get("lift_curve"),
+                                                                               k * lh) + 1e-6)
+            issues.append(_issue("lift_load", "warning", f"Regał {_name(r)}: nośność miejsca {load} kg, a „{eq['name']}” "
+                                                         f"na {top:.2f} m podniesie {cap:.0f} kg — od poziomu {low + 1} "
+                                                         "palety cięższe niż udźwig.", [i]))
+    return issues
+
+
+def analyze(layout, catalog=None):
     """(kpi, issues) — KPI tym samym wzorem co warianty (`design_kpi.compute_kpi`), a alejki z jego
     `aisle_issues` (`design_catalog.check_aisles`), więc jedna reguła i jedno liczenie."""
-    issues = check_layout(layout)
+    attach_equipment(layout, catalog)
+    issues = check_layout(layout) + check_equipment(layout["racks"])
     if not layout["racks"]:
         return {}, issues
     kpi = compute_kpi([rack_to_element(rack_geom(r)) for r in layout["racks"]], layout["features"],

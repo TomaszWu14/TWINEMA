@@ -56,11 +56,14 @@ class ScenarioForm(forms.ModelForm):
     class Meta:
         model = Scenario
         fields = ["name", "description", "growth", "seed", "shift_h", "work_days", *Scenario.NORM_FIELDS,
-                  "return_restock_pct", *Scenario.FLEET_FIELDS]
+                  "return_restock_pct", *Scenario.FLEET_FIELDS, "fleet_equipment"]
         widgets = {"description": forms.Textarea(attrs={"rows": 2})}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        fe = self.fields["fleet_equipment"]
+        fe.queryset = fe.queryset.exclude(kind__in=("conveyor", "sorter"))
+        fe.empty_label = "— bez katalogu (norma min/ruch i bateria z pól powyżej) —"
         for f in self.fields.values():
             _fc(f.widget)
 

@@ -165,7 +165,8 @@ def check_aisles(elements):
     for e in racks:
         w, d = footprint(e["kind"], e["params"])
         boxes.append(bbox(rack_corners({"x": e["x"], "y": e["y"], "angle": e["angle"], "width": w, "depth": d})))
-    pad = max(ELEMENTS[k].get("aisle_m", 0) for k in RACK_KINDS) + 0.1     # dalej niż alejka = bez znaczenia
+    pad = max([ELEMENTS[k].get("aisle_m", 0) for k in RACK_KINDS]
+              + [e.get("aisle_m") or 0 for e in elements]) + 0.1      # dalej niż alejka = bez znaczenia
     issues = []
     for i, j in near_pairs(boxes, pad):
         a, b = racks[i], racks[j]

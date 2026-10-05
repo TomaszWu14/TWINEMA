@@ -19,6 +19,7 @@
       <nav class="topbar__nav" aria-label="Moduły">
         <a href="{% url 'twin:design_hub' %}"{% if rm.url_name == 'design_hub' %} class="is-active" aria-current="page"{% endif %}>Projektowanie</a>
         <a href="{% url 'scenario:list' %}"{% if rm.app_name == 'scenario' %} class="is-active"{% endif %}>Scenariusze</a>
+        <a href="{% url 'equipment:list' %}"{% if rm.app_name == 'equipment' %} class="is-active"{% endif %}>Sprzęt</a>
         <a href="{% url 'twin:warehouse_model_list' %}"{% if rm.app_name == 'twin' and 'warehouse_' in rm.url_name or 'bay_template' in rm.url_name %} class="is-active"{% endif %}>Modele hal</a>
         <a href="{% url 'masterdata:home' %}"{% if rm.app_name == 'masterdata' %} class="is-active"{% endif %}>Dane</a>
         <a href="{% url 'ml:home' %}"{% if rm.app_name == 'ml' %} class="is-active"{% endif %}>ML</a>

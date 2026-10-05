@@ -16,13 +16,28 @@ const FEATURE_SIZE = { dock: [3.5, 2], gate: [4, 0.5], staging: [10, 6], station
   walkway: [30, 1.2], truckway: [30, 3.5], zone_temp: [15, 10], zone_adr: [10, 8], zone_oversize: [15, 8],
   zone_value: [8, 6] };
 
-/** Lista wyboru sprzętu regału(ów) — zmienia wszystkie zaznaczone naraz (np. cały blok VNA). */
+// Sprzęt z katalogu (K1) obsługuje kategorię regału: reach/czołowy → reach, VNA → vna.
+const RACK_CATEGORY = { reach: 'reach', counterbalance: 'reach', vna: 'vna' };
+const eqValue = (r) => (r.equipment_id ? `eq:${r.equipment_id}` : `cat:${r.equipment}`);
+
+/** Lista wyboru sprzętu regału(ów): kategoria ogólna albo klasa/model z katalogu (alejka, wysokość, udźwig
+ *  z katalogu). Zmienia wszystkie zaznaczone naraz (np. cały blok VNA). */
 function equipmentSelect(racks) {
-  const same = racks.every((r) => r.equipment === racks[0].equipment) ? racks[0].equipment : '';
+  const same = racks.every((r) => eqValue(r) === eqValue(racks[0])) ? eqValue(racks[0]) : '';
+  const set = (v) => change(() => racks.forEach((r) => {
+    const [kind, key] = v.split(':');
+    if (kind === 'cat') { r.equipment = key; r.equipment_id = null; return; }
+    const eq = (CFG.catalog || []).find((e) => String(e.id) === key);
+    r.equipment_id = eq.id;
+    r.equipment = RACK_CATEGORY[eq.kind] || r.equipment;
+  }));
+  const opt = (value, label) => h('option', { value, selected: value === same }, label);
   return h('label', { class: 'le-wide' }, racks.length > 1 ? `Sprzęt (${racks.length} regałów)` : 'Sprzęt obsługi',
-    h('select', { class: 'form-control', onchange: (e) => change(() => racks.forEach((r) => { r.equipment = e.target.value; })) },
+    h('select', { class: 'form-control', onchange: (e) => set(e.target.value) },
       ...(same ? [] : [h('option', { value: '', disabled: true, selected: true }, '— różny —')]),
-      ...Object.entries(CFG.equipment).map(([k, v]) => h('option', { value: k, selected: k === same }, v))));
+      h('optgroup', { label: 'Ogólnie (bez katalogu)' }, ...Object.entries(CFG.equipment).map(([k, v]) => opt(`cat:${k}`, v))),
+      h('optgroup', { label: 'Z katalogu sprzętu' }, ...(CFG.catalog || []).map((e) =>
+        opt(`eq:${e.id}`, `${e.name} — alejka ${fmt(e.aisle_m, 1)} m, do ${fmt(e.max_lift_m, 1)} m`)))));
 }
 
 /** Rola doku/bramy (S3b) — symulacja scenariusza wybiera po niej doki; puste = zgadywana z etykiety. */

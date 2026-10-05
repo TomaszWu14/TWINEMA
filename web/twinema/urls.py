@@ -13,4 +13,5 @@ urlpatterns = [
     path("", include("ml.urls")),
     path("", include("studio.urls")),
     path("", include("scenario.urls")),
+    path("", include("equipment.urls")),
 ]

@@ -1,9 +1,12 @@
 """Klej Django ↔ symulacja dnia (`scenario.sim` jest czystym Pythonem)."""
 import time
 
+from equipment.catalog import move_minutes
 from masterdata.packaging import weighted_cartons_per_pallet
 from masterdata.services import cartons_per_pallet_distribution as cartons_distribution
 from masterdata.services import stock_profile
+from twin.blender_scene import model_floor, model_racks
+from twin.design_kpi import rack_to_element, travel_stats
 from twin.layout import feature_row, rack_row
 from twin.shared import hall_feature_dict
 
@@ -25,7 +28,11 @@ def simulate(day, wm, *, runs=12, user=None):
     if cpp:
         # kartonów/paletę z master daty (rozkład po stanie) zastępuje średnią normę scenariusza
         params.update(cpp_dist=cpp[0], cartons_per_pallet=weighted_cartons_per_pallet(cpp[0]))
+    fleet = fleet_from_catalog(sc.fleet_equipment, wm) if sc.fleet_equipment_id else None
+    if fleet:
+        params.update(fleet_min_per_move=fleet["min_per_move"], battery_h=fleet["battery_h"], charge_h=fleet["charge_h"])
     res = run_many(sim_day, params, sc.shift_dicts(), places, sc.seed, runs=runs)
+    res["fleet"] = fleet
     res["cpp"] = {"value": params["cartons_per_pallet"], "source": f"master data ({cpp[2]})" if cpp else "norma"}
     res["placement"] = placement_for(wm, sc.growth)
     res["bottlenecks"] = placement_bottlenecks(res["placement"]) + res["bottlenecks"]
@@ -35,6 +42,26 @@ def simulate(day, wm, *, runs=12, user=None):
     old = ScenarioRun.objects.filter(scenario=sc).values_list("pk", flat=True)[KEEP_RUNS:]
     ScenarioRun.objects.filter(pk__in=list(old)).delete()
     return run
+
+
+def fleet_from_catalog(eq, wm):
+    """Sprzęt floty z katalogu (K1) → czas ruchu palety na tym layoucie: średnia droga od punktów obsługi
+    (doki, stanowiska) do miejsc paletowych (`travel_stats`) tam i z powrotem + podniesienie na średnią wysokość
+    belki + pobranie/odłożenie; bateria i ładowanie z katalogu. Półki (kompletacja ręczna) pomijamy."""
+    racks = [r for r in model_racks(wm) if (r.get("equipment") or "reach") != "shelf"]
+    p = eq.params()
+    if not racks:
+        dist, lift = 0.0, 0.0
+    else:
+        floor = model_floor(wm, racks)
+        tr = travel_stats([rack_to_element(r) for r in racks], [hall_feature_dict(f) for f in wm.features.all()],
+                          floor["width"], floor["depth"])
+        w = [r["n_bays"] * r["n_levels"] for r in racks]
+        dist = tr["avg_m"] or 0.0
+        lift = sum((r["n_levels"] - 1) / 2 * r["level_h"] * k for r, k in zip(racks, w, strict=True)) / sum(w)
+    return {"name": eq.name, "dist_m": round(dist, 1), "lift_m": round(lift, 2),
+            "min_per_move": round(move_minutes(p, dist, lift), 2),
+            "battery_h": p["battery_h"] or 8.0, "charge_h": p["charge_h"] or 1.5}
 
 
 def placement_for(wm, growth):
