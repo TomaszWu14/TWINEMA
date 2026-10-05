@@ -2,7 +2,7 @@
 
 > God node · 20 connections · `web/twin/design_catalog.py`
 
-**Community:** [params_for](params_for.md)
+**Community:** [design_catalog.py](design_catalog.py.md)
 
 ## Connections by Relation
 
@@ -24,7 +24,7 @@
 - .test_params_override_and_unknown() `EXTRACTED`
 
 ### contains
-- design_catalog.py `EXTRACTED`
+- [design_catalog.py](design_catalog.py.md) `EXTRACTED`
 
 ### imports
 - [design_kpi.py](design_kpi.py.md) `EXTRACTED`

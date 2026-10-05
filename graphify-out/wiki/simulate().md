@@ -2,7 +2,7 @@
 
 > God node · 29 connections · `web/twin/design_sim.py`
 
-**Community:** [simulate](simulate.md)
+**Community:** [design_sim.py](design_sim.py.md)
 
 ## Connections by Relation
 
@@ -29,13 +29,13 @@
 - .test_hall_without_vna_is_not_simulated() `EXTRACTED`
 
 ### contains
-- design_sim.py `EXTRACTED`
+- [design_sim.py](design_sim.py.md) `EXTRACTED`
 
 ### imports
 - [warehouse_design_sim.py](warehouse_design_sim.py.md) `EXTRACTED`
-- [test_design_sim.py](test_design_sim.py.md) `EXTRACTED`
-- test_design_calibration.py `EXTRACTED`
-- [test_design_sim_scene.py](test_design_sim_scene.py.md) `EXTRACTED`
+- test_design_sim.py `EXTRACTED`
+- [test_design_calibration.py](test_design_calibration.py.md) `EXTRACTED`
+- test_design_sim_scene.py `EXTRACTED`
 - design_compare.py `EXTRACTED`
 
 ### rationale_for

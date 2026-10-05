@@ -1,4 +1,4 @@
-# test_ewm_detect.py
+# hall_feature_dict
 
 > 11 nodes · cohesion 0.27
 
@@ -18,9 +18,9 @@
 
 ## Relationships
 
-- [detect](detect.md) (4 shared connections)
-- [model_racks](model_racks.md) (2 shared connections)
-- [addressing.py](addressing.py.md) (1 shared connections)
+- [design_day.py](design_day.py.md) (4 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (1 shared connections)
 
 ## Source Files
 

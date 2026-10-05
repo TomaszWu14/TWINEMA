@@ -21,10 +21,10 @@
 ## Relationships
 
 - [SlotLocator](SlotLocator.md) (7 shared connections)
-- [.slot](slot.md) (4 shared connections)
+- [blender_stock.py](blender_stock.py.md) (4 shared connections)
 - [FloorGrid](FloorGrid.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (3 shared connections)
-- [EquipmentAgentsTests](EquipmentAgentsTests.md) (3 shared connections)
+- [test_equipment_agents.py](test_equipment_agents.py.md) (3 shared connections)
 - [CalibrationViewTests](CalibrationViewTests.md) (3 shared connections)
 - [resolve_moves](resolve_moves.md) (3 shared connections)
 - [test_container_inbound.py](test_container_inbound.py.md) (2 shared connections)

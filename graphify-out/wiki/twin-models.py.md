@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **twin/models.py** (46 connections) — `web/twin/models.py`
-- **WarehouseModel** (28 connections) — `web/twin/models.py`
+- **twin/models.py** (47 connections) — `web/twin/models.py`
+- **WarehouseModel** (29 connections) — `web/twin/models.py`
 - **WarehouseModelRack** (20 connections) — `web/twin/models.py`
 - **test_design_calibration.py** (19 connections) — `web/twin/tests/test_design_calibration.py`
 - **test_ewm_tasks_flow.py** (19 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
@@ -33,17 +33,17 @@
 
 ## Relationships
 
-- [warehouse_model.py](warehouse_model.py.md) (12 shared connections)
+- [test_model_geometry.py](test_model_geometry.py.md) (12 shared connections)
 - [warehouse_design_sim.py](warehouse_design_sim.py.md) (9 shared connections)
-- [LocationOverride](LocationOverride.md) (7 shared connections)
+- [params_for](params_for.md) (7 shared connections)
 - [roles.py](roles.py.md) (6 shared connections)
-- [test_ewm_service.py](test_ewm_service.py.md) (6 shared connections)
+- [ewm_service.py](ewm_service.py.md) (6 shared connections)
 - [FloorGrid](FloorGrid.md) (6 shared connections)
 - [BayTemplate](BayTemplate.md) (5 shared connections)
 - [blender_scene.py](blender_scene.py.md) (5 shared connections)
 - [generate](generate.md) (4 shared connections)
-- [calibrate](calibrate.md) (4 shared connections)
-- [simulate](simulate.md) (4 shared connections)
+- [test_design_calibration.py](test_design_calibration.py.md) (4 shared connections)
+- [design_sim.py](design_sim.py.md) (4 shared connections)
 - [resolve_moves](resolve_moves.md) (4 shared connections)
 
 ## Source Files
@@ -62,7 +62,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 218 (96%)
+- EXTRACTED: 220 (96%)
 - INFERRED: 8 (4%)
 - AMBIGUOUS: 0 (0%)
 

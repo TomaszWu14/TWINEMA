@@ -1,41 +1,48 @@
 # StudioViewTests
 
-> 13 nodes · cohesion 0.22
+> 16 nodes · cohesion 0.13
 
 ## Key Concepts
 
-- **Layout** (12 connections) — `web/twin/design_sim.py`
-- **_manh()** (8 connections) — `web/twin/design_sim.py`
-- **.vna_slot()** (7 connections) — `web/twin/design_sim.py`
-- **_is_shelf()** (6 connections) — `web/twin/blender_scene.py`
-- **._front()** (6 connections) — `web/twin/design_sim.py`
-- **.__init__()** (6 connections) — `web/twin/design_sim.py`
-- **_pick()** (4 connections) — `web/twin/design_sim.py`
-- **.shelf()** (3 connections) — `web/twin/design_sim.py`
-- **.test_abc_puts_frequent_material_closer_to_packing()** (3 connections) — `web/twin/tests/test_design_sim.py`
-- **.ok()** (2 connections) — `web/twin/design_sim.py`
-- **Agent, który najwcześniej stanie w `start` (nie wcześniej niż `release`).** (1 connections) — `web/twin/design_sim.py`
-- **Punkty obsługi i miejsca wariantu wyliczone z regałów i elementów hali.** (1 connections) — `web/twin/design_sim.py`
-- **Miejsce palety dla materiału z czołówki `share` (0 = najczęstszy … 1) wg stref…** (1 connections) — `web/twin/design_sim.py`
+- **WarehouseTask** (15 connections) — `web/twin/models_tasks.py`
+- **ForecastViewTests** (8 connections) — `web/twin/tests/test_design_forecast.py`
+- **MlRunTests** (6 connections) — `web/ml/tests/test_ml.py`
+- **.setUpTestData()** (3 connections) — `web/twin/tests/test_design_forecast.py`
+- **.setUpTestData()** (3 connections) — `web/twin/tests/test_design_sim.py`
+- **.setUpTestData()** (2 connections) — `web/ml/tests/test_ml.py`
+- **Meta** (2 connections) — `web/twin/models_tasks.py`
+- **.test_home_lists_runs()** (1 connections) — `web/ml/tests/test_ml.py`
+- **.test_segmentation_run_and_csv()** (1 connections) — `web/ml/tests/test_ml.py`
+- **.test_viewer_cannot_run_designer_can_and_run_is_recorded()** (1 connections) — `web/ml/tests/test_ml.py`
+- **TestCase** (1 connections)
+- **.__str__()** (1 connections) — `web/twin/models_tasks.py`
+- **.setUp()** (1 connections) — `web/twin/tests/test_design_forecast.py`
+- **.test_page_shows_multiplier_and_links()** (1 connections) — `web/twin/tests/test_design_forecast.py`
+- **.test_profile_links_to_forecast()** (1 connections) — `web/twin/tests/test_design_forecast.py`
+- **TestCase** (1 connections)
 
 ## Relationships
 
-- [simulate](simulate.md) (15 shared connections)
-- [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (5 shared connections)
-- [blender_scene.py](blender_scene.py.md) (3 shared connections)
-- [test_design_compare.py](test_design_compare.py.md) (2 shared connections)
-- [test_ml.py](test_ml.py.md) (1 shared connections)
+- [test_design_forecast.py](test_design_forecast.py.md) (4 shared connections)
+- [warehouse_design_sim.py](warehouse_design_sim.py.md) (3 shared connections)
+- [warehouse_tasks.py](warehouse_tasks.py.md) (2 shared connections)
+- [design_sim.py](design_sim.py.md) (2 shared connections)
+- [ForecastTests](ForecastTests.md) (2 shared connections)
+- [roles.py](roles.py.md) (1 shared connections)
+- [CalibrationViewTests](CalibrationViewTests.md) (1 shared connections)
+- [_save](_save.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/blender_scene.py`
-- `web/twin/design_sim.py`
+- `web/ml/tests/test_ml.py`
+- `web/twin/models_tasks.py`
+- `web/twin/tests/test_design_forecast.py`
 - `web/twin/tests/test_design_sim.py`
 
 ## Audit Trail
 
-- EXTRACTED: 58 (97%)
-- INFERRED: 2 (3%)
+- EXTRACTED: 39 (81%)
+- INFERRED: 9 (19%)
 - AMBIGUOUS: 0 (0%)
 
 ---

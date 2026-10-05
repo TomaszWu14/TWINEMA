@@ -1,4 +1,4 @@
-# model_racks
+# warehouse_variants.py
 
 > 16 nodes · cohesion 0.15
 
@@ -23,16 +23,16 @@
 
 ## Relationships
 
-- [ewm_service.py](ewm_service.py.md) (8 shared connections)
+- [warehouse_model_ewm.py](warehouse_model_ewm.py.md) (8 shared connections)
 - [test_addressing.py](test_addressing.py.md) (3 shared connections)
-- [detect](detect.md) (3 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (3 shared connections)
-- [test_ewm_service.py](test_ewm_service.py.md) (3 shared connections)
-- [addressing.py](addressing.py.md) (2 shared connections)
-- [test_ewm_detect.py](test_ewm_detect.py.md) (2 shared connections)
+- [design_day.py](design_day.py.md) (3 shared connections)
+- [test_model_geometry.py](test_model_geometry.py.md) (3 shared connections)
+- [ewm_service.py](ewm_service.py.md) (3 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (2 shared connections)
+- [hall_feature_dict](hall_feature_dict.md) (2 shared connections)
 - [ewm_tasks.py](ewm_tasks.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [LocationOverride](LocationOverride.md) (2 shared connections)
+- [params_for](params_for.md) (2 shared connections)
 - [BayTemplate](BayTemplate.md) (1 shared connections)
 
 ## Source Files
