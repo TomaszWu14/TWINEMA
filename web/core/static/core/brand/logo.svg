@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 140" role="img" aria-label="TWINEMA — digital twin, 3D motion">
+  <rect width="600" height="140" fill="#12161D"/>
+  <g transform="translate(16 6) scale(1.15)">
+    <g fill="none" stroke="#D08F3E" stroke-width="2.4" stroke-dasharray="5 4" stroke-linejoin="round">
+      <polygon points="94,20 129,40 129,80 94,100 59,80 59,40"/>
+      <polyline points="59,40 94,60 129,40"/>
+      <line x1="94" y1="60" x2="94" y2="100"/>
+    </g>
+    <g stroke="#C8863A" stroke-width="3.2" stroke-linecap="round">
+      <line x1="7" y1="46" x2="19" y2="46"/>
+      <line x1="2" y1="57" x2="19" y2="57"/>
+      <line x1="9" y1="68" x2="19" y2="68"/>
+    </g>
+    <polygon points="60,20 95,40 60,60 25,40" fill="#F2A444"/>
+    <polygon points="25,40 60,60 60,100 25,80" fill="#C8863A"/>
+    <polygon points="60,60 95,40 95,80 60,100" fill="#B5772F"/>
+    <g font-family="'Arial Black', 'Segoe UI Black', Arial, sans-serif" font-weight="900" font-size="24" fill="#141820" text-anchor="middle">
+      <text transform="matrix(0.866 0.5 0 1 42.5 79)">T</text>
+      <text transform="matrix(0.866 -0.5 0 1 77.5 88)">W</text>
+    </g>
+  </g>
+  <text x="190" y="84" font-family="Montserrat, 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="62" letter-spacing="3"
+        fill="#EEF1F5"><tspan fill="#F2A444">TW</tspan>INEMA</text>
+  <text x="192" y="114" font-family="'JetBrains Mono', Consolas, 'Courier New', monospace" font-size="14" letter-spacing="6.5"
+        fill="#7F95B5">DIGITAL TWIN · 3D MOTION</text>
+</svg>

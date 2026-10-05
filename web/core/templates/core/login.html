@@ -1,9 +1,13 @@
-{% extends "core/base.html" %}
+{% extends "core/base.html" %}{% load static %}
 {% block title %}Logowanie · {{ app_name }}{% endblock %}
 {% block body %}
 <main class="login">
   <form class="login-card" method="post">{% csrf_token %}
-    <span class="brand">TWIN<b>EMA</b></span>
+    <div class="brand brand--login">
+      <img class="brand__mark" src="{% static 'core/brand/mark.svg' %}" alt="" width="88" height="60">
+      <span class="brand__word">{% include "core/_wordmark.html" %}</span>
+      <span class="brand__tag">Digital twin · 3D motion</span>
+    </div>
     {% if form.errors %}<p class="login-error" role="alert">Nieprawidłowy login lub hasło.</p>{% endif %}
     <label for="id_username">Login</label>
     <input class="form-control" type="text" name="username" id="id_username" autocomplete="username" autofocus required>
