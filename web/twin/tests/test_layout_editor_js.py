@@ -31,7 +31,8 @@ class LayoutCoreJsTests(unittest.TestCase):
                                str(TWIN / "tests" / "js" / "fullscreen.test.mjs"),
                                str(TWIN / "tests" / "js" / "day_timeline.test.mjs"),
                                str(TWIN / "tests" / "js" / "site.test.mjs"),
-                               str(TWIN / "tests" / "js" / "showcase.test.mjs")],
+                               str(TWIN / "tests" / "js" / "showcase.test.mjs"),
+                               str(TWIN / "tests" / "js" / "equipment-models.test.mjs")],
                               capture_output=True, text=True, timeout=120)
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
 

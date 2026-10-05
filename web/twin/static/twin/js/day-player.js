@@ -6,10 +6,12 @@ import { QUEUE_M, QUEUE_PITCH_M, TRAVEL_S, VEHICLES, buildTracks, countersAt, cr
   hhmm, lPath, lPathYaw, orderedSlot, palletAt, queueSides, rackFront, rectCenter, seriesAt, slotOrder,
   stationSpots, vehicleAt, vehiclePose, yawOut, ENTER_S } from './day-timeline.js';
 import { localToWorld, nearestEntry, sitePlan } from './scene-data.js';
+import { CARRY, modelForEquipment, modelParts } from './equipment-models.js';
 
 const MAX_PARCEL_STACK = 120;
 
-// Pojazdy i ładunki z prostych brył (bez cudzych modeli): [długość, wysokość, szerokość, x środka, y dołu, kolor].
+// Pojazdy i ładunki z prostych brył (bez cudzych modeli): [długość, wysokość, szerokość, x środka, y dołu, kolor, z].
+// Sprzęt magazynowy (reach, VNA, paletowy, AGV…) — equipment-models.js.
 // Oś +x pojazdu = od doku na zewnątrz (kabina z dala od hali), środek naczepy jak dotąd ~7 m przed dokiem.
 const WHEEL = 0x1f2329, CHASSIS = 0x30353a;
 const axles = (xs) => xs.map((x) => [1.0, 1.0, 2.6, x, 0, WHEEL]);
@@ -22,22 +24,17 @@ const PARTS = {
     [0.8, 0.75, 2.1, -1.9, 0, WHEEL], [0.8, 0.75, 2.1, 1.9, 0, WHEEL]],
   pallet: [[1.2, 0.144, 0.8, 0, 0, 0xa87d4a], [1.16, 1.1, 0.76, 0, 0.144, 0xb4874f]],
   parcel: [[0.6, 0.4, 0.4, 0, 0, 0x92400e]],
-  // Ludzie (kamizelka odblaskowa) i sprzęt — low-poly z brył, przód = +x.
+  // Ludzie (kamizelka odblaskowa) — low-poly z brył, przód = +x.
   person: [[0.28, 0.85, 0.4, 0, 0, 0x1f2937], [0.32, 0.62, 0.5, 0, 0.85, 0xf97316], [0.24, 0.24, 0.24, 0, 1.5, 0xe0b48a],
     [0.27, 0.1, 0.27, 0, 1.74, 0xfacc15]],
-  ptruck: [[0.55, 1.2, 0.72, -0.6, 0.08, 0xeab308], [1.15, 0.07, 0.56, 0.3, 0.06, CHASSIS], [0.08, 0.35, 0.45, -0.95, 1.05, CHASSIS]],
-  reach: [[1.6, 1.15, 1.2, -0.75, 0.15, 0xeab308], [0.18, 4.6, 1.0, 0.1, 0.1, CHASSIS], [1.1, 0.08, 1.15, -0.75, 2.2, CHASSIS],
-    [0.08, 2.05, 0.08, -1.25, 0.15, CHASSIS], [1.1, 0.07, 0.6, 0.75, 0.18, CHASSIS], [0.5, 0.3, 1.15, -0.2, 0, WHEEL]],
-  vna: [[2.4, 1.2, 1.25, -1.0, 0.12, 0x64748b], [0.2, 8.5, 1.1, 0.25, 0.1, CHASSIS], [1.0, 1.9, 1.05, -0.45, 1.3, 0x94a3b8],
-    [1.1, 0.07, 0.6, 0.85, 0.18, CHASSIS]],
   conveyor: [[8.0, 0.18, 0.75, 1.0, 0.95, 0x9ca3af], [3.0, 0.95, 0.85, -1.6, 0, 0x6b7280]],
 };
 const NO_SHADOW = new Set(['parcel', 'conveyor']);
 
 /** Jeden rodzaj obiektu = po jednej siatce instancyjnej na część; wspólny licznik `count`. */
 function fleet(scene, kind, n) {
-  const parts = PARTS[kind].map(([l, h, w, x, y, color]) => {
-    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(l, h, w).translate(x, y + h / 2, 0),
+  const parts = (PARTS[kind] || modelParts(kind)).map(([l, h, w, x, y, color, z = 0]) => {
+    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(l, h, w).translate(x, y + h / 2, z),
       new THREE.MeshStandardMaterial({ color, roughness: color === 0x0f172a ? 0.15 : 0.6, metalness: color === 0x0f172a ? 0.6 : 0.15 }),
       Math.max(1, n));
     mesh.count = 0;
@@ -78,11 +75,14 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
     pallet: fleet(viewer.scene, 'pallet', pallets.length),
     parcel: fleet(viewer.scene, 'parcel', MAX_PARCEL_STACK),
     person: fleet(viewer.scene, 'person', crewMax + 8),
-    ptruck: fleet(viewer.scene, 'ptruck', nDocks * 2),
-    reach: fleet(viewer.scene, 'reach', pallets.length),
-    vna: fleet(viewer.scene, 'vna', pallets.length),
     conveyor: fleet(viewer.scene, 'conveyor', nDocks),
   };
+  // Sprzęt przy regałach: VNA w regałach VNA, poza nimi flota scenariusza z katalogu (AGV, AMR, czołowy…), domyślnie reach.
+  // `?sprzet=<typ z katalogu>` w adresie podmienia flotę — podgląd modelu bez zmiany scenariusza.
+  const carrier = modelForEquipment(new URLSearchParams(globalThis.location?.search).get('sprzet') || data.fleet_kind) || 'reach';
+  const need = { ptruck: nDocks * 2, vna: pallets.length };
+  need[carrier] = (need[carrier] || 0) + pallets.length;
+  for (const [k, n] of Object.entries(need)) mesh[k] = fleet(viewer.scene, k, n);
   const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), P = new THREE.Vector3(), S1 = new THREE.Vector3(1, 1, 1);
   const UP = new THREE.Vector3(0, 1, 0);
   const put = (m, x, y, z, yaw = 0) => {
@@ -220,9 +220,9 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
         }
       } else {
         const a = anchor(s.from, tr.obj), b = anchor(s.to, tr.obj), [x, y] = lPath(a, b, s.p), yaw = lPathYaw(a, b, s.p);
-        put(mesh.pallet, x, y, 0.25, yaw);
-        const r = rackOf(tr.obj), dx = Math.cos(yaw) * 1.25, dy = -Math.sin(yaw) * 1.25;
-        put(r?.equipment === 'vna' ? mesh.vna : mesh.reach, x - dx, y - dy, 0, yaw);
+        const r = rackOf(tr.obj), kind = (r?.rack_class ?? r?.equipment) === 'vna' ? 'vna' : carrier, c = CARRY[kind];
+        put(mesh.pallet, x, y, c.z, yaw);
+        put(mesh[kind], x - Math.cos(yaw) * c.dx, y + Math.sin(yaw) * c.dx, 0, yaw);
       }
     }
     // ludzie i wózki paletowe: zajęci w tej chwili wg osi czasu obsady S3a (co 15 min)
