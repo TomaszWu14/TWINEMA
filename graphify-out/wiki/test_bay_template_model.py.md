@@ -1,4 +1,4 @@
-# BayTemplate
+# test_bay_template_model.py
 
 > 18 nodes · cohesion 0.16
 

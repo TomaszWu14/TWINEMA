@@ -81,6 +81,11 @@ class Scenario(models.Model):
     courier_dock_min = models.FloatField(default=30, verbose_name="Odbiór kuriera: min przy doku")
     return_min = models.FloatField(default=6, verbose_name="Obsługa zwrotu: min")
     return_restock_pct = models.FloatField(default=70, verbose_name="Zwroty: % powrotu na skład")
+    # flota (symulacja dnia): wózki do odkładania i zdejmowania palet, praca na baterii i ładowanie
+    fleet_units = models.PositiveSmallIntegerField(default=12, verbose_name="Flota: wózków / AGV")
+    fleet_min_per_move = models.FloatField(default=4, verbose_name="Flota: min na ruch palety (z dojazdem)")
+    battery_h = models.FloatField(default=6, verbose_name="Flota: praca na baterii [h]")
+    charge_h = models.FloatField(default=1.5, verbose_name="Flota: ładowanie [h]")
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -89,6 +94,7 @@ class Scenario(models.Model):
                    "palletize_cartons_per_h", "repack_min_per_pallet", "load_min_per_pallet", "pick_lines_per_h",
                    "wrap_min_per_pallet", "pack_min_per_parcel", "pack_min_per_line", "label_min_per_parcel",
                    "courier_dock_min", "return_min"]
+    FLEET_FIELDS = ["fleet_units", "fleet_min_per_move", "battery_h", "charge_h"]
 
     class Meta:
         ordering = ["-updated_at", "-pk"]
@@ -101,14 +107,17 @@ class Scenario(models.Model):
     def clean(self):
         if self.growth <= 0 or self.shift_h <= 0:
             raise ValidationError("Mnożnik wzrostu i długość zmiany muszą być dodatnie.")
-        if any((getattr(self, f) or 0) <= 0 for f in self.NORM_FIELDS):
-            raise ValidationError("Normy wydajności muszą być dodatnie.")
+        if any((getattr(self, f) or 0) <= 0 for f in [*self.NORM_FIELDS, *self.FLEET_FIELDS]):
+            raise ValidationError("Normy wydajności i parametry floty muszą być dodatnie.")
         if not 0 <= (self.return_restock_pct or 0) <= 100 or not 1 <= (self.work_days or 0) <= 7:
             raise ValidationError("Zwroty na skład: 0–100 %; dni pracy w tygodniu: 1–7.")
 
     @property
     def norms(self):
         return {f: getattr(self, f) for f in [*self.NORM_FIELDS, "return_restock_pct"]}
+
+    def sim_params(self):
+        return {**self.norms, **{f: getattr(self, f) for f in self.FLEET_FIELDS}, "growth": self.growth}
 
     def shift_dicts(self):
         return [s.as_dict() for s in self.shifts.all()]
@@ -190,6 +199,10 @@ class ScenarioDay(models.Model):
     def profile(self):
         return {**{n: triple(self, n) for n, _ in self.PROFILE}, "full_pallet_pct": self.full_pallet_pct}
 
+    def sim_day(self):
+        return {"inbound": [s.as_dict() for s in self.inbound.all()],
+                "outbound": [s.as_dict() for s in self.outbound.all()], "profile": self.profile()}
+
     def outbound_demand(self, level):
         sc = self.scenario
         return day_outbound([s.as_dict() for s in self.outbound.all()], self.profile(), sc.norms,
@@ -262,6 +275,29 @@ class OutboundStream(models.Model):
     def as_dict(self):
         return {"kind": self.kind, "departures": triple(self, "departures"), "pallets": triple(self, "pallets"),
                 "window": (self.window_from, self.window_to)}
+
+
+class ScenarioRun(models.Model):
+    """Wynik symulacji dnia scenariusza na modelu hali (S3a): KPI średnia/najgorszy, oś czasu przebiegu
+    reprezentatywnego, wąskie gardła; `events` — zdarzenia tego przebiegu dla animacji (S4)."""
+    scenario = models.ForeignKey(Scenario, on_delete=models.CASCADE, related_name="runs")
+    day_kind = models.CharField(max_length=8, choices=ScenarioDay.KIND_CHOICES)
+    model = models.ForeignKey("twin.WarehouseModel", on_delete=models.CASCADE, related_name="scenario_runs")
+    runs = models.PositiveSmallIntegerField(default=12)
+    seed = models.PositiveIntegerField(default=42)
+    duration_s = models.FloatField(default=0)
+    result = models.JSONField(default=dict)
+    events = models.JSONField(default=list)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at", "-pk"]
+        verbose_name = "Symulacja scenariusza"
+        verbose_name_plural = "Symulacje scenariuszy"
+
+    def __str__(self):
+        return f"{self.scenario} — {self.get_day_kind_display()} na „{self.model}”"
 
 
 class Shift(models.Model):

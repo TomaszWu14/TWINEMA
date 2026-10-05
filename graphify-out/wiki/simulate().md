@@ -20,19 +20,19 @@
 - .go() `EXTRACTED`
 - _work() `EXTRACTED`
 - .shelf() `EXTRACTED`
+- .ok() `EXTRACTED`
 - _tours() `EXTRACTED`
 - _kpi() `EXTRACTED`
 - .test_calibration_slows_down_the_new_hall() `EXTRACTED`
 - .test_agents_busy_within_physical_limits() `EXTRACTED`
 - .test_bigger_fleet_waits_less() `EXTRACTED`
 - .test_every_task_is_served() `EXTRACTED`
-- .test_hall_without_vna_is_not_simulated() `EXTRACTED`
 
 ### contains
 - design_sim.py `EXTRACTED`
 
 ### imports
-- [warehouse_design_sim.py](warehouse_design_sim.py.md) `EXTRACTED`
+- warehouse_design_sim.py `EXTRACTED`
 - test_design_sim.py `EXTRACTED`
 - test_design_calibration.py `EXTRACTED`
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) `EXTRACTED`

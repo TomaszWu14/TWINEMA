@@ -7,9 +7,9 @@
 - **twinema_design_kit.py** (16 connections) — `tools/blender/twinema_design_kit.py`
 - **_coll()** (8 connections) — `tools/blender/twinema_design_kit.py`
 - **start()** (8 connections) — `tools/blender/twinema_design_kit.py`
+- **add()** (7 connections) — `tools/blender/twinema_design_kit.py`
 - **_make()** (7 connections) — `tools/blender/twinema_design_kit.py`
 - **summary()** (7 connections) — `tools/blender/twinema_design_kit.py`
-- **add()** (6 connections) — `tools/blender/twinema_design_kit.py`
 - **elements()** (6 connections) — `tools/blender/twinema_design_kit.py`
 - **load_variant()** (6 connections) — `tools/blender/twinema_design_kit.py`
 - **rebuild_all()** (6 connections) — `tools/blender/twinema_design_kit.py`
@@ -39,8 +39,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 97 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 97 (99%)
+- INFERRED: 1 (1%)
 - AMBIGUOUS: 0 (0%)
 
 ---
