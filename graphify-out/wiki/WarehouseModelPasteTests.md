@@ -21,7 +21,7 @@
 
 ## Relationships
 
-- [WarehouseModel](WarehouseModel.md) (1 shared connections)
+- [twin/models.py](twin-models.py.md) (1 shared connections)
 
 ## Source Files
 

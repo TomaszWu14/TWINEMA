@@ -28,7 +28,7 @@
 
 ## Relationships
 
-- [layout-editor.js](layout-editor.js.md) (2 shared connections)
+- [context_processors.py](context_processors.py.md) (2 shared connections)
 
 ## Source Files
 

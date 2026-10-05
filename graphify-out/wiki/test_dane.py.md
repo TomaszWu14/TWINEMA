@@ -1,11 +1,11 @@
-# Material
+# test_dane.py
 
 > 26 nodes · cohesion 0.12
 
 ## Key Concepts
 
-- **generate()** (21 connections) — `web/twin/design_generator.py`
-- **design_generator.py** (17 connections) — `web/twin/design_generator.py`
+- **generate()** (23 connections) — `web/twin/design_generator.py`
+- **design_generator.py** (18 connections) — `web/twin/design_generator.py`
 - **test_model_edit.py** (15 connections) — `web/twin/tests/test_model_edit.py`
 - **GeneratorTests** (10 connections) — `web/twin/tests/test_design_generator.py`
 - **test_design_generator.py** (9 connections) — `web/twin/tests/test_design_generator.py`
@@ -33,14 +33,14 @@
 
 ## Relationships
 
-- [layout](layout.md) (7 shared connections)
-- [test_layout_structure.py](test_layout_structure.py.md) (5 shared connections)
-- [WarehouseModel](WarehouseModel.md) (4 shared connections)
-- [test_design_compare.py](test_design_compare.py.md) (3 shared connections)
+- [analyze](analyze.md) (7 shared connections)
+- [test_sim.py](test_sim.py.md) (5 shared connections)
+- [twin/models.py](twin-models.py.md) (4 shared connections)
+- [warehouse_compare.py](warehouse_compare.py.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
 - [segmentation.py](segmentation.py.md) (2 shared connections)
 - [design_catalog.py](design_catalog.py.md) (1 shared connections)
-- [layout-core.js](layout-core.js.md) (1 shared connections)
+- [addressing.py](addressing.py.md) (1 shared connections)
 
 ## Source Files
 
@@ -50,7 +50,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 112 (100%)
+- EXTRACTED: 115 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

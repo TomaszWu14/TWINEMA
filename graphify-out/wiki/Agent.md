@@ -28,7 +28,7 @@
 
 - [kpi_facts](kpi_facts.md) (10 shared connections)
 - [blender_scene.py](blender_scene.py.md) (4 shared connections)
-- [SimSceneTests](SimSceneTests.md) (3 shared connections)
+- [test_design_sim_scene.py](test_design_sim_scene.py.md) (3 shared connections)
 
 ## Source Files
 

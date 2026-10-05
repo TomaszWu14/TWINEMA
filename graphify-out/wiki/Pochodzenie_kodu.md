@@ -18,9 +18,9 @@
 
 - [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (4 shared connections)
 - [Scan](Scan.md) (3 shared connections)
-- [studio/models.py](studio-models.py.md) (2 shared connections)
+- [roles.py](roles.py.md) (2 shared connections)
 - [warehouse_tasks.py](warehouse_tasks.py.md) (2 shared connections)
-- [scene-builder.js](scene-builder.js.md) (2 shared connections)
+- [StudioViewTests](StudioViewTests.md) (2 shared connections)
 - [studio/views.py](studio-views.py.md) (1 shared connections)
 
 ## Source Files

@@ -1,4 +1,4 @@
-# test_design_forecast.py
+# WarehouseTask
 
 > 20 nodes · cohesion 0.20
 
@@ -27,10 +27,10 @@
 
 ## Relationships
 
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (5 shared connections)
+- [shared.py](shared.py.md) (5 shared connections)
 - [test_model_edit.py](test_model_edit.py.md) (4 shared connections)
-- [ml/services.py](ml-services.py.md) (4 shared connections)
-- [StudioViewTests](StudioViewTests.md) (4 shared connections)
+- [ml/views.py](ml-views.py.md) (4 shared connections)
+- [draft_script](draft_script.md) (4 shared connections)
 
 ## Source Files
 

@@ -160,6 +160,10 @@ S1 ✅: `masterdata` — hierarchia sztuka → karton → paleta, katalog nośni
 z wyliczonej palety, gdy puste), ręczna ABC (pierwszeństwo przed ABC z historii), flagi stref specjalnych
 (temperatura, ADR, gabaryt, wartość). Dla S3: nośność poziomów regału vs klasa wagi, ADR/temperatura vs strefy
 specjalne z E2b, kartonów/paletę z master daty zamiast średniej normy.
+S3a ✅: `scenario/sim/` — zdarzeniowa symulacja dnia na layoucie (doki z rolami z etykiet, ludzie na zmianach,
+flota z ładowaniem, pola odkładcze, cut-off kurierów), wiele przebiegów → średnia i P95, wąskie gardła
+z podpowiedzią „+N” z ponownej symulacji, zdarzenia przebiegu reprezentatywnego dla animacji (S4). S3b: pojemność
+vs stan, reguły rozmieszczenia (nośność, ADR/temperatura), tabela layout × scenariusz, eksport xlsx.
 
 ---
 

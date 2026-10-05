@@ -91,7 +91,8 @@ class ScenarioViewTests(TestCase):
     def test_save_params_and_reject_zero_norm(self):
         sc = self._create()
         data = {"name": sc.name, "description": "", "growth": 1.3, "seed": 7, "shift_h": 8, "work_days": 6,
-                "return_restock_pct": 70, **{f: getattr(sc, f) for f in Scenario.NORM_FIELDS}}
+                "return_restock_pct": 70,
+                **{f: getattr(sc, f) for f in [*Scenario.NORM_FIELDS, *Scenario.FLEET_FIELDS]}}
         self.client.post(reverse("scenario:save", args=[sc.pk]), data)
         sc.refresh_from_db()
         self.assertEqual((sc.growth, sc.seed), (1.3, 7))

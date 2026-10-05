@@ -1,4 +1,4 @@
-# FlowSceneEndpointTests
+# test_flow_player.py
 
 > 11 nodes · cohesion 0.24
 
@@ -18,7 +18,7 @@
 
 ## Relationships
 
-- [WarehouseModel](WarehouseModel.md) (2 shared connections)
+- [twin/models.py](twin-models.py.md) (2 shared connections)
 
 ## Source Files
 

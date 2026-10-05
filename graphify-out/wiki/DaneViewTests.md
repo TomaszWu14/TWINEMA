@@ -20,7 +20,7 @@
 ## Relationships
 
 - [design_catalog.py](design_catalog.py.md) (13 shared connections)
-- [scenario/models.py](scenario-models.py.md) (1 shared connections)
+- [day_demand](day_demand.md) (1 shared connections)
 
 ## Source Files
 

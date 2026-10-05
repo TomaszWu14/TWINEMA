@@ -1,4 +1,4 @@
-# test_container_inbound.py
+# parse_bay_numbers
 
 > 11 nodes · cohesion 0.27
 
@@ -20,7 +20,7 @@
 
 - [scenario/views.py](scenario-views.py.md) (4 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
-- [layout-panels.js](layout-panels.js.md) (1 shared connections)
+- [layout-editor.js](layout-editor.js.md) (1 shared connections)
 
 ## Source Files
 
