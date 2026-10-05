@@ -120,7 +120,7 @@ def generate(**overrides):
     f += [_feature("station", f"Paletyzacja {i + 1}", DOCK_D_M + 2, y_in + i * DOCK_PITCH_M, 4, DOCK_W_M)
           for i in range(p["container_docks"])]
     f += _docks("dock", "Dok paletowy", p["pallet_in_docks"], 0, y_in + p["container_docks"] * DOCK_PITCH_M)
-    f.append(_feature("block_zone", "Bufor przyjęć", 13, WALL_M, INBOUND_BAND_M - 14, D - 2 * WALL_M))
+    f.append(_feature("staging", "Bufor przyjęć", 13, WALL_M, INBOUND_BAND_M - 14, D - 2 * WALL_M))
     f.append(_feature("corridor", "Przejazd AGV — przyjęcia", INBOUND_BAND_M, 0, TRANSFER_M, D))
     f.append(_feature("corridor", "Przejazd — wydania", x_vna + length, 0, TRANSFER_M, D))
     # Strefa K1: pakowanie paczek i owijarki pod blokiem półek
@@ -136,7 +136,7 @@ def generate(**overrides):
     f += _docks("gate", "Brama busów (najazd, poziom 0)", p["van_gates"], x_out, y_out + p["out_docks"] * DOCK_PITCH_M)
     f += _docks("dock", "Dok paczek → kontener (przenośnik teleskopowy)", p["parcel_docks"], x_out,
                 y_out + (p["out_docks"] + p["van_gates"]) * DOCK_PITCH_M)
-    f.append(_feature("block_zone", "Bufor wydań", W - OUTBOUND_BAND_M, WALL_M, OUTBOUND_BAND_M - DOCK_D_M - 1,
+    f.append(_feature("staging", "Bufor wydań", W - OUTBOUND_BAND_M, WALL_M, OUTBOUND_BAND_M - DOCK_D_M - 1,
                       D - 2 * WALL_M))
 
     summary = {

@@ -188,7 +188,7 @@ def _build_rack(r, coll, colors=(RACK_UPRIGHT, RACK_BEAM)):
 
 
 def _build_feature(f, coll):
-    flat = f["kind"] in ("corridor", "block_zone", "returns", "other")
+    flat = f["kind"] in ("corridor", "block_zone", "staging", "returns", "other")
     h = 0.02 if flat else (0.4 if f["kind"] in ("dock", "gate") else 1.0)
     w, d = f.get("width") or 1, f.get("depth") or 1
     me = _box_mesh(f"element {f.get('label')}", [(w / 2, -d / 2, h / 2, w, d, h, 0)])
