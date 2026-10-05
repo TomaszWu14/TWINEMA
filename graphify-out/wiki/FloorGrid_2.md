@@ -2,7 +2,7 @@
 
 > God node · 20 connections · `web/twin/blender_route.py`
 
-**Community:** [load_groups](load_groups.md)
+**Community:** [test_outbound.py](test_outbound.py.md)
 
 ## Connections by Relation
 

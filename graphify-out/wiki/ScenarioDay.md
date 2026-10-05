@@ -1,4 +1,4 @@
-# test_ewm_detect.py
+# ScenarioDay
 
 > 8 nodes · cohesion 0.36
 

@@ -1,4 +1,4 @@
-# test_design_hub.py
+# DesignHubTests
 
 > 5 nodes · cohesion 0.40
 
@@ -12,7 +12,7 @@
 
 ## Relationships
 
-- [shared.py](shared.py.md) (1 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (1 shared connections)
 - [studio/views.py](studio-views.py.md) (1 shared connections)
 
 ## Source Files
