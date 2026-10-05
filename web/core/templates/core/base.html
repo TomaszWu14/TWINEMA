@@ -19,20 +19,10 @@
       <span class="brand__word">{% include "core/_wordmark.html" %}</span>
     </a>
     {% if user.is_authenticated %}
-      {% with rm=request.resolver_match %}
       <nav class="topbar__nav" aria-label="Moduły">
-        <a href="{% url 'twin:design_hub' %}"{% if rm.url_name == 'design_hub' %} class="is-active" aria-current="page"{% endif %}>Projektowanie</a>
-        <a href="{% url 'scenario:list' %}"{% if rm.app_name == 'scenario' and 'showcase' not in rm.url_name %} class="is-active"{% endif %}>Scenariusze</a>
-        <a href="{% url 'scenario:showcase_list' %}"{% if 'showcase' in rm.url_name %} class="is-active"{% endif %}>Prezentacje</a>
-        <a href="{% url 'equipment:list' %}"{% if rm.app_name == 'equipment' %} class="is-active"{% endif %}>Sprzęt</a>
-        <a href="{% url 'twin:warehouse_model_list' %}"{% if rm.app_name == 'twin' and 'warehouse_' in rm.url_name or 'bay_template' in rm.url_name %} class="is-active"{% endif %}>Modele hal</a>
-        <a href="{% url 'masterdata:home' %}"{% if rm.app_name == 'masterdata' %} class="is-active"{% endif %}>Dane</a>
-        <a href="{% url 'ml:home' %}"{% if rm.app_name == 'ml' %} class="is-active"{% endif %}>ML</a>
-        <a href="{% url 'render:jobs' %}"{% if rm.app_name == 'render' %} class="is-active"{% endif %}>Render</a>
-        <a href="{% url 'studio:list' %}"{% if rm.app_name == 'studio' %} class="is-active"{% endif %}>Studio</a>
-        <a href="{% url 'twin:ewm_tasks_list' %}"{% if 'ewm_tasks' in rm.url_name %} class="is-active"{% endif %}>Zadania i symulacja</a>
+        {% for m in nav_modules %}<a href="{{ m.url }}"{% if m.active %} class="is-active" aria-current="page"{% endif %}>{{ m.name }}</a>
+        {% endfor %}
       </nav>
-      {% endwith %}
       <form method="post" action="{% url 'core:logout' %}">{% csrf_token %}
         <button class="btn btn-ghost btn-sm" type="submit">Wyloguj ({{ user.get_username }})</button>
       </form>

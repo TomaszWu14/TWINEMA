@@ -213,6 +213,7 @@
     {% endif %}
     <p class="text-muted text-sm" id="st-live" role="status" aria-live="polite" style="margin:0"
        data-busy="{{ busy|yesno:'1,0' }}" data-status-url="{% url 'studio:status_json' p.pk %}"></p>
+    <button type="button" class="btn btn-secondary btn-sm" id="st-refresh" hidden>Odśwież</button>
 
     <div class="card"><div class="card-body">
       <h2 class="st-sec">Fakty z modelu</h2>
@@ -231,10 +232,11 @@
 (function () {
   var live = document.getElementById('st-live');
   if (!live || live.dataset.busy !== '1') return;
-  var last = null;
+  var last = null, btn = document.getElementById('st-refresh');
+  btn.addEventListener('click', function () { location.reload(); });
   function poll() {
     fetch(live.dataset.statusUrl, {credentials: 'same-origin'}).then(function (r) { return r.json(); }).then(function (d) {
-      if (last !== null && d.state !== last) { live.textContent = 'Stan renderu lub montażu się zmienił — odświeżam…'; location.reload(); return; }
+      if (last !== null && d.state !== last) { live.textContent = 'Stan renderu lub montażu się zmienił.'; btn.hidden = false; return; }
       last = d.state;
       if (d.active) setTimeout(poll, 8000);
     }).catch(function () { setTimeout(poll, 15000); });
@@ -250,7 +252,7 @@
     var urls = btn.dataset.urls.trim().split(/\s+/), i = 0;
     btn.disabled = true; bar.hidden = false; bar.max = urls.length;
     (function next() {
-      if (i >= urls.length) { live.textContent = 'Lektor nagrany — odświeżam…'; location.reload(); return; }
+      if (i >= urls.length) { live.textContent = 'Lektor nagrany.'; document.getElementById('st-refresh').hidden = false; return; }
       live.textContent = 'Nagrywam kwestię ' + (i + 1) + ' z ' + urls.length + '…';
       fetch(urls[i], {method: 'POST', credentials: 'same-origin', headers: {'X-CSRFToken': csrf}})
         .then(function (r) { return r.json(); })

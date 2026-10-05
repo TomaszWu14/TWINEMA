@@ -34,7 +34,7 @@
 </div>
 
 {% if pending %}
-{# UX-004 / WCAG 2.2.1: bez meta-refresh — fetch statusu co 5 s, komunikat w aria-live, jedno przeładowanie po końcu #}
+{# UX-004 / WCAG 2.2.1: bez meta-refresh — fetch statusu co 5 s, komunikat w aria-live, po końcu przycisk „Odśwież” (R4: bez automatycznego przeładowania) #}
 <div class="alert alert-info" id="wt-progress" data-status-url="{% url 'twin:ewm_tasks_status' batch.pk %}"
      style="margin-bottom:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
   <div style="flex:1 1 320px">
@@ -43,6 +43,7 @@
     <div id="wt-progress-meta" class="text-muted text-sm"></div>
   </div>
   <button type="button" id="wt-progress-toggle" class="btn btn-secondary">Wstrzymaj odświeżanie</button>
+  <button type="button" id="wt-refresh" class="btn btn-primary" hidden>Odśwież</button>
 </div>
 {% elif stale %}
 <div class="alert alert-error" style="margin-bottom:16px">Import nie skończył się (serwer został zrestartowany w trakcie). Usuń ten import i wgraj plik ponownie.</div>
@@ -123,10 +124,12 @@
         meta.textContent = 'Status: ' + d.status_display + ' · sprawdzono ' + new Date().toLocaleTimeString('pl-PL');
         if (d.pending) return;
         // koniec (albo import wisi) — jedno przeładowanie, żeby pokazać statystyki i raport
-        stop(d.status === 'done' ? 'Import zakończony — wczytuję wyniki…'
-          : d.stale ? 'Import nie skończył się — wczytuję szczegóły…'
-          : 'Import zakończył się błędem — wczytuję szczegóły…');
-        setTimeout(function () { location.reload(); }, 1500);
+        stop(d.status === 'done' ? 'Import zakończony — odśwież, żeby zobaczyć wyniki.'
+          : d.stale ? 'Import nie skończył się — odśwież, żeby zobaczyć szczegóły.'
+          : 'Import zakończył się błędem — odśwież, żeby zobaczyć szczegóły.');
+        var rb = document.getElementById('wt-refresh');
+        rb.hidden = false;
+        rb.addEventListener('click', function () { location.reload(); });
       })
       .catch(function () {
         if (++fails >= MAX_FAILS) stop('Nie udało się sprawdzić statusu importu — odśwież stronę ręcznie.');

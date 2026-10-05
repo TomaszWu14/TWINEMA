@@ -19,6 +19,7 @@ urlpatterns = [
     path("scenariusze/symulacja/<int:pk>/animacja/", views_play.run_play, name="run_play"),
     path("scenariusze/", views.scenario_list, name="list"),
     path("scenariusze/nowy/", views.scenario_create, name="create"),
+    path("scenariusze/demo/", views.scenario_demo, name="demo"),
     path("scenariusze/<int:pk>/", views.scenario_detail, name="detail"),
     path("scenariusze/<int:pk>/parametry/", views.scenario_save, name="save"),
     path("scenariusze/<int:pk>/przyjecia/<str:kind>/", views.day_save, name="day_save"),

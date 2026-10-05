@@ -79,7 +79,7 @@ def scenario_simulate(request, pk):
     sc = get_object_or_404(Scenario, pk=pk)
     form = SimForm(request.POST)
     if not form.is_valid():
-        messages.error(request, "Wybierz model hali i liczbę przebiegów (1–30).")
+        messages.error(request, f"Wybierz model hali i liczbę przebiegów (1–{services.MAX_RUNS}).")
         return redirect("scenario:detail", pk=pk)
     sc.ensure_days(with_defaults=False)
     kinds = [k for k, _ in ScenarioDay.KIND_CHOICES] if form.cleaned_data["day"] == "both" \

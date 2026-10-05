@@ -212,3 +212,46 @@ class ScenarioViewTests(TestCase):
         self.assertEqual(self.client.post(reverse("scenario:shifts_save", args=[sc.pk])).status_code, 403)
         self.assertEqual(self.client.post(reverse("scenario:outbound_save", args=[sc.pk, "typical"])).status_code,
                          403)
+
+
+class R4FlowTests(TestCase):
+    """R4: „Wczytaj demo” zamiast manage.py, CTA model hali → scenariusz z wybraną halą, pusty stan bez hali."""
+
+    def setUp(self):
+        from django.contrib.auth.models import User
+        self.client.force_login(User.objects.create_superuser("a", "a@x.pl", "x"))
+
+    def test_empty_list_offers_demo_button_and_demo_loads(self):
+        from django.urls import reverse
+        r = self.client.get(reverse("scenario:list"))
+        self.assertContains(r, "Wczytaj demo")
+        self.assertNotContains(r, "manage.py")
+        r = self.client.post(reverse("scenario:demo"))
+        self.assertEqual(r.status_code, 302)
+        self.assertContains(self.client.get(r["Location"]), "Uruchom symulację")
+
+    def test_detail_without_halls_links_to_generator(self):
+        from django.urls import reverse
+
+        from scenario.models import Scenario
+        self.client.post(reverse("scenario:create"), {"name": "S"})
+        r = self.client.get(reverse("scenario:detail", args=[Scenario.objects.get().pk]))
+        self.assertContains(r, reverse("twin:warehouse_model_generator"))
+        self.assertNotContains(r, "Uruchom symulację")
+
+    def test_model_cta_preselects_hall(self):
+        from django.urls import reverse
+
+        from scenario.models import Scenario
+        from twin.models import WarehouseModel
+        a = WarehouseModel.objects.create(name="A", floor_width_m=40, floor_depth_m=30)
+        b = WarehouseModel.objects.create(name="B", floor_width_m=40, floor_depth_m=30)
+        self.assertContains(self.client.get(reverse("twin:warehouse_model_view", args=[b.pk])),
+                            f'{reverse("scenario:list")}?model={b.pk}')
+        self.client.post(reverse("scenario:create"), {"name": "S"})
+        sc = Scenario.objects.get()
+        lst = self.client.get(reverse("scenario:list"), {"model": b.pk})
+        self.assertContains(lst, f'{reverse("scenario:detail", args=[sc.pk])}?model={b.pk}')
+        r = self.client.get(reverse("scenario:detail", args=[sc.pk]), {"model": b.pk})
+        self.assertEqual(r.context["sim_form"].initial["model"], b.pk)
+        self.assertNotEqual(a.pk, b.pk)

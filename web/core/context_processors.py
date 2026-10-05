@@ -17,3 +17,16 @@ def user_roles(request):
     names = set(user.groups.values_list("name", flat=True))
     is_admin = GROUP_ADMIN in names
     return {"is_admin": is_admin, "is_designer": is_admin or GROUP_DESIGNER in names}
+
+
+def navigation(request):
+    """Nawigacja w nagłówku z `core.views.MODULES` (te same nazwy co kafle strony głównej) + aktywna pozycja."""
+    from django.urls import reverse
+
+    from .views import MODULES, active_module
+    user = getattr(request, "user", None)
+    if not user or not user.is_authenticated:
+        return {}
+    active = active_module(getattr(request, "resolver_match", None))
+    return {"nav_modules": [{"name": m["name"], "url": reverse(m["url"]), "active": m["key"] == active}
+                            for m in MODULES]}
