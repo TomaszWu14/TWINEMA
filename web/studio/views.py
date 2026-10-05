@@ -1,21 +1,27 @@
+import hashlib
+import json
+from types import SimpleNamespace
+
 from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.core.files.base import ContentFile
 from django.db import transaction
-from django.http import FileResponse, HttpResponse, JsonResponse
+from django.http import FileResponse, Http404, HttpResponse, JsonResponse, QueryDict
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from core.roles import any_role, designer
+from render.models import RenderJob
 from twin.blender_scene import model_floor, model_racks
 from twin.design_kpi import compute_kpi, rack_to_element
 from twin.models import WarehouseModel
 from twin.shared import hall_feature_dict
+from twin.views.warehouse_blender import _scene_from_request
 
 from . import script_ai, tts
-from .models import Presentation, Shot, VoiceTrack
+from .models import RENDER_RESOLUTION, MontageJob, Presentation, Shot, VoiceTrack
 from .script import TARGET_WORDS, WORDS_PER_SECOND, kpi_facts, template_script
 from .voice import build_srt, cues, duration, offsets, words
 
@@ -85,15 +91,22 @@ def presentation_create(request):
 def presentation_detail(request, pk):
     p = get_object_or_404(Presentation.objects.select_related("model"), pk=pk)
     formset = ShotFormSet(queryset=p.shots.all()) if p.is_draft else None
-    shots = list(p.shots.select_related("voice"))
+    shots = list(p.shots.select_related("voice", "render"))
     n_words = sum(len(s.text.split()) for s in shots)
     voiced = [s for s in shots if s.voice_ok]
+    montage = p.montages.first()
     return render(request, "studio/detail.html", {
         "p": p, "formset": formset, "shots": shots, "facts": kpi_facts(model_kpi(p.model)),
         "ai_enabled": script_ai.enabled(), "claude_model": settings.CLAUDE_MODEL,
         "tts_enabled": tts.enabled(), "voice": p.effective_voice,
         "voiced_count": len(voiced), "all_voiced": bool(shots) and len(voiced) == len(shots),
         "audio_seconds": round(sum(s.voice.duration_s for s in voiced)),
+        "renders_done": sum(1 for s in shots if s.render_current and s.render.status == "done"),
+        "can_montage": montage_ready(shots), "montage": montage,
+        "montage_current": bool(montage and montage_ready(shots) and montage.input_key == montage_input_key(p, shots)),
+        "busy": any(s.render and s.render.status in ("queued", "running") for s in shots)
+        or bool(montage and montage.status in ("queued", "running")),
+        "worker_enabled": bool(settings.RENDER_WORKER_TOKEN),
         "words": n_words, "seconds": round(n_words / WORDS_PER_SECOND), "target_words": TARGET_WORDS,
         "steps": Presentation.STATUS_CHOICES,
         "step_index": [k for k, _ in Presentation.STATUS_CHOICES].index(p.status),
@@ -242,8 +255,100 @@ def subtitles(request, pk):
     if not shots or not all(s.voice_ok for s in shots):
         messages.error(request, "Napisy będą dostępne po nagraniu lektora dla wszystkich kwestii.")
         return redirect("studio:detail", pk=pk)
-    starts = offsets([s.voice.duration_s for s in shots])
-    srt = build_srt([(t, cues(words(s.voice.alignment))) for t, s in zip(starts, shots, strict=True)])
-    resp = HttpResponse(srt, content_type="application/x-subrip; charset=utf-8")
+    resp = HttpResponse(film_srt(shots), content_type="application/x-subrip; charset=utf-8")
     resp["Content-Disposition"] = f'attachment; filename="twinema_prezentacja_{p.pk}.srt"'
     return resp
+
+
+def film_srt(shots, start_s=0.0):
+    """SRT narracji; start_s = długość planszy tytułowej przy montażu."""
+    starts = offsets([s.voice.duration_s for s in shots], start_s=start_s)
+    return build_srt([(t, cues(words(s.voice.alignment))) for t, s in zip(starts, shots, strict=True)])
+
+
+def _sha(obj):
+    return hashlib.sha256(json.dumps(obj, sort_keys=True, ensure_ascii=False, default=str).encode()).hexdigest()
+
+
+@designer
+@require_POST
+def render_shots(request, pk):
+    """RenderJob z kolejki F3 dla każdego ujęcia. Cache: scena + preset + długość + rozdzielczość →
+    istniejący render (w kolejce, w toku albo gotowy) zamiast nowego."""
+    p = get_object_or_404(Presentation.objects.select_related("model"), pk=pk)
+    if p.status not in ("audio", "render", "montage", "done") or not p.all_voiced():
+        messages.error(request, "Najpierw nagraj lektora dla wszystkich kwestii.")
+        return redirect("studio:detail", pk=pk)
+    scene = _scene_from_request(SimpleNamespace(GET=QueryDict("")), p.model)
+    created = reused = 0
+    for n, shot in enumerate(p.shots.select_related("voice", "render"), start=1):
+        key = _sha([scene, shot.preset, shot.render_seconds, RENDER_RESOLUTION])
+        if shot.render_key == key and shot.render and shot.render.status != "error":
+            continue
+        twin = (Shot.objects.filter(render_key=key, render__status__in=("queued", "running", "done"))
+                .select_related("render").first())
+        if twin:
+            job, reused = twin.render, reused + 1
+        else:
+            job = RenderJob.objects.create(model=p.model, preset=shot.preset, kind="video",
+                                           resolution=RENDER_RESOLUTION, seconds=shot.render_seconds,
+                                           title=f"{p.title} — ujęcie {n}"[:200], created_by=request.user)
+            created += 1
+        shot.render, shot.render_key = job, key
+        shot.save(update_fields=["render", "render_key"])
+    if p.status == "audio":
+        p.status = "render"
+        p.save(update_fields=["status", "updated_at"])
+    messages.success(request, f"Render ujęć: {created} nowych zleceń w kolejce, {reused} z gotowych renderów."
+                     if created or reused else "Wszystkie ujęcia mają aktualne rendery.")
+    return redirect("studio:detail", pk=pk)
+
+
+def montage_input_key(p, shots):
+    return _sha([p.title, settings.APP_NAME, [(s.render_id, s.voice.key) for s in shots]])
+
+
+def montage_ready(shots):
+    return bool(shots) and all(s.render_current and s.render.status == "done" for s in shots)
+
+
+@designer
+@require_POST
+def montage_create(request, pk):
+    p = get_object_or_404(Presentation, pk=pk)
+    shots = list(p.shots.select_related("voice", "render"))
+    if not montage_ready(shots):
+        messages.error(request, "Montaż ruszy, gdy wszystkie ujęcia mają gotowy, aktualny render.")
+        return redirect("studio:detail", pk=pk)
+    key = montage_input_key(p, shots)
+    job = p.montages.filter(input_key=key, status__in=("queued", "running", "done")).first()
+    if job is None:
+        job = MontageJob.objects.create(presentation=p, input_key=key)
+        messages.success(request, "Montaż w kolejce — worker z ffmpeg pobierze go przy następnym odpytaniu.")
+    else:
+        messages.info(request, "Ten film jest już zmontowany albo w trakcie — bez ponownego montażu.")
+    p.status = "done" if job.status == "done" else "montage"
+    p.save(update_fields=["status", "updated_at"])
+    return redirect("studio:detail", pk=pk)
+
+
+@any_role
+def film_file(request, pk):
+    job = get_object_or_404(MontageJob, pk=pk, status="done")
+    if not job.result:
+        raise Http404
+    resp = FileResponse(job.result.open("rb"), content_type="video/mp4")
+    disp = "attachment" if request.GET.get("pobierz") else "inline"
+    resp["Content-Disposition"] = f'{disp}; filename="twinema_film_{job.presentation_id}.mp4"'
+    resp["X-Content-Type-Options"] = "nosniff"
+    return resp
+
+
+@any_role
+def status_json(request, pk):
+    """Stan renderów i montażu — strona odpytuje i przeładowuje się, gdy coś się zmieni."""
+    p = get_object_or_404(Presentation, pk=pk)
+    renders = list(p.shots.exclude(render=None).values_list("render__status", flat=True))
+    montage = p.montages.values_list("status", flat=True).first()
+    return JsonResponse({"state": f"{p.status}|{','.join(renders)}|{montage or ''}",
+                         "active": "queued" in renders or "running" in renders or montage in ("queued", "running")})

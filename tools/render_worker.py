@@ -2,7 +2,8 @@
 
 Odpytuje aplikację po HTTPS (wychodzące połączenia — serwer nie musi otwierać żadnych portów),
 przejmuje zlecenie, pobiera scenę, renderuje `tools/blender/twinema_render.py` w Blenderze bez okna
-i odsyła PNG/MP4. Tylko biblioteka standardowa Pythona.
+i odsyła PNG/MP4. Gdy kolejka renderów pusta, a jest ffmpeg — montuje filmy ze Studia
+(`twinema_montage.py`). Tylko biblioteka standardowa Pythona.
 
   set TWINEMA_URL=https://twinema.twapp.pl
   set TWINEMA_WORKER_TOKEN=<RENDER_WORKER_TOKEN z serwera>
@@ -23,6 +24,8 @@ import urllib.request
 import uuid
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, HERE)
+import twinema_montage as montage  # noqa: E402  (obok skryptu, uruchamianego jako plik)
 RENDER_SCRIPT = os.path.join(HERE, "blender", "twinema_render.py")
 TIMEOUT_S = 60 * 60                     # twardy limit jednego renderu
 
@@ -50,8 +53,8 @@ class Api:
         with urllib.request.urlopen(req, timeout=300) as resp:
             return resp.status, resp.read()
 
-    def claim(self):
-        status, body = self._req(f"{self.base}/api/render/claim/", data=f"worker={self.name}".encode(),
+    def claim(self, path="/api/render/claim/"):
+        status, body = self._req(f"{self.base}{path}", data=f"worker={self.name}".encode(),
                                  headers={"Content-Type": "application/x-www-form-urlencoded"})
         return json.loads(body) if status == 200 else None
 
@@ -104,6 +107,36 @@ def run_job(api, job, blender, engine, samples):
         return True
 
 
+def run_montage(api, job, ffmpeg, font):
+    """Montaż filmu: pobierz ujęcia i nagrania, wykonaj komendy z twinema_montage.plan, wyślij MP4."""
+    print(f"[{time.strftime('%H:%M:%S')}] Montaż {job['id']}: {job['title']} ({len(job['shots'])} ujęć)")
+    with tempfile.TemporaryDirectory(prefix="twinema_film_") as tmp:
+        t0, log = time.time(), []
+        try:
+            for i, s in enumerate(job["shots"]):
+                for url, name in ((s["clip_url"], f"clip_{i}.mp4"), (s["audio_url"], f"audio_{i}.mp3")):
+                    with open(os.path.join(tmp, name), "wb") as fh:
+                        fh.write(api.get(url, job["claim"]))
+            files, cmds, final = montage.plan(job, tmp, ffmpeg, font)
+            for path, text in files.items():
+                with open(path, "w", encoding="utf-8") as fh:
+                    fh.write(text)
+            for cmd in cmds:
+                proc = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace",
+                                      timeout=TIMEOUT_S)
+                log.append(" ".join(cmd[-1:]) + ": " + (proc.stderr or "ok")[-1500:])
+                if proc.returncode != 0:
+                    raise RuntimeError(f"ffmpeg zakończył się kodem {proc.returncode}")
+        except (RuntimeError, OSError, subprocess.TimeoutExpired, urllib.error.URLError) as exc:
+            print(f"  ✗ montaż nieudany: {exc}")
+            api.post_form(job["fail_url"], job["claim"], {"error": f"{exc}\n" + "\n".join(log)[-8000:]})
+            return False
+        api.post_form(job["result_url"], job["claim"], {"log": f"montaż {round(time.time() - t0)} s"},
+                      final, "video/mp4")
+        print(f"  ✓ film gotowy ({os.path.getsize(final) // 1024} KB)")
+        return True
+
+
 def main():
     p = argparse.ArgumentParser(description="Worker renderów TWINEMA (Blender bez okna)")
     p.add_argument("--url", default=os.environ.get("TWINEMA_URL", "http://localhost:8090"))
@@ -113,17 +146,26 @@ def main():
     p.add_argument("--samples", type=int, default=16)
     p.add_argument("--poll", type=int, default=10, help="co ile sekund pytać o zlecenia")
     p.add_argument("--once", action="store_true", help="jedno zlecenie (albo brak) i koniec")
+    p.add_argument("--ffmpeg", default="", help="ścieżka ffmpeg do montażu (inaczej FFMPEG_BIN / PATH / winget)")
+    p.add_argument("--font", default="", help="font TTF plansz z polskimi znakami (inaczej TWINEMA_FONT / systemowy)")
     a = p.parse_args()
     if len(a.token) < 32:
         sys.exit("Brak tokenu: ustaw TWINEMA_WORKER_TOKEN (ten sam co RENDER_WORKER_TOKEN na serwerze).")
     blender = find_blender(a.blender)
+    ffmpeg, font = montage.find_ffmpeg(a.ffmpeg), montage.find_font(a.font)
     api = Api(a.url, a.token, platform.node()[:40] or "worker")
     print(f"TWINEMA worker → {a.url} | Blender: {blender} | silnik: {a.engine}")
+    if not (ffmpeg and font):
+        print("Montaż filmów wyłączony — brak ffmpeg (FFMPEG_BIN / winget install Gyan.FFmpeg) "
+              "albo fontu (TWINEMA_FONT). Rendery działają normalnie.")
     while True:
         try:
             job = api.claim()
             if job:
                 run_job(api, job, blender, a.engine, a.samples)
+            elif ffmpeg and font and (job := api.claim("/api/studio/montage/claim/")):
+                run_montage(api, job, ffmpeg, font)
+            if job:
                 if a.once:
                     return
                 continue                       # od razu następne zlecenie

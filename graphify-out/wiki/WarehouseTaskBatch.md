@@ -2,7 +2,7 @@
 
 > God node · 22 connections · `web/twin/models_tasks.py`
 
-**Community:** [warehouse_design_sim.py](warehouse_design_sim.py.md)
+**Community:** [shared.py](shared.py.md)
 
 ## Connections by Relation
 
@@ -12,10 +12,10 @@
 
 ### imports
 - [warehouse_blender.py](warehouse_blender.py.md) `EXTRACTED`
-- [warehouse_design_sim.py](warehouse_design_sim.py.md) `EXTRACTED`
+- warehouse_design_sim.py `EXTRACTED`
 - [warehouse_tasks.py](warehouse_tasks.py.md) `EXTRACTED`
 - test_design_sim.py `EXTRACTED`
-- warehouse_compare.py `EXTRACTED`
+- [warehouse_compare.py](warehouse_compare.py.md) `EXTRACTED`
 - warehouse_calibration.py `EXTRACTED`
 - ewm_tasks_import.py `EXTRACTED`
 - ml/views.py `EXTRACTED`
@@ -29,10 +29,10 @@
 - .__str__() `EXTRACTED`
 
 ### uses
-- [SimulationViewTests](SimulationViewTests.md) `INFERRED`
+- SimulationViewTests `INFERRED`
 - SimulationTests `INFERRED`
-- [ForecastTests](ForecastTests.md) `INFERRED`
-- [ForecastViewTests](ForecastViewTests.md) `INFERRED`
+- ForecastTests `INFERRED`
+- ForecastViewTests `INFERRED`
 - [DesignHubTests](DesignHubTests.md) `INFERRED`
 - DemoFileTests `INFERRED`
 

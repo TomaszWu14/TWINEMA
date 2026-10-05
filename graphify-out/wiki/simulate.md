@@ -1,43 +1,62 @@
 # simulate
 
-> 20 nodes · cohesion 0.12
+> 31 nodes · cohesion 0.12
 
 ## Key Concepts
 
-- **ParseTests** (8 connections) — `web/masterdata/tests/test_importers.py`
-- **test_importers.py** (7 connections) — `web/masterdata/tests/test_importers.py`
-- **MapColumnsTests** (5 connections) — `web/masterdata/tests/test_importers.py`
-- **ReadTableTests** (5 connections) — `web/masterdata/tests/test_importers.py`
-- **SimpleTestCase** (3 connections)
-- **.test_template_headers_map_back_to_every_field()** (2 connections) — `web/masterdata/tests/test_importers.py`
-- **.test_xlsx_skips_blank_rows()** (2 connections) — `web/masterdata/tests/test_importers.py`
-- **_xlsx()** (2 connections) — `web/masterdata/tests/test_importers.py`
-- **.test_one_column_feeds_one_field()** (1 connections) — `web/masterdata/tests/test_importers.py`
-- **.test_polish_and_wms_headers_any_order()** (1 connections) — `web/masterdata/tests/test_importers.py`
-- **.test_location_level_from_column_or_code()** (1 connections) — `web/masterdata/tests/test_importers.py`
-- **.test_material_numbers_with_comma_and_defaults()** (1 connections) — `web/masterdata/tests/test_importers.py`
-- **.test_material_rejects_with_reason()** (1 connections) — `web/masterdata/tests/test_importers.py`
-- **.test_numeric_codes_from_excel_lose_float_suffix()** (1 connections) — `web/masterdata/tests/test_importers.py`
-- **.test_parse_rows_counts_and_caps_sample()** (1 connections) — `web/masterdata/tests/test_importers.py`
-- **.test_stock_dates()** (1 connections) — `web/masterdata/tests/test_importers.py`
-- **Parser plików modułu Dane — czysty Python (bez bazy).** (1 connections) — `web/masterdata/tests/test_importers.py`
-- **Wzór pliku z ekranu Dane musi się importować bez ręcznych poprawek.** (1 connections) — `web/masterdata/tests/test_importers.py`
-- **.test_bad_files()** (1 connections) — `web/masterdata/tests/test_importers.py`
-- **.test_csv_semicolon_and_comma_and_bom()** (1 connections) — `web/masterdata/tests/test_importers.py`
+- **simulate()** (29 connections) — `web/twin/design_sim.py`
+- **design_sim.py** (28 connections) — `web/twin/design_sim.py`
+- **test_design_sim.py** (21 connections) — `web/twin/tests/test_design_sim.py`
+- **test_design_sim_scene.py** (16 connections) — `web/twin/tests/test_design_sim_scene.py`
+- **_tasks()** (14 connections) — `web/twin/tests/test_design_sim.py`
+- **SimulationTests** (12 connections) — `web/twin/tests/test_design_sim.py`
+- **scale_tasks()** (5 connections) — `web/twin/design_sim.py`
+- **_Agent** (4 connections) — `web/twin/design_sim.py`
+- **_trace()** (4 connections) — `web/twin/tests/test_design_sim_scene.py`
+- **.test_multiplier_scales_task_count()** (4 connections) — `web/twin/tests/test_design_sim.py`
+- **.go()** (3 connections) — `web/twin/design_sim.py`
+- **_kpi()** (3 connections) — `web/twin/design_sim.py`
+- **_tours()** (3 connections) — `web/twin/design_sim.py`
+- **_work()** (3 connections) — `web/twin/design_sim.py`
+- **.test_calibration_slows_down_the_new_hall()** (3 connections) — `web/twin/tests/test_design_calibration.py`
+- **.test_agents_busy_within_physical_limits()** (3 connections) — `web/twin/tests/test_design_sim.py`
+- **.test_bigger_fleet_waits_less()** (3 connections) — `web/twin/tests/test_design_sim.py`
+- **.test_every_task_is_served()** (3 connections) — `web/twin/tests/test_design_sim.py`
+- **.test_hall_without_vna_is_not_simulated()** (3 connections) — `web/twin/tests/test_design_sim.py`
+- **.test_suggested_fleet_is_not_overloaded()** (3 connections) — `web/twin/tests/test_design_sim.py`
+- **_p95()** (2 connections) — `web/twin/design_sim.py`
+- **.__init__()** (1 connections) — `web/twin/design_sim.py`
+- **Symulacja dnia projektowego na wariancie hali (plan 2026-10-02, etap 3a) —…** (1 connections) — `web/twin/design_sim.py`
+- **Mnożnik wzrostu: > 1 dokłada losowe kopie zadań (czas ±15 min), < 1 losowo…** (1 connections) — `web/twin/design_sim.py`
+- **Linie kompletacji → objazdy: per dokument (bez dokumentu — pojedynczo), max 20…** (1 connections) — `web/twin/design_sim.py`
+- *... and 6 more nodes in this community*
 
 ## Relationships
 
-- [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
-- [ValueError](ValueError.md) (1 shared connections)
+- [RenderMontageTests](RenderMontageTests.md) (15 shared connections)
+- [shared.py](shared.py.md) (9 shared connections)
+- [test_design_sim_scene.py](test_design_sim_scene.py.md) (8 shared connections)
+- [warehouse_compare.py](warehouse_compare.py.md) (7 shared connections)
+- [script.py](script.py.md) (4 shared connections)
+- [twin/models.py](twin-models.py.md) (4 shared connections)
+- [blender_scene.py](blender_scene.py.md) (3 shared connections)
+- [generate](generate.md) (3 shared connections)
+- [test_ml.py](test_ml.py.md) (3 shared connections)
+- [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (2 shared connections)
+- [StudioViewTests](StudioViewTests.md) (2 shared connections)
+- [design_calibration.py](design_calibration.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/masterdata/tests/test_importers.py`
+- `web/twin/design_sim.py`
+- `web/twin/tests/test_design_calibration.py`
+- `web/twin/tests/test_design_sim.py`
+- `web/twin/tests/test_design_sim_scene.py`
 
 ## Audit Trail
 
-- EXTRACTED: 46 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 176 (98%)
+- INFERRED: 3 (2%)
 - AMBIGUOUS: 0 (0%)
 
 ---

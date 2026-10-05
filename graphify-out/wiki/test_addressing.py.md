@@ -27,9 +27,9 @@
 
 ## Relationships
 
-- [warehouse_model.py](warehouse_model.py.md) (10 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (10 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
-- [design_day.py](design_day.py.md) (1 shared connections)
+- [load_groups](load_groups.md) (1 shared connections)
 
 ## Source Files
 

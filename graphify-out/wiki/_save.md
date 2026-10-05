@@ -21,11 +21,11 @@
 ## Relationships
 
 - [generate](generate.md) (5 shared connections)
-- [test_design_compare.py](test_design_compare.py.md) (2 shared connections)
-- [warehouse_design_sim.py](warehouse_design_sim.py.md) (2 shared connections)
+- [warehouse_compare.py](warehouse_compare.py.md) (2 shared connections)
+- [shared.py](shared.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [ForecastTests](ForecastTests.md) (1 shared connections)
-- [design_sim.py](design_sim.py.md) (1 shared connections)
+- [test_ml.py](test_ml.py.md) (1 shared connections)
+- [simulate](simulate.md) (1 shared connections)
 - [StudioViewTests](StudioViewTests.md) (1 shared connections)
 - [segmentation.py](segmentation.py.md) (1 shared connections)
 

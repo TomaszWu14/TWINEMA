@@ -12,10 +12,10 @@ Plik dla kolejnej sesji (człowieka albo AI). Aktualny na 2026-10-05, po scaleni
 | F3 | `render` | #4 | kolejka ujęć, API workera (token + jednorazowy claim), `tools/render_worker.py`, presety kamery w `tools/blender/twinema_render.py` (Blender 5.2 sprawdzony) |
 | F4 | `ml` | #5 | prognoza (SES/Holt/Holt tłumiony/Holt-Winters vs trend log, wybór po MAPE), segmentacja k-means, `ModelRun` |
 | F5a | `studio` | #8 | `Presentation` + `Shot`, szkic kwestii z szablonu (KPI modelu) albo z Claude (`ANTHROPIC_API_KEY`, `CLAUDE_MODEL`, domyślnie `claude-opus-5`), edycja tylko w szkicu, akceptacja tekstu |
-| F5b | `studio` | — | lektor ElevenLabs (`ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`, `ELEVENLABS_MODEL`), nagrywanie kwestia po kwestii, cache `VoiceTrack` po hashu (tekst+głos+model), napisy SRT z wyrównania znaków |
+| F5b | `studio` | #9 | lektor ElevenLabs (`ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`, `ELEVENLABS_MODEL`), nagrywanie kwestia po kwestii, cache `VoiceTrack` po hashu (tekst+głos+model), napisy SRT z wyrównania znaków |
+| F5c | `studio` | — | ujęcia jako `RenderJob` z kolejki F3 (Full HD, długość = nagranie + 0,5 s, cache po hashu scena+preset+długość), `MontageJob` + API workera (`/api/studio/montage/…`, ten sam token), `tools/twinema_montage.py` (plansze, tpad/apad, concat, napisy mov_text) — montuje `render_worker.py`, gdy ma ffmpeg |
 
-F5 dalej: (c) ujęcia z kolejki F3 + montaż ffmpeg w workerze na PC → MP4,
-(d) deck PDF i szlif. Do Claude idą wyłącznie zdania z `studio/script.kpi_facts` (zagregowane liczby, bez nazw).
+F5 dalej: (d) deck PDF i szlif. Do Claude idą wyłącznie zdania z `studio/script.kpi_facts` (zagregowane liczby, bez nazw).
 
 Testy: 332 zielone (`cd web && python manage.py test`, env: `DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*'`).
 

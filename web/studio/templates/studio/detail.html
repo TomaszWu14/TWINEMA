@@ -26,6 +26,10 @@
   .st-actions form { margin:0; }
   .st-sum { font-size:var(--fs-sm); color:var(--fg-muted); margin:12px 0 0; }
   .st-audio { width:100%; height:36px; margin-top:8px; }
+  .st-renders { list-style:none; padding:0; margin:10px 0 0; display:grid; gap:6px; font-size:var(--fs-sm); }
+  .st-film { width:100%; aspect-ratio:16/9; background:#000; border-radius:var(--radius); display:block; }
+  .st-log { font:var(--fs-xs) var(--font-mono); white-space:pre-wrap; max-height:140px; overflow:auto;
+            color:var(--danger-fg); margin:0 0 10px; }
   .st-progress { width:100%; height:8px; accent-color:var(--primary); margin:10px 0 0; }
 </style>
 {% endblock %}
@@ -131,7 +135,53 @@
         <div class="st-actions" style="margin-top:10px"><a class="btn btn-ghost btn-sm" href="{% url 'studio:subtitles' p.pk %}">Pobierz napisy (SRT)</a></div>
       {% endif %}
     </div></div>
+
+    {% if all_voiced %}
+    <div class="card"><div class="card-body">
+      <h2 class="st-sec">Render ujęć</h2>
+      <p class="text-sm" style="margin:0">Gotowe {{ renders_done }} z {{ shots|length }} ujęć (Full HD, długość = nagranie + 0,5 s).</p>
+      <ul class="st-renders">
+        {% for s in shots %}
+        <li>{{ forloop.counter }}. {{ s.get_preset_display }} —
+          {% if not s.render %}<span class="badge badge-gray">bez renderu</span>
+          {% elif not s.render_current %}<span class="badge badge-gray">nieaktualny</span>
+          {% else %}<span class="badge {% if s.render.status == 'done' %}badge-green{% elif s.render.status == 'error' %}badge-red{% elif s.render.status == 'running' %}badge-yellow{% else %}badge-gray{% endif %}">{{ s.render.get_status_display }}</span>{% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% if is_designer and renders_done < shots|length %}
+      <form method="post" action="{% url 'studio:render_shots' p.pk %}" style="margin-top:10px">{% csrf_token %}
+        <button class="btn btn-primary" type="submit">Renderuj ujęcia</button></form>
+      <p class="text-muted text-sm" style="margin:6px 0 0">Ujęcia z tą samą sceną, kamerą i długością biorą gotowy render. Renderuje worker z Blenderem{% if not worker_enabled %} — API workera wyłączone (<code>RENDER_WORKER_TOKEN</code>){% endif %}.</p>
+      {% endif %}
+    </div></div>
+
+    <div class="card"><div class="card-body">
+      <h2 class="st-sec">Montaż</h2>
+      {% if montage and montage.status == "done" and montage_current %}
+        <video class="st-film" controls preload="metadata" src="{% url 'studio:film_file' montage.pk %}"></video>
+        <div class="st-actions" style="margin-top:10px">
+          <a class="btn btn-primary btn-sm" href="{% url 'studio:film_file' montage.pk %}?pobierz=1">Pobierz MP4</a>
+          <span class="text-muted text-sm">Napisy w pliku jako osobna ścieżka (włącz w odtwarzaczu).</span>
+        </div>
+      {% elif montage and montage_current and montage.status != "error" %}
+        <p class="text-sm" style="margin:0"><span class="badge badge-yellow">{{ montage.get_status_display }}</span>
+          {% if montage.status == "running" %}Montuje worker „{{ montage.worker }}”.{% else %}Czeka na worker z ffmpeg.{% endif %}</p>
+      {% else %}
+        {% if montage.status == "error" and montage_current %}<div class="st-log">{{ montage.log|truncatechars:600 }}</div>{% endif %}
+        {% if can_montage and is_designer %}
+        <form method="post" action="{% url 'studio:montage_create' p.pk %}">{% csrf_token %}
+          <button class="btn btn-primary" type="submit">{% if montage.status == "error" and montage_current %}Zmontuj ponownie{% else %}Zmontuj film{% endif %}</button></form>
+        <p class="text-muted text-sm" style="margin:6px 0 0">Plansza tytułowa → ujęcia z lektorem → plansza końcowa; napisy SRT w pliku. Montuje worker z ffmpeg.</p>
+        {% elif not can_montage %}
+        <p class="text-sm" style="margin:0">Montaż będzie dostępny, gdy wszystkie ujęcia mają gotowy render.</p>
+        {% endif %}
+      {% endif %}
+    </div></div>
     {% endif %}
+    {% endif %}
+    <p class="text-muted text-sm" id="st-live" role="status" aria-live="polite" style="margin:0"
+       data-busy="{{ busy|yesno:'1,0' }}" data-status-url="{% url 'studio:status_json' p.pk %}"></p>
 
     <div class="card"><div class="card-body">
       <h2 class="st-sec">Fakty z modelu</h2>
@@ -147,6 +197,19 @@
 {% endblock %}
 {% block extra_scripts %}
 <script>
+(function () {
+  var live = document.getElementById('st-live');
+  if (!live || live.dataset.busy !== '1') return;
+  var last = null;
+  function poll() {
+    fetch(live.dataset.statusUrl, {credentials: 'same-origin'}).then(function (r) { return r.json(); }).then(function (d) {
+      if (last !== null && d.state !== last) { live.textContent = 'Stan renderu lub montażu się zmienił — odświeżam…'; location.reload(); return; }
+      last = d.state;
+      if (d.active) setTimeout(poll, 8000);
+    }).catch(function () { setTimeout(poll, 15000); });
+  }
+  setTimeout(poll, 8000);
+})();
 (function () {
   var btn = document.getElementById('st-voice');
   if (!btn) return;

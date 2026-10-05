@@ -12,11 +12,11 @@
 - .test_unreachable_target_falls_back_to_straight_line() `EXTRACTED`
 
 ### contains
-- blender_route.py `EXTRACTED`
+- [blender_route.py](blender_route.py.md) `EXTRACTED`
 
 ### imports
 - [blender_scene.py](blender_scene.py.md) `EXTRACTED`
-- [test_blender_export.py](test_blender_export.py.md) `EXTRACTED`
+- test_blender_export.py `EXTRACTED`
 
 ### method
 - .route() `EXTRACTED`
@@ -33,7 +33,7 @@
 - Siatka zajętości posadzki: komórka zablokowana, jeśli leży w obrysie regału.… `EXTRACTED`
 
 ### uses
-- [BlenderExportViewTests](BlenderExportViewTests.md) `INFERRED`
+- BlenderExportViewTests `INFERRED`
 - BuildSceneTests `INFERRED`
 - _Ctx `INFERRED`
 - RouteGeometryTests `INFERRED`

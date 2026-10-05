@@ -19,9 +19,9 @@
 ## Relationships
 
 - [BayTemplate](BayTemplate.md) (2 shared connections)
-- [warehouse_design_sim.py](warehouse_design_sim.py.md) (2 shared connections)
+- [shared.py](shared.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (1 shared connections)
-- [params_for](params_for.md) (1 shared connections)
+- [test_ewm_detect.py](test_ewm_detect.py.md) (1 shared connections)
 
 ## Source Files
 

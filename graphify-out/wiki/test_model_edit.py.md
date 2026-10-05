@@ -34,8 +34,8 @@
 ## Relationships
 
 - [generate](generate.md) (7 shared connections)
-- [warehouse_design_sim.py](warehouse_design_sim.py.md) (4 shared connections)
-- [test_model_geometry.py](test_model_geometry.py.md) (2 shared connections)
+- [shared.py](shared.py.md) (4 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [script.py](script.py.md) (1 shared connections)
 - [blender_scene.py](blender_scene.py.md) (1 shared connections)

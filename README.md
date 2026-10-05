@@ -17,7 +17,7 @@ w Blenderze → film z lektorem (ElevenLabs) i deck PDF.
 | Symulacja | dzień projektowy, flota, kalibracja, porównanie wariantów | F1 |
 | Prognozy i ML | Holt-Winters i spółka kontra baseline (MAPE), segmentacja materiałów k-means | F4 ✅ |
 | Render 3D | kolejka ujęć, worker Blendera na PC (HTTPS + token), presety kamery, PNG/MP4 w aplikacji | F3 ✅ |
-| Studio prezentacji | scenariusz, lektor, montaż — MP4 + PDF | F5 |
+| Studio prezentacji | scenariusz (szablon albo Claude), lektor ElevenLabs z napisami, render ujęć, montaż MP4; deck PDF w F5d | F5 |
 
 ## Uruchomienie lokalne
 
@@ -40,6 +40,10 @@ set TWINEMA_URL=https://twinema.twapp.pl
 set TWINEMA_WORKER_TOKEN=<ten sam token>
 python tools/render_worker.py            # odpytuje co 10 s, renderuje po jednym zleceniu
 ```
+Ten sam worker montuje filmy ze Studia, gdy kolejka renderów jest pusta — wymaga ffmpeg
+(`winget install Gyan.FFmpeg` albo `FFMPEG_BIN`) i fontu z polskimi znakami (domyślnie Segoe UI/Arial,
+inaczej `TWINEMA_FONT`). Bez ffmpeg rendery działają, a montaże czekają w kolejce.
+
 Ręcznie: `blender -b -P tools/blender/twinema_render.py -- scena.json wynik.mp4 --preset orbita --seconds 10`.
 
 Testy: `python manage.py test` (z katalogu `web/`, z tym samym env).

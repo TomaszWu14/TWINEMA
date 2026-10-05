@@ -23,8 +23,8 @@
 
 - [Scan](Scan.md) (6 shared connections)
 - [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (3 shared connections)
-- [warehouse_design_sim.py](warehouse_design_sim.py.md) (3 shared connections)
-- [SimulationViewTests](SimulationViewTests.md) (2 shared connections)
+- [shared.py](shared.py.md) (3 shared connections)
+- [WarehouseTask](WarehouseTask.md) (2 shared connections)
 - [studio/models.py](studio-models.py.md) (2 shared connections)
 - [ewm_demo_tasks.py](ewm_demo_tasks.py.md) (1 shared connections)
 - [DesignHubTests](DesignHubTests.md) (1 shared connections)
