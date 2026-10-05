@@ -1,4 +1,4 @@
-# test_placement.py
+# ParseTests
 
 > 17 nodes · cohesion 0.22
 
@@ -7,8 +7,8 @@
 - **test_container_inbound.py** (12 connections) — `web/twin/tests/test_container_inbound.py`
 - **ContainerInboundTests** (10 connections) — `web/twin/tests/test_container_inbound.py`
 - **_scene()** (9 connections) — `web/twin/tests/test_container_inbound.py`
+- **outward()** (7 connections) — `web/twin/blender_containers.py`
 - **_items()** (6 connections) — `web/twin/tests/test_container_inbound.py`
-- **outward()** (5 connections) — `web/twin/blender_containers.py`
 - **.test_container_pallets_end_in_vna_slots()** (4 connections) — `web/twin/tests/test_container_inbound.py`
 - **.test_without_container_docks_nothing_changes()** (4 connections) — `web/twin/tests/test_container_inbound.py`
 - **_f()** (4 connections) — `web/twin/tests/test_container_inbound.py`
@@ -27,8 +27,8 @@
 - [kpi_facts](kpi_facts.md) (4 shared connections)
 - [blender_scene.py](blender_scene.py.md) (3 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (2 shared connections)
-- [day_demand](day_demand.md) (2 shared connections)
-- [test_equipment_agents.py](test_equipment_agents.py.md) (1 shared connections)
+- [scenario/models.py](scenario-models.py.md) (2 shared connections)
+- [EquipmentAgentsTests](EquipmentAgentsTests.md) (1 shared connections)
 
 ## Source Files
 
@@ -37,7 +37,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 70 (97%)
+- EXTRACTED: 72 (97%)
 - INFERRED: 2 (3%)
 - AMBIGUOUS: 0 (0%)
 

@@ -33,14 +33,14 @@
 
 ## Relationships
 
-- [test_layout.py](test_layout.py.md) (7 shared connections)
-- [StockItem](StockItem.md) (5 shared connections)
+- [check_layout](check_layout.md) (7 shared connections)
+- [sim/__init__.py](sim-__init__.py.md) (5 shared connections)
 - [twin/models.py](twin-models.py.md) (4 shared connections)
-- [warehouse_compare.py](warehouse_compare.py.md) (3 shared connections)
+- [test_design_compare.py](test_design_compare.py.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
 - [segmentation.py](segmentation.py.md) (2 shared connections)
 - [design_catalog.py](design_catalog.py.md) (1 shared connections)
-- [ewm_service.py](ewm_service.py.md) (1 shared connections)
+- [detect](detect.md) (1 shared connections)
 
 ## Source Files
 

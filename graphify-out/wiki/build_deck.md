@@ -20,8 +20,8 @@
 
 ## Relationships
 
-- [blender_stock.py](blender_stock.py.md) (2 shared connections)
-- [Scenario](Scenario.md) (1 shared connections)
+- [ml/views.py](ml-views.py.md) (2 shared connections)
+- [context_processors.py](context_processors.py.md) (1 shared connections)
 
 ## Source Files
 

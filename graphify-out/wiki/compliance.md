@@ -1,4 +1,4 @@
-# CompliancePureTests
+# compliance
 
 > 11 nodes · cohesion 0.27
 
@@ -18,7 +18,7 @@
 
 ## Relationships
 
-- [views_compare.py](views_compare.py.md) (4 shared connections)
+- [designer](designer.md) (4 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
 - [layout-panels.js](layout-panels.js.md) (1 shared connections)
 

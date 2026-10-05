@@ -1,4 +1,4 @@
-# warehouse_design_sim.py
+# warehouse_blender.py
 
 > 3 nodes · cohesion 0.67
 

@@ -27,7 +27,7 @@
 
 ## Relationships
 
-- [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
+- [StudioViewTests](StudioViewTests.md) (1 shared connections)
 - [importers.py](importers.py.md) (1 shared connections)
 
 ## Source Files

@@ -1,4 +1,4 @@
-# flow-player.js
+# RenderJob
 
 > 20 nodes · cohesion 0.10
 
@@ -6,6 +6,8 @@
 
 - **flow-player.js** (19 connections) — `web/twin/static/twin/js/flow-player.js`
 - **createFlowPlayer()** (2 connections) — `web/twin/static/twin/js/flow-player.js`
+- **_m** (2 connections) — `web/twin/static/twin/js/flow-player.js`
+- **_q** (2 connections) — `web/twin/static/twin/js/flow-player.js`
 - **boxes()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
 - **disposeTree()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
 - **_e** (1 connections) — `web/twin/static/twin/js/flow-player.js`
@@ -13,10 +15,8 @@
 - **FLOW_Y** (1 connections) — `web/twin/static/twin/js/flow-player.js`
 - **fmtTime()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
 - **labelSprite()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
-- **_m** (1 connections) — `web/twin/static/twin/js/flow-player.js`
 - **_p** (1 connections) — `web/twin/static/twin/js/flow-player.js`
 - **palletColor()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
-- **_q** (1 connections) — `web/twin/static/twin/js/flow-player.js`
 - **ribbon()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
 - **_s** (1 connections) — `web/twin/static/twin/js/flow-player.js`
 - **sampleKeyframes()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
@@ -35,8 +35,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 38 (97%)
-- INFERRED: 1 (3%)
+- EXTRACTED: 40 (98%)
+- INFERRED: 1 (2%)
 - AMBIGUOUS: 0 (0%)
 
 ---

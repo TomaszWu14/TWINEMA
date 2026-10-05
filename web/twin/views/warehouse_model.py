@@ -235,11 +235,10 @@ def warehouse_model_coords(request, pk):
         return redirect("twin:warehouse_model_view", pk=wm.pk)
     return render(request, "twin/warehouse_model/coords.html", {"wm": wm, "racks": racks, "templates": templates})
 
-@_planner
-def warehouse_model_view(request, pk):
-    wm = get_object_or_404(WarehouseModel, pk=pk)
-    racks = list(wm.racks.order_by("zone", "rack_id"))
-    # Assign zone colors
+def model_scene_data(wm, racks=None):
+    """Dane sceny 3D (createViewer): regały z kolorem strefy + elementy hali ze słupami. Wspólne dla widoku
+    modelu i animacji dnia scenariusza (S4). Zwraca (racks_data, features_data, zone_color)."""
+    racks = list(wm.racks.order_by("zone", "rack_id")) if racks is None else racks
     zones = sorted({r.zone for r in racks})
     zone_palette = ["#3b82f6","#10b981","#f59e0b","#ef4444","#8b5cf6","#f97316","#06b6d4","#ec4899","#14b8a6","#6b7280"]
     zone_color = {z: zone_palette[i % len(zone_palette)] for i, z in enumerate(zones)}
@@ -259,7 +258,15 @@ def warehouse_model_view(request, pk):
         }
         for r in racks
     ]
-    features_data = _features_data(wm)
+    return racks_data, _features_data(wm), zone_color
+
+
+@_planner
+def warehouse_model_view(request, pk):
+    wm = get_object_or_404(WarehouseModel, pk=pk)
+    racks = list(wm.racks.order_by("zone", "rack_id"))
+    racks_data, features_data, zone_color = model_scene_data(wm, racks)
+    zones = sorted(zone_color)
     # Legenda typów elementów obecnych w modelu (unikalne kind, w kolejności definicji).
     _kinds = hall_feature_kinds()
     present_kinds = {f["kind"] for f in features_data}

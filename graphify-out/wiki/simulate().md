@@ -32,10 +32,10 @@
 - design_sim.py `EXTRACTED`
 
 ### imports
-- [warehouse_design_sim.py](warehouse_design_sim.py.md) `EXTRACTED`
+- warehouse_design_sim.py `EXTRACTED`
 - test_design_sim.py `EXTRACTED`
 - test_design_calibration.py `EXTRACTED`
-- test_design_sim_scene.py `EXTRACTED`
+- [test_design_sim_scene.py](test_design_sim_scene.py.md) `EXTRACTED`
 - design_compare.py `EXTRACTED`
 
 ### rationale_for

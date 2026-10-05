@@ -166,6 +166,10 @@ z podpowiedzią „+N” z ponownej symulacji, zdarzenia przebiegu reprezentatyw
 S3b ✅: jawna rola doku (pole elementu hali, migracja z etykiet), nośność miejsca regału, pojemność vs stan × wzrost,
 strefy specjalne i nośność jako ostrzeżenia (zapotrzebowanie vs pojemność — stany nie mają przypisania do regałów
 projektu), kartonów/paletę z master daty w symulacji, tabela porównania layout × scenariusz, eksport xlsx.
+S4 ✅: animacja dnia w przeglądarce (`scenariusze/symulacja/<pk>/animacja/`) — scena hali (createViewer) + każdy
+kontener, auto, kurier i paleta z przebiegu reprezentatywnego (InstancedMesh), stos paczek przy pakowaniu; zegar,
+suwak, ×10–×300, skok do szczytu, liczniki, wąskie gardła na czerwono w oknie czasu + dymek z podpowiedzią (klik =
+skok czasu i kamery), pełny ekran (F), klawiatura, tabela godzinowa jako alternatywa tekstowa.
 
 ---
 

@@ -1,4 +1,4 @@
-# rack_corners
+# warehouse_model.py
 
 > 4 nodes · cohesion 0.40
 
@@ -11,7 +11,7 @@
 
 ## Relationships
 
-- [scene-builder.js](scene-builder.js.md) (2 shared connections)
+- [day-timeline.js](day-timeline.js.md) (2 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (2 shared connections)
 - [shared.py](shared.py.md) (2 shared connections)
 - [test_voice.py](test_voice.py.md) (1 shared connections)

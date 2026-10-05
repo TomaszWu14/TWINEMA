@@ -695,8 +695,8 @@
     "semantic_hash": ""
   },
   "web/twin/views/warehouse_model.py": {
-    "mtime": 1791209372.636033,
-    "ast_hash": "6868392d318e3976d518ace9e3b3e8e8",
+    "mtime": 1791211501.052799,
+    "ast_hash": "c28a5ba713c048cae748820e5e0d7c29",
     "semantic_hash": ""
   },
   "web/twin/views/warehouse_model_ewm.py": {
@@ -795,18 +795,18 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1791210090.5216155,
-    "ast_hash": "dc4c346fd3d4d7dd2241cf59dfc84019",
+    "mtime": 1791211563.323359,
+    "ast_hash": "bae0084caf8df5b58a34ed48ab7c3bd1",
     "semantic_hash": ""
   },
   "docs/HANDOFF.md": {
-    "mtime": 1791210090.520563,
-    "ast_hash": "824b4f72df8ffd617b6421c06d15d070",
+    "mtime": 1791211576.4584455,
+    "ast_hash": "a39c486abd3d4f3e349a3ed0679e9cac",
     "semantic_hash": ""
   },
   "docs/PLAN.md": {
-    "mtime": 1791210090.5216155,
-    "ast_hash": "e484da4bc39ee8ff069824b61d1502f1",
+    "mtime": 1791211563.32436,
+    "ast_hash": "f150ee2cf1db914314916477ba86b86d",
     "semantic_hash": ""
   },
   "docs/adr/0001-kopia-nie-przeniesienie.md": {
@@ -1255,8 +1255,8 @@
     "semantic_hash": ""
   },
   "web/scenario/urls.py": {
-    "mtime": 1791209626.1636856,
-    "ast_hash": "d3418ee3928f598c8552acee80e04198",
+    "mtime": 1791211535.729357,
+    "ast_hash": "c3dc2453b126c4b8b896b9c474516a8e",
     "semantic_hash": ""
   },
   "web/scenario/views.py": {
@@ -1270,8 +1270,8 @@
     "semantic_hash": ""
   },
   "web/scenario/templates/scenario/detail.html": {
-    "mtime": 1791210691.872155,
-    "ast_hash": "29c73b3585df14cbdf9b2fc8c8a1f540",
+    "mtime": 1791211545.57636,
+    "ast_hash": "7b2c26bff426a7bda173140a5b1b5c1f",
     "semantic_hash": ""
   },
   "web/scenario/templates/scenario/list.html": {
@@ -1300,8 +1300,8 @@
     "semantic_hash": ""
   },
   "web/twin/tests/test_layout_editor_js.py": {
-    "mtime": 1791209888.8972433,
-    "ast_hash": "008439f2816b1b7ef83f787fefff04b0",
+    "mtime": 1791211501.051311,
+    "ast_hash": "931e25f4e81285276c90e5f42cb0678d",
     "semantic_hash": ""
   },
   "web/twin/templates/twin/warehouse_model/editor.html": {
@@ -1390,13 +1390,13 @@
     "semantic_hash": ""
   },
   "web/scenario/sim/__init__.py": {
-    "mtime": 1791209229.2349625,
-    "ast_hash": "c874e6e19af0b5ac8f14bc9cb7b998ff",
+    "mtime": 1791211501.0437844,
+    "ast_hash": "40099fed6a325711ad56963b09285c02",
     "semantic_hash": ""
   },
   "web/scenario/sim/engine.py": {
-    "mtime": 1791209539.4805083,
-    "ast_hash": "d256aefb2e7ebcbe84f970e48dabed2f",
+    "mtime": 1791211501.0447972,
+    "ast_hash": "ec387b462ed4631a3aee9ee35a135b46",
     "semantic_hash": ""
   },
   "web/scenario/sim/places.py": {
@@ -1457,6 +1457,36 @@
   "web/twin/tests/js/scene_data.test.mjs": {
     "mtime": 1791209888.8961678,
     "ast_hash": "5419d5f90969a1c29234ae7488829059",
+    "semantic_hash": ""
+  },
+  "web/scenario/tests/test_play.py": {
+    "mtime": 1791211501.0470543,
+    "ast_hash": "81bd62726317333b138b63ce8358058a",
+    "semantic_hash": ""
+  },
+  "web/scenario/views_play.py": {
+    "mtime": 1791211501.04825,
+    "ast_hash": "e03b1a1deac59172f5af659333a7d8f1",
+    "semantic_hash": ""
+  },
+  "web/twin/static/twin/js/day-player.js": {
+    "mtime": 1791211501.04931,
+    "ast_hash": "b3e35e74bee0be7600e1434f386fa7e2",
+    "semantic_hash": ""
+  },
+  "web/twin/static/twin/js/day-timeline.js": {
+    "mtime": 1791211501.050312,
+    "ast_hash": "b93027513963e4548496c9b11e76e7f0",
+    "semantic_hash": ""
+  },
+  "web/twin/tests/js/day_timeline.test.mjs": {
+    "mtime": 1791211501.051311,
+    "ast_hash": "63ee8c4b5f36c12e8d7e020b8ed776b2",
+    "semantic_hash": ""
+  },
+  "web/scenario/templates/scenario/play.html": {
+    "mtime": 1791211501.0457969,
+    "ast_hash": "23b053c160ac701bbc687172db2bc35c",
     "semantic_hash": ""
   },
   "web/scenario/compare.py": {

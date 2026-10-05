@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **shared.py** (39 connections) — `web/twin/shared.py`
+- **shared.py** (40 connections) — `web/twin/shared.py`
 - **warehouse_blender.py** (26 connections) — `web/twin/views/warehouse_blender.py`
 - **warehouse_design_sim.py** (23 connections) — `web/twin/views/warehouse_design_sim.py`
 - **WarehouseTaskBatch** (22 connections) — `web/twin/models_tasks.py`
@@ -23,27 +23,27 @@
 - **blender_tasks.py** (11 connections) — `web/twin/blender_tasks.py`
 - **_sim_scene()** (11 connections) — `web/twin/views/warehouse_blender.py`
 - **sim_params()** (11 connections) — `web/twin/views/warehouse_design_sim.py`
+- **safe_json()** (10 connections) — `web/twin/shared.py`
 - **ewm_tasks_calibration()** (10 connections) — `web/twin/views/warehouse_calibration.py`
 - **design_day()** (10 connections) — `web/twin/views/warehouse_design_sim.py`
 - **run_simulation()** (9 connections) — `web/twin/views/warehouse_design_sim.py`
 - **load_master_levels()** (8 connections) — `web/twin/blender_stock.py`
 - **load_day_tasks()** (8 connections) — `web/twin/design_sim.py`
-- **safe_json()** (8 connections) — `web/twin/shared.py`
 - *... and 57 more nodes in this community*
 
 ## Relationships
 
-- [day_demand](day_demand.md) (11 shared connections)
-- [scene-builder.js](scene-builder.js.md) (11 shared connections)
+- [scenario/models.py](scenario-models.py.md) (11 shared connections)
+- [day-timeline.js](day-timeline.js.md) (11 shared connections)
 - [blender_scene.py](blender_scene.py.md) (10 shared connections)
 - [warehouse_tasks.py](warehouse_tasks.py.md) (10 shared connections)
 - [twin/models.py](twin-models.py.md) (9 shared connections)
 - [simulate](simulate.md) (9 shared connections)
-- [warehouse_compare.py](warehouse_compare.py.md) (9 shared connections)
-- [views_sim.py](views_sim.py.md) (8 shared connections)
+- [test_design_compare.py](test_design_compare.py.md) (9 shared connections)
+- [test_s3b_views.py](test_s3b_views.py.md) (8 shared connections)
 - [design_kpi.py](design_kpi.py.md) (7 shared connections)
 - [studio/api.py](studio-api.py.md) (6 shared connections)
-- [blender_stock.py](blender_stock.py.md) (5 shared connections)
+- [ml/views.py](ml-views.py.md) (5 shared connections)
 - [test_design_forecast.py](test_design_forecast.py.md) (5 shared connections)
 
 ## Source Files
@@ -68,7 +68,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 526 (99%)
+- EXTRACTED: 529 (99%)
 - INFERRED: 7 (1%)
 - AMBIGUOUS: 0 (0%)
 

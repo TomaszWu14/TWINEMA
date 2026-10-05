@@ -1,10 +1,10 @@
-# Scenario
+# context_processors.py
 
 > 22 nodes · cohesion 0.09
 
 ## Key Concepts
 
-- **roles.py** (28 connections) — `web/core/roles.py`
+- **roles.py** (30 connections) — `web/core/roles.py`
 - **test_ml.py** (11 connections) — `web/ml/tests/test_ml.py`
 - **test_render.py** (8 connections) — `web/render/tests/test_render.py`
 - **test_ewm_tasks_refresh.py** (6 connections) — `web/twin/tests/test_ewm_tasks_refresh.py`
@@ -30,13 +30,13 @@
 ## Relationships
 
 - [twin/models.py](twin-models.py.md) (6 shared connections)
-- [blender_stock.py](blender_stock.py.md) (4 shared connections)
+- [ml/views.py](ml-views.py.md) (4 shared connections)
 - [studio/api.py](studio-api.py.md) (3 shared connections)
 - [pre-push](pre-push.md) (2 shared connections)
 - [WorkerApiTests](WorkerApiTests.md) (2 shared connections)
 - [test_foundation.py](test_foundation.py.md) (1 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
-- [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
+- [StudioViewTests](StudioViewTests.md) (1 shared connections)
 - [shared.py](shared.py.md) (1 shared connections)
 - [forecast.py](forecast.py.md) (1 shared connections)
 - [build_deck](build_deck.md) (1 shared connections)
@@ -53,7 +53,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 83 (100%)
+- EXTRACTED: 85 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
