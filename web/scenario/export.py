@@ -9,6 +9,7 @@ from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
 from .inbound import _hhmm
+from .services import run_costs
 from .sim.report import KPI_SPEC
 from .staffing import PROCESSES, process_hours, staffing
 
@@ -83,6 +84,14 @@ def run_workbook(run, day):
     prow += [(f"Strefa: {z['label']} — miejsca / potrzeba", f"{z['positions']} / {z['need']}")
              for z in cap.get("zones", [])]
     _sheet(wb, "Pojemność", ["Pozycja", "Wartość"], prow, {1: 50, 2: 20})
+
+    c = run_costs(run)
+    crow = [(f"CAPEX: {i['label']}", i["qty"], i["unit"], i["low"], i["high"]) for i in c["capex"]["items"]]
+    crow.append(("CAPEX razem", None, "", c["capex"]["low"], c["capex"]["high"]))
+    crow += [(f"OPEX: {i['label']}", i["qty"], i["unit"], i["low"], i["high"]) for i in c["opex"]["items"]]
+    crow.append((f"OPEX roczny razem ({c['days_year']} dni)", None, "", c["opex"]["low"], c["opex"]["high"]))
+    crow += [(f"OPEX na {u['label']}", None, "zł", u["low"], u["high"]) for u in c["per_unit"].values()]
+    _sheet(wb, "Koszty", ["Pozycja", "Ilość", "Jednostka", "Od [zł]", "Do [zł]"], crow, {1: 50, 3: 18})
     return _bytes(wb)
 
 

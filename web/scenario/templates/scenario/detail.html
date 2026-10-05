@@ -200,6 +200,7 @@
       </tbody></table>
     <p class="text-muted text-sm" style="margin:6px 0 0">Potrzeba = palety na aktualnym stanie × mnożnik wzrostu ({{ sc.growth|floatformat:"-2" }}). Kartonów na paletę z kontenera: {{ v.cpp.value|floatformat:"-1" }} ({{ v.cpp.source }}).</p>
     {% endif %}
+    {% include "scenario/_costs.html" with c=v.costs %}
     {% if v.fleet %}<p class="text-muted text-sm" style="margin:4px 0 0">Flota z katalogu: <b>{{ v.fleet.name }}</b> — ruch palety {{ v.fleet.min_per_move|floatformat:"-2" }} min (droga {{ v.fleet.dist_m|floatformat:"-1" }} m w jedną stronę, podniesienie średnio {{ v.fleet.lift_m|floatformat:"-2" }} m), bateria {{ v.fleet.battery_h|floatformat:"-1" }} h, ładowanie {{ v.fleet.charge_h|floatformat:"-1" }} h.</p>{% endif %}
     <div class="sc-fsbox" id="sim-box-{{ v.run.pk }}">
     <div class="sc-fsbar"><button type="button" class="btn btn-ghost btn-sm" aria-pressed="false" data-fs-target="sim-box-{{ v.run.pk }}">Pełny ekran</button></div>

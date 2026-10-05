@@ -18,6 +18,14 @@ def _docks(role):
     return lambda r: ((r.get("places") or {}).get("counts") or {}).get(role)
 
 
+def _cost(part):
+    return lambda r: ((r.get("costs") or {}).get(part) or {}).get("mid")
+
+
+def _per(unit):
+    return lambda r: (((r.get("costs") or {}).get("per_unit") or {}).get(unit) or {}).get("mid")
+
+
 def _count(sev=None):
     return lambda r: sum(1 for b in r.get("bottlenecks", []) if sev is None or b["severity"] == sev)
 
@@ -46,6 +54,12 @@ ROWS = [
     ("Zadań bez obsady (P95)", "", "min", _agg("unfinished", "worst")),
     ("Wąskie gardła", "szt.", "min", _count()),
     ("w tym krytyczne", "szt.", "min", _count("error")),
+    # C1: koszty (środek widełek) — `ScenarioRun.result` ich nie trzyma, widok dokłada `costs` przed porównaniem
+    ("CAPEX (środek widełek)", "zł", "min", _cost("capex")),
+    ("OPEX roczny (środek widełek)", "zł/rok", "min", _cost("opex")),
+    ("OPEX na paletę", "zł", "min", _per("pallets")),
+    ("OPEX na paczkę", "zł", "min", _per("parcels")),
+    ("OPEX na zamówienie", "zł", "min", _per("orders")),
 ]
 
 

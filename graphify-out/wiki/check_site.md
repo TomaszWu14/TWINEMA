@@ -1,4 +1,4 @@
-# site.py
+# check_site
 
 > 29 nodes · cohesion 0.12
 
@@ -7,7 +7,7 @@
 - **design_kpi.py** (22 connections) — `web/twin/design_kpi.py`
 - **rack_axes()** (20 connections) — `web/twin/blender_route.py`
 - **test_design_variants.py** (16 connections) — `web/twin/tests/test_design_variants.py`
-- **rack_to_element()** (13 connections) — `web/twin/design_kpi.py`
+- **rack_to_element()** (14 connections) — `web/twin/design_kpi.py`
 - **compute_kpi()** (12 connections) — `web/twin/design_kpi.py`
 - **travel_stats()** (10 connections) — `web/twin/design_kpi.py`
 - **_el()** (9 connections) — `web/twin/tests/test_design_variants.py`
@@ -34,7 +34,7 @@
 ## Relationships
 
 - [twinema_design_kit.py](twinema_design_kit.py.md) (11 shared connections)
-- [shared.py](shared.py.md) (7 shared connections)
+- [load_groups](load_groups.md) (7 shared connections)
 - [layout-hall.js](layout-hall.js.md) (4 shared connections)
 - [blender_scene.py](blender_scene.py.md) (3 shared connections)
 - [kpi_facts](kpi_facts.md) (2 shared connections)
@@ -54,7 +54,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 167 (100%)
+- EXTRACTED: 168 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

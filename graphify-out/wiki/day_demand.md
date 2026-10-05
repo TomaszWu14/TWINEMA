@@ -1,4 +1,4 @@
-# scenario/models.py
+# day_demand
 
 > 46 nodes · cohesion 0.07
 
@@ -34,10 +34,10 @@
 ## Relationships
 
 - [twin/models.py](twin-models.py.md) (12 shared connections)
-- [shared.py](shared.py.md) (11 shared connections)
+- [load_groups](load_groups.md) (11 shared connections)
 - [kpi_facts](kpi_facts.md) (3 shared connections)
 - [analyze](analyze.md) (3 shared connections)
-- [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
+- [scenario/services.py](scenario-services.py.md) (3 shared connections)
 - [ewm_service.py](ewm_service.py.md) (3 shared connections)
 - [layout-panels.js](layout-panels.js.md) (3 shared connections)
 - [ParseTests](ParseTests.md) (2 shared connections)

@@ -1,46 +1,48 @@
 # scenario/services.py
 
-> 14 nodes · cohesion 0.17
+> 15 nodes · cohesion 0.15
 
 ## Key Concepts
 
-- **masterdata/views.py** (23 connections) — `web/masterdata/views.py`
-- **masterdata/__init__.py** (6 connections) — `web/masterdata/__init__.py`
-- **designer** (6 connections)
-- **current_stock_log()** (5 connections) — `web/masterdata/services.py`
-- **demo()** (4 connections) — `web/masterdata/views.py`
-- **home()** (4 connections) — `web/masterdata/views.py`
-- **materials()** (4 connections) — `web/masterdata/views.py`
-- **upload()** (4 connections) — `web/masterdata/views.py`
-- **template_csv()** (3 connections) — `web/masterdata/importers.py`
-- **template()** (3 connections) — `web/masterdata/views.py`
-- **masterdata/urls.py** (2 connections) — `web/masterdata/urls.py`
-- **log_detail()** (2 connections) — `web/masterdata/views.py`
-- **any_role** (2 connections)
-- **require_POST** (2 connections)
+- **ewm_service.py** (22 connections) — `web/twin/ewm_service.py`
+- **expand_model()** (9 connections) — `web/twin/addressing.py`
+- **detect_for_model()** (7 connections) — `web/twin/ewm_service.py`
+- **apply_proposal()** (6 connections) — `web/twin/ewm_service.py`
+- **warehouse_model_detect_save()** (6 connections) — `web/twin/views/warehouse_model_ewm.py`
+- **master_rows()** (4 connections) — `web/twin/ewm_service.py`
+- **plan_for_model()** (4 connections) — `web/twin/ewm_service.py`
+- **[(rząd, szablon, wyjątki), …] → (miejsca z kluczami zone/aisle, {kod: [„B0-07”,…** (1 connections) — `web/twin/addressing.py`
+- **Warstwa ORM nad czystymi modułami adresowania: master EWM, plan modelu, zapis…** (1 connections) — `web/twin/ewm_service.py`
+- **[(kod, typ EWM, wysokość mm, udźwig kg)] z mastera — tylko kody stref modelu.** (1 connections) — `web/twin/ewm_service.py`
+- **Propozycja „Wykryj z EWM” dla rzędów modelu (nic nie zapisuje).** (1 connections) — `web/twin/ewm_service.py`
+- **Zapis propozycji: nowe szablony, szablon domyślny + numeracja rzędów, wyjątki…** (1 connections) — `web/twin/ewm_service.py`
+- **Rozwinięty plan modelu → (rzędy, miejsca, duplikaty).** (1 connections) — `web/twin/ewm_service.py`
+- **_md_role** (1 connections)
+- **require_POST** (1 connections)
 
 ## Relationships
 
-- [studio/api.py](studio-api.py.md) (5 shared connections)
-- [masterdata/services.py](masterdata-services.py.md) (4 shared connections)
-- [importers.py](importers.py.md) (2 shared connections)
-- [twinema_montage.py](twinema_montage.py.md) (1 shared connections)
-- [views_sim.py](views_sim.py.md) (1 shared connections)
-- [scene-data.js](scene-data.js.md) (1 shared connections)
-- [test_ewm_service.py](test_ewm_service.py.md) (1 shared connections)
-- [twin/models.py](twin-models.py.md) (1 shared connections)
+- [ewm_service.py](ewm_service.py.md) (8 shared connections)
+- [RenderJob](RenderJob.md) (3 shared connections)
+- [scenario/views.py](scenario-views.py.md) (3 shared connections)
+- [day_demand](day_demand.md) (3 shared connections)
+- [test_ewm_service.py](test_ewm_service.py.md) (3 shared connections)
+- [layout-panels.js](layout-panels.js.md) (2 shared connections)
+- [staffing](staffing.md) (2 shared connections)
+- [SimViewTests](SimViewTests.md) (2 shared connections)
+- [twin/models.py](twin-models.py.md) (2 shared connections)
+- [BlenderExportViewTests](BlenderExportViewTests.md) (2 shared connections)
+- [BayTemplate](BayTemplate.md) (1 shared connections)
 
 ## Source Files
 
-- `web/masterdata/__init__.py`
-- `web/masterdata/importers.py`
-- `web/masterdata/services.py`
-- `web/masterdata/urls.py`
-- `web/masterdata/views.py`
+- `web/twin/addressing.py`
+- `web/twin/ewm_service.py`
+- `web/twin/views/warehouse_model_ewm.py`
 
 ## Audit Trail
 
-- EXTRACTED: 70 (100%)
+- EXTRACTED: 66 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

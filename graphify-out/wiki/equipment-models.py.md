@@ -1,4 +1,4 @@
-# Equipment
+# equipment/models.py
 
 > 45 nodes · cohesion 0.07
 
@@ -33,7 +33,7 @@
 
 ## Relationships
 
-- [shared.py](shared.py.md) (6 shared connections)
+- [load_groups](load_groups.md) (6 shared connections)
 - [scene-data.js](scene-data.js.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [views_sim.py](views_sim.py.md) (1 shared connections)
