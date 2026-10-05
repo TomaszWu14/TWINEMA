@@ -17,8 +17,14 @@ def material_codes(n=N_MATERIALS):
     return [f"1{i:07d}" for i in range(n)]
 
 
+# Udział materiałów w strefach specjalnych (syntetyczny): ADR głównie chemia, gabaryty — narzędzia/AGD.
+FLAG_SHARE = {"temp_controlled": ("Spożywcze suche", 0.15), "adr": ("Chemia gospodarcza", 0.25),
+              "oversize": ("Narzędzia", 0.10), "high_value": ("Elektronika", 0.15)}
+
+
 def demo_materials(n=N_MATERIALS, seed=7):
-    """Wiersze materiałów (dicty pól Material) z losowymi, ale wiarygodnymi wymiarami."""
+    """Wiersze materiałów (dicty pól Material) z losowymi, ale wiarygodnymi wymiarami:
+    sztuka → karton (pcs sztuk mieści się objętościowo) → paleta EUR (warstwy do ~1,5 m)."""
     rng = random.Random(seed)
     out = []
     for i, code in enumerate(material_codes(n)):
@@ -27,10 +33,17 @@ def demo_materials(n=N_MATERIALS, seed=7):
         pcs = rng.choice([1, 2, 4, 6, 12, 24, 48])
         layer = (120 // l) * (80 // w) or 1
         layers = max(1, int(150 // h))
-        out.append({"code": code, "name": f"{group} — artykuł {i + 1:04d}", "group": group, "unit": "SZT",
-                    "pcs_per_carton": pcs, "carton_l_cm": l, "carton_w_cm": w, "carton_h_cm": h,
-                    "carton_kg": round(rng.uniform(2, 18), 1), "cartons_per_pallet": layer * layers,
-                    "pallet_h_cm": round(layers * h + 14, 1)})
+        kg = round(min(rng.uniform(2, 18), 900 / (layer * layers)), 1)   # paleta ≤ ~900 kg na EUR
+        k = (0.85 / pcs) ** (1 / 3)                     # sztuka ≈ 85 % kartonu / pcs (objętościowo)
+        row = {"code": code, "name": f"{group} — artykuł {i + 1:04d}", "group": group, "unit": "SZT",
+               "piece_l_cm": round(l * k, 1), "piece_w_cm": round(w * k, 1), "piece_h_cm": round(h * k, 1),
+               "piece_kg": round(kg * 0.95 / pcs, 3), "pcs_per_carton": pcs,
+               "carton_l_cm": l, "carton_w_cm": w, "carton_h_cm": h, "carton_kg": kg,
+               "cartons_per_layer": layer, "layers_per_pallet": layers, "cartons_per_pallet": layer * layers,
+               "pallet_h_cm": round(layers * h + 14, 1), "abc_manual": ""}
+        for flag, (grp, share) in FLAG_SHARE.items():
+            row[flag] = group == grp and rng.random() < share
+        out.append(row)
     return out
 
 

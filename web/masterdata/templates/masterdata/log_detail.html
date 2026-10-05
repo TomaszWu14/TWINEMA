@@ -30,7 +30,7 @@
 <div class="card" style="margin-bottom:16px">
   <div class="card-header"><span class="card-header__title">Odrzucone wiersze{% if log.rows_rejected > log.rejects|length %} (pierwsze {{ log.rejects|length }} z {{ log.rows_rejected }}){% endif %}</span></div>
   <div class="table-wrap"><table class="table"><thead><tr><th class="num">Wiersz</th><th>Powód</th></tr></thead>
-    <tbody>{% for r in log.rejects %}<tr><td class="num">{{ r.row }}</td><td>{{ r.reason }}</td></tr>{% endfor %}</tbody></table></div>
+    <tbody>{% for r in log.rejects %}<tr><td class="num">{{ r.row|default:"—" }}</td><td>{{ r.reason }}</td></tr>{% endfor %}</tbody></table></div>
 </div>
 {% endif %}
 

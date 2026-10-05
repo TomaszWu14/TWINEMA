@@ -148,6 +148,10 @@ okno załadunku z cut-off), profil dnia (zamówienia, linie, paczki, zwroty, % p
 jako strumień przyjęć (bez składowania), `Shift` (1–3 zmiany per proces, przerwy, osoby); `scenario/outbound.py`
 i `scenario/staffing.py` — palety OUT, doki OUT, osobogodziny 7 procesów, obsada potrzebna vs zakładana per zmiana
 (podział wg zakładanej zdolności zmian), ryzyko cut-off paczek. Godziny w formularzach jako GG:MM.
+S1 ✅: `masterdata` — hierarchia sztuka → karton → paleta, katalog nośników i klas wysokości/wagi (dobierane
+z wyliczonej palety, gdy puste), ręczna ABC (pierwszeństwo przed ABC z historii), flagi stref specjalnych
+(temperatura, ADR, gabaryt, wartość). Dla S3: nośność poziomów regału vs klasa wagi, ADR/temperatura vs strefy
+specjalne z E2b, kartonów/paletę z master daty zamiast średniej normy.
 
 ---
 

@@ -193,7 +193,8 @@
   <h2 class="sc-sec" id="sc-par-h">Parametry i normy wydajności</h2>
   <form method="post" action="{% url 'scenario:save' sc.pk %}">{% csrf_token %}
     <div class="sc-params">
-      {% for f in form %}<label for="{{ f.id_for_label }}"{% if f.name == "description" or f.name == "name" %} class="sc-wide"{% endif %}>{{ f.label }} {{ f }}</label>{% endfor %}
+      {% for f in form %}<label for="{{ f.id_for_label }}"{% if f.name == "description" or f.name == "name" %} class="sc-wide"{% endif %}>{{ f.label }} {{ f }}
+        {% if f.name == "cartons_per_pallet" and cpp_hint %}<span class="text-muted text-sm">z master daty: {{ cpp_hint.0|floatformat:"-1" }} ({{ cpp_hint.1 }} materiałów, wg: {{ cpp_hint.2 }})</span>{% endif %}</label>{% endfor %}
     </div>
     <div class="sc-actions"><button class="btn btn-primary" type="submit">Zapisz parametry</button></div>
   </form>

@@ -1,0 +1,91 @@
+{% extends "core/base.html" %}
+{% block title %}{{ m.code }} — Materiały — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .mf-grid { display:grid; grid-template-columns:minmax(0,3fr) minmax(0,2fr); gap:16px; align-items:start; }
+  @media (max-width: 900px) { .mf-grid { grid-template-columns:1fr; } }
+  .mf-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:16px 0 10px; }
+  .mf-sec:first-child { margin-top:0; }
+  .mf-fields { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
+  .mf-fields label { display:flex; flex-direction:column; gap:4px; font-size:var(--fs-sm); color:var(--fg-muted); }
+  .mf-fields .mf-check { flex-direction:row; align-items:center; gap:8px; }
+  .mf-wide { grid-column:1 / -1; }
+  .mf-calc dt { font-size:var(--fs-xs); color:var(--fg-subtle); }
+  .mf-calc dd { margin:0 0 10px; font-size:var(--fs-lg); font-weight:600; }
+</style>
+{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Okruszki"><a href="{% url 'masterdata:home' %}">Dane</a> <span aria-hidden="true">/</span>
+  <a href="{% url 'masterdata:materials' %}">Materiały</a> <span aria-hidden="true">/</span> <span>{{ m.code }}</span></nav>
+<div class="page-header">
+  <div>
+    <div class="page-header__title">{{ m.code }}</div>
+    <div class="page-header__sub">{{ m.name|default:"bez nazwy" }}{% if m.group %} · {{ m.group }}{% endif %}</div>
+  </div>
+</div>
+
+<div class="mf-grid">
+  <form class="card" method="post"><div class="card-body">{% csrf_token %}
+    {% if form.errors %}<div class="alert alert-error" role="alert">Popraw zaznaczone pola.</div>{% endif %}
+    {% with f=form %}
+    <h2 class="mf-sec">Ogólne</h2>
+    <div class="mf-fields">
+      <label class="mf-wide" for="{{ f.name.id_for_label }}">{{ f.name.label }} {{ f.name }}</label>
+      <label for="{{ f.group.id_for_label }}">{{ f.group.label }} {{ f.group }}</label>
+      <label for="{{ f.unit.id_for_label }}">{{ f.unit.label }} {{ f.unit }}</label>
+    </div>
+    <h2 class="mf-sec">Sztuka</h2>
+    <div class="mf-fields">
+      <label for="{{ f.piece_l_cm.id_for_label }}">{{ f.piece_l_cm.label }} {{ f.piece_l_cm }}</label>
+      <label for="{{ f.piece_w_cm.id_for_label }}">{{ f.piece_w_cm.label }} {{ f.piece_w_cm }}</label>
+      <label for="{{ f.piece_h_cm.id_for_label }}">{{ f.piece_h_cm.label }} {{ f.piece_h_cm }}</label>
+      <label for="{{ f.piece_kg.id_for_label }}">{{ f.piece_kg.label }} {{ f.piece_kg }}</label>
+    </div>
+    <h2 class="mf-sec">Karton</h2>
+    <div class="mf-fields">
+      <label for="{{ f.pcs_per_carton.id_for_label }}">{{ f.pcs_per_carton.label }} {{ f.pcs_per_carton }}</label>
+      <label for="{{ f.carton_l_cm.id_for_label }}">{{ f.carton_l_cm.label }} {{ f.carton_l_cm }}</label>
+      <label for="{{ f.carton_w_cm.id_for_label }}">{{ f.carton_w_cm.label }} {{ f.carton_w_cm }}</label>
+      <label for="{{ f.carton_h_cm.id_for_label }}">{{ f.carton_h_cm.label }} {{ f.carton_h_cm }}</label>
+      <label for="{{ f.carton_kg.id_for_label }}">{{ f.carton_kg.label }} {{ f.carton_kg }}</label>
+    </div>
+    <h2 class="mf-sec">Paleta</h2>
+    <div class="mf-fields">
+      <label for="{{ f.carrier.id_for_label }}">{{ f.carrier.label }} {{ f.carrier }}</label>
+      <label for="{{ f.cartons_per_layer.id_for_label }}">{{ f.cartons_per_layer.label }} {{ f.cartons_per_layer }}</label>
+      <label for="{{ f.layers_per_pallet.id_for_label }}">{{ f.layers_per_pallet.label }} {{ f.layers_per_pallet }}</label>
+      <label for="{{ f.cartons_per_pallet.id_for_label }}">{{ f.cartons_per_pallet.label }} (gdy bez warstw) {{ f.cartons_per_pallet }}</label>
+      <label for="{{ f.pallet_h_cm.id_for_label }}">{{ f.pallet_h_cm.label }} (puste = z warstw) {{ f.pallet_h_cm }}</label>
+      <label for="{{ f.height_class.id_for_label }}">{{ f.height_class.label }} {{ f.height_class }}</label>
+      <label for="{{ f.weight_class.id_for_label }}">{{ f.weight_class.label }} {{ f.weight_class }}</label>
+    </div>
+    <h2 class="mf-sec">Rozmieszczenie</h2>
+    <div class="mf-fields">
+      <label for="{{ f.abc_manual.id_for_label }}">{{ f.abc_manual.label }} {{ f.abc_manual }}</label>
+      <label class="mf-check" for="{{ f.temp_controlled.id_for_label }}">{{ f.temp_controlled }} {{ f.temp_controlled.label }}</label>
+      <label class="mf-check" for="{{ f.adr.id_for_label }}">{{ f.adr }} {{ f.adr.label }}</label>
+      <label class="mf-check" for="{{ f.oversize.id_for_label }}">{{ f.oversize }} {{ f.oversize.label }}</label>
+      <label class="mf-check" for="{{ f.high_value.id_for_label }}">{{ f.high_value }} {{ f.high_value.label }}</label>
+    </div>
+    {% endwith %}
+    <div style="margin-top:16px"><button class="btn btn-primary" type="submit">Zapisz materiał</button></div>
+  </div></form>
+
+  <div class="card"><div class="card-body">
+    <h2 class="mf-sec">Paleta wyliczona</h2>
+    <dl class="mf-calc">
+      <dt>Kartonów na palecie</dt><dd>{{ calc.cpp|default:"—" }}</dd>
+      <dt>Wysokość z nośnikiem</dt><dd>{% if calc.height %}{{ calc.height|floatformat:"-1" }} cm{% else %}—{% endif %}</dd>
+      <dt>Waga z nośnikiem</dt><dd>{% if calc.weight %}{{ calc.weight|floatformat:"-1" }} kg{% else %}—{% endif %}</dd>
+      <dt>Nośnik</dt><dd>{{ carrier|default:"—" }}</dd>
+      <dt>ABC</dt><dd>{% if m.abc_manual %}{{ m.abc_manual }} (ręcznie){% elif abc_history %}{{ abc_history }} (z historii){% else %}—{% endif %}</dd>
+    </dl>
+    <h2 class="mf-sec">Spójność danych</h2>
+    <div role="status" aria-live="polite">
+    {% if warnings %}<ul class="text-sm" style="margin:0;padding-left:18px">{% for w in warnings %}<li>{{ w }}</li>{% endfor %}</ul>
+    {% else %}<p class="text-sm" style="margin:0">Bez uwag.</p>{% endif %}
+    </div>
+    <p class="text-muted text-sm" style="margin:10px 0 0">Ostrzeżenia nie blokują zapisu. Puste klasy wysokości i wagi aplikacja dobiera z wyliczonej palety.</p>
+  </div></div>
+</div>
+{% endblock %}

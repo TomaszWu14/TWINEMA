@@ -201,6 +201,8 @@ def scenario_detail(request, pk):
                              "outbound": OutFormSet(queryset=d.outbound.all(), prefix=f"{d.kind}-out"),
                              "profile": DayProfileForm(instance=d, prefix=f"{d.kind}-p")} for d in days]
         ctx["shift_fs"] = ShiftFormSet(queryset=sc.shifts.all(), prefix="shift")
+        from masterdata.services import cartons_per_pallet_hint     # podpowiedź, nie nadpisuje normy
+        ctx["cpp_hint"] = cartons_per_pallet_hint()
     return render(request, "scenario/detail.html", ctx)
 
 
