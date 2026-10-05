@@ -25,7 +25,7 @@
 ## Relationships
 
 - [kpi_facts](kpi_facts.md) (4 shared connections)
-- [build_scene](build_scene.md) (3 shared connections)
+- [blender_scene.py](blender_scene.py.md) (3 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (2 shared connections)
 - [day_demand](day_demand.md) (2 shared connections)
 - [_inside](_inside.md) (1 shared connections)

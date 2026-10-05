@@ -27,7 +27,7 @@
 - [SimulationViewTests](SimulationViewTests.md) (2 shared connections)
 - [studio/models.py](studio-models.py.md) (2 shared connections)
 - [ewm_demo_tasks.py](ewm_demo_tasks.py.md) (1 shared connections)
-- [DesignHubTests](DesignHubTests.md) (1 shared connections)
+- [test_design_hub.py](test_design_hub.py.md) (1 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (1 shared connections)
 
 ## Source Files

@@ -36,7 +36,7 @@
 - [WorkerApiTests](WorkerApiTests.md) (2 shared connections)
 - [test_foundation.py](test_foundation.py.md) (1 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
-- [stock_for_scene](stock_for_scene.md) (1 shared connections)
+- [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
 - [shared.py](shared.py.md) (1 shared connections)
 - [forecast.py](forecast.py.md) (1 shared connections)
 - [build_deck](build_deck.md) (1 shared connections)

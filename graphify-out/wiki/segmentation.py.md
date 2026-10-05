@@ -15,8 +15,8 @@
 
 ## Relationships
 
-- [generate](generate.md) (2 shared connections)
-- [detect](detect.md) (1 shared connections)
+- [GeneratorTests](GeneratorTests.md) (2 shared connections)
+- [ewm_service.py](ewm_service.py.md) (1 shared connections)
 
 ## Source Files
 

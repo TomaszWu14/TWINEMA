@@ -1,0 +1,145 @@
+{% extends "twin/base.html" %}
+{% load static %}
+{% block title %}Edytor layoutu — {{ wm.name }} — {{ app_name }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  .le-wrap { display:grid; grid-template-columns:250px minmax(0,1fr) 300px; gap:12px; align-items:start; }
+  @media (max-width: 1150px) { .le-wrap { grid-template-columns:1fr; } }
+  .le-side { display:grid; gap:12px; }
+  .le-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:0 0 10px; }
+  .le-canvas { position:relative; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; }
+  .le-canvas:focus-within { outline:2px solid var(--focus); outline-offset:2px; }
+  #le-svg { display:block; width:100%; height:calc(100vh - 230px); min-height:440px; touch-action:none; user-select:none; cursor:default; }
+  #le-svg:focus { outline:none; }
+  #le-svg.is-panning { cursor:grabbing; }
+  .le-tools { position:absolute; top:8px; right:8px; display:flex; gap:6px; }
+  .le-grid-1 { stroke:var(--border); stroke-width:1; vector-effect:non-scaling-stroke; }
+  .le-grid-5 { stroke:var(--border-strong); stroke-width:1; vector-effect:non-scaling-stroke; }
+  .le-floor { fill:var(--surface-2); stroke:var(--fg-muted); stroke-width:2; vector-effect:non-scaling-stroke; }
+  .le-axis { fill:var(--fg-subtle); font-family:var(--font-mono); }
+  .le-item rect { stroke-width:1.5; vector-effect:non-scaling-stroke; cursor:move; }
+  .le-item text { fill:var(--fg); pointer-events:none; font-family:var(--font-sans); }
+  .le-item.is-selected rect { stroke:var(--primary) !important; stroke-width:3; }
+  .le-item.has-error rect { stroke:var(--danger-solid) !important; stroke-width:3; stroke-dasharray:6 3; }
+  .le-item.has-warning rect { stroke:var(--warn-solid); stroke-dasharray:4 3; }
+  .le-marquee { fill:var(--primary-soft); stroke:var(--primary); stroke-width:1; vector-effect:non-scaling-stroke; }
+  .le-form { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .le-form label { display:flex; flex-direction:column; gap:3px; font-size:var(--fs-xs); color:var(--fg-muted); }
+  .le-form .le-wide { grid-column:1 / -1; }
+  .le-form .le-check { flex-direction:row; align-items:center; gap:6px; }
+  .le-form input, .le-form select { min-height:32px; width:100%; min-width:0; box-sizing:border-box; }
+  .le-form .le-check input { width:auto; min-height:0; }
+  #le-reload[hidden] { display:none; }
+  .le-zones { list-style:none; margin:0; padding:0; display:grid; gap:4px; }
+  .le-zones button { width:100%; justify-content:flex-start; gap:8px; }
+  .le-swatch { width:12px; height:12px; border-radius:3px; flex:none; }
+  .le-kpi { display:grid; grid-template-columns:1fr auto; gap:4px 10px; margin:0; font-size:var(--fs-sm); }
+  .le-kpi dt { color:var(--fg-muted); } .le-kpi dd { margin:0; text-align:right; font-variant-numeric:tabular-nums; font-weight:600; }
+  .le-issues { list-style:none; margin:0; padding:0; display:grid; gap:4px; max-height:300px; overflow:auto; }
+  .le-issues button { width:100%; text-align:left; white-space:normal; line-height:1.35; padding:6px 8px; font-size:var(--fs-sm);
+                      background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--fg); cursor:pointer; }
+  .le-issues .is-error { border-left:3px solid var(--danger-solid); } .le-issues .is-warning { border-left:3px solid var(--warn-solid); }
+  .le-status { font-size:var(--fs-sm); min-height:1.4em; margin:0; }
+  .le-status.is-error { color:var(--danger-fg); } .le-status.is-ok { color:var(--ok-fg); }
+  .le-help { font-size:var(--fs-xs); color:var(--fg-muted); line-height:1.6; }
+  .le-help kbd { font-family:var(--font-mono); background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:0 4px; }
+</style>
+{% endblock %}
+
+{% block content %}
+<nav class="breadcrumb" aria-label="Ścieżka">
+  <a href="{% url 'twin:warehouse_model_list' %}">Modele magazynu</a> <span class="breadcrumb__sep">›</span>
+  <a href="{% url 'twin:warehouse_model_view' wm.pk %}">{{ wm.name }}</a> <span class="breadcrumb__sep">›</span>
+  <span>Edytor layoutu</span>
+</nav>
+<div class="page-header">
+  <div>
+    <div class="page-header__title">Edytor layoutu — {{ wm.name }}</div>
+    <div class="page-header__sub">Plan z góry: przeciągaj regały i całe bloki, dodawaj doki i pola odkładcze. Kolizje i KPI liczą się na bieżąco, zapis jest jednym przyciskiem.</div>
+  </div>
+  <div class="page-header__actions">
+    <button type="button" class="btn btn-ghost" id="le-undo" title="Cofnij (Ctrl+Z)" disabled>Cofnij</button>
+    <button type="button" class="btn btn-ghost" id="le-redo" title="Ponów (Ctrl+Y)" disabled>Ponów</button>
+    <a href="{% url 'twin:warehouse_model_view' wm.pk %}" class="btn btn-secondary" id="le-3d">Widok 3D</a>
+    <button type="button" class="btn btn-primary" id="le-save" disabled>Zapisz</button>
+  </div>
+</div>
+{% csrf_token %}
+<p class="le-status" id="le-status" role="status" aria-live="polite">Wczytuję plan…</p>
+<button type="button" class="btn btn-secondary btn-sm" id="le-reload" hidden>Wczytaj plan ponownie (porzuć moje zmiany)</button>
+
+<div class="le-wrap" style="margin-top:8px">
+  <div class="le-side">
+    <div class="card"><div class="card-body">
+      <h2 class="le-sec">Strefy</h2>
+      <ul class="le-zones" id="le-zones" aria-label="Strefy regałów — kliknij, aby zaznaczyć cały blok"></ul>
+    </div></div>
+    <div class="card"><div class="card-body">
+      <h2 class="le-sec">Dodaj blok regałów</h2>
+      <form class="le-form" id="le-block">
+        <label>Strefa <input name="zone" required maxlength="20" class="form-control" value="N"></label>
+        <label>Rzędy <input name="rows" type="number" required min="1" max="60" value="4" class="form-control"></label>
+        <label>Gniazda w rzędzie <input name="bays" type="number" required min="1" max="500" value="10" class="form-control"></label>
+        <label>Poziomy <input name="levels" type="number" required min="1" max="40" value="5" class="form-control"></label>
+        <label>Szer. gniazda [cm] <input name="bay_width_cm" type="number" required min="20" max="2000" class="form-control"></label>
+        <label>Głębokość [cm] <input name="depth_cm" type="number" required min="20" max="1000" class="form-control"></label>
+        <label>Wys. poziomu [cm] <input name="level_height_cm" type="number" required min="20" max="1000" class="form-control"></label>
+        <label>Alejka [m] <input name="aisle" type="number" required min="0.5" max="20" step="0.1" class="form-control"></label>
+        <label class="le-check le-wide"><input name="back" type="checkbox" checked> Rzędy parami plecami do siebie</label>
+        <button class="btn btn-secondary le-wide" type="submit">Dodaj blok na środku widoku</button>
+      </form>
+    </div></div>
+    <div class="card"><div class="card-body">
+      <h2 class="le-sec">Dodaj element hali</h2>
+      <form class="le-form" id="le-feature">
+        <label class="le-wide">Rodzaj <select name="kind" class="form-control" id="le-feature-kind"></select></label>
+        <label>Szerokość [m] <input name="width" type="number" required min="0.1" max="5000" step="0.1" class="form-control"></label>
+        <label>Głębokość [m] <input name="depth" type="number" required min="0.1" max="5000" step="0.1" class="form-control"></label>
+        <button class="btn btn-secondary le-wide" type="submit">Dodaj element</button>
+      </form>
+    </div></div>
+  </div>
+
+  <div class="le-canvas">
+    <svg id="le-svg" tabindex="0" role="application"
+         aria-label="Plan hali. Strzałki przesuwają zaznaczenie, R obraca, Delete usuwa, Ctrl+Z cofa."
+         aria-describedby="le-help"></svg>
+    <div class="le-tools">
+      <button type="button" class="btn btn-secondary btn-sm" id="le-zoomin" aria-label="Przybliż">+</button>
+      <button type="button" class="btn btn-secondary btn-sm" id="le-zoomout" aria-label="Oddal">−</button>
+      <button type="button" class="btn btn-secondary btn-sm" id="le-fit">Cała hala</button>
+    </div>
+  </div>
+
+  <div class="le-side">
+    <div class="card"><div class="card-body">
+      <h2 class="le-sec">Właściwości</h2>
+      <div id="le-props"></div>
+    </div></div>
+    <div class="card"><div class="card-body">
+      <h2 class="le-sec">KPI na żywo</h2>
+      <dl class="le-kpi" id="le-kpi"></dl>
+    </div></div>
+    <div class="card"><div class="card-body">
+      <h2 class="le-sec" id="le-issue-count">Problemy</h2>
+      <ul class="le-issues" id="le-issues" aria-labelledby="le-issue-count"></ul>
+    </div></div>
+    <div class="card"><div class="card-body">
+      <h2 class="le-sec">Skróty</h2>
+      <div class="le-help" id="le-help">
+        Klik — zaznacz, <kbd>Shift</kbd>+klik — dodaj do zaznaczenia, przeciągnij po pustym — zaznacz prostokątem,
+        dwuklik na regale — cała strefa. Przeciągnij zaznaczenie (siatka 0,1 m, <kbd>Alt</kbd> — bez przyciągania).
+        <kbd>←↑→↓</kbd> 0,1 m (<kbd>Shift</kbd> 1 m), <kbd>R</kbd> obrót 90°, <kbd>Delete</kbd> usuń,
+        <kbd>Ctrl+D</kbd> duplikuj, <kbd>Ctrl+Z</kbd>/<kbd>Ctrl+Y</kbd> cofnij/ponów, <kbd>Esc</kbd> odznacz.
+        Widok: kółko — zoom, <kbd>Spacja</kbd>+przeciągnij albo środkowy przycisk — przesuń.
+      </div>
+    </div></div>
+  </div>
+</div>
+{{ config|json_script:"le-config" }}
+{% endblock %}
+
+{% block extra_scripts %}
+<script type="module" src="{% static 'twin/js/layout-editor.js' %}"></script>
+{% endblock %}

@@ -5,8 +5,8 @@
 ## Key Concepts
 
 - **flow-player.js** (19 connections) — `web/twin/static/twin/js/flow-player.js`
+- **createFlowPlayer()** (2 connections) — `web/twin/static/twin/js/flow-player.js`
 - **boxes()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
-- **createFlowPlayer()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
 - **disposeTree()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
 - **_e** (1 connections) — `web/twin/static/twin/js/flow-player.js`
 - **FLOW_LABELS** (1 connections) — `web/twin/static/twin/js/flow-player.js`
@@ -35,8 +35,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 38 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 38 (97%)
+- INFERRED: 1 (3%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -27,7 +27,7 @@
 
 ## Relationships
 
-- [stock_for_scene](stock_for_scene.md) (1 shared connections)
+- [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
 - [importers.py](importers.py.md) (1 shared connections)
 
 ## Source Files

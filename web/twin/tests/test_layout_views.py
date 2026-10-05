@@ -112,3 +112,42 @@ class LayoutApiTests(TestCase):
         data["racks"][0]["id"] = alien.pk
         self.assertEqual(self._post("save", data).status_code, 409)
         self.assertEqual(WarehouseModelRack.objects.get(pk=alien.pk).zone, "X")
+
+
+class LayoutEditorPageTests(TestCase):
+    """Ekran edytora (E2): tylko Projektant/Administratorzy, konfiguracja dla modułu JS, linki."""
+
+    def setUp(self):
+        self.wm = WarehouseModel.objects.create(name="Hala", floor_width_m=60, floor_depth_m=40)
+        self.designer = User.objects.create_user("proj", password="x")
+        self.designer.groups.add(Group.objects.create(name=GROUP_DESIGNER))
+        self.viewer = User.objects.create_user("zarzad", password="x")
+        self.viewer.groups.add(Group.objects.create(name=GROUP_VIEWER))
+
+    def test_designer_gets_editor_with_api_config(self):
+        self.client.force_login(self.designer)
+        r = self.client.get(reverse("twin:warehouse_layout_editor", args=[self.wm.pk]))
+        self.assertEqual(r.status_code, 200)
+        cfg = json.loads(r.content.decode().split('id="le-config" type="application/json">')[1].split("</script>")[0])
+        self.assertEqual(cfg["urls"]["check"], reverse("twin:warehouse_layout_check", args=[self.wm.pk]))
+        self.assertEqual(cfg["urls"]["save"], reverse("twin:warehouse_layout_save", args=[self.wm.pk]))
+        self.assertEqual(cfg["limits"]["n_levels"], [1, 40])
+        self.assertEqual(cfg["aisle"], 3.0)
+        self.assertContains(r, "twin/js/layout-editor.js")
+        self.assertContains(r, 'aria-live="polite"')
+
+    def test_viewer_has_no_editor_and_no_link(self):
+        self.client.force_login(self.viewer)
+        self.assertEqual(self.client.get(reverse("twin:warehouse_layout_editor", args=[self.wm.pk])).status_code, 403)
+        url = reverse("twin:warehouse_layout_editor", args=[self.wm.pk])
+        self.assertNotContains(self.client.get(reverse("twin:warehouse_model_view", args=[self.wm.pk])), url)
+
+    def test_links_from_model_view_and_list(self):
+        self.client.force_login(self.designer)
+        url = reverse("twin:warehouse_layout_editor", args=[self.wm.pk])
+        self.assertContains(self.client.get(reverse("twin:warehouse_model_view", args=[self.wm.pk])), url)
+        self.assertContains(self.client.get(reverse("twin:warehouse_model_list")), url)
+
+    def test_anonymous_redirects_to_login(self):
+        r = self.client.get(reverse("twin:warehouse_layout_editor", args=[self.wm.pk]))
+        self.assertEqual(r.status_code, 302)

@@ -5,7 +5,7 @@
 ## Key Concepts
 
 - **warehouse_model.py** (30 connections) — `web/twin/views/warehouse_model.py`
-- **rack_corners()** (19 connections) — `web/twin/blender_route.py`
+- **rack_corners()** (21 connections) — `web/twin/blender_route.py`
 - **test_model_geometry.py** (11 connections) — `web/twin/tests/test_model_geometry.py`
 - **parse_geometry_csv()** (9 connections) — `web/twin/model_geometry.py`
 - **active_master()** (8 connections) — `web/twin/ewm_service.py`
@@ -36,14 +36,14 @@
 - [twin/models.py](twin-models.py.md) (12 shared connections)
 - [shared.py](shared.py.md) (11 shared connections)
 - [kpi_facts](kpi_facts.md) (3 shared connections)
-- [layout.py](layout.py.md) (3 shared connections)
-- [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
-- [ewm_service.py](ewm_service.py.md) (3 shared connections)
-- [demo_dane.py](demo_dane.py.md) (3 shared connections)
+- [test_layout.py](test_layout.py.md) (3 shared connections)
+- [model_racks](model_racks.md) (3 shared connections)
+- [warehouse_model_ewm.py](warehouse_model_ewm.py.md) (3 shared connections)
+- [layout-editor.js](layout-editor.js.md) (3 shared connections)
 - [ParseTests](ParseTests.md) (2 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [warehouse_design_day.py](warehouse_design_day.py.md) (1 shared connections)
-- [build_scene](build_scene.md) (1 shared connections)
+- [load_groups](load_groups.md) (1 shared connections)
+- [blender_scene.py](blender_scene.py.md) (1 shared connections)
 - [design_catalog.py](design_catalog.py.md) (1 shared connections)
 
 ## Source Files
@@ -57,7 +57,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 204 (96%)
+- EXTRACTED: 206 (96%)
 - INFERRED: 8 (4%)
 - AMBIGUOUS: 0 (0%)
 

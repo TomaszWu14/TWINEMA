@@ -23,7 +23,7 @@
 - .test_unknown_rack_is_none() `EXTRACTED`
 
 ### contains
-- [blender_stock.py](blender_stock.py.md) `EXTRACTED`
+- blender_stock.py `EXTRACTED`
 
 ### imports
 - [test_design_calibration.py](test_design_calibration.py.md) `EXTRACTED`

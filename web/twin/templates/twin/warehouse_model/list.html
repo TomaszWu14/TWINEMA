@@ -69,6 +69,7 @@
                 <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 Wizualizacja
               </a>
+              {% if is_designer %}<a href="{% url 'twin:warehouse_layout_editor' wm.pk %}" class="btn btn-secondary btn-sm">Edytor layoutu</a>{% endif %}
               {% if is_designer %}<a href="{% url 'twin:warehouse_model_coords' wm.pk %}" class="btn btn-secondary btn-sm">
                 <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>
                 Współrzędne
