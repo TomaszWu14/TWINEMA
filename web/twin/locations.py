@@ -20,14 +20,3 @@ def parse_code(code):
         return None
     return zone, rack_id, stack, col_idx, level
 
-
-def active_master_qs():
-    """Lokalizacje z aktywnej partii master-daty (pusty queryset, gdy brak partii).
-
-    Serwis (nie widok) — wspólny dla widoków bliźniaka.
-    """
-    from twin.models import WarehouseLocationMaster, WarehouseLocationMasterBatch
-
-    batch = WarehouseLocationMasterBatch.objects.filter(is_active=True).first()
-    return WarehouseLocationMaster.objects.filter(batch=batch) if batch else \
-        WarehouseLocationMaster.objects.none()

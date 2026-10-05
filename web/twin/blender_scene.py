@@ -67,13 +67,27 @@ def _aisle_m(r, racks):
     return min(aisles, default=None)
 
 
+def rack_class(r):
+    """Jeden predykat rodzaju regału dla KPI, rozmieszczenia, symulacji, animacji i kosztów:
+    'shelf' | 'vna' | 'pallet' — z pola `equipment` (sprzęt z katalogu ustawia je w K1);
+    geometria tylko dla danych bez pola (stare pliki / testy)."""
+    eq = r.get("equipment")
+    if eq in ("shelf", "vna"):
+        return eq
+    if eq:
+        return "pallet"
+    return "shelf" if r["level_h"] < SHELF_LEVEL_M else "pallet"
+
+
 def _vna_racks(racks):
-    return [r for r in racks if r["n_levels"] * r["level_h"] >= HIGH_BAY_M
-            and (_aisle_m(r, racks) or 99) <= VNA_AISLE_MAX_M]
+    """VNA: z pola `equipment`; bez pola — wysoki regał przy wąskiej alejce (geometria)."""
+    return [r for r in racks if rack_class(r) == "vna" or (
+        not r.get("equipment") and r["n_levels"] * r["level_h"] >= HIGH_BAY_M
+        and (_aisle_m(r, racks) or 99) <= VNA_AISLE_MAX_M)]
 
 
 def _is_shelf(r):
-    return r["level_h"] < SHELF_LEVEL_M
+    return rack_class(r) == "shelf"
 
 
 def _feature_center(f):
@@ -385,7 +399,9 @@ def model_racks(wm):
         "x": r.x_m or 0.0, "y": r.y_m or 0.0, "angle": r.angle_deg or 0.0,
         "width": r.width_m, "depth": r.depth_cm / 100, "level_h": r.level_height_cm / 100,
         "n_bays": max(1, r.n_bays), "n_levels": max(1, r.n_levels), "equipment": r.equipment,
-    } for r in wm.racks.order_by("zone", "rack_id")]
+        "aisle_m": r.equipment_model.aisle_m if r.equipment_model_id else None,
+        "rack_class": rack_class({"equipment": r.equipment, "level_h": r.level_height_cm / 100}),
+    } for r in wm.racks.select_related("equipment_model").order_by("zone", "rack_id")]
 
 
 def model_floor(wm, racks):

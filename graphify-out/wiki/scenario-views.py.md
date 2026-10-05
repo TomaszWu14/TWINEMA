@@ -1,43 +1,44 @@
 # scenario/views.py
 
-> 16 nodes · cohesion 0.21
+> 15 nodes · cohesion 0.18
 
 ## Key Concepts
 
-- **detect()** (14 connections) — `web/twin/ewm_detect.py`
-- **ewm_detect.py** (13 connections) — `web/twin/ewm_detect.py`
-- **parse_code()** (8 connections) — `web/twin/addressing.py`
-- **letter_rank()** (5 connections) — `web/twin/addressing.py`
-- **_grid()** (5 connections) — `web/twin/ewm_detect.py`
-- **_shape()** (5 connections) — `web/twin/ewm_detect.py`
-- **_distance()** (4 connections) — `web/twin/ewm_detect.py`
-- **_template_sig()** (3 connections) — `web/twin/ewm_detect.py`
-- **_new_template()** (2 connections) — `web/twin/ewm_detect.py`
-- **Klucz sortowania liter poziomów: znane litery wg LETTER_ORDER, obce na końcu.** (1 connections) — `web/twin/addressing.py`
-- **Kod EWM → (strefa, przejście, gniazdo, pozycja, litera, połówka) albo None.** (1 connections) — `web/twin/addressing.py`
-- **„Wykryj z EWM”: kody lokalizacji z mastera → propozycja szablonów gniazd, reguł…** (1 connections) — `web/twin/ewm_detect.py`
-- **k pozycji × [(litera, split)] → zbiór komórek (pozycja, litera, połówka).** (1 connections) — `web/twin/ewm_detect.py`
-- **Komórki gniazda → (sygnatura obrysu, czy siatka regularna). Sygnatura = (k,…** (1 connections) — `web/twin/ewm_detect.py`
-- **Liczba różnic gniazda od szablonu: brakujące + nadmiarowe komórki + inne typy…** (1 connections) — `web/twin/ewm_detect.py`
-- **rows: [{"zone", "rack_id", "n_bays"}]; master: [(kod, typ_ewm, wysokość_mm,…** (1 connections) — `web/twin/ewm_detect.py`
+- **build_pallets()** (10 connections) — `web/twin/blender_stock.py`
+- **test_blender_stock.py** (10 connections) — `web/twin/tests/test_blender_stock.py`
+- **abc_by_hits()** (9 connections) — `web/twin/blender_stock.py`
+- **BuildPalletsTests** (6 connections) — `web/twin/tests/test_blender_stock.py`
+- **ParseCodeTests** (6 connections) — `web/twin/tests/test_blender_stock.py`
+- **SimpleTestCase** (3 connections)
+- **.test_abc_thresholds()** (2 connections) — `web/twin/tests/test_blender_stock.py`
+- **.test_sources_merge_by_location()** (2 connections) — `web/twin/tests/test_blender_stock.py`
+- **.test_stock_without_snapshot_is_enough()** (2 connections) — `web/twin/tests/test_blender_stock.py`
+- **Klasa ABC wg udziału w pobraniach (ta sama reguła progów co…** (1 connections) — `web/twin/blender_stock.py`
+- **Czysta funkcja: dane wejściowe jako proste krotki/dicty → (pallets, stats,…** (1 connections) — `web/twin/blender_stock.py`
+- **.test_four_part_builder_code()** (1 connections) — `web/twin/tests/test_blender_stock.py`
+- **.test_garbage_is_none()** (1 connections) — `web/twin/tests/test_blender_stock.py`
+- **.test_letter_encodes_column_and_level_like_3d_map()** (1 connections) — `web/twin/tests/test_blender_stock.py`
+- **Palety w lokalizacjach (stan magazynu) w scenie Blendera —…** (1 connections) — `web/twin/tests/test_blender_stock.py`
 
 ## Relationships
 
-- [layout-panels.js](layout-panels.js.md) (6 shared connections)
-- [simulate_plan](simulate_plan.md) (4 shared connections)
-- [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
-- [SimViewTests](SimViewTests.md) (2 shared connections)
-- [StudioViewTests](StudioViewTests.md) (1 shared connections)
+- [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (7 shared connections)
+- [scenario/services.py](scenario-services.py.md) (4 shared connections)
+- [ml/services.py](ml-services.py.md) (2 shared connections)
+- [day-timeline.js](day-timeline.js.md) (2 shared connections)
+- [blender_scene.py](blender_scene.py.md) (1 shared connections)
+- [packaging.py](packaging.py.md) (1 shared connections)
+- [kpi_facts](kpi_facts.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/addressing.py`
-- `web/twin/ewm_detect.py`
+- `web/twin/blender_stock.py`
+- `web/twin/tests/test_blender_stock.py`
 
 ## Audit Trail
 
-- EXTRACTED: 64 (97%)
-- INFERRED: 2 (3%)
+- EXTRACTED: 54 (96%)
+- INFERRED: 2 (4%)
 - AMBIGUOUS: 0 (0%)
 
 ---

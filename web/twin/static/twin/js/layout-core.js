@@ -5,7 +5,7 @@
 export const ZONE_PALETTE = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#f97316', '#06b6d4',
   '#ec4899', '#14b8a6', '#6b7280'];   // jak warehouse_model_view (kolory stref w 3D)
 export const SNAP_M = 0.1;
-export const BACK_GAP_M = 0.2;       // szczelina między regałami plecami do siebie
+export const BACK_GAP_M = 0.1;       // zapas; właściwa wartość z konfiguracji edytora (design_catalog.BACK_GAP_M)
 
 export const rad = (deg) => (deg || 0) * Math.PI / 180;
 export const round = (v, d = 3) => Math.round(v * 10 ** d) / 10 ** d;
@@ -87,7 +87,7 @@ export function nextRackIds(racks, zone, count) {
 /** Blok regałów: `rows` rzędów po `bays` gniazd, parami plecami do siebie (opcjonalnie), między
  *  parami alejka `aisle` [m]. Rząd nieparzysty w parze jest obrócony o 180° (front do alejki). */
 export function makeBlock({ x, y, rows, bays, levels, bayWidthCm, depthCm, levelHeightCm, aisle,
-  zone, ids, backToBack = true }) {
+  zone, ids, backToBack = true, backGap = BACK_GAP_M }) {
   const w = bays * bayWidthCm / 100, d = depthCm / 100;
   const out = [];
   let yy = y;
@@ -97,7 +97,7 @@ export function makeBlock({ x, y, rows, bays, levels, bayWidthCm, depthCm, level
       depth_cm: depthCm, level_height_cm: levelHeightCm };
     // 180°: narożnik w (x + w, y + d) — prostokąt zajmuje to samo pole, front zwrócony w +y
     out.push(back ? { ...base, x: round(x + w), y: round(yy + d), angle: 180 } : { ...base, x: round(x), y: round(yy), angle: 0 });
-    yy += d + (backToBack && i % 2 === 0 && i + 1 < rows ? BACK_GAP_M : aisle);
+    yy += d + (backToBack && i % 2 === 0 && i + 1 < rows ? backGap : aisle);
   }
   return out;
 }

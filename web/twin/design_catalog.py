@@ -124,10 +124,13 @@ def element_summary(kind, p):
             "throughput_h": ELEMENTS[kind].get("throughput_h")}
 
 
+BACK_GAP_M = 0.1          # szczelina między regałami plecami do siebie — jedno źródło (generator, edytor JS)
+
+
 def block_rows(kind, rows, *, back_to_back=True, aisle=None, **overrides):
     """Rzędy bloku regałów: lista przesunięć „w głąb" [m] kolejnych rzędów.
 
-    back_to_back=True: pary plecami do siebie (szczelina 0,1 m) i korytarz `aisle`
+    back_to_back=True: pary plecami do siebie (szczelina `BACK_GAP_M`) i korytarz `aisle`
     (domyślnie wymagany przez sprzęt z katalogu) między parami."""
     p = params_for(kind, **overrides)
     _, d = footprint(kind, p)
@@ -135,29 +138,44 @@ def block_rows(kind, rows, *, back_to_back=True, aisle=None, **overrides):
     offsets, pos = [], 0.0
     for i in range(rows):
         offsets.append(round(pos, 3))
-        gap = 0.1 if (back_to_back and i % 2 == 0) else aisle
+        gap = BACK_GAP_M if (back_to_back and i % 2 == 0) else aisle
         pos += d + gap
     return offsets
 
 
-def _span(e, axis, along):
-    """Rzut obrysu elementu na oś: (początek, koniec) [m]; along=True → szerokość."""
+def _proj(e, axis):
+    """Rzut 4 narożników elementu na oś: (min, max) [m] — działa dla każdego kąta (też 180°)."""
+    from .blender_route import rack_corners
+
     w, d = footprint(e["kind"], e["params"])
-    o = e["x"] * axis[0] + e["y"] * axis[1]
-    return o, o + (w if along else d)
+    v = [x * axis[0] + y * axis[1] for x, y in
+         rack_corners({"x": e["x"], "y": e["y"], "angle": e["angle"] or 0, "width": w, "depth": d})]
+    return min(v), max(v)
+
+
+def _front_to(r, axis, sign):
+    """Czy front regału (strona −u_d regału) patrzy w stronę `sign`·axis."""
+    from .blender_route import rack_axes
+
+    ud = rack_axes(r["angle"])[1]
+    return (ud[0] * axis[0] + ud[1] * axis[1]) * sign < 0
+
+
+def _parallel(a, b):
+    """Ten sam kierunek osi modulo 180° (0° i 180° = rzędy plecami albo frontami do siebie)."""
+    return abs(((a["angle"] or 0) - (b["angle"] or 0) + 90) % 180 - 90) <= 1
 
 
 def check_aisles(elements):
     """Kontrola szerokości alejek między równoległymi elementami składowania.
 
     elements: dicty {kind, x, y, angle, params, label, aisle_m?} (`aisle_m` nadpisuje katalog,
-    np. półki z kompletacją). Dla każdej pary sąsiednich regałów o tym
-    samym kącie, nakładających się wzdłuż osi, liczy prześwit między frontami; prześwit
-    0,05–aisle_m (węższy niż wymaga sprzęt, a nie „plecami do siebie") = naruszenie.
+    np. półki z kompletacją albo Ast sprzętu). Para równoległa (kąt modulo 180°), nakładająca się
+    wzdłuż osi: prześwit liczony z rzutu narożników. Alejka wymagana tylko, gdy w prześwit patrzy
+    front któregoś regału (front = strona −u_d regału) i tylko między najbliższymi sąsiadami
+    (nie „przez" regał stojący pomiędzy). Szczelina plecami do siebie ≤ 0,3 m — bez alejki.
     `ia`/`ib` = indeksy pary w `elements`."""
-    import math
-
-    from .blender_route import bbox, near_pairs, rack_corners
+    from .blender_route import bbox, near_pairs, rack_axes, rack_corners
 
     idx = [n for n, e in enumerate(elements) if e["kind"] in RACK_KINDS]
     racks = [elements[n] for n in idx]
@@ -167,24 +185,42 @@ def check_aisles(elements):
         boxes.append(bbox(rack_corners({"x": e["x"], "y": e["y"], "angle": e["angle"], "width": w, "depth": d})))
     pad = max([ELEMENTS[k].get("aisle_m", 0) for k in RACK_KINDS]
               + [e.get("aisle_m") or 0 for e in elements]) + 0.1      # dalej niż alejka = bez znaczenia
+    pairs = near_pairs(boxes, pad)
+    near = {}
+    for i, j in pairs:
+        near.setdefault(i, set()).add(j)
+        near.setdefault(j, set()).add(i)
     issues = []
-    for i, j in near_pairs(boxes, pad):
+    for i, j in pairs:
         a, b = racks[i], racks[j]
-        if abs(((a["angle"] - b["angle"]) + 180) % 360 - 180) > 1:
+        if not _parallel(a, b):
             continue
-        t = math.radians(a["angle"] or 0)
-        u_w, u_d = (math.cos(t), -math.sin(t)), (math.sin(t), math.cos(t))
-
-        aw, bw = _span(a, u_w, along=True), _span(b, u_w, along=True)
-        if min(aw[1], bw[1]) - max(aw[0], bw[0]) <= 0.2:     # nie leżą naprzeciw siebie
+        u_w, u_d = rack_axes(a["angle"])
+        aw, bw = _proj(a, u_w), _proj(b, u_w)
+        lo_w, hi_w = max(aw[0], bw[0]), min(aw[1], bw[1])
+        if hi_w - lo_w <= 0.2:                              # nie leżą naprzeciw siebie
             continue
-        ad, bd = _span(a, u_d, along=False), _span(b, u_d, along=False)
-        gap = max(bd[0] - ad[1], ad[0] - bd[1])
+        (low, sl), (up, su) = sorted(((_proj(a, u_d), a), (_proj(b, u_d), b)), key=lambda t: t[0][0])
+        gap = up[0] - low[1]
         need = max(e.get("aisle_m") or ELEMENTS[e["kind"]].get("aisle_m", 0) for e in (a, b))
-        kind = "kolizja" if gap < -0.01 else "za wąska alejka" if 0.3 < gap < need - 0.01 else None
+        if gap < -0.01:
+            kind = "kolizja"
+        else:
+            facing = _front_to(sl, u_d, +1) or _front_to(su, u_d, -1)
+            kind = "za wąska alejka" if facing and 0.3 < gap < need - 0.01 else None
+            if kind:                                        # tylko najbliżsi sąsiedzi
+                for k in (near.get(i, set()) | near.get(j, set())) - {i, j}:
+                    c = racks[k]
+                    if not _parallel(a, c):
+                        continue
+                    cw, cd = _proj(c, u_w), _proj(c, u_d)
+                    if min(hi_w, cw[1]) - max(lo_w, cw[0]) > 0.2 and cd[1] > low[1] + 0.01 and cd[0] < up[0] - 0.01:
+                        kind = None
+                        break
         if kind:
             issues.append({"type": kind, "a": a.get("label"), "b": b.get("label"),
-                           "gap_m": round(gap, 2), "need_m": need, "ia": idx[i], "ib": idx[j]})
+                           "gap_m": round(gap, 2), "need_m": need,
+                           "ia": idx[i], "ib": idx[j]})
     return issues
 
 
@@ -195,8 +231,9 @@ def variant_summary(elements, floor_w, floor_d):
         s = element_summary(e["kind"], e["params"])
         k = by_kind.setdefault(e["kind"], {"label": s["label"], "count": 0, "pallet_positions": 0})
         k["count"] += 1
-        k["pallet_positions"] += s["pallet_positions"]
-        positions += s["pallet_positions"]
+        pp = 0 if e.get("shelf") else s["pallet_positions"]
+        k["pallet_positions"] += pp
+        positions += pp
         area += s["area_m2"]
     floor = floor_w * floor_d
     return {"pallet_positions": positions, "built_area_m2": round(area, 1),

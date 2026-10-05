@@ -16,6 +16,7 @@ dwóch stref liczy się do jednej — dokładny podział miejsc, gdy strefy zacz
 import math
 
 from twin.blender_route import rack_corners
+from twin.blender_scene import rack_class
 from twin.design_compare import PALLET_W_M          # 0,9 m na paletę w boku — ten sam wzór co `rack_to_element`
 
 FILL_WARN_PCT = 90
@@ -27,7 +28,7 @@ ZONE_FLAGS = [("zone_adr", "adr", "ADR (towary niebezpieczne)"),
 
 def positions(r):
     """Miejsca paletowe regału (jak w KPI wariantów: palet w gnieździe ≈ szerokość / 0,9 m) albo 0 dla półek."""
-    if (r.get("equipment") or "reach") == "shelf":
+    if rack_class({"equipment": r.get("equipment"), "level_h": r["level_height_cm"] / 100}) == "shelf":
         return 0
     return r["n_bays"] * max(1, round(r["bay_width_cm"] / 100 / PALLET_W_M)) * r["n_levels"]
 

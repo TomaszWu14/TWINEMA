@@ -24,7 +24,7 @@
 
 - [test_voice.py](test_voice.py.md) (6 shared connections)
 - [test_fleet_catalog.py](test_fleet_catalog.py.md) (2 shared connections)
-- [test_showcase.py](test_showcase.py.md) (1 shared connections)
+- [showcase.py](showcase.py.md) (1 shared connections)
 - [twinema_montage.py](twinema_montage.py.md) (1 shared connections)
 
 ## Source Files

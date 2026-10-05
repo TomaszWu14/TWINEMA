@@ -12,7 +12,7 @@ Wymiary hali wynikają z pojemności; liczba par rzędów VNA dobrana do proporc
 """
 import math
 
-from .design_catalog import ELEMENTS, SHELF_AISLE_M
+from .design_catalog import BACK_GAP_M, ELEMENTS, SHELF_AISLE_M
 from .site import default_site
 
 VNA = ELEMENTS["rack_vna"]["params"]
@@ -28,7 +28,6 @@ PRESET = {                      # scenariusz referencyjny: duże centrum dystryb
 
 SPRINKLER_M = 1.0               # wolne pod tryskaczami
 BEAM_GAP_M = 0.25               # belka + luz nad paletą
-BACK_GAP_M = 0.1                # rzędy plecami do siebie
 WALL_M = 1.0
 INBOUND_BAND_M = 25.0           # rozładunek kontenerów, paletyzacja, bufor
 OUTBOUND_BAND_M = 20.0          # bufor wydań przy dokach

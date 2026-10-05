@@ -126,12 +126,3 @@ def level_height_keys(zone, letter, level):
         keys.insert(0, f"{level}{base}")
     return keys
 
-
-def level_height_mm(level_heights, zone, letter, level):
-    """Wysokość miejsca [mm] ze słownika typu regału (patrz ``level_height_keys``);
-    brak klucza → największa wysokość typu (dotychczasowy fallback); pusty słownik → 0."""
-    lh = level_heights or {}
-    for key in level_height_keys(zone, letter, level):
-        if lh.get(key):
-            return int(lh[key])
-    return int(max(lh.values())) if lh else 0

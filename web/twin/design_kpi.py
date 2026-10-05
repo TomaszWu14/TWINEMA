@@ -104,15 +104,17 @@ def rack_to_element(r):
     wymaganą alejkę: VNA → `rack_vna`, półki → `rack_std` z alejką `SHELF_AISLE_M`, reszta → reach."""
     n_bays = max(1, r["n_bays"])
     bay_w = r["width"] / n_bays
-    equipment = r.get("equipment") or "reach"
-    kind = "rack_vna" if equipment == "vna" else "rack_std"
+    from .blender_scene import rack_class
+
+    cls = rack_class(r)
+    kind = "rack_vna" if cls == "vna" else "rack_std"
     el = {"kind": kind, "label": f"{r['zone']}-{r['rack_id']}", "x": r["x"], "y": r["y"],
           "angle": r.get("angle") or 0.0,
           "params": params_for(kind, bays=n_bays, levels=max(1, r["n_levels"]),
                                bay_width=round(bay_w, 3), depth=r["depth"], level_h=r["level_h"],
                                pallets_per_bay=max(1, round(bay_w / 0.9)))}
-    if equipment == "shelf":
-        el["aisle_m"] = SHELF_AISLE_M
+    if cls == "shelf":                          # półki = kompletacja ręczna, nie miejsca paletowe
+        el["aisle_m"], el["shelf"] = SHELF_AISLE_M, True
     if r.get("aisle_m"):                       # Ast ze sprzętu z katalogu (K1) nadpisuje typ regału
         el["aisle_m"] = r["aisle_m"]
     return el

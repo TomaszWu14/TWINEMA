@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **check_aisles()** (13 connections) — `web/twin/design_catalog.py`
+- **check_aisles()** (20 connections) — `web/twin/design_catalog.py`
 - **AisleCheckTests** (7 connections) — `web/twin/tests/test_design_catalog.py`
 - **_rack()** (7 connections) — `web/twin/tests/test_design_catalog.py`
 - **.test_variant_summary()** (4 connections) — `web/twin/tests/test_design_catalog.py`
@@ -19,7 +19,8 @@
 
 ## Relationships
 
-- [twinema_design_kit.py](twinema_design_kit.py.md) (13 shared connections)
+- [twinema_design_kit.py](twinema_design_kit.py.md) (12 shared connections)
+- [site.py](site.py.md) (1 shared connections)
 - [day_demand](day_demand.md) (1 shared connections)
 
 ## Source Files
@@ -29,7 +30,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 53 (100%)
+- EXTRACTED: 60 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

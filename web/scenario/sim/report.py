@@ -25,6 +25,7 @@ KPI_SPEC = [
     ("staging_in_max", "Max palet na polu przyjęć", "", "high"), ("staging_out_max", "Max palet na polu wydań", "", "high"),
     ("fleet_util_pct", "Flota: wykorzystanie dnia", "%", "high"), ("fleet_peak_pct", "Flota: szczyt", "%", "high"),
     ("fleet_wait_p95_min", "Flota: czekanie zadań P95", "min", "high"), ("unfinished", "Zadań bez obsady", "", "high"),
+    ("fleet_busy_h", "Flota: godzin pracy", "h", "high"),
     ("fleet_charge_h", "Flota: godzin ładowania", "h", "high"), ("fleet_effective", "Flota efektywna (bez ładowania)", "", "low"),
 ] + [(f"util_{p}", f"{lbl}: wykorzystanie", "%", "high") for p, lbl in PROCS] \
   + [(f"wait_{p}_p95_min", f"{lbl}: czekanie P95", "min", "high") for p, lbl in PROCS]
@@ -79,7 +80,8 @@ def run_report(rec):
     fb = series(fleet.busy)
     n_units = len(fleet.u)
     tl["fleet_busy"], tl["fleet_units"] = fb, n_units
-    kpi["fleet_util_pct"] = round(100 * sum(e - s for s, e in fleet.busy) / (n_units * 24))
+    kpi["fleet_busy_h"] = round(sum(e - s for s, e in fleet.busy), 1)       # wózko-godziny pracy (koszty OPEX)
+    kpi["fleet_util_pct"] = round(100 * kpi["fleet_busy_h"] / (n_units * 24))
     kpi["fleet_peak_pct"] = round(100 * max(fb) / n_units)
     kpi["fleet_wait_p95_min"] = round(p95([(s - r) * 60 for r, s, _ in fleet.waits]), 1)
     charge_h = sum(min(e, 24) - s for s, e in fleet.charging if s < 24)

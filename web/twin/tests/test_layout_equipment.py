@@ -92,3 +92,7 @@ class LayoutEquipmentSaveTests(TestCase):
         r = self.client.get(reverse("twin:warehouse_layout_editor", args=[self.wm.pk]))
         self.assertContains(r, "VNA kombi 1,5 t / 14 m")
         self.assertNotContains(r, "AMR półkowy")                    # AMR nie obsługuje regałów paletowych
+        # K2: podnośnikowy i kompletacja obsługują regały (kategoria reach); ciągnik nie podnosi palety
+        cat = {Equipment.objects.get(pk=e["id"]).kind: e["category"] for e in r.context["config"]["catalog"]}
+        self.assertEqual((cat.get("stacker"), cat.get("order_picker"), cat.get("vna")), ("reach", "reach", "vna"))
+        self.assertNotIn("tractor", cat)

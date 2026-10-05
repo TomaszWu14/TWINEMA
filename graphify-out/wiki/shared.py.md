@@ -1,30 +1,25 @@
 # shared.py
 
-> 4 nodes · cohesion 0.40
+> 3 nodes · cohesion 0.67
 
 ## Key Concepts
 
-- **load_groups()** (7 connections) — `web/twin/design_day.py`
-- **groups_for()** (4 connections) — `web/masterdata/services.py`
-- **.test_groups_for_design_day()** (2 connections) — `web/masterdata/tests/test_dane.py`
-- **{materiał z zadań: grupa towarowa} z modułu Dane; None, gdy materiałów jeszcze…** (1 connections) — `web/twin/design_day.py`
+- **ClampTests** (3 connections) — `web/twin/tests/test_flow_player.py`
+- **.test_clamps_and_defaults()** (2 connections) — `web/twin/tests/test_flow_player.py`
+- **SimpleTestCase** (1 connections)
 
 ## Relationships
 
-- [day-timeline.js](day-timeline.js.md) (2 shared connections)
-- [test_showcase.py](test_showcase.py.md) (2 shared connections)
-- [test_sim.py](test_sim.py.md) (2 shared connections)
-- [test_voice.py](test_voice.py.md) (1 shared connections)
+- [twin/models.py](twin-models.py.md) (1 shared connections)
+- [test_sim.py](test_sim.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/masterdata/services.py`
-- `web/masterdata/tests/test_dane.py`
-- `web/twin/design_day.py`
+- `web/twin/tests/test_flow_player.py`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (100%)
+- EXTRACTED: 6 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -12,7 +12,7 @@
 
 ### imports
 - [warehouse_blender.py](warehouse_blender.py.md) `EXTRACTED`
-- [warehouse_compare.py](warehouse_compare.py.md) `EXTRACTED`
+- warehouse_compare.py `EXTRACTED`
 - warehouse_design_sim.py `EXTRACTED`
 - [warehouse_tasks.py](warehouse_tasks.py.md) `EXTRACTED`
 - test_design_sim.py `EXTRACTED`
@@ -31,7 +31,7 @@
 ### uses
 - SimulationViewTests `INFERRED`
 - SimulationTests `INFERRED`
-- [ForecastTests](ForecastTests.md) `INFERRED`
+- ForecastTests `INFERRED`
 - ForecastViewTests `INFERRED`
 - DesignHubTests `INFERRED`
 - DemoFileTests `INFERRED`

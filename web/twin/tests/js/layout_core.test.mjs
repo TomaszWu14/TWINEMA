@@ -44,9 +44,9 @@ test('kolejne numery regałów w strefie z wiodącymi zerami', () => {
   assert.deepEqual(nextRackIds(racks, 'Z', 1), ['001']);
 });
 
-test('blok: pary plecami (szczelina 0,2 m), alejka między parami, drugi w parze obrócony', () => {
+test('blok: pary plecami (szczelina z konfiguracji), alejka między parami, drugi w parze obrócony', () => {
   const b = makeBlock({ x: 2, y: 5, rows: 3, bays: 10, levels: 5, bayWidthCm: 270, depthCm: 110,
-    levelHeightCm: 180, aisle: 3, zone: 'V', ids: ['001', '002', '003'] });
+    levelHeightCm: 180, aisle: 3, zone: 'V', ids: ['001', '002', '003'], backGap: 0.2 });
   assert.deepEqual(b.map((r) => r.angle), [0, 180, 0]);
   near(b[1].x, 2 + 27); near(b[1].y, 5 + 1.1 + 0.2 + 1.1);
   near(b[2].y, 5 + 1.1 + 0.2 + 1.1 + 3);

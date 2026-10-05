@@ -6,8 +6,8 @@
 
 - **Layout** (12 connections) — `web/twin/design_sim.py`
 - **_manh()** (8 connections) — `web/twin/design_sim.py`
+- **_is_shelf()** (7 connections) — `web/twin/blender_scene.py`
 - **.vna_slot()** (7 connections) — `web/twin/design_sim.py`
-- **_is_shelf()** (6 connections) — `web/twin/blender_scene.py`
 - **._front()** (6 connections) — `web/twin/design_sim.py`
 - **.__init__()** (6 connections) — `web/twin/design_sim.py`
 - **.ok()** (4 connections) — `web/twin/design_sim.py`
@@ -23,8 +23,8 @@
 - [simulate](simulate.md) (15 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (5 shared connections)
 - [blender_scene.py](blender_scene.py.md) (3 shared connections)
-- [detect](detect.md) (2 shared connections)
-- [ForecastTests](ForecastTests.md) (1 shared connections)
+- [staffing.py](staffing.py.md) (2 shared connections)
+- [test_ml.py](test_ml.py.md) (1 shared connections)
 
 ## Source Files
 
@@ -34,7 +34,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 58 (94%)
+- EXTRACTED: 59 (94%)
 - INFERRED: 4 (6%)
 - AMBIGUOUS: 0 (0%)
 

@@ -1,4 +1,4 @@
-# Shot
+# Presentation
 
 > 8 nodes · cohesion 0.46
 

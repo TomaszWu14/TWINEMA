@@ -30,7 +30,7 @@
 
 ## Relationships
 
-- [test_s3b_views.py](test_s3b_views.py.md) (7 shared connections)
+- [test_master_data.py](test_master_data.py.md) (7 shared connections)
 - [test_sim.py](test_sim.py.md) (4 shared connections)
 - [day_demand](day_demand.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)

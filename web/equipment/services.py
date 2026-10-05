@@ -1,13 +1,12 @@
 """Dobór klasy sprzętu do regałów (generator hali, dane demo) — ta sama reguła co migracja 0006 w twin."""
-from .catalog import RACK_CATEGORY
 from .models import Equipment
 
 
 def pick_class(category, top_m):
     """Najmniejsza klasa systemowa danej kategorii regału (reach/vna), która sięga belki `top_m`;
     gdy żadna — najwyższa. Półki i nieznane kategorie → None."""
-    kinds = [k for k, c in RACK_CATEGORY.items() if c == category and k != "counterbalance"]
-    cands = sorted(Equipment.objects.filter(is_system=True, kind__in=kinds), key=lambda e: e.max_lift_m or 0)
+    # klasa domyślna = typ o nazwie kategorii (reach / vna); czołowy, podnośnikowy i kompletacja tylko ręcznie
+    cands = sorted(Equipment.objects.filter(is_system=True, kind=category), key=lambda e: e.max_lift_m or 0)
     return next((e for e in cands if (e.max_lift_m or 0) >= top_m), cands[-1] if cands else None)
 
 

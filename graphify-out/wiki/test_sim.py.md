@@ -1,13 +1,13 @@
 # test_sim.py
 
-> 80 nodes · cohesion 0.05
+> 78 nodes · cohesion 0.05
 
 ## Key Concepts
 
 - **shared.py** (42 connections) — `web/twin/shared.py`
 - **warehouse_blender.py** (31 connections) — `web/twin/views/warehouse_blender.py`
+- **model_racks()** (25 connections) — `web/twin/blender_scene.py`
 - **warehouse_compare.py** (25 connections) — `web/twin/views/warehouse_compare.py`
-- **model_racks()** (24 connections) — `web/twin/blender_scene.py`
 - **hall_feature_dict()** (23 connections) — `web/twin/shared.py`
 - **warehouse_design_sim.py** (23 connections) — `web/twin/views/warehouse_design_sim.py`
 - **WarehouseTaskBatch** (22 connections) — `web/twin/models_tasks.py`
@@ -29,7 +29,7 @@
 - **run_simulation()** (9 connections) — `web/twin/views/warehouse_design_sim.py`
 - **load_master_levels()** (8 connections) — `web/twin/blender_stock.py`
 - **load_day_tasks()** (8 connections) — `web/twin/design_sim.py`
-- *... and 55 more nodes in this community*
+- *... and 53 more nodes in this community*
 
 ## Relationships
 
@@ -37,13 +37,13 @@
 - [day-timeline.js](day-timeline.js.md) (11 shared connections)
 - [blender_scene.py](blender_scene.py.md) (10 shared connections)
 - [warehouse_tasks.py](warehouse_tasks.py.md) (10 shared connections)
-- [detect](detect.md) (10 shared connections)
+- [staffing.py](staffing.py.md) (10 shared connections)
 - [twin/models.py](twin-models.py.md) (9 shared connections)
 - [simulate](simulate.md) (9 shared connections)
-- [views_sim.py](views_sim.py.md) (8 shared connections)
+- [scenario/services.py](scenario-services.py.md) (8 shared connections)
 - [site.py](site.py.md) (7 shared connections)
 - [scene-data.js](scene-data.js.md) (6 shared connections)
-- [Equipment](Equipment.md) (6 shared connections)
+- [CatalogViewTests](CatalogViewTests.md) (6 shared connections)
 - [ml/services.py](ml-services.py.md) (5 shared connections)
 
 ## Source Files
@@ -68,7 +68,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 551 (99%)
+- EXTRACTED: 550 (99%)
 - INFERRED: 7 (1%)
 - AMBIGUOUS: 0 (0%)
 

@@ -8,8 +8,9 @@ from django.http import FileResponse, Http404
 from django.urls import reverse
 from django.utils import timezone
 
+from equipment.catalog import RACK_CATEGORY
 from equipment.models import Equipment
-from twin.design_catalog import ELEMENTS, SHELF_AISLE_M
+from twin.design_catalog import BACK_GAP_M, ELEMENTS, SHELF_AISLE_M
 from twin.layout import (
     RACK_LIMITS, LayoutError, analyze, clean_layout, column_list, feature_row, rack_row,
 )
@@ -63,8 +64,8 @@ def _parse(request):
 
 
 def equipment_catalog():
-    """{id: parametry} sprzętu obsługującego regały (reach/VNA) — do walidacji layoutu (K1)."""
-    return {e.pk: e.params() for e in Equipment.objects.filter(kind__in=("reach", "counterbalance", "vna"))}
+    """{id: parametry} sprzętu obsługującego regały (`RACK_CATEGORY`) — do walidacji layoutu (K1)."""
+    return {e.pk: e.params() for e in Equipment.objects.filter(kind__in=RACK_CATEGORY)}
 
 
 def _analyze(layout):
@@ -89,14 +90,14 @@ def warehouse_layout_editor(request, pk):
                  "save": reverse("twin:warehouse_layout_save", args=[pk]),
                  "underlay": reverse("twin:warehouse_layout_underlay_upload", args=[pk])},
         "limits": RACK_LIMITS, "featureColors": HALL_FEATURE_COLORS,
-        "aisle": ELEMENTS["rack_std"]["aisle_m"],
+        "aisle": ELEMENTS["rack_std"]["aisle_m"], "backGap": BACK_GAP_M,
         "equipment": dict(WarehouseModelRack.EQUIPMENT_CHOICES),
         "dockRoles": dict(WarehouseHallFeature.DOCK_ROLE_CHOICES),
         "aisles": {"reach": ELEMENTS["rack_std"]["aisle_m"], "vna": ELEMENTS["rack_vna"]["aisle_m"],
                    "shelf": SHELF_AISLE_M},
         "areaKinds": AREA_KINDS,
-        "catalog": [{"id": e["id"], "name": e["name"], "kind": e["kind"], "aisle_m": e["aisle_m"],
-                     "max_lift_m": e["max_lift_m"]} for e in equipment_catalog().values()],
+        "catalog": [{"id": e["id"], "name": e["name"], "category": RACK_CATEGORY[e["kind"]],
+                     "aisle_m": e["aisle_m"], "max_lift_m": e["max_lift_m"]} for e in equipment_catalog().values()],
         "defaultSite": default_site({"width": wm.floor_width_m, "depth": wm.floor_depth_m,
                                      "clear_height": wm.clear_height_m}),
     }
@@ -190,6 +191,12 @@ def warehouse_layout_save(request, pk):
         wm.save(update_fields=["floor_width_m", "floor_depth_m", "clear_height_m", "columns", "underlay_meta",
                                "site", "updated_at"])
     out = _layout(wm)
+    # indeksy w `issues` muszą wskazywać kolejność ZWRÓCONYCH list (regały wracają posortowane strefa/numer)
+    saved = clean_layout(out, hall_feature_kinds())
+    saved["site"] = out["site"] or None
+    res, _ = _analyze(saved)
+    if res:
+        kpi, issues, _ = res
     out.update(kpi=kpi, issues=issues)
     return JsonResponse(out, json_dumps_params={"ensure_ascii": False})
 

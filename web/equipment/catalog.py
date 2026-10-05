@@ -20,9 +20,9 @@ KINDS = [
     ("conveyor", "Przenośnik"),
     ("sorter", "Sorter"),
 ]
-# ponytail: stacker / kompletacja / ciągnik nie obsługują kategorii regału w layoucie (edytor wybiera spośród
-# reach/czołowy/VNA) — dodać tu, gdy layout zacznie przypisywać je do regałów.
-RACK_CATEGORY = {"reach": "reach", "counterbalance": "reach", "vna": "vna"}
+# Typy przypisywalne do regałów w edytorze. Ciągnik, AGV/AMR, przenośnik i sorter nie podnoszą palety do gniazda.
+RACK_CATEGORY = {"reach": "reach", "counterbalance": "reach", "stacker": "reach", "order_picker": "reach",
+                 "vna": "vna"}
 
 # Osprzęt: kod → (etykieta, redukcja udźwigu [%], dodatkowy czas na pobranie i na odłożenie [s]).
 # Wartości przybliżone (typowe rzędy wielkości), do nadpisania własnym modelem z karty katalogowej.
