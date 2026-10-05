@@ -16,7 +16,7 @@
 ## Relationships
 
 - [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (4 shared connections)
-- [ewm_tasks.py](ewm_tasks.py.md) (3 shared connections)
+- [warehouse_blender.py](warehouse_blender.py.md) (3 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (2 shared connections)
 - [layout-core.js](layout-core.js.md) (2 shared connections)
 - [studio/views.py](studio-views.py.md) (2 shared connections)

@@ -3,6 +3,7 @@
 # Plan: docs/superpowers/plans/2026-10-02-model-nowego-magazynu.md (etap 1).
 from django import forms
 
+from equipment.services import assign_classes
 from twin.shared import (
     _md_role, messages, redirect, render, transaction,
     WarehouseHallFeature, WarehouseModel, WarehouseModelRack,
@@ -71,6 +72,6 @@ def _save(name, g):
         wm = WarehouseModel.objects.create(name=name[:200], notes=notes, clear_height_m=p["clear_height_m"],
                                            floor_width_m=g["floor"]["width"], floor_depth_m=g["floor"]["depth"],
                                            site=g["site"])
-        WarehouseModelRack.objects.bulk_create([WarehouseModelRack(model=wm, **r) for r in g["racks"]])
+        WarehouseModelRack.objects.bulk_create([WarehouseModelRack(model=wm, **r) for r in assign_classes(g["racks"])])
         WarehouseHallFeature.objects.bulk_create([WarehouseHallFeature(model=wm, **f) for f in g["features"]])
     return wm

@@ -21,7 +21,7 @@
 
 ## Relationships
 
-- [ewm_tasks.py](ewm_tasks.py.md) (5 shared connections)
+- [warehouse_blender.py](warehouse_blender.py.md) (5 shared connections)
 - [studio/models.py](studio-models.py.md) (4 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (4 shared connections)
 - [studio/views.py](studio-views.py.md) (3 shared connections)

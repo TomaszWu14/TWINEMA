@@ -177,6 +177,9 @@ symulacyjne); fotorealizm tylko offline w Blenderze (Cycles). Dalej: D1 działka
 D1 ✅: działka pod halą (`twin/site.py`) — wymiary, ograniczenia planu miejscowego (wysokość, % zabudowy, linie
 zabudowy, % zieleni), dojazd i wjazdy, plac/parking/zieleń/drogi; walidacja i KPI w edytorze (tryb „Działka”), teren
 w 3D, auta w animacji dnia wjeżdżają od bramy działki. Dalej: K1 katalog sprzętu → tryb prezentacji.
+K1 ✅: katalog sprzętu (`equipment`, `/sprzet/`) — klasy systemowe (anonimowe) + własne modele; Ast, maks. podnoszenie
+i udźwig na wysokości walidują layout, flota scenariusza z katalogu liczy czas ruchu palety i ładowanie. Koszty
+(CAPEX/OPEX) — pola są, UI później. Dalej: tryb prezentacji 3D.
 
 ---
 

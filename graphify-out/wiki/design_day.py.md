@@ -27,7 +27,7 @@
 ## Relationships
 
 - [day-timeline.js](day-timeline.js.md) (11 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (1 shared connections)
+- [shared.py](shared.py.md) (1 shared connections)
 - [twin/models.py](twin-models.py.md) (1 shared connections)
 - [LoadAndViewTests](LoadAndViewTests.md) (1 shared connections)
 

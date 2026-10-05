@@ -1,0 +1,31 @@
+{% extends "core/base.html" %}
+{% block title %}{% if eq %}Edycja: {{ eq.name }}{% else %}Nowy sprzęt{% endif %} — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .eq-form { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+  .eq-form label { display:flex; flex-direction:column; gap:4px; font-size:var(--fs-sm); color:var(--fg-muted); }
+  .eq-form .wide { grid-column:1 / -1; }
+  .eq-err { color:var(--danger-fg); font-size:var(--fs-xs); }
+</style>
+{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Ścieżka"><a href="{% url 'equipment:list' %}">Katalog sprzętu</a> / {% if eq %}{{ eq.name }}{% else %}nowy{% endif %}</nav>
+<div class="page-header"><div>
+  <div class="page-header__title">{% if eq %}Edycja: {{ eq.name }}{% else %}Nowy sprzęt{% endif %}</div>
+  <div class="page-header__sub">Wpisz parametry z karty katalogowej. Puste pole = nie dotyczy (np. podnoszenie przy przenośniku).</div>
+</div></div>
+<div class="card"><div class="card-body">
+  <form method="post" novalidate>{% csrf_token %}
+    {% if form.non_field_errors %}<div class="alert alert-error" role="alert">{{ form.non_field_errors|join:" " }}</div>{% endif %}
+    <div class="eq-form">
+      {% for f in form %}
+      <label for="{{ f.id_for_label }}"{% if f.name == "lift_curve" or f.name == "notes" or f.name == "name" %} class="wide"{% endif %}>{{ f.label }} {{ f }}
+        {% if f.help_text %}<span class="text-muted">{{ f.help_text }}</span>{% endif %}
+        {% for e in f.errors %}<span class="eq-err" role="alert">{{ e }}</span>{% endfor %}</label>
+      {% endfor %}
+    </div>
+    <div style="margin-top:14px;display:flex;gap:8px"><button class="btn btn-primary" type="submit">Zapisz</button>
+      <a class="btn btn-ghost" href="{% if eq %}{% url 'equipment:detail' eq.pk %}{% else %}{% url 'equipment:list' %}{% endif %}">Anuluj</a></div>
+  </form>
+</div></div>
+{% endblock %}

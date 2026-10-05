@@ -1,11 +1,11 @@
-# Material
+# test_s3b_views.py
 
 > 24 nodes · cohesion 0.12
 
 ## Key Concepts
 
-- **generate()** (28 connections) — `web/twin/design_generator.py`
-- **design_generator.py** (22 connections) — `web/twin/design_generator.py`
+- **generate()** (30 connections) — `web/twin/design_generator.py`
+- **design_generator.py** (23 connections) — `web/twin/design_generator.py`
 - **test_model_edit.py** (15 connections) — `web/twin/tests/test_model_edit.py`
 - **GeneratorTests** (10 connections) — `web/twin/tests/test_design_generator.py`
 - **test_design_generator.py** (9 connections) — `web/twin/tests/test_design_generator.py`
@@ -31,12 +31,12 @@
 
 ## Relationships
 
-- [clean_layout](clean_layout.md) (7 shared connections)
-- [sim/__init__.py](sim-__init__.py.md) (5 shared connections)
+- [analyze](analyze.md) (7 shared connections)
+- [test_dane.py](test_dane.py.md) (5 shared connections)
 - [twin/models.py](twin-models.py.md) (4 shared connections)
 - [detect](detect.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
-- [segmentation.py](segmentation.py.md) (2 shared connections)
+- [equipment/views.py](equipment-views.py.md) (2 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)
 - [test_addressing.py](test_addressing.py.md) (1 shared connections)
 
@@ -48,7 +48,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 122 (100%)
+- EXTRACTED: 125 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

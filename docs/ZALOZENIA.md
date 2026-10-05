@@ -105,3 +105,8 @@ Etapy przeplatają się z edytorem (E1–E3) wg kolejności z góry; każdy = os
 | K | Katalog sprzętu | **klasy ogólne** w repo (anonimowo, typowe zakresy: wózek paletowy elektryczny, czołowy, reach truck, VNA/kombi, AGV, AMR) + **własne modele** dodawane w aplikacji z kart katalogowych producentów (nazwy tylko w bazie użytkownika, nigdy w repo/demo). Parametry: prędkość jazdy z ładunkiem/bez, podnoszenia/opuszczania, max wysokość, udźwig (z krzywą/redukcją na wysokości), wymagana alejka, czasy pobrania/odłożenia, bateria (czas pracy, ładowanie) — zasilają symulację i walidację alejek; koszty później w tym samym katalogu |
 
 Kolejność po S3b i S4: **G1 grafika → D1 działka → K1 katalog sprzętu → tryb prezentacji 3D**.
+
+Co z katalogu (K1) zasila co: **Ast** → alejki w edytorze; **maks. wysokość podnoszenia** → błąd, gdy najwyższa belka
+wyżej; **udźwig + krzywa** → ostrzeżenie nośność miejsca vs udźwig na wysokości; **prędkości, podnoszenie, czasy
+pobrania/odłożenia** → czas ruchu palety w symulacji (z drogi na layoucie); **bateria/ładowanie** → przerwy floty
+i „flota efektywna”. Wymiary/promień skrętu i koszty — zapisane, do placu i CAPEX/OPEX później.

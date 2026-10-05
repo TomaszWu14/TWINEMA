@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "axes",
     "core",
     "masterdata",
+    "equipment",
     "twin",
     "render",
     "ml",

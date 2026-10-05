@@ -205,6 +205,9 @@ class WarehouseModelRack(models.Model):
     angle_deg = models.FloatField(default=0, verbose_name="Kąt obrotu [°]")
     equipment = models.CharField(max_length=6, choices=EQUIPMENT_CHOICES, default="reach",
                                  verbose_name="Sprzęt obsługi (wymagana alejka)")
+    equipment_model = models.ForeignKey("equipment.Equipment", on_delete=models.SET_NULL, null=True, blank=True,
+                                        related_name="racks", verbose_name="Sprzęt z katalogu",
+                                        help_text="Konkretna klasa/model: alejka, wysokość podnoszenia, udźwig (K1).")
     load_kg = models.PositiveIntegerField(default=1000, verbose_name="Nośność miejsca paletowego [kg]",
                                           help_text="Na jedną paletę (para belek / pole). Ostrzeżenia rozmieszczenia (S3b).")
     # Edytor układu, część 1: szablon domyślny gniazd + reguła adresu (numeracja, kierunek).

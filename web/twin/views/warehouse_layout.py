@@ -8,6 +8,7 @@ from django.http import FileResponse, Http404
 from django.urls import reverse
 from django.utils import timezone
 
+from equipment.models import Equipment
 from twin.design_catalog import ELEMENTS, SHELF_AISLE_M
 from twin.layout import (
     RACK_LIMITS, LayoutError, analyze, clean_layout, column_list, feature_row, rack_row,
@@ -61,10 +62,15 @@ def _parse(request):
         return None, JsonResponse({"error": str(exc)}, status=400)
 
 
+def equipment_catalog():
+    """{id: parametry} sprzętu obsługującego regały (reach/VNA) — do walidacji layoutu (K1)."""
+    return {e.pk: e.params() for e in Equipment.objects.filter(kind__in=("reach", "counterbalance", "vna"))}
+
+
 def _analyze(layout):
     """analyze + lista słupów do rysowania; zła siatka słupów (za gęsta) → (None, odpowiedź 400)."""
     try:
-        kpi, issues = analyze(layout)
+        kpi, issues = analyze(layout, equipment_catalog())
         if layout["site"]:
             kpi["site"] = site_kpi(layout["site"], layout["floor"], layout["racks"])
             issues += check_site(layout["site"], layout["floor"], layout["racks"], layout["features"])
@@ -89,6 +95,8 @@ def warehouse_layout_editor(request, pk):
         "aisles": {"reach": ELEMENTS["rack_std"]["aisle_m"], "vna": ELEMENTS["rack_vna"]["aisle_m"],
                    "shelf": SHELF_AISLE_M},
         "areaKinds": AREA_KINDS,
+        "catalog": [{"id": e["id"], "name": e["name"], "kind": e["kind"], "aisle_m": e["aisle_m"],
+                     "max_lift_m": e["max_lift_m"]} for e in equipment_catalog().values()],
         "defaultSite": default_site({"width": wm.floor_width_m, "depth": wm.floor_depth_m,
                                      "clear_height": wm.clear_height_m}),
     }
@@ -153,9 +161,12 @@ def warehouse_layout_save(request, pk):
                 setattr(obj, f, r[f])
             if r["load_kg"] is not None:
                 obj.load_kg = r["load_kg"]
+            if r["equipment_given"]:
+                obj.equipment_model_id = r["equipment_id"]
             obj.x_m, obj.y_m, obj.angle_deg = r["x"], r["y"], r["angle"]
             (updated if r["id"] else created).append(obj)
-        WarehouseModelRack.objects.bulk_update(updated, [*RACK_FIELDS, "load_kg", "x_m", "y_m", "angle_deg"])
+        WarehouseModelRack.objects.bulk_update(updated, [*RACK_FIELDS, "load_kg", "equipment_model", "x_m", "y_m",
+                                                         "angle_deg"])
         WarehouseModelRack.objects.bulk_create(created)
         f_updated, f_created = [], []
         for f in layout["features"]:

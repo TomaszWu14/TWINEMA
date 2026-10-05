@@ -113,6 +113,8 @@ def rack_to_element(r):
                                pallets_per_bay=max(1, round(bay_w / 0.9)))}
     if equipment == "shelf":
         el["aisle_m"] = SHELF_AISLE_M
+    if r.get("aisle_m"):                       # Ast ze sprzętu z katalogu (K1) nadpisuje typ regału
+        el["aisle_m"] = r["aisle_m"]
     return el
 
 

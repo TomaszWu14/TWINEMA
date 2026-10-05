@@ -42,7 +42,7 @@ def _sim_view(run):
             "wait_in_container_p95_min", "wait_in_pallet_p95_min", "wait_out_p95_min", "queue_in_container_max",
             "queue_in_pallet_max", "queue_out_max", "staging_in_max", "staging_out_max")]),
         ("Obsada i flota", [_cell(agg, k) for k in ("fleet_util_pct", "fleet_peak_pct", "fleet_wait_p95_min",
-                                                     "unfinished")]
+                                                     "fleet_effective", "fleet_charge_h", "unfinished") if k in agg]
          + [_cell(agg, f"util_{p}") for p, _ in PROCS] + [_cell(agg, f"wait_{p}_p95_min") for p, _ in PROCS]),
     ]
     queue = [a + b + c for a, b, c in zip(tl["queue_in_container"], tl["queue_in_pallet"], tl["queue_out"],
@@ -62,7 +62,7 @@ def _sim_view(run):
             "staging": [{"side": "przyjęć", "need": round(need["in"]), "drawn": pl["staging_m2"]["in"]},
                         {"side": "wydań", "need": round(need["out"]), "drawn": pl["staging_m2"]["out"]}],
             "errors": sum(b["severity"] == "error" for b in r["bottlenecks"]),
-            "capacity": (r.get("placement") or {}).get("capacity"), "cpp": r.get("cpp")}
+            "capacity": (r.get("placement") or {}).get("capacity"), "cpp": r.get("cpp"), "fleet": r.get("fleet")}
 
 
 @designer

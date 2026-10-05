@@ -42,6 +42,7 @@ ROWS = [
     ("Max palet na polu wydań (P95)", "", "min", _agg("staging_out_max", "worst")),
     ("Flota: wykorzystanie dnia", "%", None, _agg("fleet_util_pct", "mean")),
     ("Flota: szczyt (P95)", "%", "min", _agg("fleet_peak_pct", "worst")),
+    ("Flota efektywna — bez ładowania (P5)", "", "max", _agg("fleet_effective", "worst")),
     ("Zadań bez obsady (P95)", "", "min", _agg("unfinished", "worst")),
     ("Wąskie gardła", "szt.", "min", _count()),
     ("w tym krytyczne", "szt.", "min", _count("error")),

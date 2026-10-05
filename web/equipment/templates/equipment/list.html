@@ -1,0 +1,47 @@
+{% extends "core/base.html" %}
+{% block title %}Katalog sprzętu — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .eq-filters { display:flex; flex-wrap:wrap; gap:6px; margin:0 0 16px; }
+  .eq-table { width:100%; border-collapse:collapse; font-size:var(--fs-sm); }
+  .eq-table th, .eq-table td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--border); }
+  .eq-table td.num, .eq-table th.num { text-align:right; font-variant-numeric:tabular-nums; }
+  .eq-table thead th { color:var(--fg-muted); font-weight:600; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-header__title">Katalog sprzętu</div>
+    <div class="page-header__sub">Wózki, AGV/AMR, przenośniki: prędkości, podnoszenie, udźwig, wymagana alejka i bateria.
+      Parametry zasilają walidację layoutu (alejka, wysokość, udźwig) i symulację dnia (czas ruchu palety, ładowanie).</div>
+  </div>
+  {% if is_designer %}<a class="btn btn-primary" href="{% url 'equipment:create' %}">Dodaj własny model</a>{% endif %}
+</div>
+
+<nav class="eq-filters" aria-label="Filtr typu sprzętu">
+  <a class="btn btn-sm {% if not kind %}btn-primary{% else %}btn-ghost{% endif %}" href="{% url 'equipment:list' %}"{% if not kind %} aria-current="page"{% endif %}>Wszystkie</a>
+  {% for k, label in kinds %}<a class="btn btn-sm {% if kind == k %}btn-primary{% else %}btn-ghost{% endif %}" href="?typ={{ k }}"{% if kind == k %} aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}
+</nav>
+
+<div class="card"><div class="card-body" style="overflow-x:auto">
+  <table class="eq-table">
+    <caption class="sr-only">Sprzęt w katalogu</caption>
+    <thead><tr><th scope="col">Nazwa</th><th scope="col">Typ</th><th scope="col">Pochodzenie</th>
+      <th scope="col" class="num">Jazda z ład. [km/h]</th><th scope="col" class="num">Maks. podnoszenie [m]</th>
+      <th scope="col" class="num">Udźwig [kg]</th><th scope="col" class="num">Alejka Ast [m]</th><th scope="col" class="num">Bateria / ładowanie [h]</th></tr></thead>
+    <tbody>
+    {% for e in items %}
+      <tr><th scope="row"><a href="{% url 'equipment:detail' e.pk %}">{{ e.name }}</a></th><td>{{ e.get_kind_display }}</td>
+        <td>{% if e.is_system %}<span class="badge badge-gray">klasa systemowa</span>{% else %}<span class="badge badge-green">własny model</span>{% endif %}</td>
+        <td class="num">{{ e.speed_loaded_kmh|floatformat:"-1" }}</td><td class="num">{{ e.max_lift_m|default_if_none:"—"|floatformat:"-1" }}</td>
+        <td class="num">{{ e.capacity_kg }}</td><td class="num">{{ e.aisle_m|default_if_none:"—"|floatformat:"-1" }}</td>
+        <td class="num">{% if e.battery_h %}{{ e.battery_h|floatformat:"-1" }} / {{ e.charge_h|floatformat:"-1" }}{% else %}—{% endif %}</td></tr>
+    {% empty %}
+      <tr><td colspan="8" class="text-muted">Brak sprzętu tego typu.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p class="text-muted text-sm" style="margin:10px 0 0">Klasy systemowe mają typowe, przybliżone parametry. Konkretny model z karty katalogowej producenta dodaj jako własny („Kopiuj jako własny model” w karcie klasy).</p>
+</div></div>
+{% endblock %}

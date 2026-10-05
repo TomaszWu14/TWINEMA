@@ -78,7 +78,7 @@ class CleanLayoutTests(TestCase):
         row = rack_row(r)
         self.assertEqual((row["x"], row["angle"]), (0.0, 0.0))            # brak pozycji = 0 (jak model_racks)
         again = clean_layout(layout([row], [feature_row(f)]), KINDS)
-        self.assertEqual(again["racks"][0], {**row, "x": 0.0, "y": 3.5, "angle": 0.0})
+        self.assertEqual(again["racks"][0], {**row, "x": 0.0, "y": 3.5, "angle": 0.0, "equipment_given": True})
         self.assertEqual(again["features"][0]["kind"], "dock")
 
 

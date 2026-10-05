@@ -7,7 +7,7 @@
 - **demo_stock()** (9 connections) — `web/masterdata/demo.py`
 - **demo.py** (8 connections) — `web/masterdata/demo.py`
 - **demo_materials()** (7 connections) — `web/masterdata/demo.py`
-- **DemoStockTests** (7 connections) — `web/masterdata/tests/test_dane.py`
+- **DemoStockTests** (4 connections) — `web/masterdata/tests/test_dane.py`
 - **material_codes()** (3 connections) — `web/masterdata/demo.py`
 - **.test_fill_and_seed_are_deterministic()** (2 connections) — `web/masterdata/tests/test_dane.py`
 - **.test_wide_bays_hold_several_pallets_per_level()** (2 connections) — `web/masterdata/tests/test_dane.py`
@@ -16,9 +16,9 @@
 
 ## Relationships
 
-- [masterdata/services.py](masterdata-services.py.md) (6 shared connections)
-- [test_voice.py](test_voice.py.md) (4 shared connections)
+- [studio/api.py](studio-api.py.md) (4 shared connections)
 - [layout-panels.js](layout-panels.js.md) (3 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (3 shared connections)
 
 ## Source Files
 
@@ -27,8 +27,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 37 (92%)
-- INFERRED: 3 (8%)
+- EXTRACTED: 37 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

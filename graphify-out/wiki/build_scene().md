@@ -33,7 +33,7 @@
 - [test_ewm_tasks_flow.py](test_ewm_tasks_flow.py.md) `EXTRACTED`
 - test_blender_export.py `EXTRACTED`
 - test_container_inbound.py `EXTRACTED`
-- test_equipment_agents.py `EXTRACTED`
+- [test_equipment_agents.py](test_equipment_agents.py.md) `EXTRACTED`
 
 ### rationale_for
 - Składa scenę. `picks` = \[(nazwa_pickera, \[(rack, bay_idx, level, sku), …\]), …\]… `EXTRACTED`

@@ -10,6 +10,8 @@ MODULES = [
      "phase": "S2", "url": "scenario:list"},
     {"key": "model", "name": "Model hali", "desc": "Hala od zera albo z danych: regały, strefy, pola odkładcze.",
      "phase": "F1", "url": "twin:warehouse_model_list"},
+    {"key": "sprzet", "name": "Katalog sprzętu", "desc": "Wózki, AGV/AMR: prędkości, podnoszenie, udźwig, alejka, bateria.",
+     "phase": "K1", "url": "equipment:list"},
     {"key": "symulacja", "name": "Symulacja", "desc": "Dzień projektowy, flota, kalibracja, porównanie wariantów.",
      "phase": "F1", "url": "twin:design_hub"},
     {"key": "ml", "name": "Prognozy i ML", "desc": "Holt-Winters kontra baseline, segmentacja SKU pod rozmieszczenie.",
