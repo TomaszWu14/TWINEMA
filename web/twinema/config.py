@@ -34,6 +34,11 @@ class AppEnv(BaseSettings):
     SESSION_COOKIE_AGE: int = 28800
     CSP_REPORT_ONLY: bool = True
 
+    # ── Render (worker Blendera poza serwerem, pobiera zlecenia po HTTPS) ────
+    RENDER_WORKER_TOKEN: str = ""      # puste = API workera wyłączone (403)
+    RENDER_MAX_MB: int = 500           # limit pliku wyniku (PNG/MP4)
+    RENDER_STALE_MIN: int = 120        # zlecenie „w toku” dłużej niż tyle minut wraca do kolejki
+
     # ── Obserwowalność ──────────────────────────────────────────────────────
     SENTRY_DSN: str = ""
     SENTRY_ENVIRONMENT: str = "production"
@@ -42,6 +47,8 @@ class AppEnv(BaseSettings):
     def _cross_field_checks(self) -> "AppEnv":
         if not self.DJANGO_DEBUG and self.DJANGO_SECRET_KEY == DEV_SECRET:
             raise ValueError("DJANGO_SECRET_KEY musi być ustawiony, gdy DJANGO_DEBUG=false.")
+        if self.RENDER_WORKER_TOKEN and len(self.RENDER_WORKER_TOKEN) < 32:
+            raise ValueError("RENDER_WORKER_TOKEN musi mieć co najmniej 32 znaki (np. secrets.token_urlsafe(32)).")
         return self
 
 

@@ -9,4 +9,5 @@ urlpatterns = [
     path("", include("core.urls")),
     path("", include("masterdata.urls")),
     path("", include("twin.urls")),
+    path("", include("render.urls")),
 ]
