@@ -32,8 +32,8 @@
 - [views_compare.py](views_compare.py.md) (3 shared connections)
 - [scenario/models.py](scenario-models.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [design_kpi.py](design_kpi.py.md) (2 shared connections)
-- [design_catalog.py](design_catalog.py.md) (1 shared connections)
+- [test_design_variants.py](test_design_variants.py.md) (2 shared connections)
+- [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)
 - [scene-builder.js](scene-builder.js.md) (1 shared connections)
 
 ## Source Files

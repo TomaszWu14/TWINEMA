@@ -1,4 +1,4 @@
-# DesignHubTests
+# test_design_hub.py
 
 > 5 nodes · cohesion 0.40
 

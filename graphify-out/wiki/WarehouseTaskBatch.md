@@ -18,11 +18,11 @@
 - warehouse_compare.py `EXTRACTED`
 - warehouse_calibration.py `EXTRACTED`
 - ewm_tasks_import.py `EXTRACTED`
-- [ml/views.py](ml-views.py.md) `EXTRACTED`
-- test_design_forecast.py `EXTRACTED`
+- ml/views.py `EXTRACTED`
+- [test_design_forecast.py](test_design_forecast.py.md) `EXTRACTED`
 - warehouse_design_day.py `EXTRACTED`
 - warehouse_forecast.py `EXTRACTED`
-- test_design_hub.py `EXTRACTED`
+- [test_design_hub.py](test_design_hub.py.md) `EXTRACTED`
 - design_hub.py `EXTRACTED`
 
 ### method
@@ -33,7 +33,7 @@
 - SimulationTests `INFERRED`
 - [ForecastTests](ForecastTests.md) `INFERRED`
 - ForecastViewTests `INFERRED`
-- [DesignHubTests](DesignHubTests.md) `INFERRED`
+- DesignHubTests `INFERRED`
 - DemoFileTests `INFERRED`
 
 ---

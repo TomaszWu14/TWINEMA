@@ -27,8 +27,8 @@
 
 - [twin/models.py](twin-models.py.md) (5 shared connections)
 - [BlenderExportViewTests](BlenderExportViewTests.md) (2 shared connections)
-- [test_ewm_service.py](test_ewm_service.py.md) (2 shared connections)
-- [blender_stock.py](blender_stock.py.md) (2 shared connections)
+- [make_model_and_master](make_model_and_master.md) (2 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (2 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (1 shared connections)
 - [scenario/models.py](scenario-models.py.md) (1 shared connections)
 

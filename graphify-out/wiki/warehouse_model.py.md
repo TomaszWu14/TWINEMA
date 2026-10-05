@@ -1,30 +1,35 @@
 # warehouse_model.py
 
-> 4 nodes · cohesion 0.40
+> 11 nodes · cohesion 0.25
 
 ## Key Concepts
 
-- **load_groups()** (7 connections) — `web/twin/design_day.py`
-- **groups_for()** (4 connections) — `web/masterdata/services.py`
-- **.test_groups_for_design_day()** (2 connections) — `web/masterdata/tests/test_dane.py`
-- **{materiał z zadań: grupa towarowa} z modułu Dane; None, gdy materiałów jeszcze…** (1 connections) — `web/twin/design_day.py`
+- **bay_templates.py** (11 connections) — `web/twin/views/bay_templates.py`
+- **bay_template_form()** (5 connections) — `web/twin/views/bay_templates.py`
+- **_levels_from_post()** (4 connections) — `web/twin/views/bay_templates.py`
+- **bay_template_delete()** (3 connections) — `web/twin/views/bay_templates.py`
+- **_int()** (3 connections) — `web/twin/views/bay_templates.py`
+- **bay_template_list()** (2 connections) — `web/twin/views/bay_templates.py`
+- **_md_role** (2 connections)
+- **_planner** (1 connections)
+- **require_POST** (1 connections)
+- **Szablony gniazd (słup regału: palety na belce, poziomy od podłogi) — lista,…** (1 connections) — `web/twin/views/bay_templates.py`
+- **Wiersze tabeli poziomów (lvl-<i>-letter/height/type/split/kg) → lista poziomów;…** (1 connections) — `web/twin/views/bay_templates.py`
 
 ## Relationships
 
-- [day-timeline.js](day-timeline.js.md) (2 shared connections)
-- [masterdata/services.py](masterdata-services.py.md) (2 shared connections)
+- [BayTemplate](BayTemplate.md) (2 shared connections)
 - [shared.py](shared.py.md) (2 shared connections)
-- [test_voice.py](test_voice.py.md) (1 shared connections)
+- [twin/models.py](twin-models.py.md) (1 shared connections)
+- [BlenderExportViewTests](BlenderExportViewTests.md) (1 shared connections)
 
 ## Source Files
 
-- `web/masterdata/services.py`
-- `web/masterdata/tests/test_dane.py`
-- `web/twin/design_day.py`
+- `web/twin/views/bay_templates.py`
 
 ## Audit Trail
 
-- EXTRACTED: 14 (100%)
+- EXTRACTED: 34 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

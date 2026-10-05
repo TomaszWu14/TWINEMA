@@ -29,9 +29,9 @@
 
 ## Relationships
 
-- [design_catalog.py](design_catalog.py.md) (9 shared connections)
+- [twinema_design_kit.py](twinema_design_kit.py.md) (9 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
-- [design_kpi.py](design_kpi.py.md) (1 shared connections)
+- [test_design_variants.py](test_design_variants.py.md) (1 shared connections)
 
 ## Source Files
 

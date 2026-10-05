@@ -1,4 +1,4 @@
-# design_catalog.py
+# twinema_design_kit.py
 
 > 19 nodes · cohesion 0.15
 
@@ -27,7 +27,7 @@
 ## Relationships
 
 - [DaneViewTests](DaneViewTests.md) (13 shared connections)
-- [design_kpi.py](design_kpi.py.md) (11 shared connections)
+- [test_design_variants.py](test_design_variants.py.md) (11 shared connections)
 - [scene-builder.js](scene-builder.js.md) (9 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
 - [scenario/models.py](scenario-models.py.md) (1 shared connections)

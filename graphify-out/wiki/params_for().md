@@ -2,7 +2,7 @@
 
 > God node · 19 connections · `web/twin/design_catalog.py`
 
-**Community:** [design_catalog.py](design_catalog.py.md)
+**Community:** [twinema_design_kit.py](twinema_design_kit.py.md)
 
 ## Connections by Relation
 
@@ -23,11 +23,11 @@
 - .test_params_override_and_unknown() `EXTRACTED`
 
 ### contains
-- [design_catalog.py](design_catalog.py.md) `EXTRACTED`
+- design_catalog.py `EXTRACTED`
 
 ### imports
-- [design_kpi.py](design_kpi.py.md) `EXTRACTED`
-- test_design_variants.py `EXTRACTED`
+- design_kpi.py `EXTRACTED`
+- [test_design_variants.py](test_design_variants.py.md) `EXTRACTED`
 - test_design_catalog.py `EXTRACTED`
 
 ### rationale_for

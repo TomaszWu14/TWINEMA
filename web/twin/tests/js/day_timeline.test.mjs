@@ -1,7 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildTracks, countersAt, dayRange, hashId, lPath, palletAt, rackFront, rectSlot, seriesAt, upperBound,
-  vehicleAt, TRAVEL_S } from '../../static/twin/js/day-timeline.js';
+import { STAND_M, buildTracks, countersAt, crewAt, dayRange, hashId, lPath, lPathYaw, orderedSlot, palletAt,
+  queueSides, rackFront, rectSlot, seriesAt, slotOrder, stationSpots, upperBound, vehicleAt, vehiclePose, yawOut,
+  TRAVEL_S } from '../../static/twin/js/day-timeline.js';
 
 const EV = [
   [3600, 'in1', 'container', 'arrive', 'gate'],
@@ -93,4 +94,75 @@ test('geometria: sloty na polu, regał wg id, przejazd w L', () => {
   assert.deepEqual(lPath([0, 0], [10, 10], 0.25), [5, 0]);
   assert.deepEqual(lPath([0, 0], [10, 10], 0.75), [10, 5]);
   assert.deepEqual(lPath([0, 0], [10, 10], 2), [10, 10]);
+});
+
+// ── G1b: auta przy swoich dokach, kolejka bez nakładania, obsada w czasie ──────────────────────
+const DOCKS = {
+  1: { x: 2, y: 71.35, out: [-1, 0], wall: [0, 71.35], role: 'in_container' },
+  2: { x: 2, y: 76.35, out: [-1, 0], wall: [0, 76.35], role: 'in_container' },
+  9: { x: 305, y: 84, out: [1, 0], wall: [307.2, 84], role: 'out' },
+};
+const BODY = { truck: [-6.8, 9.35], container: [-6.1, 8.65] };   // tył naczepy … przód kabiny (oś +x auta)
+function footprint(p, kind) {                                    // obrys osiowy [x0, x1, y0, y1]
+  const ux = Math.cos(p.yaw), uy = -Math.sin(p.yaw), [b, f] = BODY[kind];
+  const xs = [p.x + ux * b, p.x + ux * f, p.x + uy * 1.3, p.x - uy * 1.3];
+  const ys = [p.y + uy * b, p.y + uy * f, p.y + ux * 1.3, p.y - ux * 1.3];
+  return [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+}
+const overlap = (a, b) => a[0] < b[1] && b[0] < a[1] && a[2] < b[3] && b[2] < a[3];
+
+test('auto w doku: tył naczepy 0,3 m od ściany, na zewnątrz, tyłem do bramy', () => {
+  const sides = queueSides(DOCKS);
+  const p = vehiclePose({ phase: 'dock' }, DOCKS[1], 'truck', sides);
+  assert.ok(Math.abs(p.x + STAND_M.truck) < 1e-9 && Math.abs(p.y - 71.35) < 1e-9);
+  assert.equal(p.yaw, yawOut([-1, 0]));
+  assert.ok(Math.abs(footprint(p, 'truck')[1] - -0.3) < 1e-9);       // tył naczepy 0,3 m przed ścianą x = 0
+  const q = footprint(vehiclePose({ phase: 'dock' }, DOCKS[9], 'truck', sides), 'truck');
+  assert.ok(Math.abs(q[0] - 307.5) < 1e-9);                           // po stronie wydań — poza halą, nie w ścianie
+});
+
+test('auta w dokach i w kolejce nie nachodzą na siebie', () => {
+  const sides = queueSides(DOCKS);
+  const fps = [
+    footprint(vehiclePose({ phase: 'dock' }, DOCKS[1], 'container', sides), 'container'),
+    footprint(vehiclePose({ phase: 'dock' }, DOCKS[2], 'truck', sides), 'truck'),
+    ...[0, 1, 2, 3, 4, 5].map((i) => footprint(vehiclePose({ phase: 'queue' }, DOCKS[1], 'truck', sides, i), 'truck')),
+  ];
+  for (let i = 0; i < fps.length; i++) {
+    for (let j = i + 1; j < fps.length; j++) assert.ok(!overlap(fps[i], fps[j]), `${i} vs ${j}`);
+  }
+  const qo = vehiclePose({ phase: 'queue' }, DOCKS[9], 'truck', sides, 0);
+  assert.ok(qo.x > 307.2 + 20);                                       // kolejka wydań przed swoją ścianą, nie w hali
+});
+
+test('dojazd: z pasa przed dokiem do postoju (bez jazdy przez halę)', () => {
+  const sides = queueSides(DOCKS), d = DOCKS[1];
+  const a = vehiclePose({ phase: 'in', p: 0 }, d, 'truck', sides), b = vehiclePose({ phase: 'in', p: 1 }, d, 'truck', sides);
+  assert.ok(a.x < -30 && Math.abs(a.y - 71.35) < 1e-9);
+  assert.ok(Math.abs(b.x + STAND_M.truck) < 1e-9);
+  const o = vehiclePose({ phase: 'out', p: 0.5 }, d, 'truck', sides);
+  assert.ok(o.x < b.x && o.x > a.x);                                 // odjazd tą samą drogą na zewnątrz
+});
+
+test('pole odkładcze rośnie od doków; kierunek jazdy na L', () => {
+  const r = { x: 13, y: 1, w: 11, d: 182, angle: 0 };
+  const order = slotOrder(r, [2, 90]);
+  const [x, y] = orderedSlot(r, order, 0);
+  assert.ok(Math.abs(y - 90) < 1.5 && x < 15);                       // pierwsza paleta najbliżej doków
+  assert.equal(orderedSlot(r, order, order.length)[2], 1);          // po zapełnieniu — druga warstwa
+  assert.equal(lPathYaw([0, 0], [10, 5], 0.2), 0);
+  assert.equal(lPathYaw([0, 0], [10, 5], 0.9), -Math.PI / 2);
+  assert.equal(lPathYaw([10, 0], [0, -5], 0.2), Math.PI);
+});
+
+test('obsada w chwili t z osi czasu (co 15 min) i miejsca przy stołach', () => {
+  const people = { pack: [0, 4, 6], pick: [8, 8, 2] };
+  assert.deepEqual(crewAt(people, 900, 1000), { pack: 4, pick: 8 });
+  assert.deepEqual(crewAt(people, 900, 99999), { pack: 6, pick: 2 });
+  const spots = stationSpots([{ x: 0, y: 0, w: 4, d: 4, angle: 0 }, { x: 10, y: 0, w: 4, d: 4, angle: 0 }], 3);
+  assert.equal(spots.length, 3);
+  assert.deepEqual(spots[0], [2, -0.5]);                             // przed pierwszym stołem
+  assert.deepEqual(spots[1], [12, -0.5]);                            // potem kolejny stół
+  assert.notDeepEqual(spots[2], spots[0]);
+  assert.deepEqual(stationSpots([], 5), []);
 });

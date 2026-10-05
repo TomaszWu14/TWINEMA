@@ -19,7 +19,7 @@
 
 ## Relationships
 
-- [Scenario](Scenario.md) (7 shared connections)
+- [scenario/views.py](scenario-views.py.md) (7 shared connections)
 - [packaging.py](packaging.py.md) (4 shared connections)
 - [views_compare.py](views_compare.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (3 shared connections)
@@ -30,7 +30,7 @@
 - [warehouse_tasks.py](warehouse_tasks.py.md) (2 shared connections)
 - [shared.py](shared.py.md) (2 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
-- [design_kpi.py](design_kpi.py.md) (1 shared connections)
+- [test_design_variants.py](test_design_variants.py.md) (1 shared connections)
 
 ## Source Files
 
