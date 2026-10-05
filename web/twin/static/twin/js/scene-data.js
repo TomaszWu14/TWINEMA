@@ -4,6 +4,7 @@
 // group.position = (x, 0, y), group.rotation.y = θ → punkt lokalny (a, c) trafia w
 // (x + a·cosθ + c·sinθ, y − a·sinθ + c·cosθ) = u_w·a + u_d·c.
 import { zoneColors } from './layout-core.js';
+import { edgeSetbacks, entryOnBoundary, insetPolygon, plotPolygon } from './site-geom.js';
 
 // Typy elementów rysowane jako płaskie pola na posadzce (reszta = bryły/rampy).
 export const FLAT_KINDS = new Set(['corridor', 'block_zone', 'staging', 'returns', 'fire_route', 'charging',
@@ -298,7 +299,6 @@ export function effectiveQuality(stored, racks) {
 }
 
 // ── Działka (D1, format twin/site.py) — w układzie HALI (scena 3D i animacja liczą w nim wszystko) ──
-const SITE_IN = { N: [0, 1], S: [0, -1], W: [1, 0], E: [-1, 0] };      // kierunek w głąb działki od granicy
 
 /** Punkt działki → punkt hali (odwrotność położenia hali na działce: narożnik + kąt, osie jak regał). */
 export function siteToHall(site, [px, py]) {
@@ -308,20 +308,19 @@ export function siteToHall(site, [px, py]) {
 
 const rectPts = (r) => [[0, 0], [r.width, 0], [r.width, r.depth], [0, r.depth]].map((p) => localToWorld(r, p));
 
-/** Działka → wielokąty w układzie hali: granica, linie zabudowy, elementy terenu, wjazdy ({at, dir}). */
+/** Działka → wielokąty w układzie hali: granica (prostokąt albo wielokąt D2), linie zabudowy (odstęp per krawędź),
+ *  elementy terenu, wjazdy ({at, dir} — dir w głąb działki). */
 export function sitePlan(site) {
   if (!site?.width) return null;
-  const toH = (p) => siteToHall(site, p), W = site.width, D = site.depth, sb = site.setback || {};
-  const off = (s) => (s === site.access_side ? sb.road : sb.other) || 0;
-  const b = [off('W'), off('N'), W - off('E'), D - off('S')];
+  const toH = (p) => siteToHall(site, p), plot = plotPolygon(site);
   const entries = (site.entries || []).map((e) => {
-    const at = { N: [e.pos, 0], S: [e.pos, D], W: [0, e.pos], E: [W, e.pos] }[e.side];
-    const d = SITE_IN[e.side], a = toH(at), c = toH([at[0] + d[0], at[1] + d[1]]);
+    const { at, dir } = entryOnBoundary(site, e), a = toH(at), c = toH([at[0] + dir[0], at[1] + dir[1]]);
     return { kind: e.kind, width: e.width, side: e.side, at: a, dir: [c[0] - a[0], c[1] - a[1]] };
   });
+  const building = insetPolygon(plot, edgeSetbacks(site));
   return {
-    plot: [[0, 0], [W, 0], [W, D], [0, D]].map(toH),
-    building: b[2] > b[0] && b[3] > b[1] ? [[b[0], b[1]], [b[2], b[1]], [b[2], b[3]], [b[0], b[3]]].map(toH) : null,
+    plot: plot.map(toH),
+    building: building ? building.map(toH) : null,
     areas: (site.areas || []).map((a) => ({ kind: a.kind, label: a.label, pts: rectPts(a).map(toH), w: a.width, d: a.depth })),
     entries,
   };

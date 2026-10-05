@@ -5,7 +5,7 @@ import { History, bbox, corners, rotateGroup, snap, svgTransform, zoneColors } f
 import { renderPanels } from './layout-panels.js';
 import { deleteSelectedColumn, drawColumns, drawUnderlay, hallPointer } from './layout-hall.js';
 import { initPreview, preview3d } from './layout-preview.js';
-import { drawSite, hallItem, siteItems, siteOut } from './layout-site.js';
+import { drawSite, hallItem, siteDrag, siteDragEnd, siteItems, siteOut, sitePointer } from './layout-site.js';
 import { bindFullscreenButton } from './fullscreen.js';
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -335,6 +335,10 @@ svg.addEventListener('pointerdown', (e) => {
   const [wx, wy] = world(e);
   const hit = e.target.closest('.le-item');
   if (e.button === 0 && !spaceDown && S.view === 'hall' && hallPointer(e, [wx, wy])) return;   // słup / kalibracja
+  if (e.button === 0 && !spaceDown && S.view === 'site' && sitePointer(e, [wx, wy])) {        // wierzchołek granicy (D2)
+    svg.setPointerCapture(e.pointerId);
+    return;
+  }
   svg.setPointerCapture(e.pointerId);
   if (e.button === 1 || spaceDown) {
     drag = { pan: [e.clientX, e.clientY, vb.x, vb.y] };
@@ -352,6 +356,7 @@ svg.addEventListener('pointerdown', (e) => {
 });
 
 svg.addEventListener('pointermove', (e) => {
+  if (siteDrag(world(e), e)) return;
   if (!drag) return;
   if (drag.pan) {
     const [cx, cy, x0, y0] = drag.pan, s = vb.w / svg.clientWidth;
@@ -370,6 +375,7 @@ svg.addEventListener('pointermove', (e) => {
 });
 
 svg.addEventListener('pointerup', () => {
+  if (siteDragEnd()) return;
   if (!drag) return;
   const d = drag;
   drag = null;

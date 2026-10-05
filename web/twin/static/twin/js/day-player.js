@@ -6,6 +6,7 @@ import { QUEUE_M, QUEUE_PITCH_M, TRAVEL_S, VEHICLES, buildTracks, countersAt, cr
   hhmm, lPath, lPathYaw, orderedSlot, palletAt, queueSides, rackFront, rectCenter, seriesAt, slotOrder,
   stationSpots, vehicleAt, vehiclePose, yawOut, ENTER_S } from './day-timeline.js';
 import { localToWorld, nearestEntry, sitePlan } from './scene-data.js';
+import { routePath } from './site-route.js';
 import { CARRY, modelForEquipment, modelParts } from './equipment-models.js';
 
 const MAX_PARCEL_STACK = 120;
@@ -67,7 +68,14 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
   const nDocks = Object.keys(places.docks).length;
   const plan = sitePlan(data.site), enterS = plan?.entries.length ? ENTER_S : 0;      // D1: wjazd z bramy działki
   const entryOf = {};
-  const entryFor = (d, kind) => (entryOf[`${d.wall}:${kind}`] ??= nearestEntry(plan, d.wall, kind === 'courier' ? 'car' : 'truck')?.at ?? null);
+  // D3: trasa wjazd → pas przed dokiem po drogach działki (raz na dok i rodzaj auta); brak trasy → punkt wjazdu
+  // (vehiclePose jedzie wtedy odcinkiem prostym jak w D1)
+  const entryFor = (d, kind) => (entryOf[`${d.wall}:${kind}`] ??= (() => {
+    const at = nearestEntry(plan, d.wall, kind === 'courier' ? 'car' : 'truck')?.at;
+    if (!at) return null;
+    const lane = dockPose(d, QUEUE_M);
+    return routePath(plan, data.floor, at, [lane.x, lane.y]) || at;
+  })());
   const mesh = {
     container: fleet(viewer.scene, 'container', byKind('container').length),
     truck: fleet(viewer.scene, 'truck', byKind('truck').length),
