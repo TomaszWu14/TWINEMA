@@ -1,4 +1,4 @@
-﻿# Przekazanie — stan projektu i następny krok (F6)
+# Przekazanie — stan projektu i następny krok (F6)
 
 Plik dla kolejnej sesji (człowieka albo AI). Aktualny na 2026-10-05, po scaleniu F5 (PR #8–#11).
 
