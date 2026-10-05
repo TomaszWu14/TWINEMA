@@ -1,4 +1,4 @@
-# studio/models.py
+# Shot
 
 > 8 nodes · cohesion 0.46
 

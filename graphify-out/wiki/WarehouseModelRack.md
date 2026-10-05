@@ -31,7 +31,7 @@
 - test_bay_template_model.py `EXTRACTED`
 - test_bay_template_views.py `EXTRACTED`
 - test_layout_views.py `EXTRACTED`
-- test_warehouse_model_view.py `EXTRACTED`
+- [test_warehouse_model_view.py](test_warehouse_model_view.py.md) `EXTRACTED`
 - test_warehouse_model_paste.py `EXTRACTED`
 
 ### method

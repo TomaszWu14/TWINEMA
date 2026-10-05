@@ -1,19 +1,29 @@
 from django import forms
 from django.contrib import messages
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from core.roles import GROUP_ADMIN, any_role, designer, has_role
+from masterdata.importers import ImportFileError
 
-from .catalog import KINDS, capacity_at
+from . import importers
+from .catalog import ATTACHMENTS, KINDS, capacity_at
 from .models import PARAM_FIELDS, CostRate, Equipment
+
+IMPORT_MAX = 5 * 1024 * 1024
 
 
 class EquipmentForm(forms.ModelForm):
+    attachments = forms.MultipleChoiceField(
+        choices=[(k, v[0]) for k, v in ATTACHMENTS.items()], required=False, label="Osprzęt",
+        widget=forms.SelectMultiple(attrs={"size": 5}),
+        help_text="Zmniejsza udźwig i wydłuża obsługę palety (wartości przybliżone).")
+
     class Meta:
         model = Equipment
-        fields = ["kind", "name", *PARAM_FIELDS, "cost_purchase", "cost_purchase_max", "cost_per_hour",
-                  "cost_per_hour_max", "notes"]
+        fields = ["kind", "name", "manufacturer", "attachments", *PARAM_FIELDS, "cost_purchase",
+                  "cost_purchase_max", "cost_per_hour", "cost_per_hour_max", "notes"]
         widgets = {"lift_curve": forms.Textarea(attrs={"rows": 2}), "notes": forms.Textarea(attrs={"rows": 2})}
 
     def __init__(self, *args, **kwargs):
@@ -78,11 +88,47 @@ def _curve(eq):
 
 @any_role
 def catalog_list(request):
-    kind = request.GET.get("typ", "")
+    kind, maker = request.GET.get("typ", ""), request.GET.get("producent", "")
     items = Equipment.objects.all()
     if kind in dict(KINDS):
         items = items.filter(kind=kind)
-    return render(request, "equipment/list.html", {"items": items, "kinds": KINDS, "kind": kind})
+    if maker:
+        items = items.filter(manufacturer=maker)
+    makers = Equipment.objects.exclude(manufacturer="").order_by("manufacturer").values_list(
+        "manufacturer", flat=True).distinct()
+    return render(request, "equipment/list.html", {"items": items, "kinds": KINDS, "kind": kind,
+                                                   "makers": makers, "maker": maker})
+
+
+@designer
+def import_template(request):
+    resp = HttpResponse(importers.template_xlsx(),
+                        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    resp["Content-Disposition"] = 'attachment; filename="twinema_wzor_sprzetu.xlsx"'
+    return resp
+
+
+@designer
+@require_POST
+def import_file(request):
+    f = request.FILES.get("plik")
+    if not f or f.size > IMPORT_MAX:
+        messages.error(request, "Wybierz plik xlsx/csv (do 5 MB).")
+        return redirect("equipment:list")
+    try:
+        rows, bad = importers.parse_file(f.name, f.read())
+    except ImportFileError as exc:
+        messages.error(request, str(exc))
+        return redirect("equipment:list")
+    created, updated, skipped = importers.import_rows(rows, request.user)
+    messages.success(request, f"Import: {created} nowych, {updated} zaktualizowanych modeli.")
+    for n, why in bad[:20]:
+        messages.warning(request, f"Wiersz {n}: {why}")
+    for name, why in skipped[:20]:
+        messages.warning(request, f"„{name}”: {why}")
+    if len(bad) + len(skipped) > 40:
+        messages.warning(request, f"…i {len(bad) + len(skipped) - 40} kolejnych odrzuceń.")
+    return redirect("equipment:list")
 
 
 @any_role
@@ -93,6 +139,8 @@ def catalog_detail(request, pk):
                           ("Koszt godziny pracy [zł]", "cost_per_hour", "cost_per_hour_max")):
         r = eq.cost_range(lo, hi)
         rows.append((label, f"{r[0]:,.0f} – {r[1]:,.0f}".replace(",", " ") if r else None))
+    if eq.attachments:
+        rows.insert(0, ("Udźwig z osprzętem [kg]", eq.params()["capacity_kg"]))
     curve = _curve(eq)
     top = max([c["kg"] for c in curve] or [1])
     return render(request, "equipment/detail.html", {

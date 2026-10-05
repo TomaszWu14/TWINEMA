@@ -20,8 +20,8 @@
 
 ## Relationships
 
-- [masterdata/views.py](masterdata-views.py.md) (5 shared connections)
-- [ewm_service.py](ewm_service.py.md) (2 shared connections)
+- [test_s3b_views.py](test_s3b_views.py.md) (5 shared connections)
+- [detect](detect.md) (2 shared connections)
 - [test_sim.py](test_sim.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [ForecastTests](ForecastTests.md) (1 shared connections)

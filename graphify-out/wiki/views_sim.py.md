@@ -1,4 +1,4 @@
-# scenario/services.py
+# views_sim.py
 
 > 11 nodes · cohesion 0.18
 
@@ -20,15 +20,15 @@
 
 - [test_sim.py](test_sim.py.md) (8 shared connections)
 - [blender_scene.py](blender_scene.py.md) (6 shared connections)
-- [scenario/views.py](scenario-views.py.md) (4 shared connections)
+- [scenario/models.py](scenario-models.py.md) (4 shared connections)
 - [packaging.py](packaging.py.md) (3 shared connections)
-- [check_site](check_site.md) (3 shared connections)
-- [views_showcase.py](views_showcase.py.md) (2 shared connections)
+- [equipment/importers.py](equipment-importers.py.md) (3 shared connections)
+- [test_showcase.py](test_showcase.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [test_voice.py](test_voice.py.md) (1 shared connections)
-- [Fleet](Fleet.md) (1 shared connections)
-- [layout-hall.js](layout-hall.js.md) (1 shared connections)
-- [equipment/models.py](equipment-models.py.md) (1 shared connections)
+- [test_fleet_catalog.py](test_fleet_catalog.py.md) (1 shared connections)
+- [addressing.py](addressing.py.md) (1 shared connections)
+- [Equipment](Equipment.md) (1 shared connections)
 - [ml/services.py](ml-services.py.md) (1 shared connections)
 
 ## Source Files
