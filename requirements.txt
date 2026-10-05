@@ -7,3 +7,4 @@ whitenoise==6.12.0
 django-axes==8.3.1        # ochrona przed brute-force logowania
 sentry-sdk[django]==2.64.0  # opcjonalnie, gdy SENTRY_DSN
 openpyxl==3.1.5         # import zadań/lokalizacji z XLSX, eksport raportów
+anthropic==1.11.0       # Studio: szkic scenariusza (gdy ANTHROPIC_API_KEY)

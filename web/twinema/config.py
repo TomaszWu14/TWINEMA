@@ -39,6 +39,10 @@ class AppEnv(BaseSettings):
     RENDER_MAX_MB: int = 500           # limit pliku wyniku (PNG/MP4)
     RENDER_STALE_MIN: int = 120        # zlecenie „w toku” dłużej niż tyle minut wraca do kolejki
 
+    # ── Studio prezentacji (na zewnątrz idzie wyłącznie tekst narracji) ─────
+    ANTHROPIC_API_KEY: str = ""        # puste = szkic scenariusza z Claude wyłączony
+    CLAUDE_MODEL: str = "claude-opus-5"
+
     # ── Obserwowalność ──────────────────────────────────────────────────────
     SENTRY_DSN: str = ""
     SENTRY_ENVIRONMENT: str = "production"
