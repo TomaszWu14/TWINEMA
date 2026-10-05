@@ -96,3 +96,12 @@ prezentacji 3D → katalog sprzętu (z kosztami)**. Porównanie „obecny vs prz
 3. **S3 Symulacja scenariusza** — przebieg dnia na layoucie (czysty Python, wiele przebiegów, P95): kolejki przy dokach, pole odkładcze, obsada, flota, opóźnienia; karta KPI + wąskie gardła z podpowiedziami.
 4. **S4 Animacja dnia** — odtwarzacz z zegarem i przyspieszeniem, każdy obiekt ze scenariusza, podświetlenie wąskich gardeł w 3D.
 Etapy przeplatają się z edytorem (E1–E3) wg kolejności z góry; każdy = osobne PR-y.
+
+## Runda 4 — grafika, działka, katalog sprzętu
+| # | Temat | Decyzja |
+|---|---|---|
+| G | Grafika | dziś przeglądarka ~2–3/10, Blender Eevee ~4–5/10. Cel **G1**: przeglądarka ~6–7/10 (poziom programów symulacyjnych typu FlexSim): cienie, SSAO, tone mapping, materiały PBR, szczegółowe regały/palety/wózki/AGV/ludzie/auta, hala ze ścianami i bramami, lepsze ujęcia — z zachowaniem płynności (instancing). Fotorealizm 8–9/10 tylko offline (Blender Cycles) |
+| D | Działka | wymiary działki; ograniczenia: **max wysokość budynku [m]**, **max % zabudowy**, **odległości od granic** (linie zabudowy, osobno od drogi), **min % powierzchni biologicznie czynnej**; **dojazd: strona działki + punkt wjazdu** — walidacja: hala mieści się w liniach zabudowy, % zabudowy i zieleni, wysokość hali/regałów ≤ max, doki osiągalne z placu manewrowego (tiry ~35 m przed dokami), droga aut od wjazdu do doków; parkingi |
+| K | Katalog sprzętu | **klasy ogólne** w repo (anonimowo, typowe zakresy: wózek paletowy elektryczny, czołowy, reach truck, VNA/kombi, AGV, AMR) + **własne modele** dodawane w aplikacji z kart katalogowych producentów (nazwy tylko w bazie użytkownika, nigdy w repo/demo). Parametry: prędkość jazdy z ładunkiem/bez, podnoszenia/opuszczania, max wysokość, udźwig (z krzywą/redukcją na wysokości), wymagana alejka, czasy pobrania/odłożenia, bateria (czas pracy, ładowanie) — zasilają symulację i walidację alejek; koszty później w tym samym katalogu |
+
+Kolejność po S3b i S4: **G1 grafika → D1 działka → K1 katalog sprzętu → tryb prezentacji 3D**.
