@@ -60,6 +60,13 @@
     border-radius: var(--radius);
   }
   #plan-svg { display: block; }
+
+  /* ── Pełny ekran (static/twin/js/fullscreen.js): scena + odtwarzacz przepływów / plan 2D ── */
+  .viz-fs { position: absolute; top: 10px; right: 10px; z-index: 25; }
+  #panel-3d:fullscreen, #panel-3d.is-pseudo-fs { background: #0f172a; padding: 8px; overflow: auto; }
+  #panel-3d:fullscreen #three-canvas-wrap, #panel-3d.is-pseudo-fs #three-canvas-wrap { height: calc(100vh - 190px); }
+  #panel-2d:fullscreen, #panel-2d.is-pseudo-fs { background: var(--bg); padding: 8px; overflow: auto; }
+  #panel-2d:fullscreen #plan-wrap, #panel-2d.is-pseudo-fs #plan-wrap { height: calc(100vh - 60px); }
   .rack-rect { cursor: pointer; transition: opacity .15s; }
   .rack-rect:hover { opacity: .75; }
 
@@ -218,6 +225,8 @@
         <canvas id="three-canvas"></canvas>
         {% include "twin/_3d_boot.html" with status_id="three-status" %}
         <div id="three-hint">Obracaj: PPM lub dotyk &nbsp;|&nbsp; Zoom: kółko myszy &nbsp;|&nbsp; Przesuń: Shift+PPM</div>
+        <button type="button" class="btn btn-secondary btn-sm viz-fs" id="fs-3d" data-fs aria-pressed="false"
+                title="Scena 3D z animacją na pełnym ekranie (F, wyjście Esc)">Pełny ekran</button>
       </div>
     </div>
   </div>
@@ -227,13 +236,17 @@
 <!-- 2D tab -->
 <div id="panel-2d" style="display:none">
   <div class="card" style="margin-bottom:8px">
-    <div class="card-body" style="padding:12px">
+    <div class="card-body" style="padding:12px;position:relative">
+      <button type="button" class="btn btn-secondary btn-sm viz-fs" id="fs-2d" data-fs aria-pressed="false"
+              title="Plan 2D na pełnym ekranie (F, wyjście Esc)">Pełny ekran</button>
       <div id="plan-wrap">
         <!-- SVG rendered by JS below -->
       </div>
     </div>
   </div>
 </div>
+
+<p class="sr-only" id="fs-live" aria-live="polite"></p>
 
 <!-- Rack info panel (shared) -->
 <div id="rack-info">
@@ -255,6 +268,7 @@
 <script type="module">
 import { createViewer } from '{% static "twin/js/scene-builder.js" %}';
 import { FLAT_KINDS } from '{% static "twin/js/scene-data.js" %}';
+import { bindFullscreenButton } from '{% static "twin/js/fullscreen.js" %}';
 
 // ── Data from Django ────────────────────────────────────────────────────────
 const RACKS_JSON    = {{ racks_json|safe }};
@@ -299,6 +313,16 @@ const viewer = createViewer({ canvas: document.getElementById('three-canvas'),
 viewer.setData({ floor: { width: FLOOR_W, depth: FLOOR_D }, racks: RACKS_JSON, features: FEATURES_JSON },
                { frame: true });
 window.tw3dReady();                          // scena zbudowana — zdejmij spinner
+
+// Pełny ekran: scena z odtwarzaczem przepływów albo plan 2D; skrót F dla widocznej zakładki.
+const fsLive = document.getElementById('fs-live');
+const fs3d = bindFullscreenButton(document.getElementById('fs-3d'), document.getElementById('panel-3d'),
+                                  { live: fsLive, onChange: () => viewer.resize() });
+const fs2d = bindFullscreenButton(document.getElementById('fs-2d'), document.getElementById('panel-2d'), { live: fsLive });
+document.addEventListener('keydown', (e) => {
+  if (e.key.toLowerCase() !== 'f' || e.ctrlKey || e.metaKey || e.altKey || e.target.closest('input, select, textarea')) return;
+  (document.getElementById('panel-2d').style.display === 'none' ? fs3d : fs2d).toggle();
+});
 
 // Animacja przepływów (ta sama scena co eksport do Blendera) — moduł ładowany osobno,
 // żeby jego błąd nie zabrał widoku 3D; scena liczona dopiero po „Załaduj animację".

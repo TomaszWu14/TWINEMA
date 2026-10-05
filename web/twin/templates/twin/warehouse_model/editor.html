@@ -21,6 +21,12 @@
   .le-stage[data-mode="2d"] .le-pane-3d, .le-stage[data-mode="3d"] .le-pane-2d { display:none; }
   .le-pane-3d { height:calc(100vh - 270px); min-height:440px; background:#0f172a; }
   #le-3d-canvas { display:block; width:100% !important; height:100% !important; }
+  .le-fs-btn { margin-left:auto; }
+  /* Pełny ekran: cały obszar roboczy; plan i 3D na wysokość ekranu, panele boczne przewijane osobno. */
+  #le-work:fullscreen, #le-work.is-pseudo-fs { background:var(--bg); padding:12px; overflow:auto; }
+  #le-work:fullscreen #le-svg, #le-work.is-pseudo-fs #le-svg,
+  #le-work:fullscreen .le-pane-3d, #le-work.is-pseudo-fs .le-pane-3d { height:calc(100vh - 110px); }
+  #le-work:fullscreen .le-side, #le-work.is-pseudo-fs .le-side { max-height:calc(100vh - 70px); overflow:auto; }
   .le-3d-hint { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); font-size:var(--fs-xs);
                 color:rgba(255,255,255,.6); pointer-events:none; white-space:nowrap; }
   #le-svg:focus { outline:none; }
@@ -86,7 +92,9 @@
   </div>
 </div>
 {% csrf_token %}
+<div id="le-work">
 <p class="le-status" id="le-status" role="status" aria-live="polite">Wczytuję plan…</p>
+<p class="sr-only" id="le-fs-live" aria-live="polite"></p>
 <button type="button" class="btn btn-secondary btn-sm" id="le-reload" hidden>Wczytaj plan ponownie (porzuć moje zmiany)</button>
 
 <div class="le-wrap" style="margin-top:8px">
@@ -131,6 +139,8 @@
       <button type="button" class="btn btn-secondary btn-sm" data-le-mode="2d" aria-pressed="true">Plan 2D</button>
       <button type="button" class="btn btn-secondary btn-sm" data-le-mode="split" aria-pressed="false">2D + 3D</button>
       <button type="button" class="btn btn-secondary btn-sm" data-le-mode="3d" aria-pressed="false">Podgląd 3D</button>
+      <button type="button" class="btn btn-ghost btn-sm le-fs-btn" id="le-fs" data-fs aria-pressed="false"
+              title="Cały obszar roboczy na pełnym ekranie (F, wyjście Esc)">Pełny ekran</button>
     </div>
     <div class="le-stage" id="le-stage" data-mode="2d">
       <div class="le-canvas le-pane-2d">
@@ -176,12 +186,14 @@
         Klik — zaznacz, <kbd>Shift</kbd>+klik — dodaj do zaznaczenia, przeciągnij po pustym — zaznacz prostokątem,
         dwuklik na regale — cała strefa. Przeciągnij zaznaczenie (siatka 0,1 m, <kbd>Alt</kbd> — bez przyciągania).
         <kbd>←↑→↓</kbd> 0,1 m (<kbd>Shift</kbd> 1 m), <kbd>R</kbd> obrót 90°, <kbd>Delete</kbd> usuń,
-        <kbd>Ctrl+D</kbd> duplikuj, <kbd>Ctrl+Z</kbd>/<kbd>Ctrl+Y</kbd> cofnij/ponów, <kbd>Esc</kbd> odznacz.
+        <kbd>Ctrl+D</kbd> duplikuj, <kbd>Ctrl+Z</kbd>/<kbd>Ctrl+Y</kbd> cofnij/ponów, <kbd>Esc</kbd> odznacz,
+        <kbd>F</kbd> pełny ekran (<kbd>Esc</kbd> wychodzi).
         Widok: kółko — zoom, <kbd>Spacja</kbd>+przeciągnij albo środkowy przycisk — przesuń.
         Słup: klik zaznacza, <kbd>Delete</kbd> usuwa (np. przy bramie); siatkę i podkład ustawisz w panelu „Hala”.
       </div>
     </div></div>
   </div>
+</div>
 </div>
 {{ config|json_script:"le-config" }}
 {% endblock %}

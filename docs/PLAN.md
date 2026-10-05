@@ -141,7 +141,8 @@ zapisz stronę jako PNG — bez nowej zależności), sprzęt regału (reach/VNA/
 E3 ✅: podgląd 3D obok planu (układ 2D | 2D + 3D | 3D), ta sama scena co widok modelu — wspólny moduł
 `static/twin/js/scene-builder.js` (+ czyste `scene-data.js`); przebudowa 300 ms po zmianie (1000 regałów ≈ 0,1 s),
 zaznaczenie podświetlone w 3D, ujęcia z góry / izometria / do zaznaczenia. „Utwórz przyszły layout (kopia)” →
-edytor (kopia niesie słupy, wysokość, podkład, sprzęt) → „Zobacz animację przepływów”.
+edytor (kopia niesie słupy, wysokość, podkład, sprzęt) → „Zobacz animację przepływów”. Pełny ekran (F) w edytorze
+i w widoku 3D / planie 2D modelu — wspólny `fullscreen.js` dla trybu prezentacji i scenariuszy.
 
 Scenariusze (założenia z burzy mózgów: `docs/ZALOZENIA.md`) przeplatają się z edytorem:
 **E1** → **S2a** scenariusz + plan przyjęć → **E2** → **E3** → S1 master data materiału, S2b wydania/paczki/
