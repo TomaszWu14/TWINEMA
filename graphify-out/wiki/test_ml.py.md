@@ -25,7 +25,7 @@
 - [draft_script](draft_script.md) (2 shared connections)
 - [staffing.py](staffing.py.md) (2 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (1 shared connections)
-- [test_dane.py](test_dane.py.md) (1 shared connections)
+- [demo_materials](demo_materials.md) (1 shared connections)
 
 ## Source Files
 

@@ -68,3 +68,24 @@ class WarehouseHallFeatureTests(TestCase):
         r = self.client.get(self.view_url)
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "FEATURES_JSON")  # stała JS zawsze obecna (pusta lista)
+
+
+class OwnColorTests(TestCase):
+    """G2: do bazy trafia tylko własny kolor — domyślny rodzaju / pola formularza idzie za paletą."""
+
+    def test_default_colors_are_not_stored(self):
+        from twin.shared import FORM_DEFAULT_COLOR, HALL_FEATURE_COLORS, own_color
+        self.assertEqual(own_color("returns", HALL_FEATURE_COLORS["returns"].upper()), "")
+        self.assertEqual(own_color("staging", FORM_DEFAULT_COLOR), "")
+        self.assertEqual(own_color("staging", " #123ABC "), "#123abc")
+
+    def test_migration_clears_old_palette_keeps_custom(self):
+        from importlib import import_module
+        mig = import_module("twin.migrations.0007_kolory_domyslne_elementow")
+        wm = WarehouseModel.objects.create(name="H", floor_width_m=20, floor_depth_m=10)
+        old = wm.features.create(kind="returns", color_hex="#f43f5e")
+        own = wm.features.create(kind="returns", color_hex="#123abc")
+        from django.apps import apps
+        mig.forwards(apps, None)
+        old.refresh_from_db(); own.refresh_from_db()
+        self.assertEqual((old.color_hex, own.color_hex), ("", "#123abc"))

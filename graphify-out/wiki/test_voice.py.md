@@ -24,16 +24,16 @@
 
 ## Relationships
 
-- [showcase.py](showcase.py.md) (7 shared connections)
+- [test_showcase.py](test_showcase.py.md) (7 shared connections)
 - [masterdata/importers.py](masterdata-importers.py.md) (6 shared connections)
-- [test_fleet_catalog.py](test_fleet_catalog.py.md) (5 shared connections)
+- [CostViewsTests](CostViewsTests.md) (5 shared connections)
 - [LayoutApiTests](LayoutApiTests.md) (4 shared connections)
 - [test_ewm_service.py](test_ewm_service.py.md) (4 shared connections)
 - [test_sim.py](test_sim.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [warehouse_model.py](warehouse_model.py.md) (1 shared connections)
-- [scenario/services.py](scenario-services.py.md) (1 shared connections)
-- [ml/services.py](ml-services.py.md) (1 shared connections)
+- [views_sim.py](views_sim.py.md) (1 shared connections)
+- [ml/views.py](ml-views.py.md) (1 shared connections)
 - [equipment/importers.py](equipment-importers.py.md) (1 shared connections)
 - [packaging.py](packaging.py.md) (1 shared connections)
 

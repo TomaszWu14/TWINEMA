@@ -84,13 +84,25 @@ def _parse_loc_code(code):
 
 
 # ── Elementy hali ─────────────────────────────────────────────────────────────
+# G2: spokojna paleta (przygaszone odcienie na szarej posadzce); nasycony zostaje tylko kolor bezpieczeństwa
+# (droga pożarowa). Strefy specjalne = te same kolory w trybie „Strefy” widoku 3D (scene-data.rackTint).
 HALL_FEATURE_COLORS = {
-    "dock": "#64748b", "gate": "#0ea5e9", "corridor": "#94a3b8",
-    "block_zone": "#a855f7", "staging": "#f59e0b", "returns": "#f43f5e", "leader": "#22c55e",
-    "station": "#eab308", "other": "#6b7280",
-    "fire_route": "#dc2626", "charging": "#14b8a6", "walkway": "#4ade80", "truckway": "#facc15",
-    "zone_temp": "#38bdf8", "zone_adr": "#ea580c", "zone_oversize": "#78716c", "zone_value": "#c026d3",
+    "dock": "#64748b", "gate": "#4b86b4", "corridor": "#94a3b8",
+    "block_zone": "#7d7a99", "staging": "#c9a54a", "returns": "#a8806b", "leader": "#5f9a72",
+    "station": "#a99572", "other": "#6b7280",
+    "fire_route": "#dc2626", "charging": "#3e9a90", "walkway": "#7fb28a", "truckway": "#c9ad55",
+    "zone_temp": "#4f9ccc", "zone_adr": "#d07a3a", "zone_oversize": "#8f8a84", "zone_value": "#8d72b0",
 }
+
+
+FORM_DEFAULT_COLOR = "#94a3b8"   # wartość pola koloru w formularzu, gdy element nie ma własnego
+
+
+def own_color(kind, posted):
+    """Kolor do zapisu: tylko własny wybór użytkownika. Domyślny kolor rodzaju (albo domyślna wartość pola
+    formularza) → "" — wtedy element idzie za paletą HALL_FEATURE_COLORS i jej zmiany (G2)."""
+    c = (posted or "").strip().lower()[:7]
+    return "" if c in (HALL_FEATURE_COLORS.get(kind), FORM_DEFAULT_COLOR) else c
 
 
 def hall_feature_kinds():
@@ -159,7 +171,7 @@ def save_hall_features(request, owner_field, owner_obj):
             feat.x_m, feat.y_m = _f(xs, i), _f(ys, i)
             feat.width_m, feat.depth_m = _f(ws, i, 2), _f(ds, i, 2)
             feat.angle_deg = _f(angles, i)
-            feat.color_hex = (colors[i] if i < len(colors) else "").strip()[:7]
+            feat.color_hex = own_color(kind, colors[i] if i < len(colors) else "")
             feat.notes = (notes[i] if i < len(notes) else "")[:200]
             if i < len(roles):                  # stary formularz bez kolumny roli — nie nadpisuj
                 feat.dock_role = roles[i] if roles[i] in valid_roles and kind in ("dock", "gate") else ""

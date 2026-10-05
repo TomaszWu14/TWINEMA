@@ -30,7 +30,7 @@
 - [test_ml.py](test_ml.py.md) (2 shared connections)
 - [scene-data.js](scene-data.js.md) (1 shared connections)
 - [ScenarioViewTests](ScenarioViewTests.md) (1 shared connections)
-- [test_dane.py](test_dane.py.md) (1 shared connections)
+- [demo_materials](demo_materials.md) (1 shared connections)
 
 ## Source Files
 

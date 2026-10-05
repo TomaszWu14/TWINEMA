@@ -62,7 +62,8 @@ test('steelMatrices: przesunięcie = punkt lokalny w hali, kolumny = osie obróc
     near32(Math.hypot(m[0], m[1], m[2]), sx); near32(Math.hypot(m[4], m[5], m[6]), sy); near32(Math.hypot(m[8], m[9], m[10]), sz);
     near32(m[5], Math.cos(a) * sy);                          // obrót kratownicy wokół lokalnej osi X
   }
-  assert.deepEqual(Object.values(mats).map((m) => m.length / 16), Object.values(seen));
+  assert.deepEqual(['up', 'beam', 'brace'].map((k) => mats[k].length / 16), Object.values(seen));
+  assert.deepEqual(['up', 'beam', 'brace'].map((k) => mats._owner[k].length), Object.values(seen));   // G2: indeks regału na instancję
 });
 
 test('extents: hala albo dalej, gdy regał wystaje', () => {

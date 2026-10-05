@@ -25,7 +25,7 @@
 - [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (3 shared connections)
 - [test_sim.py](test_sim.py.md) (3 shared connections)
 - [layout-core.js](layout-core.js.md) (2 shared connections)
-- [Presentation](Presentation.md) (2 shared connections)
+- [BrandTests](BrandTests.md) (2 shared connections)
 - [ewm_demo_tasks.py](ewm_demo_tasks.py.md) (1 shared connections)
 - [studio/api.py](studio-api.py.md) (1 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (1 shared connections)
