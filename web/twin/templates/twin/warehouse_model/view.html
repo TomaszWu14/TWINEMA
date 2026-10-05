@@ -170,6 +170,10 @@
        title="Scena JSON dla skryptu Blendera / Blender MCP — animacja przepływów palet, towarów, ludzi i wózków widłowych">
       Eksport do Blendera
     </a>
+    <a href="{% url 'render:jobs' %}?model={{ wm.pk }}" class="btn btn-primary"
+       title="Zleć ujęcie z Blendera (przelot, orbita, plan) — render na komputerze z workerem">
+      Renderuj w Blenderze
+    </a>
     <a href="{% url 'twin:warehouse_model_list' %}" class="btn btn-ghost">
       Wszystkie modele
     </a>

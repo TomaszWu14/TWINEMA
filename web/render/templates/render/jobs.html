@@ -1,0 +1,122 @@
+{% extends "core/base.html" %}
+{% block title %}Render 3D — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .rj-top { display:grid; grid-template-columns:minmax(0,3fr) minmax(0,2fr); gap:16px; margin-bottom:24px; }
+  @media (max-width: 900px) { .rj-top { grid-template-columns:1fr; } }
+  .rj-form { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+  .rj-form label { display:flex; flex-direction:column; gap:4px; font-size:var(--fs-sm); color:var(--fg-muted); }
+  .rj-form .rj-check { flex-direction:row; align-items:center; gap:8px; align-self:end; min-height:38px; }
+  .rj-form .rj-wide { grid-column:1 / -1; }
+  .rj-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:0 0 12px; }
+  .rj-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:16px; }
+  .rj-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden;
+             display:flex; flex-direction:column; }
+  .rj-media { aspect-ratio:16/9; background:var(--surface-2); display:grid; place-items:center; color:var(--fg-subtle);
+              font-size:var(--fs-sm); text-align:center; padding:12px; }
+  .rj-media img, .rj-media video { width:100%; height:100%; object-fit:cover; display:block; }
+  .rj-media:has(img), .rj-media:has(video) { padding:0; }
+  .rj-body { padding:12px 14px; display:flex; flex-direction:column; gap:6px; flex:1; }
+  .rj-body h3 { margin:0; font-size:var(--fs-md); }
+  .rj-meta { font-size:var(--fs-xs); color:var(--fg-subtle); }
+  .rj-actions { display:flex; gap:8px; align-items:center; margin-top:auto; padding-top:6px; }
+  .rj-actions form { margin:0; }
+  .rj-log { font:var(--fs-xs) var(--font-mono); white-space:pre-wrap; max-height:120px; overflow:auto; color:var(--danger-fg); }
+  .rj-cmd { font:var(--fs-xs) var(--font-mono); background:var(--field); border:1px solid var(--border); border-radius:var(--radius);
+            padding:10px; white-space:pre-wrap; overflow-x:auto; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-header__title">Render 3D</div>
+    <div class="page-header__sub">Ujęcia z Blendera: aplikacja kolejkuje zlecenie, worker na komputerze z Blenderem renderuje i odsyła klip albo kadr.</div>
+  </div>
+</div>
+
+<div class="rj-top">
+  <div class="card"><div class="card-body">
+    <h2 class="rj-sec">Nowe ujęcie</h2>
+    {% if is_designer %}
+    <form class="rj-form" method="post" action="{% url 'render:create' %}">{% csrf_token %}
+      <label class="rj-wide">{{ form.model.label }} {{ form.model }}</label>
+      <label>{{ form.preset.label }} {{ form.preset }}</label>
+      <label>{{ form.kind.label }} {{ form.kind }}</label>
+      <label>{{ form.resolution.label }} {{ form.resolution }}</label>
+      <label>{{ form.seconds.label }} {{ form.seconds }}</label>
+      <label>{{ form.source.label }} {{ form.source }}</label>
+      <label class="rj-check">{{ form.pallets }} {{ form.pallets.label }}</label>
+      <label class="rj-wide">{{ form.title.label }} (opcjonalnie) {{ form.title }}</label>
+      <div class="rj-wide"><button class="btn btn-primary" type="submit">Dodaj do kolejki</button></div>
+    </form>
+    {% else %}
+    <p class="text-muted text-sm" style="margin:0">Zlecenia dodaje Projektant — tutaj możesz oglądać gotowe ujęcia.</p>
+    {% endif %}
+  </div></div>
+
+  <div class="card"><div class="card-body">
+    <h2 class="rj-sec">Worker</h2>
+    {% if worker_enabled %}
+      <p class="text-sm" style="margin:0 0 8px">API workera włączone.
+        {% if last_worker %}Ostatnio zlecenie przejął <b>{{ last_worker.worker|default:"worker" }}</b> {{ last_worker.claimed_at|date:"d.m.Y H:i" }}.{% else %}Żaden worker jeszcze się nie zgłosił.{% endif %}</p>
+      <div class="rj-cmd">set TWINEMA_URL={{ request.scheme }}://{{ request.get_host }}
+set TWINEMA_WORKER_TOKEN=…   (ten sam co RENDER_WORKER_TOKEN)
+python tools/render_worker.py</div>
+      <p class="text-muted text-sm" style="margin:8px 0 0">Worker szuka Blendera sam (albo <code>BLENDER_BIN</code>), odpytuje co 10 s i renderuje po jednym zleceniu.</p>
+    {% else %}
+      <p class="text-sm" style="margin:0">API workera wyłączone — ustaw <code>RENDER_WORKER_TOKEN</code> (≥ 32 znaki) w zmiennych serwera. Zlecenia czekają w kolejce.</p>
+    {% endif %}
+  </div></div>
+</div>
+
+<h2 class="rj-sec">Ujęcia</h2>
+{% if jobs %}
+<div class="rj-list" id="rj-list" data-active="{{ active|yesno:'1,0' }}" data-status-url="{% url 'render:status_json' %}">
+  {% for j in jobs %}
+  <article class="rj-card">
+    <div class="rj-media">
+      {% if j.status == "done" and j.kind == "video" %}
+        <video controls preload="metadata" src="{% url 'render:result_file' j.pk %}"></video>
+      {% elif j.status == "done" %}
+        <a href="{% url 'render:result_file' j.pk %}"><img src="{% url 'render:result_file' j.pk %}" alt="{{ j }}" loading="lazy"></a>
+      {% elif j.status == "error" %}<span>Render nie powiódł się</span>
+      {% elif j.status == "running" %}<span>Renderuje się{% if j.worker %} na „{{ j.worker }}”{% endif %}…</span>
+      {% else %}<span>W kolejce — czeka na workera</span>{% endif %}
+    </div>
+    <div class="rj-body">
+      <h3>{{ j }}</h3>
+      <div class="rj-meta">{{ j.get_kind_display }} · {{ j.resolution }}{% if j.kind == "video" %} · {{ j.seconds }} s{% endif %} · {{ j.model.name }}</div>
+      <div class="rj-meta">{{ j.created_at|date:"d.m.Y H:i" }}{% if j.created_by %} · {{ j.created_by }}{% endif %}{% if j.duration_s %} · render {{ j.duration_s }} s{% endif %}</div>
+      {% if j.status == "error" and j.log %}<div class="rj-log">{{ j.log|truncatechars:600 }}</div>{% endif %}
+      <div class="rj-actions">
+        <span class="badge {% if j.status == 'done' %}badge-green{% elif j.status == 'error' %}badge-red{% elif j.status == 'running' %}badge-yellow{% else %}badge-gray{% endif %}">{{ j.get_status_display }}</span>
+        {% if j.status == "done" %}<a class="btn btn-ghost btn-sm" href="{% url 'render:result_file' j.pk %}?pobierz=1">Pobierz</a>{% endif %}
+        {% if is_designer %}<form method="post" action="{% url 'render:delete' j.pk %}">{% csrf_token %}<button class="btn btn-ghost btn-sm" type="submit">Usuń</button></form>{% endif %}
+      </div>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card"><div class="empty-state">Brak ujęć. Wybierz model hali i ujęcie powyżej.</div></div>
+{% endif %}
+<p class="text-muted text-sm" id="rj-live" aria-live="polite" style="margin-top:12px"></p>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+(function () {
+  var list = document.getElementById('rj-list');
+  if (!list || list.dataset.active !== '1') return;
+  var url = list.dataset.statusUrl, last = null;
+  function poll() {
+    fetch(url, {credentials: 'same-origin'}).then(function (r) { return r.json(); }).then(function (d) {
+      var now = d.active.join(',');
+      if (last !== null && now !== last) { document.getElementById('rj-live').textContent = 'Stan zleceń się zmienił — odświeżam…'; location.reload(); return; }
+      last = now;
+      if (d.active.length) setTimeout(poll, 8000); else location.reload();
+    }).catch(function () { setTimeout(poll, 15000); });
+  }
+  setTimeout(poll, 8000);
+})();
+</script>
+{% endblock %}

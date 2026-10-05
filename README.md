@@ -6,7 +6,7 @@ TWINEMA łączy projektowanie centrum dystrybucyjnego w 3D z symulacją pracy i 
 prezentacji: układ hali i regałów → symulacja dnia projektowego → animacja przepływów
 w Blenderze → film z lektorem (ElevenLabs) i deck PDF.
 
-> Status: **F2 — dane z plików (materiały, master lokalizacji, stany) zasilają scenę 3D i dzień projektowy; F1 — rdzeń modelowania i symulacji działa** (generator hali, widok 3D, import zadań, dzień projektowy, kalibracja, prognoza, symulacja, porównanie, eksport do Blendera). Mapa drogi i decyzje: [`docs/PLAN.md`](docs/PLAN.md).
+> Status: **F3 — render w Blenderze przez kolejkę i workera (przelot, orbita, przejazd, plan); F2 — dane z plików (materiały, master lokalizacji, stany) zasilają scenę 3D i dzień projektowy; F1 — rdzeń modelowania i symulacji działa** (generator hali, widok 3D, import zadań, dzień projektowy, kalibracja, prognoza, symulacja, porównanie, eksport do Blendera). Mapa drogi i decyzje: [`docs/PLAN.md`](docs/PLAN.md).
 
 ## Moduły (plan)
 
@@ -16,7 +16,7 @@ w Blenderze → film z lektorem (ElevenLabs) i deck PDF.
 | Model hali | generator hali, regały, strefy, pola odkładcze, warianty, widok 3D | F1 |
 | Symulacja | dzień projektowy, flota, kalibracja, porównanie wariantów | F1 |
 | Prognozy i ML | wzrost wolumenów, segmentacja SKU, czas cyklu | F4 |
-| Render 3D | worker Blendera, presety kamery, animacje przepływów | F3 |
+| Render 3D | kolejka ujęć, worker Blendera na PC (HTTPS + token), presety kamery, PNG/MP4 w aplikacji | F3 ✅ |
 | Studio prezentacji | scenariusz, lektor, montaż — MP4 + PDF | F5 |
 
 ## Uruchomienie lokalne
@@ -34,7 +34,13 @@ python ../tools/ewm_demo_tasks.py demo.xlsx --scale 0.05   # syntetyczne zadania
 python manage.py demo_dane --model 1                  # materiały + stan demo na regałach modelu
 ```
 
-Blender: eksport sceny z widoku modelu → `blender -b -P tools/blender/twinema_warehouse_anim.py -- scena.json`.
+Render: ustaw na serwerze `RENDER_WORKER_TOKEN` (≥ 32 znaki), na PC z Blenderem:
+```bash
+set TWINEMA_URL=https://twinema.twapp.pl
+set TWINEMA_WORKER_TOKEN=<ten sam token>
+python tools/render_worker.py            # odpytuje co 10 s, renderuje po jednym zleceniu
+```
+Ręcznie: `blender -b -P tools/blender/twinema_render.py -- scena.json wynik.mp4 --preset orbita --seconds 10`.
 
 Testy: `python manage.py test` (z katalogu `web/`, z tym samym env).
 

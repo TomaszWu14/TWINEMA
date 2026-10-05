@@ -8,7 +8,7 @@
 > projekt z zewnątrz (rekruterzy). Scenariusz referencyjny: **budowa nowego centrum
 > dystrybucyjnego** — dane demonstracyjne, bez nazw firm i danych klientów.
 
-Status: F0 ✅, F1 ✅ (przeszczep rdzenia), F2 ✅ (Dane) — 2026-10-05. Następna: F3 (Render).
+Status: F0 ✅, F1 ✅ (przeszczep rdzenia), F2 ✅ (Dane), F3 ✅ (Render) — 2026-10-05. Następna: F4 (ML) / F5 (Studio).
 
 ---
 
@@ -60,13 +60,16 @@ web/
   twin/        F1: model hali, regały, elementy, szablony gniazd, warianty, import zadań, dzień projektowy,
                symulacja, kalibracja, prognoza, porównanie, eksport sceny — logika w czystym Pythonie
   ml/          F4: forecast, sku_segmentation, cycle_time + ModelRun (wersja, metryka)
-  render/      F3: scene.py, RenderJob, API dla workera
+  render/      F3: RenderJob (kolejka), API workera (token + jednorazowy claim, walidacja PNG/MP4),
+               ekran ujęć z podglądem; presety kamery w tools/blender/twinema_render.py
   studio/      F5: Presentation, Shot, Script, VoiceTrack; pipeline TTS → render → ffmpeg
-tools/blender/ design_kit, anim, render_worker.py (pętla: pobierz zlecenie → render → wyślij)
+tools/blender/ design_kit, anim, twinema_render.py (presety: przelot, orbita, przejazd, plan, ogólny)
+tools/render_worker.py  pętla na PC z Blenderem: przejmij zlecenie → scena → render → wyślij (stdlib)
 ```
 
 Stack: Python 3.13, Django 5.2 LTS, PostgreSQL 17, Docker + Coolify, gunicorn + WhiteNoise.
-Celery + Redis dochodzą w F3 (kolejka TTS/montażu); rendery robi zewnętrzny worker.
+Kolejka renderów = tabela RenderJob + worker odpytujący po HTTPS (bez Celery). Celery + Redis dojdą
+w F5, jeśli TTS/montaż po stronie serwera tego wymagają.
 
 **Worker renderujący (D6):** skrypt na PC z Blenderem odpytuje `/api/render/next` (token),
 pobiera scenę JSON, renderuje `blender -b -P`, odsyła MP4/PNG. Serwer bez GPU i bez

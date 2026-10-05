@@ -13,7 +13,7 @@ MODULES = [
     {"key": "ml", "name": "Prognozy i ML", "desc": "Wzrost wolumenów, segmentacja SKU, czas cyklu.",
      "phase": "F4"},
     {"key": "render", "name": "Render 3D", "desc": "Blender: ujęcia i animacje przepływów.",
-     "phase": "F3"},
+     "phase": "F3", "url": "render:jobs"},
     {"key": "studio", "name": "Studio prezentacji", "desc": "Scenariusz, lektor, montaż — film i deck.",
      "phase": "F5"},
 ]
