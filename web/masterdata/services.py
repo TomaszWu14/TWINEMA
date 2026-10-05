@@ -138,25 +138,64 @@ def stock_for_scene(log=None):
             for loc, mat, qty, unit, hu, lot, exp in items]
 
 
-def cartons_per_pallet_hint():
-    """Podpowiedź do normy scenariusza „kartonów na paletę”: średnia ważona liczbą palet na
-    aktualnym stanie (albo prosta średnia po materiałach, gdy brak stanu) → (wartość, liczba
-    materiałów, podstawa) albo None."""
+def _stock_pallets():
+    """{materiał: palet na aktualnym stanie} — pozycja stanu = jedna paleta (jak w scenie 3D)."""
     from django.db.models import Count
 
-    cpp = {code: packaging.cartons_per_pallet({"cartons_per_layer": l, "layers_per_pallet": n,
+    log = current_stock_log()
+    return dict(log.stock_items.values_list("material_code").annotate(n=Count("pk"))) if log else {}
+
+
+def cartons_per_pallet_distribution():
+    """[(kartonów/paletę, waga)] z master daty: waga = palet na stanie (albo 1 na materiał bez stanu).
+    → (rozkład, liczba materiałów, podstawa) albo None, gdy materiały nie mają przeliczników."""
+    from collections import Counter
+
+    cpp = {code: packaging.cartons_per_pallet({"cartons_per_layer": lay, "layers_per_pallet": n,
                                                "cartons_per_pallet": c})
-           for code, l, n, c in Material.objects.values_list(
+           for code, lay, n, c in Material.objects.values_list(
                "code", "cartons_per_layer", "layers_per_pallet", "cartons_per_pallet")}
     cpp = {k: v for k, v in cpp.items() if v}
     if not cpp:
         return None
-    log = current_stock_log()
-    weights = dict(log.stock_items.values_list("material_code").annotate(n=Count("pk"))) if log else {}
-    rows = [(cpp[m], w) for m, w in weights.items() if m in cpp]
-    if rows:
-        return packaging.weighted_cartons_per_pallet(rows), len(rows), "stan magazynu"
-    return packaging.weighted_cartons_per_pallet([(v, 1) for v in cpp.values()]), len(cpp), "materiały"
+    weights = {m: w for m, w in _stock_pallets().items() if m in cpp}
+    basis = "stan magazynu" if weights else "materiały"
+    weights = weights or dict.fromkeys(cpp, 1)
+    dist = Counter()
+    for m, w in weights.items():
+        dist[cpp[m]] += w
+    return sorted(dist.items()), len(weights), basis
+
+
+def cartons_per_pallet_hint():
+    """Podpowiedź do normy scenariusza „kartonów na paletę”: średnia ważona liczbą palet na
+    aktualnym stanie (albo prosta średnia po materiałach, gdy brak stanu) → (wartość, liczba
+    materiałów, podstawa) albo None."""
+    d = cartons_per_pallet_distribution()
+    return (packaging.weighted_cartons_per_pallet(d[0]), d[1], d[2]) if d else None
+
+
+def stock_profile():
+    """Palety na stanie per materiał z wagą i flagami stref specjalnych (dla reguł rozmieszczenia S3b):
+    [{code, pallets, kg, heavy, adr, temp_controlled, oversize, high_value}]. `heavy` = najwyższa klasa wagi.
+    Bez listy materiałów na zewnątrz — wynik trafia tylko do zagregowanych reguł."""
+    stock = _stock_pallets()
+    if not stock:
+        return []
+    weight_classes = sorted(PalletClass.objects.filter(kind="weight").values_list("pk", "limit"), key=lambda c: c[1])
+    top = weight_classes[-1][0] if weight_classes else None
+    objs = list(Carrier.objects.all())
+    carriers = {c.pk: c.as_dict() for c in objs}
+    default = next((carriers[c.pk] for c in objs if c.is_default), None)
+    out = []
+    for m in Material.objects.filter(code__in=stock.keys()):
+        d = m.as_dict()
+        kg = packaging.pallet_weight_kg(d, carriers.get(m.carrier_id) or default)
+        wc = m.weight_class_id or packaging.classify(kg, weight_classes)
+        out.append({"code": m.code, "pallets": stock[m.code], "kg": kg, "heavy": top is not None and wc == top,
+                    "adr": m.adr, "temp_controlled": m.temp_controlled, "oversize": m.oversize,
+                    "high_value": m.high_value})
+    return out
 
 
 def abc_from_history():

@@ -38,9 +38,9 @@
 - [SimViewTests](SimViewTests.md) (3 shared connections)
 - [shared.py](shared.py.md) (2 shared connections)
 - [BayTemplate](BayTemplate.md) (2 shared connections)
-- [blender_route.py](blender_route.py.md) (2 shared connections)
-- [views_sim.py](views_sim.py.md) (1 shared connections)
-- [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
+- [FloorGrid](FloorGrid.md) (2 shared connections)
+- [test_s3b_views.py](test_s3b_views.py.md) (1 shared connections)
+- [packaging.py](packaging.py.md) (1 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
 - [StudioViewTests](StudioViewTests.md) (1 shared connections)
 

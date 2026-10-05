@@ -306,6 +306,7 @@ def warehouse_model_features(request, pk):
     return render(request, "twin/warehouse_model/features.html", {
         "wm": wm, "features": wm.features.all(),
         "kind_choices": WarehouseHallFeature.KIND_CHOICES,
+        "dock_role_choices": WarehouseHallFeature.DOCK_ROLE_CHOICES,
         "feature_colors": HALL_FEATURE_COLORS,
         # Chrome parametryzowany (ten sam szablon dla modułu A — mapa 3D).
         "list_url": reverse("twin:warehouse_model_list"),

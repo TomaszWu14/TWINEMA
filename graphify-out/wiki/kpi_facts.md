@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **blender_route.py** (33 connections) — `web/twin/blender_route.py`
+- **blender_route.py** (34 connections) — `web/twin/blender_route.py`
 - **Item** (15 connections) — `web/twin/blender_agents.py`
 - **blender_agents.py** (14 connections) — `web/twin/blender_agents.py`
 - **blender_containers.py** (14 connections) — `web/twin/blender_containers.py`
@@ -29,8 +29,8 @@
 - [simulate](simulate.md) (4 shared connections)
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) (4 shared connections)
 - [ParseTests](ParseTests.md) (4 shared connections)
-- [engine.py](engine.py.md) (3 shared connections)
-- [day_demand](day_demand.md) (3 shared connections)
+- [views_compare.py](views_compare.py.md) (3 shared connections)
+- [scenario/models.py](scenario-models.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [design_kpi.py](design_kpi.py.md) (2 shared connections)
 - [design_catalog.py](design_catalog.py.md) (1 shared connections)
@@ -44,7 +44,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 111 (98%)
+- EXTRACTED: 112 (98%)
 - INFERRED: 2 (2%)
 - AMBIGUOUS: 0 (0%)
 

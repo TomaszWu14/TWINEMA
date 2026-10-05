@@ -19,9 +19,9 @@
 
 ## Relationships
 
-- [Scenario](Scenario.md) (7 shared connections)
-- [masterdata/views.py](masterdata-views.py.md) (4 shared connections)
-- [engine.py](engine.py.md) (3 shared connections)
+- [scenario/views.py](scenario-views.py.md) (7 shared connections)
+- [packaging.py](packaging.py.md) (4 shared connections)
+- [views_compare.py](views_compare.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (3 shared connections)
 - [EquipmentAgentsTests](EquipmentAgentsTests.md) (3 shared connections)
 - [ScenarioViewTests](ScenarioViewTests.md) (3 shared connections)

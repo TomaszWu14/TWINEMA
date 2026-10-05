@@ -1,11 +1,11 @@
-# warehouse_compare.py
+# test_design_compare.py
 
 > 17 nodes · cohesion 0.19
 
 ## Key Concepts
 
 - **test_design_compare.py** (14 connections) — `web/twin/tests/test_design_compare.py`
-- **design_compare.py** (12 connections) — `web/twin/design_compare.py`
+- **design_compare.py** (13 connections) — `web/twin/design_compare.py`
 - **capacity()** (8 connections) — `web/twin/design_compare.py`
 - **required_fleet()** (8 connections) — `web/twin/design_compare.py`
 - **CompareTests** (7 connections) — `web/twin/tests/test_design_compare.py`
@@ -28,8 +28,8 @@
 - [simulate](simulate.md) (7 shared connections)
 - [Material](Material.md) (3 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (2 shared connections)
-- [test_sim.py](test_sim.py.md) (2 shared connections)
-- [ForecastTests](ForecastTests.md) (2 shared connections)
+- [sim/__init__.py](sim-__init__.py.md) (2 shared connections)
+- [test_ml.py](test_ml.py.md) (2 shared connections)
 - [blender_scene.py](blender_scene.py.md) (1 shared connections)
 
 ## Source Files
@@ -39,7 +39,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 77 (99%)
+- EXTRACTED: 78 (99%)
 - INFERRED: 1 (1%)
 - AMBIGUOUS: 0 (0%)
 

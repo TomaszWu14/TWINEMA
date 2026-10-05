@@ -42,6 +42,9 @@
   .sc-bn .sc-bn-head { font-size:var(--fs-xs); color:var(--fg-muted); text-transform:uppercase; letter-spacing:.06em; }
   .sc-bn .sc-bn-fix { font-weight:600; margin-top:2px; }
   .sc-chart { width:100%; height:300px; margin-top:12px; }
+  .sc-fsbox:fullscreen, .sc-fsbox.is-pseudo-fs { background:var(--bg); padding:16px; }
+  .sc-fsbox:fullscreen .sc-chart, .sc-fsbox.is-pseudo-fs .sc-chart { height:calc(100vh - 80px); }
+  .sc-fsbar { display:flex; justify-content:flex-end; margin-top:12px; }
   .sc-simgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
 </style>
 {% if sim_runs %}<script src="{% static 'twin/vendor/echarts.min.js' %}"></script>{% endif %}
@@ -149,6 +152,8 @@
   <div style="margin-top:20px">
     <p class="sc-sub" style="margin-top:0">{{ v.run.get_day_kind_display }} na „{{ v.run.model.name }}” · {{ v.run.runs }} przebiegów · {{ v.run.created_at|date:"d.m.Y H:i" }} · {{ v.run.duration_s|floatformat:"-1" }} s
       · <a class="btn btn-primary btn-sm" href="{% url 'scenario:run_play' v.run.pk %}">Animacja dnia</a>
+      · <a href="{% url 'scenario:run_xlsx' v.run.pk %}">wyniki (xlsx)</a>
+      · <a href="{% url 'scenario:compare' %}?ids={{ v.run.pk }}">porównaj</a>
       · <a href="{% url 'scenario:run_events' v.run.pk %}">zdarzenia (JSON)</a></p>
     {% for w in v.warnings %}<p class="text-sm" style="margin:0 0 6px">⚠ {{ w }}</p>{% endfor %}
     <h3 class="sc-sub">Wąskie gardła {% if v.bottlenecks %}({{ v.bottlenecks|length }}{% if v.errors %}, krytyczne: {{ v.errors }}{% endif %}){% endif %}</h3>
@@ -181,7 +186,24 @@
       </div>
       {% endfor %}
     </div>
+    {% if v.capacity %}
+    <h3 class="sc-sub">Pojemność i rozmieszczenie</h3>
+    <table class="sc-table"><caption class="sr-only">Miejsca paletowe w layoucie wobec stanu × wzrost, strefy specjalne</caption>
+      <thead><tr><th scope="col">Pozycja</th><th scope="col">Miejsca w layoucie</th><th scope="col">Potrzeba</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">Wszystkie miejsca paletowe{% if v.capacity.fill_pct is not None %} ({{ v.capacity.fill_pct|floatformat:"-1" }} %){% endif %}</th>
+          <td>{{ v.capacity.positions|floatformat:"0g" }}</td><td class="{% if v.capacity.need > v.capacity.positions %}is-short{% else %}is-ok{% endif %}">{{ v.capacity.need|floatformat:"0g" }}</td></tr>
+        <tr><th scope="row">Ciężkie palety na poziomach dolnych</th><td>{{ v.capacity.heavy_low_positions|floatformat:"0g" }}</td>
+          <td class="{% if v.capacity.heavy_need > v.capacity.heavy_low_positions %}is-short{% endif %}">{{ v.capacity.heavy_need|floatformat:"0g" }}</td></tr>
+        {% for z in v.capacity.zones %}{% if z.need or z.areas %}<tr><th scope="row">Strefa: {{ z.label }}{% if not z.areas %} <span class="text-muted">(brak w layoucie)</span>{% endif %}</th>
+          <td>{{ z.positions|floatformat:"0g" }}</td><td class="{% if z.need > z.positions %}is-short{% else %}is-ok{% endif %}">{{ z.need|floatformat:"0g" }}</td></tr>{% endif %}{% endfor %}
+      </tbody></table>
+    <p class="text-muted text-sm" style="margin:6px 0 0">Potrzeba = palety na aktualnym stanie × mnożnik wzrostu ({{ sc.growth|floatformat:"-2" }}). Kartonów na paletę z kontenera: {{ v.cpp.value|floatformat:"-1" }} ({{ v.cpp.source }}).</p>
+    {% endif %}
+    <div class="sc-fsbox" id="sim-box-{{ v.run.pk }}">
+    <div class="sc-fsbar"><button type="button" class="btn btn-ghost btn-sm" aria-pressed="false" data-fs-target="sim-box-{{ v.run.pk }}">Pełny ekran</button></div>
     <div class="sc-chart" id="sim-{{ v.run.pk }}" role="img" aria-label="Oś czasu dnia ({{ v.run.get_day_kind_display|lower }}): auta w kolejce, palety na polach odkładczych, wózki w pracy — wartości w tabeli poniżej"></div>
+    </div>
     <details style="margin-top:8px"><summary class="text-sm">Oś czasu jako tabela (co godzinę)</summary>
       <div class="sc-scroll"><table class="sc-table"><thead><tr><th scope="col">Godzina</th><th scope="col">Aut w kolejce</th><th scope="col">Palet: pole przyjęć</th><th scope="col">Palet: pole wydań</th><th scope="col">Wózków w pracy</th></tr></thead>
         <tbody>{% for h in v.hourly %}<tr><th scope="row">{{ h.t }}</th><td>{{ h.queue }}</td><td>{{ h.staging_in }}</td><td>{{ h.staging_out }}</td><td>{{ h.fleet }}</td></tr>{% endfor %}</tbody></table></div>
@@ -190,7 +212,7 @@
   {% empty %}
   {% if not sim_form %}<p class="text-sm" style="margin:0">Symulacji jeszcze nie uruchomiono.</p>{% endif %}
   {% endfor %}
-  <p class="text-muted text-sm" style="margin:12px 0 0">Pojemność (miejsca paletowe vs stan) i reguły rozmieszczenia (nośność, strefy specjalne) — następny etap (S3b).</p>
+  <p class="text-muted text-sm" style="margin:12px 0 0"><a href="{% url 'scenario:compare' %}">Porównaj wyniki</a> — layouty i scenariusze w jednej tabeli.</p>
 </div></section>
 {{ sim_charts|json_script:"sc-sim-data" }}
 
@@ -289,6 +311,16 @@
 {% endif %}
 {% endblock %}
 {% block extra_scripts %}
+<p class="sr-only" id="sc-fs-live" aria-live="polite"></p>
+<script type="module">
+import { bindFullscreenButton } from '{% static "twin/js/fullscreen.js" %}';
+document.querySelectorAll('[data-fs-target]').forEach((b) => {
+  const box = document.getElementById(b.dataset.fsTarget);
+  bindFullscreenButton(b, box, { live: document.getElementById('sc-fs-live'), onChange: () => setTimeout(() => {
+    box.querySelectorAll('.sc-chart').forEach((c) => globalThis.echarts?.getInstanceByDom(c)?.resize());
+  }, 60) });
+});
+</script>
 <script>
 (function () {
   var form = document.getElementById('sc-simform');

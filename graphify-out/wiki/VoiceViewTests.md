@@ -6,8 +6,8 @@
 
 - **Api** (8 connections) — `tools/render_worker.py`
 - **render_worker.py** (7 connections) — `tools/render_worker.py`
+- **.get()** (7 connections) — `tools/render_worker.py`
 - **main()** (7 connections) — `tools/render_worker.py`
-- **.get()** (6 connections) — `tools/render_worker.py`
 - **.post_form()** (4 connections) — `tools/render_worker.py`
 - **._req()** (4 connections) — `tools/render_worker.py`
 - **find_blender()** (4 connections) — `tools/render_worker.py`
@@ -26,8 +26,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 49 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 49 (98%)
+- INFERRED: 1 (2%)
 - AMBIGUOUS: 0 (0%)
 
 ---

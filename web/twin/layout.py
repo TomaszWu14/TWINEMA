@@ -31,6 +31,8 @@ TRAFFIC_KINDS = {"walkway", "truckway"}      # drogi ruchu: regał na nich = ost
 COLUMN_BLOCKS = {"dock", "gate"}             # słup w doku/bramie = błąd (auto musi podjechać)
 SPECIAL_ZONE_KINDS = {"zone_temp", "zone_adr", "zone_oversize", "zone_value"}   # reguły rozmieszczenia → S3
 EQUIPMENT = ("reach", "vna", "shelf")
+DOCK_ROLES = ("in_container", "in_pallet", "out", "courier", "shared")
+DEFAULT_LOAD_KG = 1000
 ROOF_GAP_M = 0.5        # zapas nad najwyższym poziomem regału pod konstrukcją dachu / tryskaczami
 OVERLAP_TOL_M = 0.02    # styk krawędzią / plecami do siebie to nie kolizja
 OUTSIDE_TOL_M = 0.05
@@ -136,6 +138,9 @@ def clean_layout(data, feature_kinds):
         row["equipment"] = r.get("equipment") or "reach"
         if row["equipment"] not in EQUIPMENT:
             raise LayoutError(f"Regał {i}: nieznany sprzęt {row['equipment']!r}.")
+        # brak klucza = zostaw wartość z bazy (stary klient); None przy zapisie nie nadpisuje
+        row["load_kg"] = (None if r.get("load_kg") in (None, "")
+                          else _int(r.get("load_kg"), f"Regał {i} nośność [kg]", 50, 10000))
         out["racks"].append(row)
     for i, f in enumerate(feats, 1):
         if not isinstance(f, dict):
@@ -149,8 +154,33 @@ def clean_layout(data, feature_kinds):
             "x": _num(f.get("x"), f"Element hali {i} X"), "y": _num(f.get("y"), f"Element hali {i} Y"),
             "width": _num(f.get("width"), f"Element hali {i} szerokość", 0.1, 5000),
             "depth": _num(f.get("depth"), f"Element hali {i} głębokość", 0.1, 5000),
-            "angle": _num(f.get("angle", 0), f"Element hali {i} kąt", -3600, 3600) % 360})
+            "angle": _num(f.get("angle", 0), f"Element hali {i} kąt", -3600, 3600) % 360,
+            "dock_role": _dock_role(f, i)})
     return out
+
+
+def _dock_role(f, i):
+    if "dock_role" not in f or f["dock_role"] is None:
+        return None
+    role = f["dock_role"]
+    if role not in ("", *DOCK_ROLES):
+        raise LayoutError(f"Element hali {i}: nieznana rola doku {role!r}.")
+    return role
+
+
+def guess_dock_role(label):
+    """Rola doku z etykiety (dla doków bez jawnej roli): „kontener” → kontenery, „pacz…/kurier” → paczki,
+    „wspóln” → wspólny, „przyj/paletowy/ IN ” → palety IN, reszta → wydania."""
+    s = f" {(label or '').lower()} "
+    if "wspóln" in s:
+        return "shared"
+    if "pacz" in s or "kurier" in s:
+        return "courier"
+    if "kontener" in s:
+        return "in_container"
+    if "przyj" in s or "paletowy" in s or " in " in s:
+        return "in_pallet"
+    return "out"
 
 
 def column_list(columns, floor):
@@ -180,12 +210,14 @@ def rack_row(r):
     return {"id": r.pk, "zone": r.zone, "rack_id": r.rack_id, "x": r.x_m or 0.0, "y": r.y_m or 0.0,
             "angle": r.angle_deg or 0.0, "n_bays": r.n_bays, "n_levels": r.n_levels,
             "bay_width_cm": r.bay_width_cm, "depth_cm": r.depth_cm, "level_height_cm": r.level_height_cm,
-            "equipment": getattr(r, "equipment", None) or "reach"}
+            "equipment": getattr(r, "equipment", None) or "reach",
+            "load_kg": getattr(r, "load_kg", None) or DEFAULT_LOAD_KG}
 
 
 def feature_row(f):
     return {"id": f.pk, "kind": f.kind, "label": f.label, "x": f.x_m, "y": f.y_m,
-            "width": f.width_m, "depth": f.depth_m, "angle": f.angle_deg or 0.0}
+            "width": f.width_m, "depth": f.depth_m, "angle": f.angle_deg or 0.0,
+            "dock_role": getattr(f, "dock_role", "") or ""}
 
 
 def rack_geom(r):

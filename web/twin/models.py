@@ -203,6 +203,8 @@ class WarehouseModelRack(models.Model):
     angle_deg = models.FloatField(default=0, verbose_name="Kąt obrotu [°]")
     equipment = models.CharField(max_length=6, choices=EQUIPMENT_CHOICES, default="reach",
                                  verbose_name="Sprzęt obsługi (wymagana alejka)")
+    load_kg = models.PositiveIntegerField(default=1000, verbose_name="Nośność miejsca paletowego [kg]",
+                                          help_text="Na jedną paletę (para belek / pole). Ostrzeżenia rozmieszczenia (S3b).")
     # Edytor układu, część 1: szablon domyślny gniazd + reguła adresu (numeracja, kierunek).
     template = models.ForeignKey(BayTemplate, on_delete=models.SET_NULL, null=True, blank=True,
                                  related_name="racks", verbose_name="Szablon gniazda")
@@ -282,8 +284,17 @@ class WarehouseHallFeature(models.Model):
         ("zone_oversize", "Strefa specjalna: gabaryty / dłużyca"),
         ("zone_value", "Strefa specjalna: towary wysokiej wartości"),
     ]
+    DOCK_ROLE_CHOICES = [
+        ("in_container", "Przyjęcia: kontenery"),
+        ("in_pallet", "Przyjęcia: palety (auta)"),
+        ("out", "Wydania"),
+        ("courier", "Kurier / paczki"),
+        ("shared", "Wspólny IN + OUT"),
+    ]
     model = models.ForeignKey(WarehouseModel, on_delete=models.CASCADE, related_name="features")
     kind = models.CharField(max_length=20, choices=KIND_CHOICES, default="other", verbose_name="Typ elementu")
+    dock_role = models.CharField(max_length=12, choices=DOCK_ROLE_CHOICES, blank=True, default="",
+                                 verbose_name="Rola doku", help_text="Dla doków i bram; puste = z etykiety.")
     label = models.CharField(max_length=100, blank=True, verbose_name="Etykieta")
     zone_code = models.CharField(max_length=20, blank=True, verbose_name="Prefiks kodów lokalizacji",
                                  help_text="Dla stref blokowych/zwrotów — łapie kody po prefiksie")

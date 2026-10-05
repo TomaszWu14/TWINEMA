@@ -44,7 +44,7 @@
 ### uses
 - [TasksEndpointAndImportTests](TasksEndpointAndImportTests.md) `INFERRED`
 - SlotLocatorTests `INFERRED`
-- [CalibrationTests](CalibrationTests.md) `INFERRED`
+- CalibrationTests `INFERRED`
 - CalibrationViewTests `INFERRED`
 - ResolveMovesTests `INFERRED`
 - SceneFromTasksTests `INFERRED`

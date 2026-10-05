@@ -52,8 +52,25 @@ def demo_hall():
                                        clear_height_m=g["params"]["clear_height_m"],
                                        floor_width_m=g["floor"]["width"], floor_depth_m=g["floor"]["depth"])
     WarehouseModelRack.objects.bulk_create([WarehouseModelRack(model=wm, **r) for r in g["racks"]])
-    WarehouseHallFeature.objects.bulk_create([WarehouseHallFeature(model=wm, **f) for f in g["features"]])
+    WarehouseHallFeature.objects.bulk_create([WarehouseHallFeature(model=wm, **f) for f in g["features"]]
+                                             + [WarehouseHallFeature(model=wm, **z) for z in demo_zones(g["racks"])])
     return wm, True
+
+
+def demo_zones(racks):
+    """Strefy specjalne demo nad dwiema parami rzędów VNA: ADR (rzędy 1–2) i temperatura (rzędy 3–4)."""
+    vna = sorted((r for r in racks if r["zone"] == "V"), key=lambda r: r["y_m"])
+    out = []
+    for kind, label, rows in (("zone_adr", "Strefa ADR", vna[:2]), ("zone_temp", "Strefa temperaturowa", vna[2:4])):
+        if not rows:
+            continue
+        x0 = min(r["x_m"] for r in rows)
+        y0 = min(r["y_m"] for r in rows)
+        x1 = max(r["x_m"] + r["n_bays"] * r["bay_width_cm"] / 100 for r in rows)
+        y1 = max(r["y_m"] + r["depth_cm"] / 100 for r in rows)
+        out.append({"kind": kind, "label": label, "x_m": round(x0 - 0.2, 2), "y_m": round(y0 - 0.2, 2),
+                    "width_m": round(x1 - x0 + 0.4, 2), "depth_m": round(y1 - y0 + 0.4, 2), "angle_deg": 0.0})
+    return out
 
 
 def _r(v, k):

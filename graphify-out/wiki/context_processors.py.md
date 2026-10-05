@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **roles.py** (28 connections) — `web/core/roles.py`
+- **roles.py** (30 connections) — `web/core/roles.py`
 - **test_ml.py** (11 connections) — `web/ml/tests/test_ml.py`
 - **test_render.py** (8 connections) — `web/render/tests/test_render.py`
 - **test_ewm_tasks_refresh.py** (6 connections) — `web/twin/tests/test_ewm_tasks_refresh.py`
@@ -53,7 +53,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 83 (100%)
+- EXTRACTED: 85 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

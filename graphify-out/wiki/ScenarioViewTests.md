@@ -18,7 +18,7 @@
 
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (3 shared connections)
-- [._scene](_scene.md) (2 shared connections)
+- [resolve_moves](resolve_moves.md) (2 shared connections)
 - [layout-editor.js](layout-editor.js.md) (2 shared connections)
 - [draft_script](draft_script.md) (1 shared connections)
 

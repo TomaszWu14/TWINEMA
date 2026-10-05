@@ -102,6 +102,7 @@ def hall_feature_dict(f):
         "angle": f.angle_deg,
         "color": (f.color_hex or HALL_FEATURE_COLORS.get(f.kind, "#6b7280")),
         "zone_code": f.zone_code,
+        "dock_role": getattr(f, "dock_role", "") or "",
     }
 
 
@@ -126,6 +127,7 @@ def save_hall_features(request, owner_field, owner_obj):
     xs, ys = P.getlist("x_m"), P.getlist("y_m")
     ws, ds = P.getlist("width_m"), P.getlist("depth_m")
     angles, colors, notes = P.getlist("angle_deg"), P.getlist("color_hex"), P.getlist("notes")
+    roles, valid_roles = P.getlist("dock_role"), dict(WarehouseHallFeature.DOCK_ROLE_CHOICES)
     deleted = [d for d in (P.get("deleted_ids") or "").split(",") if d.strip().isdigit()]
 
     def _f(lst, i, default=0.0):
@@ -153,4 +155,6 @@ def save_hall_features(request, owner_field, owner_obj):
             feat.angle_deg = _f(angles, i)
             feat.color_hex = (colors[i] if i < len(colors) else "").strip()[:7]
             feat.notes = (notes[i] if i < len(notes) else "")[:200]
+            if i < len(roles):                  # stary formularz bez kolumny roli — nie nadpisuj
+                feat.dock_role = roles[i] if roles[i] in valid_roles and kind in ("dock", "gate") else ""
             feat.save()
