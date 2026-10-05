@@ -27,6 +27,20 @@ ALIASES = {
         "carton_kg": ["karton waga", "waga kartonu", "carton weight", "carton_kg"],
         "cartons_per_pallet": ["kartonow na palecie", "kartony na palecie", "cartons per pallet", "cartons_per_pallet"],
         "pallet_h_cm": ["wys palety", "wysokosc palety", "pallet height", "pallet_h_cm"],
+        "piece_l_cm": ["sztuka dl", "sztuka dlugosc", "dlugosc sztuki", "piece length", "piece_l_cm"],
+        "piece_w_cm": ["sztuka szer", "sztuka szerokosc", "szerokosc sztuki", "piece width", "piece_w_cm"],
+        "piece_h_cm": ["sztuka wys", "sztuka wysokosc", "wysokosc sztuki", "piece height", "piece_h_cm"],
+        "piece_kg": ["sztuka waga", "waga sztuki", "piece weight", "piece_kg"],
+        "cartons_per_layer": ["kartonow na warstwe", "kartony na warstwe", "cartons per layer", "cartons_per_layer"],
+        "layers_per_pallet": ["warstw na palecie", "warstwy na palecie", "layers per pallet", "layers_per_pallet"],
+        "carrier": ["nosnik", "typ palety", "carrier", "pallet type"],
+        "height_class": ["klasa wysokosci", "height class"],
+        "weight_class": ["klasa wagi", "weight class"],
+        "abc_manual": ["abc", "klasa abc", "abc class"],
+        "temp_controlled": ["temperatura", "temperatura kontrolowana", "chlodnia", "temp controlled"],
+        "adr": ["adr", "niebezpieczny", "towar niebezpieczny", "dangerous goods"],
+        "oversize": ["gabaryt", "dluzyca", "ponadgabaryt", "oversize"],
+        "high_value": ["wysoka wartosc", "wartosciowy", "high value"],
     },
     "locations": {
         "location_code": ["lokalizacja", "kod lokalizacji", "miejsce skladowania", "location", "bin", "code", "kod"],
@@ -60,7 +74,14 @@ LABELS = {
     "max_weight_kg": "max waga [kg]", "max_volume_m3": "max objętość [m3]", "blocked_pick": "blokada wydania",
     "blocked_put": "blokada umieszczania", "material_code": "materiał", "qty": "ilość", "hu": "HU",
     "lot": "partia", "expiry": "data ważności",
+    "piece_l_cm": "sztuka dł [cm]", "piece_w_cm": "sztuka szer [cm]", "piece_h_cm": "sztuka wys [cm]",
+    "piece_kg": "sztuka waga [kg]", "cartons_per_layer": "kartonów na warstwę", "layers_per_pallet": "warstw na palecie",
+    "carrier": "nośnik", "height_class": "klasa wysokości", "weight_class": "klasa wagi", "abc_manual": "klasa ABC",
+    "temp_controlled": "temperatura kontrolowana", "adr": "ADR", "oversize": "gabaryt / dłużyca",
+    "high_value": "wysoka wartość",
 }
+MATERIAL_REFS = ("carrier", "height_class", "weight_class")      # nazwy → FK rozwiązuje services
+MATERIAL_FLAGS = ("temp_controlled", "adr", "oversize", "high_value")
 CODE_RE = re.compile(r"^[A-Z0-9][A-Z0-9._/-]{0,49}$")
 
 
@@ -190,21 +211,34 @@ def _code(v, field):
     return s
 
 
+MATERIAL_INTS = ("pcs_per_carton", "cartons_per_pallet", "cartons_per_layer", "layers_per_pallet")
+MATERIAL_FLOATS = ("carton_l_cm", "carton_w_cm", "carton_h_cm", "carton_kg", "pallet_h_cm",
+                   "piece_l_cm", "piece_w_cm", "piece_h_cm", "piece_kg")
+
+
 def parse_material(row, cols):
+    """Wiersz → dict pól materiału. Nośnik i klasy jako nazwy (FK rozwiązuje services);
+    flagi stref specjalnych jako bool (TAK/X/1)."""
     try:
-        return {
+        abc = _text(_cell(row, cols, "abc_manual"), upper=True)
+        if abc not in ("", "A", "B", "C"):
+            raise ValueError(f"klasa ABC: „{abc[:10]}” — dozwolone A, B, C albo puste")
+        out = {
             "code": _code(_cell(row, cols, "code"), "code"),
             "name": _text(_cell(row, cols, "name"))[:200],
             "group": _text(_cell(row, cols, "group"))[:80],
             "unit": (_text(_cell(row, cols, "unit"), upper=True) or "SZT")[:10],
-            "pcs_per_carton": _num(_cell(row, cols, "pcs_per_carton"), "pcs_per_carton", integer=True),
-            "carton_l_cm": _num(_cell(row, cols, "carton_l_cm"), "carton_l_cm"),
-            "carton_w_cm": _num(_cell(row, cols, "carton_w_cm"), "carton_w_cm"),
-            "carton_h_cm": _num(_cell(row, cols, "carton_h_cm"), "carton_h_cm"),
-            "carton_kg": _num(_cell(row, cols, "carton_kg"), "carton_kg"),
-            "cartons_per_pallet": _num(_cell(row, cols, "cartons_per_pallet"), "cartons_per_pallet", integer=True),
-            "pallet_h_cm": _num(_cell(row, cols, "pallet_h_cm"), "pallet_h_cm"),
-        }, None
+            "abc_manual": abc,
+        }
+        for f in MATERIAL_INTS:
+            out[f] = _num(_cell(row, cols, f), f, integer=True)
+        for f in MATERIAL_FLOATS:
+            out[f] = _num(_cell(row, cols, f), f)
+        for f in MATERIAL_REFS:
+            out[f] = _text(_cell(row, cols, f))[:60]
+        for f in MATERIAL_FLAGS:
+            out[f] = _bool(_cell(row, cols, f))
+        return out, None
     except ValueError as exc:
         return None, str(exc)
 

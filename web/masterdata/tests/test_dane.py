@@ -128,6 +128,8 @@ class DaneViewTests(TestCase):
         self.assertTrue(r.content.decode("utf-8").startswith("﻿lokalizacja;materiał"))
         Material.objects.create(code="ZZ-80", name="Wiertarka", group="Narzędzia")
         Material.objects.create(code="AA-1", name="Kubek", group="AGD")
+        self.assertEqual(self.client.get(reverse("masterdata:materials")).status_code, 403)  # #25: bez danych źródłowych
+        self.client.force_login(self.designer)
         r = self.client.get(reverse("masterdata:materials"), {"q": "wiert"})
         self.assertContains(r, "ZZ-80")
         self.assertNotContains(r, "AA-1")

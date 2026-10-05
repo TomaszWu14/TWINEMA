@@ -1,3 +1,4 @@
+from django import forms
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
@@ -8,15 +9,23 @@ from django.views.decorators.http import require_POST
 from core.roles import any_role, designer
 
 from . import importers, services
-from .models import ImportLog, Material
+from . import packaging
+from .models import SPECIAL_FLAGS, Carrier, ImportLog, Material, PalletClass
 
 MAX_UPLOAD_MB = 25
 KINDS = dict(ImportLog.KIND_CHOICES)
 KIND_HELP = {
-    "materials": "Kod, nazwa, grupa towarowa, karton (wymiary, waga, szt.), paletyzacja. Istniejące kody są aktualizowane.",
+    "materials": "Kod, nazwa, grupa, sztuka → karton → paleta (wymiary, wagi, przeliczniki, warstwy), nośnik, klasy, "
+                 "ABC, strefy specjalne. Istniejące kody są aktualizowane tylko w kolumnach z pliku.",
     "locations": "Kody lokalizacji z typem, poziomem i wymiarami. Każdy import tworzy nowy aktywny master.",
     "stock": "Lokalizacja, materiał, ilość, HU, partia, data ważności. Najnowszy import = aktualny stan w scenie 3D.",
 }
+
+
+def _counts(field):
+    """[(etykieta, liczba materiałów)] — zbiorcze liczby, które widzi też rola Podgląd."""
+    return [(row[field] or "bez klasy", row["n"]) for row in
+            Material.objects.values(field).annotate(n=Count("pk")).order_by(field)]
 
 
 @any_role
@@ -31,6 +40,8 @@ def home(request):
         "stock_log": stock_log,
         "stock_locations": stock_log.stock_items.values("location_code").distinct().count() if stock_log else 0,
         "master": WarehouseLocationMasterBatch.objects.filter(is_active=True).first(),
+        "by_height": _counts("height_class__label"), "by_weight": _counts("weight_class__label"),
+        "by_flag": [(label, Material.objects.filter(**{f: True}).count()) for f, label in SPECIAL_FLAGS],
         "logs": ImportLog.objects.select_related("uploaded_by")[:20],
         "models": WarehouseModel.objects.order_by("-created_at")[:20],
         "max_mb": MAX_UPLOAD_MB,
@@ -60,7 +71,7 @@ def upload(request, kind):
     return redirect("masterdata:log_detail", pk=log.pk)
 
 
-@any_role
+@designer                      # raport pokazuje wiersze danych źródłowych — nie dla roli Podgląd
 def log_detail(request, pk):
     log = get_object_or_404(ImportLog, pk=pk)
     labels = importers.LABELS
@@ -81,15 +92,102 @@ def template(request, kind):
     return resp
 
 
-@any_role
+@designer                      # lista materiałów = dane źródłowe (decyzja #25: Podgląd ich nie widzi)
 def materials(request):
-    q = (request.GET.get("q") or "").strip()
-    qs = Material.objects.all()
+    g = request.GET
+    q = (g.get("q") or "").strip()
+    qs = Material.objects.select_related("carrier", "height_class", "weight_class")
     if q:
         qs = qs.filter(Q(code__icontains=q) | Q(name__icontains=q) | Q(group__icontains=q))
-    page = Paginator(qs, 50).get_page(request.GET.get("page"))
+    for key in ("height_class", "weight_class"):
+        if g.get(key, "").isdigit():
+            qs = qs.filter(**{f"{key}_id": int(g[key])})
+    if g.get("abc") in ("A", "B", "C"):
+        qs = qs.filter(abc_manual=g["abc"])
+    flag = g.get("flaga")
+    if flag in dict(SPECIAL_FLAGS):
+        qs = qs.filter(**{flag: True})
+    page = Paginator(qs, 50).get_page(g.get("page"))
+    history = services.abc_from_history()
+    for m in page.object_list:
+        m.abc_history = history.get(m.code, "")
+        m.cpp = packaging.cartons_per_pallet(m.as_dict())
     groups = Material.objects.exclude(group="").values("group").annotate(n=Count("pk")).order_by("-n")[:12]
-    return render(request, "masterdata/materials.html", {"page": page, "q": q, "groups": groups})
+    query = g.copy()
+    query.pop("page", None)
+    return render(request, "masterdata/materials.html", {
+        "page": page, "q": q, "groups": groups, "query": query.urlencode(), "f": g,
+        "heights": PalletClass.objects.filter(kind="height"), "weights": PalletClass.objects.filter(kind="weight"),
+        "flags": SPECIAL_FLAGS, "has_history": bool(history)})
+
+
+class MaterialForm(forms.ModelForm):
+    class Meta:
+        model = Material
+        exclude = ["code"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for f in self.fields.values():
+            if not isinstance(f.widget, forms.CheckboxInput):
+                f.widget.attrs.setdefault("class", "form-control")
+        self.fields["carrier"].empty_label = "domyślny (EUR)"
+        self.fields["height_class"].empty_label = self.fields["weight_class"].empty_label = "dobierz z palety"
+
+
+@designer
+def material_edit(request, pk):
+    m = get_object_or_404(Material, pk=pk)
+    form = MaterialForm(request.POST or None, instance=m)
+    if request.method == "POST" and form.is_valid():
+        m = form.save(commit=False)
+        services.classify_materials([m])
+        m.save()
+        messages.success(request, f"Zapisano materiał {m.code}.")
+        return redirect("masterdata:material_edit", pk=m.pk)
+    carrier = (m.carrier or Carrier.objects.filter(is_default=True).first())
+    cd = carrier.as_dict() if carrier else None
+    d = m.as_dict()
+    return render(request, "masterdata/material_form.html", {
+        "m": m, "form": form, "carrier": carrier, "warnings": packaging.warnings(d, cd),
+        "calc": {"cpp": packaging.cartons_per_pallet(d), "height": packaging.pallet_height_cm(d, cd),
+                 "weight": packaging.pallet_weight_kg(d, cd)},
+        "abc_history": services.abc_from_history().get(m.code, ""),
+    })
+
+
+CarrierFormSet = forms.modelformset_factory(
+    Carrier, fields=["name", "length_cm", "width_cm", "height_cm", "weight_kg", "max_load_h_cm", "max_load_kg",
+                     "is_default"], extra=1, can_delete=True)
+ClassFormSet = forms.modelformset_factory(PalletClass, fields=["kind", "label", "limit"], extra=2, can_delete=True)
+
+
+@designer
+def catalog(request):
+    """Nośniki i klasy wysokości/wagi — dwa formsety, każdy z własnym przyciskiem zapisu."""
+    which = request.POST.get("which")
+    carriers = CarrierFormSet(request.POST if which == "carriers" else None, prefix="c",
+                              queryset=Carrier.objects.all())
+    classes = ClassFormSet(request.POST if which == "classes" else None, prefix="k",
+                           queryset=PalletClass.objects.all())
+    for fs in (carriers, classes):
+        for i, form in enumerate(fs, start=1):
+            for f in form.fields.values():
+                f.widget.attrs["aria-label"] = f"{f.label} (wiersz {i})"      # pola w tabeli bez <label>
+                if not isinstance(f.widget, forms.CheckboxInput):
+                    f.widget.attrs.setdefault("class", "form-control")
+    if request.method == "POST":
+        fs = carriers if which == "carriers" else classes
+        if fs.is_valid():
+            fs.save()
+            if which == "carriers" and Carrier.objects.filter(is_default=True).count() > 1:
+                keep = Carrier.objects.filter(is_default=True).order_by("-pk").first()
+                Carrier.objects.exclude(pk=keep.pk).update(is_default=False)
+                messages.warning(request, f"Domyślny może być jeden nośnik — zostawiono „{keep}”.")
+            messages.success(request, "Zapisano katalog.")
+            return redirect("masterdata:catalog")
+        messages.error(request, "Popraw zaznaczone pola.")
+    return render(request, "masterdata/catalog.html", {"carriers": carriers, "classes": classes})
 
 
 @designer

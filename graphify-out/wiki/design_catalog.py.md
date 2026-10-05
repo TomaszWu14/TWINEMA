@@ -31,7 +31,7 @@
 - [twinema_design_kit.py](twinema_design_kit.py.md) (9 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
 - [day_demand](day_demand.md) (1 shared connections)
-- [build_scene](build_scene.md) (1 shared connections)
+- [Material](Material.md) (1 shared connections)
 
 ## Source Files
 

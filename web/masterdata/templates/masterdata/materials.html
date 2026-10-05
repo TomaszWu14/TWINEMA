@@ -1,35 +1,65 @@
 {% extends "core/base.html" %}
 {% block title %}Materiały — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .mt-filters { display:flex; flex-wrap:wrap; gap:10px; align-items:end; margin:0 0 12px; }
+  .mt-filters label { display:flex; flex-direction:column; gap:4px; font-size:var(--fs-sm); color:var(--fg-muted); }
+  .mt-flag { display:inline-block; margin:0 4px 2px 0; }
+</style>
+{% endblock %}
 {% block content %}
 <nav class="breadcrumb" aria-label="Okruszki"><a href="{% url 'masterdata:home' %}">Dane</a> <span aria-hidden="true">/</span> <span>Materiały</span></nav>
 <div class="page-header">
   <div>
     <div class="page-header__title">Materiały</div>
-    <div class="page-header__sub">{{ page.paginator.count }} pozycji{% if q %} dla „{{ q }}”{% endif %}</div>
+    <div class="page-header__sub">{{ page.paginator.count }} pozycji{% if q %} dla „{{ q }}”{% endif %} · sztuka → karton → paleta, nośnik, klasy, ABC i strefy specjalne</div>
   </div>
-  <form class="page-header__actions" method="get" role="search">
-    <input class="form-control" type="search" name="q" value="{{ q }}" placeholder="Kod, nazwa albo grupa" aria-label="Szukaj materiału">
-    <button class="btn btn-secondary" type="submit">Szukaj</button>
-  </form>
+  <div class="page-header__actions"><a class="btn btn-secondary" href="{% url 'masterdata:catalog' %}">Nośniki i klasy</a></div>
 </div>
+
+<form class="mt-filters" method="get" role="search" aria-label="Filtry materiałów">
+  <label>Szukaj <input class="form-control" type="search" name="q" value="{{ q }}" placeholder="Kod, nazwa albo grupa"></label>
+  <label>Klasa wysokości
+    <select class="form-control" name="height_class"><option value="">wszystkie</option>
+      {% for c in heights %}<option value="{{ c.pk }}"{% if f.height_class == c.pk|stringformat:"d" %} selected{% endif %}>{{ c.label }}</option>{% endfor %}</select></label>
+  <label>Klasa wagi
+    <select class="form-control" name="weight_class"><option value="">wszystkie</option>
+      {% for c in weights %}<option value="{{ c.pk }}"{% if f.weight_class == c.pk|stringformat:"d" %} selected{% endif %}>{{ c.label }}</option>{% endfor %}</select></label>
+  <label>ABC (ręcznie)
+    <select class="form-control" name="abc"><option value="">wszystkie</option>
+      {% for a in "ABC" %}<option value="{{ a }}"{% if f.abc == a %} selected{% endif %}>{{ a }}</option>{% endfor %}</select></label>
+  <label>Strefa specjalna
+    <select class="form-control" name="flaga"><option value="">wszystkie</option>
+      {% for key, label in flags %}<option value="{{ key }}"{% if f.flaga == key %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></label>
+  <button class="btn btn-secondary" type="submit">Filtruj</button>
+  {% if query %}<a class="btn btn-ghost btn-sm" href="{% url 'masterdata:materials' %}">Wyczyść</a>{% endif %}
+</form>
 {% if groups %}<p class="text-sm" style="margin:0 0 12px">{% for g in groups %}<a class="badge badge-gray" href="?q={{ g.group|urlencode }}">{{ g.group }} · {{ g.n }}</a> {% endfor %}</p>{% endif %}
+
 <div class="card">
   {% if page.object_list %}
   <div class="table-wrap"><table class="table">
-    <thead><tr><th>Kod</th><th>Nazwa</th><th>Grupa</th><th class="num">Szt/karton</th><th>Karton [cm]</th><th class="num">Kg</th><th class="num">Kart./paleta</th></tr></thead>
+    <thead><tr><th>Kod</th><th>Nazwa</th><th class="num">Szt/karton</th><th>Karton [cm]</th><th class="num">Kart./paleta</th>
+      <th>Nośnik</th><th>Klasa wys.</th><th>Klasa wagi</th><th>ABC</th><th>Strefy</th></tr></thead>
     <tbody>{% for m in page.object_list %}
-      <tr><td>{{ m.code }}</td><td>{{ m.name }}</td><td>{{ m.group }}</td><td class="num">{{ m.pcs_per_carton|default:"—" }}</td>
+      <tr><td><a href="{% url 'masterdata:material_edit' m.pk %}">{{ m.code }}</a></td><td>{{ m.name }}</td>
+        <td class="num">{{ m.pcs_per_carton|default:"—" }}</td>
         <td>{% if m.carton_l_cm %}{{ m.carton_l_cm|floatformat:"-1" }}×{{ m.carton_w_cm|floatformat:"-1" }}×{{ m.carton_h_cm|floatformat:"-1" }}{% else %}—{% endif %}</td>
-        <td class="num">{{ m.carton_kg|floatformat:"-1"|default:"—" }}</td><td class="num">{{ m.cartons_per_pallet|default:"—" }}</td></tr>
+        <td class="num">{{ m.cpp|default:"—" }}</td>
+        <td>{{ m.carrier|default:"EUR (domyślny)" }}</td>
+        <td>{{ m.height_class|default:"—" }}</td><td>{{ m.weight_class|default:"—" }}</td>
+        <td>{% if m.abc_manual %}<b>{{ m.abc_manual }}</b> <span class="text-muted text-sm">ręcznie</span>{% elif m.abc_history %}{{ m.abc_history }} <span class="text-muted text-sm">z historii</span>{% else %}—{% endif %}</td>
+        <td>{% for fl in m.flags %}<span class="badge badge-yellow mt-flag">{{ fl }}</span>{% empty %}—{% endfor %}</td></tr>
     {% endfor %}</tbody>
   </table></div>
-  {% else %}<div class="empty-state">Brak materiałów{% if q %} dla „{{ q }}”{% endif %}. Zaimportuj plik na ekranie Dane.</div>{% endif %}
+  {% else %}<div class="empty-state">Brak materiałów dla tych filtrów. Zaimportuj plik na ekranie Dane.</div>{% endif %}
 </div>
+{% if not has_history %}<p class="text-muted text-sm" style="margin-top:8px">ABC z historii pojawi się po segmentacji w module Prognozy i ML (na imporcie zadań). Ręczna klasa ma pierwszeństwo.</p>{% endif %}
 {% if page.has_other_pages %}
 <nav class="text-sm" style="margin-top:12px;display:flex;gap:8px;align-items:center" aria-label="Strony">
-  {% if page.has_previous %}<a class="btn btn-ghost btn-sm" href="?q={{ q|urlencode }}&amp;page={{ page.previous_page_number }}">← Poprzednia</a>{% endif %}
+  {% if page.has_previous %}<a class="btn btn-ghost btn-sm" href="?{{ query }}&amp;page={{ page.previous_page_number }}">← Poprzednia</a>{% endif %}
   <span class="text-muted">Strona {{ page.number }} z {{ page.paginator.num_pages }}</span>
-  {% if page.has_next %}<a class="btn btn-ghost btn-sm" href="?q={{ q|urlencode }}&amp;page={{ page.next_page_number }}">Następna →</a>{% endif %}
+  {% if page.has_next %}<a class="btn btn-ghost btn-sm" href="?{{ query }}&amp;page={{ page.next_page_number }}">Następna →</a>{% endif %}
 </nav>
 {% endif %}
 {% endblock %}

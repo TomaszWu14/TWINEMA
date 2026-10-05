@@ -22,10 +22,10 @@
 ## Relationships
 
 - [Scan](Scan.md) (5 shared connections)
-- [Shot](Shot.md) (4 shared connections)
+- [roles.py](roles.py.md) (4 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (4 shared connections)
 - [studio/views.py](studio-views.py.md) (3 shared connections)
-- [blender_route.py](blender_route.py.md) (3 shared connections)
+- [StudioViewTests](StudioViewTests.md) (3 shared connections)
 
 ## Source Files
 

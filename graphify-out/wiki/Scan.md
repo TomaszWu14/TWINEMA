@@ -25,8 +25,8 @@
 - [studio/views.py](studio-views.py.md) (6 shared connections)
 - [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (5 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (3 shared connections)
-- [Shot](Shot.md) (3 shared connections)
-- [blender_route.py](blender_route.py.md) (2 shared connections)
+- [roles.py](roles.py.md) (3 shared connections)
+- [StudioViewTests](StudioViewTests.md) (2 shared connections)
 - [warehouse_tasks.py](warehouse_tasks.py.md) (2 shared connections)
 
 ## Source Files

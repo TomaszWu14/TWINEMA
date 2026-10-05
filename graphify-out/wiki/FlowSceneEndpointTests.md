@@ -1,4 +1,4 @@
-# test_flow_player.py
+# FlowSceneEndpointTests
 
 > 11 nodes · cohesion 0.24
 

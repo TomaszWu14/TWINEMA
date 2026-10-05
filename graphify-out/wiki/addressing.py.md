@@ -1,29 +1,25 @@
 # addressing.py
 
-> 7 nodes · cohesion 0.29
+> 8 nodes · cohesion 0.36
 
 ## Key Concepts
 
-- **compliance()** (7 connections) — `web/twin/ewm_compliance.py`
-- **ewm_compliance.py** (6 connections) — `web/twin/ewm_compliance.py`
-- **CompliancePureTests** (3 connections) — `web/twin/tests/test_ewm_service.py`
-- **.test_statuses_and_percent()** (2 connections) — `web/twin/tests/test_ewm_service.py`
-- **Raport zgodności modelu z EWM: kody z planu (expand_model) vs kody z mastera,…** (1 connections) — `web/twin/ewm_compliance.py`
-- **rows: [{"zone", "rack_id", "has_template"}]; locations/duplicates: wynik…** (1 connections) — `web/twin/ewm_compliance.py`
-- **SimpleTestCase** (1 connections)
+- **GeneratorViewTests** (8 connections) — `web/twin/tests/test_design_generator.py`
+- **._post()** (4 connections) — `web/twin/tests/test_design_generator.py`
+- **.test_create_saves_model_and_opens_3d()** (2 connections) — `web/twin/tests/test_design_generator.py`
+- **.test_invalid_input_shows_errors()** (2 connections) — `web/twin/tests/test_design_generator.py`
+- **.test_preview_does_not_save()** (2 connections) — `web/twin/tests/test_design_generator.py`
+- **.setUp()** (1 connections) — `web/twin/tests/test_design_generator.py`
+- **.test_get_shows_preset_summary()** (1 connections) — `web/twin/tests/test_design_generator.py`
+- **TestCase** (1 connections)
 
 ## Relationships
 
-- [test_ewm_service.py](test_ewm_service.py.md) (3 shared connections)
-- [scenario/views.py](scenario-views.py.md) (2 shared connections)
-- [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
-- [layout-editor.js](layout-editor.js.md) (1 shared connections)
-- [ewm_service.py](ewm_service.py.md) (1 shared connections)
+- [Material](Material.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/ewm_compliance.py`
-- `web/twin/tests/test_ewm_service.py`
+- `web/twin/tests/test_design_generator.py`
 
 ## Audit Trail
 

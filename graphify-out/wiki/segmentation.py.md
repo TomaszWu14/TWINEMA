@@ -15,7 +15,7 @@
 
 ## Relationships
 
-- [build_scene](build_scene.md) (2 shared connections)
+- [Material](Material.md) (2 shared connections)
 - [test_layout_structure.py](test_layout_structure.py.md) (1 shared connections)
 
 ## Source Files

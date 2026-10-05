@@ -1,57 +1,60 @@
 # build_scene
 
-> 26 nodes · cohesion 0.12
+> 26 nodes · cohesion 0.14
 
 ## Key Concepts
 
-- **generate()** (21 connections) — `web/twin/design_generator.py`
-- **design_generator.py** (17 connections) — `web/twin/design_generator.py`
-- **test_model_edit.py** (15 connections) — `web/twin/tests/test_model_edit.py`
-- **GeneratorTests** (10 connections) — `web/twin/tests/test_design_generator.py`
-- **test_design_generator.py** (9 connections) — `web/twin/tests/test_design_generator.py`
-- **vna_levels()** (5 connections) — `web/twin/design_generator.py`
-- **_row_pairs()** (4 connections) — `web/twin/design_generator.py`
-- **_docks()** (3 connections) — `web/twin/design_generator.py`
-- **_feature()** (3 connections) — `web/twin/design_generator.py`
-- **_pair_pitch()** (3 connections) — `web/twin/design_generator.py`
-- **_rack()** (2 connections) — `web/twin/design_generator.py`
-- **.setUp()** (2 connections) — `web/twin/tests/test_design_generator.py`
-- **.test_levels_from_height()** (2 connections) — `web/twin/tests/test_design_generator.py`
-- **.test_pallet_too_tall_raises()** (2 connections) — `web/twin/tests/test_design_generator.py`
-- **.test_racks_inside_hall_and_not_overlapping()** (2 connections) — `web/twin/tests/test_design_generator.py`
-- **_rect()** (2 connections) — `web/twin/tests/test_design_generator.py`
-- **Generator hali od parametrów — nowy magazyn „od zera” (plan 2026-10-02, etap…** (1 connections) — `web/twin/design_generator.py`
-- **Poziomy składowania z podłogą: góra najwyższej palety ≤ wysokość − tryskacze.** (1 connections) — `web/twin/design_generator.py`
-- **[korytarz][A|B][korytarz]… — y każdego rzędu; A patrzy na korytarz przed, B za.** (1 connections) — `web/twin/design_generator.py`
-- **.test_capacity_meets_targets()** (1 connections) — `web/twin/tests/test_design_generator.py`
-- **.test_docks_on_opposite_walls()** (1 connections) — `web/twin/tests/test_design_generator.py`
-- **.test_hall_size_and_aspect()** (1 connections) — `web/twin/tests/test_design_generator.py`
-- **.test_vna_aisles_wide_enough()** (1 connections) — `web/twin/tests/test_design_generator.py`
-- **SimpleTestCase** (1 connections)
-- **Generator hali od parametrów (plan 2026-10-02, etap 1): pojemność, geometria,…** (1 connections) — `web/twin/tests/test_design_generator.py`
+- **blender_scene.py** (62 connections) — `web/twin/blender_scene.py`
+- **build_scene()** (24 connections) — `web/twin/blender_scene.py`
+- **_feature_center()** (10 connections) — `web/twin/blender_scene.py`
+- **.free_point()** (8 connections) — `web/twin/blender_scene.py`
+- **_task_forklifts()** (8 connections) — `web/twin/blender_scene.py`
+- **_Ctx** (7 connections) — `web/twin/blender_scene.py`
+- **_vna_racks()** (7 connections) — `web/twin/blender_scene.py`
+- **_carry()** (6 connections) — `web/twin/blender_scene.py`
+- **_container_flow()** (6 connections) — `web/twin/blender_scene.py`
+- **_forklift_task()** (6 connections) — `web/twin/blender_scene.py`
+- **_aisle_m()** (5 connections) — `web/twin/blender_scene.py`
+- **_point_end()** (4 connections) — `web/twin/blender_scene.py`
+- **.__init__()** (3 connections) — `web/twin/blender_scene.py`
+- **_labelled()** (3 connections) — `web/twin/blender_scene.py`
+- **_demo_picks()** (2 connections) — `web/twin/blender_scene.py`
+- **_span()** (2 connections) — `web/twin/blender_scene.py`
+- **.__init__()** (2 connections) — `web/twin/design_sim_scene.py`
+- **Eksport modelu magazynu (moduł B — `WarehouseModel`) do sceny animacji…** (1 connections) — `web/twin/blender_scene.py`
+- **Koniec ruchu na posadzce (dok / stanowisko) — najbliższy do `near`.** (1 connections) — `web/twin/blender_scene.py`
+- **Wózek przewozi paletę z `src` do `dst` (krotki z _rack_end/_point_end): paleta…** (1 connections) — `web/twin/blender_scene.py`
+- **Demo: przyjęcie (dok → gniazdo) albo wydanie (gniazdo → dok), doki po kolei.** (1 connections) — `web/twin/blender_scene.py`
+- **Kontenery przy dokach kontenerowych → przenośnik → paletyzacja; zwraca gotowe…** (1 connections) — `web/twin/blender_scene.py`
+- **Wózki z zadań EWM: agent na zasób, zadania od znacznika potwierdzenia…** (1 connections) — `web/twin/blender_scene.py`
+- **Składa scenę. `picks` = [(nazwa_pickera, [(rack, bay_idx, level, sku), …]), …]…** (1 connections) — `web/twin/blender_scene.py`
+- **Najwęższy korytarz przy regale: po każdej stronie najbliższy równoległy regał…** (1 connections) — `web/twin/blender_scene.py`
 - *... and 1 more nodes in this community*
 
 ## Relationships
 
-- [check_layout](check_layout.md) (7 shared connections)
-- [test_layout_structure.py](test_layout_structure.py.md) (5 shared connections)
-- [twin/models.py](twin-models.py.md) (4 shared connections)
-- [warehouse_compare.py](warehouse_compare.py.md) (3 shared connections)
+- [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (17 shared connections)
+- [kpi_facts](kpi_facts.md) (10 shared connections)
+- [warehouse_design_sim.py](warehouse_design_sim.py.md) (10 shared connections)
+- [layout.py](layout.py.md) (6 shared connections)
+- [test_outbound.py](test_outbound.py.md) (5 shared connections)
+- [twin/models.py](twin-models.py.md) (5 shared connections)
+- [test_equipment_agents.py](test_equipment_agents.py.md) (5 shared connections)
+- [Agent](Agent.md) (4 shared connections)
+- [design_kpi.py](design_kpi.py.md) (3 shared connections)
+- [RenderMontageTests](RenderMontageTests.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
-- [segmentation.py](segmentation.py.md) (2 shared connections)
-- [design_catalog.py](design_catalog.py.md) (1 shared connections)
-- [detect](detect.md) (1 shared connections)
+- [test_design_sim_scene.py](test_design_sim_scene.py.md) (3 shared connections)
 
 ## Source Files
 
-- `web/twin/design_generator.py`
-- `web/twin/tests/test_design_generator.py`
-- `web/twin/tests/test_model_edit.py`
+- `web/twin/blender_scene.py`
+- `web/twin/design_sim_scene.py`
 
 ## Audit Trail
 
-- EXTRACTED: 112 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 171 (98%)
+- INFERRED: 3 (2%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -13,7 +13,7 @@ w Blenderze → film z lektorem (ElevenLabs) i deck PDF.
 | Moduł | Co robi | Faza |
 |---|---|---|
 | Scenariusze | wolumeny dnia typowego i szczytowego: plan przyjęć (kontenery, auta 33-pal., solówki; min/śr/max), doki w szczycie, osobogodziny | S2a ✅ |
-| Dane | importy materiałów, mastera lokalizacji i stanów z raportem odrzuceń; dane demo | F2 ✅ |
+| Dane | importy materiałów, mastera lokalizacji i stanów z raportem odrzuceń; opakowania sztuka → karton → paleta, katalog nośników, klasy wysokości/wagi, ręczna ABC, strefy specjalne; dane demo | F2 ✅ · S1 ✅ |
 | Model hali | generator hali, regały, strefy, pola odkładcze, warianty, widok 3D | F1 ✅ |
 | Edytor layoutu | plan z góry w przeglądarce: przeciąganie regałów i całych bloków, doki i pola odkładcze, kolizje i KPI na żywo, cofnij/ponów, zapis; konstrukcja hali — słupy, wysokość w świetle, drogi pożarowe i ruchu, strefy ładowania i specjalne, podkład z rzutu z kalibracją skali | E2 ✅ · E2b ✅ |
 | Symulacja | dzień projektowy, flota, kalibracja, porównanie wariantów | F1 ✅ |
