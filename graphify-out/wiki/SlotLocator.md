@@ -23,7 +23,7 @@
 - .test_unknown_rack_is_none() `EXTRACTED`
 
 ### contains
-- blender_stock.py `EXTRACTED`
+- [blender_stock.py](blender_stock.py.md) `EXTRACTED`
 
 ### imports
 - test_design_calibration.py `EXTRACTED`
@@ -44,7 +44,7 @@
 ### uses
 - [TasksEndpointAndImportTests](TasksEndpointAndImportTests.md) `INFERRED`
 - SlotLocatorTests `INFERRED`
-- [CalibrationTests](CalibrationTests.md) `INFERRED`
+- CalibrationTests `INFERRED`
 - CalibrationViewTests `INFERRED`
 - ResolveMovesTests `INFERRED`
 - SceneFromTasksTests `INFERRED`

@@ -1,4 +1,4 @@
-# shared.py
+# warehouse_design_sim.py
 
 > 82 nodes · cohesion 0.05
 
@@ -34,16 +34,16 @@
 ## Relationships
 
 - [day_demand](day_demand.md) (11 shared connections)
-- [rack_corners](rack_corners.md) (11 shared connections)
-- [blender_scene.py](blender_scene.py.md) (10 shared connections)
+- [test_model_edit.py](test_model_edit.py.md) (11 shared connections)
+- [build_scene](build_scene.md) (10 shared connections)
 - [warehouse_tasks.py](warehouse_tasks.py.md) (10 shared connections)
 - [twin/models.py](twin-models.py.md) (9 shared connections)
 - [simulate](simulate.md) (9 shared connections)
 - [warehouse_compare.py](warehouse_compare.py.md) (9 shared connections)
-- [analyze](analyze.md) (8 shared connections)
+- [layout.py](layout.py.md) (8 shared connections)
 - [design_kpi.py](design_kpi.py.md) (7 shared connections)
 - [studio/api.py](studio-api.py.md) (6 shared connections)
-- [ml/services.py](ml-services.py.md) (5 shared connections)
+- [blender_stock.py](blender_stock.py.md) (5 shared connections)
 - [WarehouseTask](WarehouseTask.md) (5 shared connections)
 
 ## Source Files

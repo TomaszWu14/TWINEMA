@@ -26,8 +26,8 @@
 
 ## Relationships
 
-- [rack_corners](rack_corners.md) (11 shared connections)
-- [shared.py](shared.py.md) (1 shared connections)
+- [test_model_edit.py](test_model_edit.py.md) (11 shared connections)
+- [warehouse_design_sim.py](warehouse_design_sim.py.md) (1 shared connections)
 - [twin/models.py](twin-models.py.md) (1 shared connections)
 - [LoadAndViewTests](LoadAndViewTests.md) (1 shared connections)
 

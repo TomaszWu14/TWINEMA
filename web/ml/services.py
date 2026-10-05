@@ -44,6 +44,8 @@ def run_segmentation(batch, k=4, user=None):
         xyz[m] = "X" if cv < XYZ_CUTS[0] else ("Y" if cv < XYZ_CUTS[1] else "Z")
     # objętość wchodzi jako cecha tylko, gdy znamy ją dla każdego materiału (pilnuje segment())
     res = segmentation.segment(md, days, volumes=volumes, k=k, abc=abc, xyz=xyz)
+    if res["ok"]:
+        res["abc"] = abc                    # klasa ABC z historii per materiał — czyta ją masterdata
     metrics = {"skus": res["skus"], "inertia": res["inertia"], "k": k} if res["ok"] else {}
     return ModelRun.objects.create(kind="segmentation", batch=batch, version=segmentation.VERSION,
                                    params={"k": k}, metrics=metrics, result=res, created_by=_user(user))

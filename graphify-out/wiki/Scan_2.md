@@ -2,7 +2,7 @@
 
 > God node · 23 connections · `web/twin/ewm_tasks.py`
 
-**Community:** [blender_route.py](blender_route.py.md)
+**Community:** [StudioViewTests](StudioViewTests.md)
 
 ## Connections by Relation
 

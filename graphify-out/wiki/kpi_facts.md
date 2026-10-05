@@ -24,7 +24,7 @@
 ## Relationships
 
 - [Agent](Agent.md) (10 shared connections)
-- [blender_scene.py](blender_scene.py.md) (10 shared connections)
+- [build_scene](build_scene.md) (10 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (7 shared connections)
 - [simulate](simulate.md) (4 shared connections)
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) (4 shared connections)

@@ -2,7 +2,7 @@
 
 > God node · 24 connections · `web/twin/blender_scene.py`
 
-**Community:** [blender_scene.py](blender_scene.py.md)
+**Community:** [build_scene](build_scene.md)
 
 ## Connections by Relation
 
@@ -33,7 +33,7 @@
 - test_ewm_tasks_flow.py `EXTRACTED`
 - test_blender_export.py `EXTRACTED`
 - [test_container_inbound.py](test_container_inbound.py.md) `EXTRACTED`
-- test_equipment_agents.py `EXTRACTED`
+- [test_equipment_agents.py](test_equipment_agents.py.md) `EXTRACTED`
 
 ### rationale_for
 - Składa scenę. `picks` = \[(nazwa_pickera, \[(rack, bay_idx, level, sku), …\]), …\]… `EXTRACTED`

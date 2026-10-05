@@ -1,0 +1,51 @@
+{% extends "core/base.html" %}
+{% block title %}Nośniki i klasy — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .ct-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:0 0 12px; }
+  .ct-table td { vertical-align:middle; }
+  .ct-table .form-control { min-width:70px; }
+</style>
+{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Okruszki"><a href="{% url 'masterdata:home' %}">Dane</a> <span aria-hidden="true">/</span> <span>Nośniki i klasy</span></nav>
+<div class="page-header">
+  <div>
+    <div class="page-header__title">Nośniki i klasy palet</div>
+    <div class="page-header__sub">Katalog nośników (palet) i klas wysokości / wagi — materiał wskazuje nośnik, klasy dobierane są z wyliczonej palety albo ręcznie.</div>
+  </div>
+</div>
+
+<section class="card" aria-labelledby="ct-c"><div class="card-body">
+  <h2 class="ct-sec" id="ct-c">Nośniki</h2>
+  <form method="post">{% csrf_token %}<input type="hidden" name="which" value="carriers">
+    {{ carriers.management_form }}
+    {% if carriers.non_form_errors %}<div class="alert alert-error" role="alert">{{ carriers.non_form_errors }}</div>{% endif %}
+    <div class="table-wrap"><table class="table ct-table">
+      <thead><tr><th>Nazwa</th><th>Dł. [cm]</th><th>Szer. [cm]</th><th>Wys. własna [cm]</th><th>Waga własna [kg]</th>
+        <th>Max wys. ładunku [cm]</th><th>Max waga ładunku [kg]</th><th>Domyślny</th><th>Usuń</th></tr></thead>
+      <tbody>{% for f in carriers %}
+        <tr>{% for field in f.visible_fields %}<td>{{ field }}{% for e in field.errors %}<div class="text-sm" style="color:var(--danger-fg)">{{ e }}</div>{% endfor %}</td>{% endfor %}{% for h in f.hidden_fields %}{{ h }}{% endfor %}</tr>
+      {% endfor %}</tbody>
+    </table></div>
+    <div style="margin-top:12px"><button class="btn btn-primary" type="submit">Zapisz nośniki</button>
+      <span class="text-muted text-sm">Pusty ostatni wiersz = nowy nośnik. Materiał bez nośnika używa domyślnego.</span></div>
+  </form>
+</div></section>
+
+<section class="card" style="margin-top:16px" aria-labelledby="ct-k"><div class="card-body">
+  <h2 class="ct-sec" id="ct-k">Klasy wysokości i wagi</h2>
+  <form method="post">{% csrf_token %}<input type="hidden" name="which" value="classes">
+    {{ classes.management_form }}
+    {% if classes.non_form_errors %}<div class="alert alert-error" role="alert">{{ classes.non_form_errors }}</div>{% endif %}
+    <div class="table-wrap"><table class="table ct-table">
+      <thead><tr><th>Rodzaj</th><th>Nazwa klasy</th><th>Do (włącznie)</th><th>Usuń</th></tr></thead>
+      <tbody>{% for f in classes %}
+        <tr>{% for field in f.visible_fields %}<td>{{ field }}{% for e in field.errors %}<div class="text-sm" style="color:var(--danger-fg)">{{ e }}</div>{% endfor %}</td>{% endfor %}{% for h in f.hidden_fields %}{{ h }}{% endfor %}</tr>
+      {% endfor %}</tbody>
+    </table></div>
+    <div style="margin-top:12px"><button class="btn btn-primary" type="submit">Zapisz klasy</button>
+      <span class="text-muted text-sm">Paleta trafia do najmniejszej klasy, której limit ją mieści (np. 120 cm → „do 140 cm”).</span></div>
+  </form>
+</div></section>
+{% endblock %}
