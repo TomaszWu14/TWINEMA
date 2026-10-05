@@ -64,10 +64,19 @@ class ViewFloatLocalizationTests(TestCase):
 
     def test_floor_consts_use_dot(self):
         from django.urls import reverse
-        wm = WarehouseModel.objects.create(name="LF", floor_width_m=40, floor_depth_m=20)
+        wm = WarehouseModel.objects.create(name="LF", floor_width_m=40, floor_depth_m=20, clear_height_m=12.5)
         r = self.client.get(reverse("twin:warehouse_model_view", args=[wm.pk]))
         self.assertContains(r, "const FLOOR_W = 40.0;")
+        self.assertContains(r, "const CLEAR_H = 12.5;")       # G1: wysokość ścian hali w 3D
         self.assertNotContains(r, "40,0;")
+
+    def test_flow_stock_hides_decor_pallets(self):
+        """G1: prawdziwy stan HU z odtwarzacza przepływów chowa palety poglądowe (bez dubli w regałach)."""
+        from django.urls import reverse
+        wm = WarehouseModel.objects.create(name="LF2")
+        r = self.client.get(reverse("twin:warehouse_model_view", args=[wm.pk]))
+        self.assertContains(r, "onStock: has => viewer.setDecor(!has)")
+        self.assertContains(r, "const CLEAR_H = 0;")           # brak wysokości → ściany z wysokości regałów
 
 
 class InstancingGuardTests(TestCase):

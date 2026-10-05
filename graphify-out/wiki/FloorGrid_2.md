@@ -33,7 +33,7 @@
 - Siatka zajętości posadzki: komórka zablokowana, jeśli leży w obrysie regału.… `EXTRACTED`
 
 ### uses
-- BlenderExportViewTests `INFERRED`
+- [BlenderExportViewTests](BlenderExportViewTests.md) `INFERRED`
 - BuildSceneTests `INFERRED`
 - _Ctx `INFERRED`
 - RouteGeometryTests `INFERRED`

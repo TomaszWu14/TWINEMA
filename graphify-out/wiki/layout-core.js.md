@@ -27,7 +27,7 @@
 - [Scan](Scan.md) (2 shared connections)
 - [studio/views.py](studio-views.py.md) (2 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (2 shared connections)
-- [roles.py](roles.py.md) (2 shared connections)
+- [studio/models.py](studio-models.py.md) (2 shared connections)
 
 ## Source Files
 

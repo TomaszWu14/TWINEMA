@@ -22,7 +22,7 @@
 ## Relationships
 
 - [Scan](Scan.md) (5 shared connections)
-- [roles.py](roles.py.md) (4 shared connections)
+- [studio/models.py](studio-models.py.md) (4 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (4 shared connections)
 - [studio/views.py](studio-views.py.md) (3 shared connections)
 - [layout-core.js](layout-core.js.md) (3 shared connections)

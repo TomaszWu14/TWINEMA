@@ -1,4 +1,4 @@
-# EwmViewsTests
+# BlenderExportViewTests
 
 > 8 nodes · cohesion 0.20
 
@@ -21,7 +21,7 @@
 - [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
 - [BayTemplate](BayTemplate.md) (2 shared connections)
 - [design_kpi.py](design_kpi.py.md) (1 shared connections)
-- [bay_templates.py](bay_templates.py.md) (1 shared connections)
+- [blender_stock.py](blender_stock.py.md) (1 shared connections)
 
 ## Source Files
 
