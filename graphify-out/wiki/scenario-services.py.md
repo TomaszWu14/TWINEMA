@@ -1,75 +1,47 @@
 # scenario/services.py
 
-> 82 nodes · cohesion 0.05
+> 11 nodes · cohesion 0.18
 
 ## Key Concepts
 
-- **shared.py** (41 connections) — `web/twin/shared.py`
-- **warehouse_blender.py** (26 connections) — `web/twin/views/warehouse_blender.py`
-- **model_racks()** (24 connections) — `web/twin/blender_scene.py`
-- **hall_feature_dict()** (23 connections) — `web/twin/shared.py`
-- **warehouse_design_sim.py** (23 connections) — `web/twin/views/warehouse_design_sim.py`
-- **WarehouseTaskBatch** (22 connections) — `web/twin/models_tasks.py`
-- **warehouse_compare.py** (20 connections) — `web/twin/views/warehouse_compare.py`
-- **warehouse_variants.py** (20 connections) — `web/twin/views/warehouse_variants.py`
-- **warehouse_calibration.py** (19 connections) — `web/twin/views/warehouse_calibration.py`
-- **models_tasks.py** (17 connections) — `web/twin/models_tasks.py`
-- **views/__init__.py** (17 connections) — `web/twin/views/__init__.py`
-- **model_floor()** (14 connections) — `web/twin/blender_scene.py`
-- **load_inputs()** (13 connections) — `web/twin/design_day.py`
-- **safe_json()** (12 connections) — `web/twin/shared.py`
-- **ewm_tasks_compare()** (12 connections) — `web/twin/views/warehouse_compare.py`
-- **warehouse_design_day.py** (12 connections) — `web/twin/views/warehouse_design_day.py`
-- **warehouse_forecast.py** (12 connections) — `web/twin/views/warehouse_forecast.py`
-- **blender_tasks.py** (11 connections) — `web/twin/blender_tasks.py`
-- **_sim_scene()** (11 connections) — `web/twin/views/warehouse_blender.py`
-- **sim_params()** (11 connections) — `web/twin/views/warehouse_design_sim.py`
-- **ewm_tasks_calibration()** (10 connections) — `web/twin/views/warehouse_calibration.py`
-- **design_day()** (10 connections) — `web/twin/views/warehouse_design_sim.py`
-- **run_simulation()** (9 connections) — `web/twin/views/warehouse_design_sim.py`
-- **load_master_levels()** (8 connections) — `web/twin/blender_stock.py`
-- **load_day_tasks()** (8 connections) — `web/twin/design_sim.py`
-- *... and 57 more nodes in this community*
+- **blender_stock.py** (24 connections) — `web/twin/blender_stock.py`
+- **build_scene_for_model()** (17 connections) — `web/twin/blender_scene.py`
+- **stock_for_scene()** (5 connections) — `web/masterdata/services.py`
+- **load_stock_inputs()** (5 connections) — `web/twin/blender_stock.py`
+- **window_source()** (4 connections) — `web/twin/blender_tasks.py`
+- **_activity_picks()** (3 connections) — `web/twin/blender_scene.py`
+- **Aktywność pickerów (picker, kod, materiał; kolejność = confirmed_at) → trasy.…** (1 connections) — `web/twin/blender_scene.py`
+- **Scena dla `WarehouseModel`. `batch` = PickerActivityBatch (None → demo…** (1 connections) — `web/twin/blender_scene.py`
+- **Rzeczywiste palety w lokalizacjach → scena Blendera („cyfrowe zdjęcie"…** (1 connections) — `web/twin/blender_stock.py`
+- **Dane do `build_pallets`: (wiersze migawki, stany, aktywność). Stany = najnowszy…** (1 connections) — `web/twin/blender_stock.py`
+- **Opis źródła wózków do `scene.source` (odtwarzacz pokazuje go pod animacją).** (1 connections) — `web/twin/blender_tasks.py`
 
 ## Relationships
 
-- [day_demand](day_demand.md) (11 shared connections)
-- [day-timeline.js](day-timeline.js.md) (11 shared connections)
-- [blender_scene.py](blender_scene.py.md) (10 shared connections)
-- [warehouse_tasks.py](warehouse_tasks.py.md) (10 shared connections)
-- [twin/models.py](twin-models.py.md) (9 shared connections)
-- [simulate](simulate.md) (9 shared connections)
-- [detect](detect.md) (9 shared connections)
-- [roles.py](roles.py.md) (8 shared connections)
-- [site.py](site.py.md) (7 shared connections)
-- [test_equipment.py](test_equipment.py.md) (6 shared connections)
-- [ml/services.py](ml-services.py.md) (5 shared connections)
-- [test_design_forecast.py](test_design_forecast.py.md) (5 shared connections)
+- [test_sim.py](test_sim.py.md) (8 shared connections)
+- [blender_scene.py](blender_scene.py.md) (6 shared connections)
+- [scenario/views.py](scenario-views.py.md) (4 shared connections)
+- [packaging.py](packaging.py.md) (3 shared connections)
+- [check_site](check_site.md) (3 shared connections)
+- [views_showcase.py](views_showcase.py.md) (2 shared connections)
+- [twin/models.py](twin-models.py.md) (2 shared connections)
+- [test_voice.py](test_voice.py.md) (1 shared connections)
+- [Fleet](Fleet.md) (1 shared connections)
+- [layout-hall.js](layout-hall.js.md) (1 shared connections)
+- [equipment/models.py](equipment-models.py.md) (1 shared connections)
+- [ml/services.py](ml-services.py.md) (1 shared connections)
 
 ## Source Files
 
+- `web/masterdata/services.py`
 - `web/twin/blender_scene.py`
 - `web/twin/blender_stock.py`
 - `web/twin/blender_tasks.py`
-- `web/twin/design_day.py`
-- `web/twin/design_sim.py`
-- `web/twin/models_tasks.py`
-- `web/twin/shared.py`
-- `web/twin/views/__init__.py`
-- `web/twin/views/design_hub.py`
-- `web/twin/views/warehouse_blender.py`
-- `web/twin/views/warehouse_calibration.py`
-- `web/twin/views/warehouse_compare.py`
-- `web/twin/views/warehouse_design_day.py`
-- `web/twin/views/warehouse_design_sim.py`
-- `web/twin/views/warehouse_forecast.py`
-- `web/twin/views/warehouse_racktype.py`
-- `web/twin/views/warehouse_variants.py`
 
 ## Audit Trail
 
-- EXTRACTED: 538 (99%)
-- INFERRED: 7 (1%)
+- EXTRACTED: 63 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

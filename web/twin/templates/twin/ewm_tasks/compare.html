@@ -62,7 +62,9 @@
 
 {% if not day %}
 <div class="alert alert-warning" style="margin-top:16px">Brak potwierdzonych zadań w tym imporcie — nie ma dnia projektowego.</div>
-{% elif table %}
+{% else %}
+{% if missing %}<div class="alert alert-info" role="status" style="margin-top:16px">Jeszcze niepoliczone: {{ missing|join:", " }} — porównanie liczy Projektant (kilka symulacji dnia na wariant); potem wynik widzą wszyscy.</div>{% endif %}
+{% if table %}
 <div class="card" style="margin-top:16px"><div class="card-body">
   <div class="table-wrap"><table class="table cmp-table">
     <thead><tr><th>Wskaźnik</th>{% for m in chosen %}<th class="num"><a href="{% url 'twin:warehouse_model_view' m.pk %}">{{ m.name }}</a></th>{% endfor %}</tr></thead>
@@ -72,5 +74,6 @@
   {% if skipped %}<p class="cmp-note">Bez symulacji (brak regałów VNA, półek K1 albo doków): {{ skipped|join:", " }} — dla nich tylko pojemność.</p>{% endif %}
   <p class="cmp-note">Flota „wymagana” = sugerowana przez symulację po ustaleniu (≤ 85 % pracy w 16 h). Pogrubione = najlepsza wartość. CAPEX/OPEX nie są liczone — wpisz ceny sprzętu i stawki, gdy będą znane.</p>
 </div></div>
+{% endif %}
 {% endif %}
 {% endblock %}

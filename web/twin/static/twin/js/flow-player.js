@@ -439,7 +439,7 @@ export function createFlowPlayer({ scene, camera, canvas, requestRender, root, u
       `<div class="flow-pallet-info__row"><span>${k}</span><b>${escapeHtml(v)}</b></div>`);
     const state = { occupied: 'zajęta', blocked: 'zablokowana', blocked_empty: 'zablokowana (pusta)' }[p.state] || p.state;
     palletInfo.innerHTML = `<button type="button" class="flow-pallet-info__x" aria-label="Zamknij">&times;</button>
-      <div class="flow-pallet-info__title">${escapeHtml(p.code)}</div>` +
+      <div class="flow-pallet-info__title">${escapeHtml(p.code || 'Paleta')}</div>` +
       row('Stan', state) + row('SKU', p.sku) + row('Nazwa', p.name) + row('Partia', p.lot) +
       row('Ilość', p.qty ? `${p.qty} ${p.unit || ''}` : '') + row('Termin', p.expiry) +
       row('Klasa ABC', p.abc) + row('Pobrania', p.picks || '') +

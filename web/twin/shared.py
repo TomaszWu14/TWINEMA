@@ -1,6 +1,7 @@
 """Wspólne importy i pomocnicze widoków bliźniaka — odpowiednik jądra widoków ze źródła
 (PROVENANCE.md), odchudzony do tego, czego używa moduł: skróty Django, dekoratory ról,
 bezpieczny JSON do <script>, parser kodu lokalizacji, elementy hali."""
+import hashlib
 import json
 import re
 
@@ -23,6 +24,11 @@ from .models import (  # noqa: F401
 # Dekoratory pod nazwami ze źródła: zapis = Projektant, odczyt = każda rola.
 _md_role = designer
 _planner = any_role
+
+
+def cache_digest(*parts):
+    """Klucz cache z dowolnych parametrów (bez spacji/dwukropków — bezpieczny dla każdego backendu)."""
+    return hashlib.sha256(json.dumps(parts, sort_keys=True, default=str).encode()).hexdigest()
 
 
 def safe_json(obj):

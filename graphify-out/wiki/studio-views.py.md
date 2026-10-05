@@ -23,7 +23,7 @@
 
 - [warehouse_blender.py](warehouse_blender.py.md) (6 shared connections)
 - [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (3 shared connections)
-- [scenario/services.py](scenario-services.py.md) (3 shared connections)
+- [test_sim.py](test_sim.py.md) (3 shared connections)
 - [layout-core.js](layout-core.js.md) (2 shared connections)
 - [studio/models.py](studio-models.py.md) (2 shared connections)
 - [ewm_demo_tasks.py](ewm_demo_tasks.py.md) (1 shared connections)

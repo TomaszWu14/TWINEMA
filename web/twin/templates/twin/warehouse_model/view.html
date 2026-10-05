@@ -149,7 +149,7 @@
     <a href="{% url 'twin:warehouse_model_features' wm.pk %}" class="btn btn-secondary">
       Elementy hali
     </a>
-    {% if has_master %}
+    {% if is_designer %}{% if has_master %}
     <a href="{% url 'twin:warehouse_model_detect' wm.pk %}" class="btn btn-secondary"
        title="Szablony gniazd, numeracja i wyjątki z kodów lokalizacji EWM (podgląd przed zapisem)">
       Wykryj z EWM
@@ -163,7 +163,7 @@
     <a href="{% url 'twin:warehouse_model_compliance' wm.pk %}" class="btn btn-secondary"
        title="Kody z planu vs master EWM, per przejście">
       Zgodność z EWM
-    </a>
+    </a>{% endif %}
     {% if is_designer %}<a href="{% url 'twin:warehouse_layout_editor' wm.pk %}" class="btn btn-primary"
        title="Plan z góry: przeciąganie regałów i bloków, doki, pola odkładcze, kolizje i KPI na żywo">Edytor layoutu</a>
     <a href="{% url 'twin:warehouse_model_zones' wm.pk %}" class="btn btn-secondary"

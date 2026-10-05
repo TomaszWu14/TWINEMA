@@ -1,6 +1,7 @@
-"""„Wykryj z EWM” (podgląd propozycji → zapis) i raport zgodności modelu z EWM (+ XLSX)."""
+"""„Wykryj z EWM” (podgląd propozycji → zapis) i raport zgodności modelu z EWM (+ XLSX).
+Kody lokalizacji z mastera EWM to dane źródłowe — tylko Projektant/Administratorzy (ZALOZENIA #25)."""
 from twin.shared import (
-    _md_role, _planner, get_object_or_404, messages, redirect, render, require_POST, WarehouseModel,
+    _md_role, get_object_or_404, messages, redirect, render, require_POST, WarehouseModel,
 )
 from twin.xlsx import _finalize_xlsx, _make_xlsx_response
 from twin.ewm_service import active_master, apply_proposal, compliance_for_model, detect_for_model
@@ -12,7 +13,7 @@ STATUS = {"ok": ("Zgodne", "badge-green"), "diff": ("Rozbieżności", "badge-red
 LIST_LIMIT = 100   # kodów na listę w HTML; pełne listy w XLSX
 
 
-@_planner
+@_md_role
 def warehouse_model_detect(request, pk):
     wm = get_object_or_404(WarehouseModel, pk=pk)
     batch = active_master()
@@ -46,7 +47,7 @@ def warehouse_model_detect_save(request, pk):
     return redirect("twin:warehouse_model_compliance", pk=wm.pk)
 
 
-@_planner
+@_md_role
 def warehouse_model_compliance(request, pk):
     wm = get_object_or_404(WarehouseModel, pk=pk)
     batch = active_master()
