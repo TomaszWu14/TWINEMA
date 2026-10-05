@@ -30,7 +30,7 @@
 - [ForecastTests](ForecastTests.md) (2 shared connections)
 - [context_processors.py](context_processors.py.md) (1 shared connections)
 - [ScenarioViewTests](ScenarioViewTests.md) (1 shared connections)
-- [detect](detect.md) (1 shared connections)
+- [ewm_service.py](ewm_service.py.md) (1 shared connections)
 
 ## Source Files
 

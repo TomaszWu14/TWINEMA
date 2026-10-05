@@ -1,48 +1,43 @@
 # blender_route.py
 
-> 12 nodes · cohesion 0.18
+> 19 nodes · cohesion 0.19
 
 ## Key Concepts
 
-- **blender_stock.py** (24 connections) — `web/twin/blender_stock.py`
-- **build_scene_for_model()** (16 connections) — `web/twin/blender_scene.py`
-- **stock_for_scene()** (5 connections) — `web/masterdata/services.py`
-- **load_stock_inputs()** (5 connections) — `web/twin/blender_stock.py`
-- **window_source()** (4 connections) — `web/twin/blender_tasks.py`
-- **_activity_picks()** (3 connections) — `web/twin/blender_scene.py`
-- **Pozycje stanu jako dicty `build_pallets`: location, hu, sku, name, lot, expiry,…** (1 connections) — `web/masterdata/services.py`
-- **Aktywność pickerów (picker, kod, materiał; kolejność = confirmed_at) → trasy.…** (1 connections) — `web/twin/blender_scene.py`
-- **Scena dla `WarehouseModel`. `batch` = PickerActivityBatch (None → demo…** (1 connections) — `web/twin/blender_scene.py`
-- **Rzeczywiste palety w lokalizacjach → scena Blendera („cyfrowe zdjęcie"…** (1 connections) — `web/twin/blender_stock.py`
-- **Dane do `build_pallets`: (wiersze migawki, stany, aktywność). Stany = najnowszy…** (1 connections) — `web/twin/blender_stock.py`
-- **Opis źródła wózków do `scene.source` (odtwarzacz pokazuje go pod animacją).** (1 connections) — `web/twin/blender_tasks.py`
+- **Agent** (22 connections) — `web/twin/blender_agents.py`
+- **._key()** (9 connections) — `web/twin/blender_agents.py`
+- **.move()** (7 connections) — `web/twin/blender_agents.py`
+- **.key()** (6 connections) — `web/twin/blender_agents.py`
+- **.wait()** (5 connections) — `web/twin/blender_agents.py`
+- **_r()** (5 connections) — `web/twin/blender_agents.py`
+- **.drop()** (4 connections) — `web/twin/blender_agents.py`
+- **.face()** (4 connections) — `web/twin/blender_agents.py`
+- **.pick_up()** (4 connections) — `web/twin/blender_agents.py`
+- **.wait_until()** (3 connections) — `web/twin/blender_agents.py`
+- **._carry_pose()** (2 connections) — `web/twin/blender_agents.py`
+- **.__init__()** (2 connections) — `web/twin/blender_agents.py`
+- **.lift_to()** (2 connections) — `web/twin/blender_agents.py`
+- **.as_dict()** (1 connections) — `web/twin/blender_agents.py`
+- **Postój do chwili `t` (realny znacznik zadania); zajęty agent nie cofa się w…** (1 connections) — `web/twin/blender_agents.py`
+- **Przejęcie ładunku: klatka „na miejscu" → po `handling` s ładunek jest na…** (1 connections) — `web/twin/blender_agents.py`
+- **Odłożenie ładunku w `pos` na wysokości `z` (np. gniazdo regału albo dok).** (1 connections) — `web/twin/blender_agents.py`
+- **Agent z osią czasu ruchu: rodzaj z `SPEED` (wózek, pracownik, kombi, AGV, EPT).** (1 connections) — `web/twin/blender_agents.py`
+- **Jazda/przejście trasą A* do `target`; trasa trafia też do mapy przepływów.** (1 connections) — `web/twin/blender_agents.py`
 
 ## Relationships
 
-- [shared.py](shared.py.md) (8 shared connections)
-- [build_scene](build_scene.md) (6 shared connections)
-- [Scenario](Scenario.md) (4 shared connections)
-- [blender_stock.py](blender_stock.py.md) (3 shared connections)
-- [ewm_levels.py](ewm_levels.py.md) (3 shared connections)
-- [masterdata/services.py](masterdata-services.py.md) (2 shared connections)
-- [twin/models.py](twin-models.py.md) (2 shared connections)
-- [test_voice.py](test_voice.py.md) (1 shared connections)
-- [stock_for_scene](stock_for_scene.md) (1 shared connections)
-- [resolve_moves](resolve_moves.md) (1 shared connections)
-- [studio/api.py](studio-api.py.md) (1 shared connections)
-- [ml/services.py](ml-services.py.md) (1 shared connections)
+- [kpi_facts](kpi_facts.md) (10 shared connections)
+- [blender_scene.py](blender_scene.py.md) (4 shared connections)
+- [test_design_sim_scene.py](test_design_sim_scene.py.md) (3 shared connections)
 
 ## Source Files
 
-- `web/masterdata/services.py`
-- `web/twin/blender_scene.py`
-- `web/twin/blender_stock.py`
-- `web/twin/blender_tasks.py`
+- `web/twin/blender_agents.py`
 
 ## Audit Trail
 
-- EXTRACTED: 63 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 79 (98%)
+- INFERRED: 2 (2%)
 - AMBIGUOUS: 0 (0%)
 
 ---

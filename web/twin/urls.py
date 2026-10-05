@@ -37,6 +37,7 @@ urlpatterns = [
     path("magazyn/model/<int:pk>/zgodnosc-ewm/", views.warehouse_model_compliance,
          name="warehouse_model_compliance"),
     path("magazyn/model/<int:pk>/view/", views.warehouse_model_view, name="warehouse_model_view"),
+    path("magazyn/model/<int:pk>/edytor/", views.warehouse_layout_editor, name="warehouse_layout_editor"),
     path("magazyn/model/<int:pk>/uklad.json", views.warehouse_layout_json, name="warehouse_layout_json"),
     path("magazyn/model/<int:pk>/uklad/sprawdz/", views.warehouse_layout_check, name="warehouse_layout_check"),
     path("magazyn/model/<int:pk>/uklad/zapisz/", views.warehouse_layout_save, name="warehouse_layout_save"),

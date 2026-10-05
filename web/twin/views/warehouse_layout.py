@@ -2,12 +2,14 @@
 # w jednej transakcji z blokadą optymistyczną po `version` (= updated_at modelu). Logika w twin/layout.py.
 import json
 
+from django.urls import reverse
 from django.utils import timezone
 
-from twin.layout import LayoutError, analyze, clean_layout, feature_row, rack_row
+from twin.design_catalog import ELEMENTS
+from twin.layout import RACK_LIMITS, LayoutError, analyze, clean_layout, feature_row, rack_row
 from twin.shared import (
-    _md_role, _planner, get_object_or_404, hall_feature_kinds, JsonResponse, require_POST, transaction,
-    WarehouseHallFeature, WarehouseModel, WarehouseModelRack,
+    _md_role, _planner, get_object_or_404, HALL_FEATURE_COLORS, hall_feature_kinds, JsonResponse, render,
+    require_POST, transaction, WarehouseHallFeature, WarehouseModel, WarehouseModelRack,
 )
 
 MAX_BODY = 2 * 1024 * 1024
@@ -35,6 +37,20 @@ def _parse(request):
         return None, JsonResponse({"error": "To nie jest poprawny JSON."}, status=400)
     except LayoutError as exc:
         return None, JsonResponse({"error": str(exc)}, status=400)
+
+
+@_md_role
+def warehouse_layout_editor(request, pk):
+    """Edytor planu hali (E2): dane przez uklad.json, sprawdzanie i zapis przez API powyżej."""
+    wm = get_object_or_404(WarehouseModel, pk=pk)
+    config = {
+        "urls": {"layout": reverse("twin:warehouse_layout_json", args=[pk]),
+                 "check": reverse("twin:warehouse_layout_check", args=[pk]),
+                 "save": reverse("twin:warehouse_layout_save", args=[pk])},
+        "limits": RACK_LIMITS, "featureColors": HALL_FEATURE_COLORS,
+        "aisle": ELEMENTS["rack_std"]["aisle_m"],
+    }
+    return render(request, "twin/warehouse_model/editor.html", {"wm": wm, "config": config})
 
 
 @_planner

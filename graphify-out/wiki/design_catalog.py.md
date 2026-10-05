@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **design_catalog.py** (19 connections) — `web/twin/design_catalog.py`
+- **design_catalog.py** (20 connections) — `web/twin/design_catalog.py`
 - **params_for()** (19 connections) — `web/twin/design_catalog.py`
 - **test_design_catalog.py** (13 connections) — `web/twin/tests/test_design_catalog.py`
 - **footprint()** (11 connections) — `web/twin/design_catalog.py`
@@ -31,12 +31,12 @@
 
 ## Relationships
 
-- [DaneViewTests](DaneViewTests.md) (13 shared connections)
+- [test_dane.py](test_dane.py.md) (13 shared connections)
 - [design_kpi.py](design_kpi.py.md) (11 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (9 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
 - [day_demand](day_demand.md) (1 shared connections)
-- [generate](generate.md) (1 shared connections)
+- [GeneratorTests](GeneratorTests.md) (1 shared connections)
 
 ## Source Files
 
@@ -46,7 +46,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 129 (100%)
+- EXTRACTED: 130 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

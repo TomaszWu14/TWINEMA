@@ -18,6 +18,7 @@ Plik dla kolejnej sesji (człowieka albo AI). Aktualny na 2026-10-05, po scaleni
 | E1 | `twin` | #12 | silnik edytora layoutu: `twin/layout.py` + API `uklad.json` / `uklad/sprawdz/` / `uklad/zapisz/`, nowy rodzaj cechy „Pole odkładcze” (`staging`) |
 | S2a | `scenario` | #14 | scenariusz niezależny od layoutu (dzień typowy + szczytowy, mnożnik wzrostu, normy), plan przyjęć (kontener 40' / auto 33-pal. / solówka, min/śr/max, okna awizacji), wynik: palety/dzień, doki w szczycie, osobogodziny, stanowiska paletyzacji; `manage.py demo_scenariusz` |
 | S2b | `scenario` | — | wydania (auta OUT jak przyjęcia, cut-off, profil zamówień, % palet pełnych), paczki z pakowaniem i nadaniem, zwroty, cross-dock (przyjazd i wyjazd, bez składowania), zmiany i obsada per proces; wynik: palety OUT, doki OUT, osobogodziny 7 procesów, obsada potrzebna vs zakładana z niedoborami, ryzyko cut-off; godziny GG:MM |
+| E2 | `twin` | #15 | edytor planu 2D (`magazyn/model/<pk>/edytor/`, Projektant/Administratorzy): SVG w metrach, przeciąganie z siatką 0,1 m, zaznaczanie strefy/prostokątem, obrót 90°, cofnij/ponów, „Dodaj blok” (rzędy parami plecami + alejka), elementy hali, panel właściwości, KPI i problemy na żywo z API E1, zapis z 409/422; czyste funkcje `static/twin/js/layout-core.js` testowane `node --test` |
 
 Przepływ filmu: kwestie (szablon/Claude) → zatwierdź → „Nagraj lektora” → „Renderuj ujęcia i kadry” (worker
 z Blenderem) → „Zmontuj film” (worker z ffmpeg) → MP4 + deck PDF + SRT. Do Claude i ElevenLabs idzie wyłącznie
@@ -37,7 +38,7 @@ Testy: `cd web && python manage.py test --parallel 4` (env: `DJANGO_DEBUG=true D
   uruchomione razem (testy mockują API i komendy) — sprawdzić synchronizację głosu, plansze, napisy, kadry.
 
 ## Następny krok: F6 — szlif (wg burzy mózgów, `docs/PLAN.md` §2.2 i §6)
-- **Priorytet od 2026-10-05:** E1 ✅ → S2a ✅ → S2b ✅ (z obsadą) → E2 (plan 2D) → E3 (podgląd 3D) → S1 → S3 symulacja
+- **Priorytet od 2026-10-05:** E1 ✅ → S2a ✅ → E2 ✅ (plan 2D) → S2b ✅ (wydania, paczki, zwroty, cross-dock, obsada) → E2b (słupy, wysokość w świetle, drogi pożarowe, podkład PNG/PDF, ładowanie i drogi ruchu) → E3 (podgląd 3D) → S1 → S3 symulacja
   scenariusza → S4 animacja dnia → tryb prezentacji 3D → katalog sprzętu — szczegóły w `docs/PLAN.md`
   („Po F5”) i `docs/ZALOZENIA.md` (decyzje właściciela).
 - ML3: model czasu cyklu (gradient boosting vs mediana real÷sym, MAE na odłożonych dniach).
