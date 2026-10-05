@@ -1,43 +1,47 @@
 # scene-builder.js
 
-> 15 nodes · cohesion 0.23
+> 16 nodes · cohesion 0.22
 
 ## Key Concepts
 
-- **Scan** (23 connections) — `web/twin/ewm_tasks.py`
-- **ScanFileTests** (8 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **.__iter__()** (4 connections) — `web/twin/ewm_tasks.py`
-- **._file()** (4 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **.columns()** (3 connections) — `web/twin/ewm_tasks.py`
-- **.stats()** (3 connections) — `web/twin/ewm_tasks.py`
-- **.test_cp1250_semicolon_csv_with_title_line()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **.test_missing_columns_yield_nothing()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **.test_xls_rejected_with_hint()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **._count()** (2 connections) — `web/twin/ewm_tasks.py`
-- **.unmapped_headers()** (2 connections) — `web/twin/ewm_tasks.py`
-- **.test_xlsx_with_excel_date_and_time_cells()** (2 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **Przebieg po pliku: nagłówek → mapowanie kolumn → wiersze sparsowane albo błędy,…** (1 connections) — `web/twin/ewm_tasks.py`
-- **Poprawne, nieanulowane zadania (dicty pól modelu).** (1 connections) — `web/twin/ewm_tasks.py`
-- **[(etykieta pola, nagłówek z pliku)] w kolejności pól.** (1 connections) — `web/twin/ewm_tasks.py`
+- **design_day.py** (23 connections) — `web/twin/design_day.py`
+- **build_profile()** (18 connections) — `web/twin/design_day.py`
+- **working_days()** (11 connections) — `web/twin/design_day.py`
+- **design_forecast.py** (11 connections) — `web/twin/design_forecast.py`
+- **_stream_value()** (5 connections) — `web/twin/design_day.py`
+- **_abc_xyz()** (4 connections) — `web/twin/design_day.py`
+- **_total()** (4 connections) — `web/twin/design_day.py`
+- **_groups()** (3 connections) — `web/twin/design_day.py`
+- **_order_profile()** (3 connections) — `web/twin/design_day.py`
+- **.test_empty()** (3 connections) — `web/twin/tests/test_design_day.py`
+- **Profil ruchów i dzień projektowy z zadań EWM (spec projektowania magazynu, krok…** (1 connections) — `web/twin/design_day.py`
+- **daily: {data: {rodzaj: n, "orders": n}}; hourly: {(data, godzina): {rodzaj:…** (1 connections) — `web/twin/design_day.py`
+- **Dni z ruchem ≥ WORKDAY_SHARE mediany dni z jakimkolwiek ruchem (rosnąco).** (1 connections) — `web/twin/design_day.py`
+- **ABC wg liczby pobrań (linie kompletacji + wydania), XYZ wg zmienności dziennej.** (1 connections) — `web/twin/design_day.py`
+- **Pobrania (linie kompletacji + wydania) w dni robocze per grupa asortymentowa H1.** (1 connections) — `web/twin/design_day.py`
+- **Prognoza wzrostu wolumenów z historii zadań EWM (plan 2026-10-02, etap 5) —…** (1 connections) — `web/twin/design_forecast.py`
 
 ## Relationships
 
-- [warehouse_tasks.py](warehouse_tasks.py.md) (4 shared connections)
-- [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (3 shared connections)
-- [Scan](Scan.md) (2 shared connections)
-- [studio/views.py](studio-views.py.md) (2 shared connections)
-- [Pochodzenie kodu](Pochodzenie_kodu.md) (2 shared connections)
-- [studio/models.py](studio-models.py.md) (2 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (11 shared connections)
+- [design_day.py](design_day.py.md) (11 shared connections)
+- [ml/views.py](ml-views.py.md) (7 shared connections)
+- [ml/services.py](ml-services.py.md) (4 shared connections)
+- [rack_corners](rack_corners.md) (2 shared connections)
+- [scenario/views.py](scenario-views.py.md) (2 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
+- [views_sim.py](views_sim.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/ewm_tasks.py`
-- `web/twin/tests/test_ewm_tasks_parser.py`
+- `web/twin/design_day.py`
+- `web/twin/design_forecast.py`
+- `web/twin/tests/test_design_day.py`
 
 ## Audit Trail
 
-- EXTRACTED: 57 (90%)
-- INFERRED: 6 (10%)
+- EXTRACTED: 91 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

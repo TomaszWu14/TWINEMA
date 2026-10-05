@@ -2,7 +2,7 @@
 
 > God node · 23 connections · `web/twin/ewm_tasks.py`
 
-**Community:** [StudioViewTests](StudioViewTests.md)
+**Community:** [layout-core.js](layout-core.js.md)
 
 ## Connections by Relation
 
