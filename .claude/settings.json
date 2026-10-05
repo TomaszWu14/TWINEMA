@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python manage.py check)",
+      "Bash(python manage.py check *)",
+      "Bash(python manage.py test)",
+      "Bash(python manage.py test *)",
+      "Bash(python manage.py makemigrations --check *)",
+      "Bash(python manage.py showmigrations *)",
+      "Bash(DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*' python manage.py check)",
+      "Bash(DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*' python manage.py check *)",
+      "Bash(DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*' python manage.py test)",
+      "Bash(DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*' python manage.py test *)",
+      "Bash(DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*' python manage.py makemigrations --check *)",
+      "Bash(DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*' ../.venv/Scripts/python manage.py check)",
+      "Bash(DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*' ../.venv/Scripts/python manage.py check *)",
+      "Bash(DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*' ../.venv/Scripts/python manage.py test)",
+      "Bash(DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*' ../.venv/Scripts/python manage.py test *)",
+      "Bash(../.venv/Scripts/python manage.py check)",
+      "Bash(../.venv/Scripts/python manage.py check *)",
+      "Bash(../.venv/Scripts/python manage.py test *)",
+      "Bash(ruff check *)",
+      "Bash(python -m ruff check *)",
+      "Bash(.venv/Scripts/ruff check *)",
+      "Bash(graphify query *)",
+      "Bash(graphify update .)",
+      "Bash(curl -s -m 10 https://twinema.twapp.pl/health/)",
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "mcp__claude-in-chrome__read_console_messages",
+      "mcp__claude-in-chrome__read_page",
+      "mcp__claude-in-chrome__get_page_text",
+      "mcp__claude-in-chrome__find"
+    ]
+  }
+}

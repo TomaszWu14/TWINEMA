@@ -1,0 +1,45 @@
+# Community 58
+
+> 13 nodes · cohesion 0.29
+
+## Key Concepts
+
+- **resolve_moves()** (11 connections) — `web/twin/blender_tasks.py`
+- **._scene()** (8 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **ResolveMovesTests** (7 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **_row()** (7 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **SceneFromTasksTests** (7 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **.test_agent_is_resource_or_user()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **.test_endpoints_by_kind_and_unmapped_skipped()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **.test_times_from_confirmation_with_compression()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **.test_agents_from_resources_no_demo_forklifts()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **.test_busy_agent_starts_next_task_right_after()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **.test_task_starts_at_confirmation_and_times_monotonic()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **SimpleTestCase** (2 connections)
+- **Wiersze WT (krotki ROW_FIELDS, rosnąco po potwierdzeniu) → (ruchy, pominięte).…** (1 connections) — `web/twin/blender_tasks.py`
+
+## Relationships
+
+- [Community 8](Community_8.md) (4 shared connections)
+- [Community 56](Community_56.md) (3 shared connections)
+- [Community 11](Community_11.md) (2 shared connections)
+- [Community 79](Community_79.md) (2 shared connections)
+- [Community 62](Community_62.md) (1 shared connections)
+- [Community 0](Community_0.md) (1 shared connections)
+- [Community 35](Community_35.md) (1 shared connections)
+- [Community 49](Community_49.md) (1 shared connections)
+
+## Source Files
+
+- `web/twin/blender_tasks.py`
+- `web/twin/tests/test_ewm_tasks_flow.py`
+
+## Audit Trail
+
+- EXTRACTED: 59 (97%)
+- INFERRED: 2 (3%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+*Part of the graphify knowledge wiki. See [index](index.md) to navigate.*
