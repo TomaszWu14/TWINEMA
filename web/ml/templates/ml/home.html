@@ -1,0 +1,71 @@
+{% extends "core/base.html" %}
+{% block title %}Prognozy i ML — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .ml-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:16px; margin-bottom:24px; }
+  .ml-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:18px;
+             display:flex; flex-direction:column; gap:10px; }
+  .ml-card h2 { margin:0; font-size:var(--fs-lg); }
+  .ml-card p { margin:0; color:var(--fg-muted); font-size:var(--fs-sm); }
+  .ml-form { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:10px; margin-top:auto; }
+  .ml-form label { display:flex; flex-direction:column; gap:4px; font-size:var(--fs-sm); color:var(--fg-muted); }
+  .ml-form .ml-wide { grid-column:1 / -1; }
+  .ml-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:0 0 12px; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-header__title">Prognozy i ML</div>
+    <div class="page-header__sub">Modele uczone na imporcie zadań magazynowych. Każdy przebieg zapisuje wersję algorytmu, parametry i miary — punkt odniesienia jest zawsze pokazany obok.</div>
+  </div>
+</div>
+
+{% if not batches %}
+<div class="card" style="margin-bottom:24px"><div class="empty-state">Najpierw zaimportuj zadania magazynowe w <a href="{% url 'twin:ewm_tasks_list' %}">Zadaniach i symulacji</a> — modele uczą się na historii ruchów.</div></div>
+{% endif %}
+
+<div class="ml-grid">
+  <section class="ml-card">
+    <h2>Prognoza wolumenów</h2>
+    <p>Wygładzanie wykładnicze (SES, Holt, Holt tłumiony, Holt-Winters z sezonem rocznym przy ≥ 2 latach) kontra trend log-liniowy. Wygrywa model z najniższym MAPE na ostatnich 8 tygodniach; wynik to wzrost P50/P90 i mnożnik do symulacji.</p>
+    {% if is_designer and batches %}
+    <form class="ml-form" method="post" action="{% url 'ml:run' 'forecast' %}">{% csrf_token %}
+      <label class="ml-wide">Import zadań <select class="form-control" name="batch">{% for b in batches %}<option value="{{ b.pk }}">{{ b.name }}</option>{% endfor %}</select></label>
+      <label>Strumień <select class="form-control" name="stream">{% for k, v in streams %}<option value="{{ k }}"{% if k == "total" %} selected{% endif %}>{{ v }}</option>{% endfor %}</select></label>
+      <label>Horyzont [lata] <input class="form-control" type="number" name="years" value="5" min="1" max="20"></label>
+      <div class="ml-wide"><button class="btn btn-primary" type="submit">Uruchom prognozę</button></div>
+    </form>
+    {% endif %}
+  </section>
+  <section class="ml-card">
+    <h2>Segmentacja materiałów</h2>
+    <p>k-means na profilu rotacji (pobrania, zmienność, dni z ruchem, objętość kartonu z modułu Dane) → segmenty z rekomendacją miejsca w hali, zestawione z klasycznym ABC×XYZ.</p>
+    {% if is_designer and batches %}
+    <form class="ml-form" method="post" action="{% url 'ml:run' 'segmentation' %}">{% csrf_token %}
+      <label class="ml-wide">Import zadań <select class="form-control" name="batch">{% for b in batches %}<option value="{{ b.pk }}">{{ b.name }}</option>{% endfor %}</select></label>
+      <label>Liczba segmentów <input class="form-control" type="number" name="k" value="4" min="2" max="8"></label>
+      <div class="ml-wide"><button class="btn btn-primary" type="submit">Uruchom segmentację</button></div>
+    </form>
+    {% endif %}
+  </section>
+</div>
+
+<h2 class="ml-sec">Przebiegi</h2>
+<div class="card">
+  {% if runs %}
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>Kiedy</th><th>Model</th><th>Import</th><th>Wersja</th><th>Wynik</th><th>Kto</th></tr></thead>
+    <tbody>{% for r in runs %}
+      <tr>
+        <td><a href="{% url 'ml:detail' r.pk %}">{{ r.created_at|date:"d.m.Y H:i" }}</a></td>
+        <td>{{ r.get_kind_display }}</td><td>{{ r.batch.name }}</td><td><code>{{ r.version }}</code></td>
+        <td>{% if r.kind == "forecast" and r.metrics.mape is not None %}MAPE {{ r.metrics.mape }} % (baseline {{ r.metrics.baseline_mape }} %) · wzrost {{ r.metrics.growth_p50_pct }} %/rok
+            {% elif r.kind == "segmentation" and r.metrics.skus %}{{ r.metrics.k }} segmenty · {{ r.metrics.skus }} materiałów
+            {% else %}<span class="text-muted">brak wyniku</span>{% endif %}</td>
+        <td>{{ r.created_by|default:"—" }}</td>
+      </tr>{% endfor %}</tbody>
+  </table></div>
+  {% else %}<div class="empty-state">Jeszcze nic nie uruchomiono.</div>{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "core/base.html" %}
+{% block title %}Segmentacja #{{ run.pk }} — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .sg-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; margin-bottom:20px; }
+  .sg-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px;
+             display:flex; flex-direction:column; gap:8px; border-top:3px solid var(--sg); }
+  .sg-card h2 { margin:0; font-size:var(--fs-md); display:flex; gap:8px; align-items:center; }
+  .sg-num { width:24px; height:24px; border-radius:50%; background:var(--sg); color:#111; font:700 12px/24px var(--font-sans); text-align:center; flex:none; }
+  .sg-big { font-size:var(--fs-2xl); font-weight:700; }
+  .sg-meta { font-size:var(--fs-sm); color:var(--fg-muted); }
+  .sg-place { font-size:var(--fs-sm); background:var(--surface-2); border-radius:var(--radius); padding:8px; }
+  .sg-bar { height:6px; background:var(--surface-2); border-radius:3px; overflow:hidden; }
+  .sg-bar span { display:block; height:100%; background:var(--sg); }
+</style>
+{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Okruszki"><a href="{% url 'ml:home' %}">Prognozy i ML</a> <span aria-hidden="true">/</span> <span>Segmentacja #{{ run.pk }}</span></nav>
+<div class="page-header">
+  <div>
+    <div class="page-header__title">Segmentacja materiałów</div>
+    <div class="page-header__sub">Import „{{ run.batch.name }}” · {{ run.created_at|date:"d.m.Y H:i" }} · <code>{{ run.version }}</code>{% if res.ok %} · {{ res.skus }} materiałów, cechy: {{ res.features|join:", " }}{% endif %}</div>
+  </div>
+  {% if res.ok %}<div class="page-header__actions"><a class="btn btn-secondary" href="{% url 'ml:segments_csv' run.pk %}">Przypisania (CSV)</a></div>{% endif %}
+</div>
+
+{% if not res.ok %}
+<div class="card"><div class="empty-state">{{ res.reason }}</div></div>
+{% else %}
+<div class="sg-grid">
+  {% for s in res.segments %}
+  <section class="sg-card" style="--sg:{% cycle '#f2a93b' '#4ade80' '#60a5fa' '#c084fc' '#f87171' '#2dd4bf' '#facc15' '#a3a3a3' %}">
+    <h2><span class="sg-num">{{ s.id|add:1 }}</span>{{ s.name }}</h2>
+    <div><span class="sg-big">{{ s.share_pct }} %</span> <span class="sg-meta">pobrań · {{ s.skus }} materiałów</span></div>
+    <div class="sg-bar" aria-hidden="true"><span style="width:{{ s.share_pct }}%"></span></div>
+    <div class="sg-meta">Śr. {{ s.avg_hits }} pobrań/materiał · CV {{ s.profile.cv }} · dni z ruchem {{ s.profile.active|floatformat:0 }} %{% if s.profile.volume %} · karton {{ s.profile.volume }} dm³{% endif %}</div>
+    <div class="sg-place"><b>Gdzie:</b> {{ s.placement }}</div>
+    <div class="sg-meta">Np.: {{ s.examples|join:", " }}</div>
+  </section>
+  {% endfor %}
+</div>
+
+{% if res.cross %}
+<div class="card">
+  <div class="card-header"><span class="card-header__title">Segmenty a klasyczne ABC×XYZ (liczba materiałów)</span></div>
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>Segment</th>
+      <th class="num">AX</th><th class="num">AY</th><th class="num">AZ</th><th class="num">BX</th><th class="num">BY</th><th class="num">BZ</th><th class="num">CX</th><th class="num">CY</th><th class="num">CZ</th></tr></thead>
+    <tbody>{% for row in res.cross %}<tr><td>{{ row.segment|add:1 }}</td>
+      <td class="num">{{ row.cells.AX }}</td><td class="num">{{ row.cells.AY }}</td><td class="num">{{ row.cells.AZ }}</td>
+      <td class="num">{{ row.cells.BX }}</td><td class="num">{{ row.cells.BY }}</td><td class="num">{{ row.cells.BZ }}</td>
+      <td class="num">{{ row.cells.CX }}</td><td class="num">{{ row.cells.CY }}</td><td class="num">{{ row.cells.CZ }}</td></tr>{% endfor %}</tbody>
+  </table></div>
+  <div class="card-body text-muted text-sm">ABC wg udziału w pobraniach (80/95 %), XYZ wg współczynnika zmienności dziennej (0,5 / 1,0). Segment zbierający kilka komórek ABC×XYZ pokazuje, gdzie klasyczny podział rozcina materiały o podobnym zachowaniu.</div>
+</div>
+{% endif %}
+{% endif %}
+{% endblock %}
