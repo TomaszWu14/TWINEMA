@@ -35,7 +35,7 @@
 - [design_kpi.py](design_kpi.py.md) (11 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (9 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
-- [test_model_geometry.py](test_model_geometry.py.md) (1 shared connections)
+- [day_demand](day_demand.md) (1 shared connections)
 - [generate](generate.md) (1 shared connections)
 
 ## Source Files

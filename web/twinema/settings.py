@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "render",
     "ml",
     "studio",
+    "scenario",
 ]
 
 MIDDLEWARE = [

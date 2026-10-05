@@ -27,9 +27,9 @@
 
 ## Relationships
 
-- [masterdata/services.py](masterdata-services.py.md) (10 shared connections)
+- [demo_dane.py](demo_dane.py.md) (10 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
-- [load_groups](load_groups.md) (1 shared connections)
+- [scenario/views.py](scenario-views.py.md) (1 shared connections)
 
 ## Source Files
 

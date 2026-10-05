@@ -12,7 +12,7 @@
 
 ## Relationships
 
-- [warehouse_blender.py](warehouse_blender.py.md) (1 shared connections)
+- [shared.py](shared.py.md) (1 shared connections)
 - [studio/views.py](studio-views.py.md) (1 shared connections)
 
 ## Source Files

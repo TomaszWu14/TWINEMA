@@ -20,7 +20,7 @@
 - [design_kpi.py](design_kpi.py.md) (1 shared connections)
 - [test_ewm_service.py](test_ewm_service.py.md) (1 shared connections)
 - [twin/models.py](twin-models.py.md) (1 shared connections)
-- [warehouse_blender.py](warehouse_blender.py.md) (1 shared connections)
+- [shared.py](shared.py.md) (1 shared connections)
 
 ## Source Files
 

@@ -2,7 +2,7 @@
 
 > God node · 20 connections · `web/twin/blender_route.py`
 
-**Community:** [WarehouseTaskBatch](WarehouseTaskBatch.md)
+**Community:** [warehouse_design_day.py](warehouse_design_day.py.md)
 
 ## Connections by Relation
 
@@ -16,7 +16,7 @@
 
 ### imports
 - [blender_scene.py](blender_scene.py.md) `EXTRACTED`
-- test_blender_export.py `EXTRACTED`
+- [test_blender_export.py](test_blender_export.py.md) `EXTRACTED`
 
 ### method
 - .route() `EXTRACTED`

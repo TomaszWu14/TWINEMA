@@ -24,13 +24,13 @@
 ## Relationships
 
 - [Agent](Agent.md) (10 shared connections)
-- [blender_scene.py](blender_scene.py.md) (10 shared connections)
+- [build_scene](build_scene.md) (10 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (7 shared connections)
 - [simulate](simulate.md) (4 shared connections)
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) (4 shared connections)
 - [ParseTests](ParseTests.md) (4 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (3 shared connections)
-- [test_model_geometry.py](test_model_geometry.py.md) (3 shared connections)
+- [warehouse_design_day.py](warehouse_design_day.py.md) (3 shared connections)
+- [day_demand](day_demand.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [design_kpi.py](design_kpi.py.md) (2 shared connections)
 - [design_catalog.py](design_catalog.py.md) (1 shared connections)

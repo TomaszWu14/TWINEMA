@@ -33,14 +33,14 @@
 
 ## Relationships
 
-- [blender_route.py](blender_route.py.md) (7 shared connections)
-- [SimulationViewTests](SimulationViewTests.md) (5 shared connections)
+- [layout.py](layout.py.md) (7 shared connections)
+- [detect](detect.md) (5 shared connections)
 - [twin/models.py](twin-models.py.md) (4 shared connections)
 - [test_design_compare.py](test_design_compare.py.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
 - [segmentation.py](segmentation.py.md) (2 shared connections)
 - [design_catalog.py](design_catalog.py.md) (1 shared connections)
-- [GeneratorViewTests](GeneratorViewTests.md) (1 shared connections)
+- [test_ewm_detect.py](test_ewm_detect.py.md) (1 shared connections)
 
 ## Source Files
 

@@ -15,9 +15,9 @@
 ## Relationships
 
 - [test_ewm_service.py](test_ewm_service.py.md) (3 shared connections)
-- [load_groups](load_groups.md) (2 shared connections)
+- [scenario/views.py](scenario-views.py.md) (2 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
-- [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
+- [demo_dane.py](demo_dane.py.md) (1 shared connections)
 - [ewm_service.py](ewm_service.py.md) (1 shared connections)
 
 ## Source Files

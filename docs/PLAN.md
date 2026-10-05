@@ -133,6 +133,14 @@ E1: `twin/layout.py` (kolizje na obróconych prostokątach, regał w doku/bramie
 korytarzu = błąd, poza halą, duplikat adresu; alejki z `design_catalog.check_aisles`; KPI z `compute_kpi`),
 API `magazyn/model/<pk>/uklad.json` · `uklad/sprawdz/` · `uklad/zapisz/` (blokada optymistyczna po `version`).
 
+Scenariusze (założenia z burzy mózgów: `docs/ZALOZENIA.md`) przeplatają się z edytorem:
+**E1** → **S2a** scenariusz + plan przyjęć → **E2** → **E3** → S1 master data materiału, S2b wydania/paczki/
+zwroty/cross-dock, S2c obsada i zmiany → **S3** symulacja scenariusza (wiele przebiegów, P95, wąskie gardła)
+→ **S4** animacja dnia → tryb prezentacji 3D → katalog sprzętu.
+S2a: aplikacja `scenario` — `Scenario` (mnożnik wzrostu, ziarno, zmiana, normy wydajności), dzień typowy
+i szczytowy, `InboundStream` (kontener 40' / auto 33-pal. / solówka-bus, min/śr/max, okno awizacji, % mono,
+% kontroli); `scenario/inbound.py` liczy deterministycznie palety/dzień, doki w szczycie, osobogodziny, stanowiska.
+
 ---
 
 ## 7. Ryzyka

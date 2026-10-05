@@ -21,11 +21,11 @@
 
 - [simulate](simulate.md) (3 shared connections)
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) (2 shared connections)
-- [warehouse_blender.py](warehouse_blender.py.md) (2 shared connections)
+- [shared.py](shared.py.md) (2 shared connections)
 - [StudioViewTests](StudioViewTests.md) (2 shared connections)
 - [test_design_compare.py](test_design_compare.py.md) (2 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (1 shared connections)
-- [SimulationViewTests](SimulationViewTests.md) (1 shared connections)
+- [detect](detect.md) (1 shared connections)
 
 ## Source Files
 

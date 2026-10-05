@@ -1,4 +1,4 @@
-# load_groups
+# scenario/views.py
 
 > 16 nodes · cohesion 0.21
 
@@ -23,7 +23,7 @@
 
 ## Relationships
 
-- [masterdata/services.py](masterdata-services.py.md) (6 shared connections)
+- [demo_dane.py](demo_dane.py.md) (6 shared connections)
 - [test_container_inbound.py](test_container_inbound.py.md) (4 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
 - [ewm_tasks.py](ewm_tasks.py.md) (2 shared connections)

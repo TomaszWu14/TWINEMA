@@ -1,45 +1,55 @@
 # SlotLocator
 
-> 15 nodes · cohesion 0.18
+> God node · 33 connections · `web/twin/blender_stock.py`
 
-## Key Concepts
+**Community:** [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md)
 
-- **build_pallets()** (10 connections) — `web/twin/blender_stock.py`
-- **test_blender_stock.py** (10 connections) — `web/twin/tests/test_blender_stock.py`
-- **abc_by_hits()** (9 connections) — `web/twin/blender_stock.py`
-- **BuildPalletsTests** (6 connections) — `web/twin/tests/test_blender_stock.py`
-- **ParseCodeTests** (6 connections) — `web/twin/tests/test_blender_stock.py`
-- **SimpleTestCase** (3 connections)
-- **.test_abc_thresholds()** (2 connections) — `web/twin/tests/test_blender_stock.py`
-- **.test_sources_merge_by_location()** (2 connections) — `web/twin/tests/test_blender_stock.py`
-- **.test_stock_without_snapshot_is_enough()** (2 connections) — `web/twin/tests/test_blender_stock.py`
-- **Klasa ABC wg udziału w pobraniach (ta sama reguła progów co…** (1 connections) — `web/twin/blender_stock.py`
-- **Czysta funkcja: dane wejściowe jako proste krotki/dicty → (pallets, stats,…** (1 connections) — `web/twin/blender_stock.py`
-- **.test_four_part_builder_code()** (1 connections) — `web/twin/tests/test_blender_stock.py`
-- **.test_garbage_is_none()** (1 connections) — `web/twin/tests/test_blender_stock.py`
-- **.test_letter_encodes_column_and_level_like_3d_map()** (1 connections) — `web/twin/tests/test_blender_stock.py`
-- **Palety w lokalizacjach (stan magazynu) w scenie Blendera —…** (1 connections) — `web/twin/tests/test_blender_stock.py`
+## Connections by Relation
 
-## Relationships
+### calls
+- build_pallets() `EXTRACTED`
+- ewm_tasks_calibration() `EXTRACTED`
+- ._scene() `EXTRACTED`
+- location_report() `EXTRACTED`
+- .test_bays_ranked_and_lanes_inside_rack() `EXTRACTED`
+- .test_halves_split_the_cell_side_by_side() `EXTRACTED`
+- .test_physical_bays_spread_pallet_positions() `EXTRACTED`
+- .setUp() `EXTRACTED`
+- .setUp() `EXTRACTED`
+- .test_gh_split_x_vertically() `EXTRACTED`
+- .test_level_clamped_to_rack() `EXTRACTED`
+- .test_master_level_overrides_letter() `EXTRACTED`
+- .test_shelves_bcd_stack_vertically_in_level_one() `EXTRACTED`
+- .test_unknown_rack_is_none() `EXTRACTED`
 
-- [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (7 shared connections)
-- [Item](Item.md) (4 shared connections)
-- [ml/services.py](ml-services.py.md) (2 shared connections)
-- [design_calibration.py](design_calibration.py.md) (2 shared connections)
-- [blender_scene.py](blender_scene.py.md) (1 shared connections)
-- [blender_stock.py](blender_stock.py.md) (1 shared connections)
-- [kpi_facts](kpi_facts.md) (1 shared connections)
+### contains
+- [blender_stock.py](blender_stock.py.md) `EXTRACTED`
 
-## Source Files
+### imports
+- [test_design_calibration.py](test_design_calibration.py.md) `EXTRACTED`
+- test_ewm_tasks_flow.py `EXTRACTED`
+- warehouse_calibration.py `EXTRACTED`
+- ewm_tasks_import.py `EXTRACTED`
+- test_blender_stock.py `EXTRACTED`
 
-- `web/twin/blender_stock.py`
-- `web/twin/tests/test_blender_stock.py`
+### method
+- .slot() `EXTRACTED`
+- ._parse() `EXTRACTED`
+- .__init__() `EXTRACTED`
+- .rack_and_bay() `EXTRACTED`
 
-## Audit Trail
+### rationale_for
+- Kod lokalizacji → gniazdo w regale modelu (środek palety, wysokość, obrót).… `EXTRACTED`
 
-- EXTRACTED: 54 (96%)
-- INFERRED: 2 (4%)
-- AMBIGUOUS: 0 (0%)
+### uses
+- [TasksEndpointAndImportTests](TasksEndpointAndImportTests.md) `INFERRED`
+- SlotLocatorTests `INFERRED`
+- CalibrationTests `INFERRED`
+- CalibrationViewTests `INFERRED`
+- ResolveMovesTests `INFERRED`
+- SceneFromTasksTests `INFERRED`
+- BuildPalletsTests `INFERRED`
+- ParseCodeTests `INFERRED`
 
 ---
 
