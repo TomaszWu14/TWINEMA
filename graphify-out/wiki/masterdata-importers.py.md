@@ -1,30 +1,30 @@
-# importers.py
+# masterdata/importers.py
 
 > 15 nodes · cohesion 0.18
 
 ## Key Concepts
 
-- **importers.py** (21 connections) — `web/masterdata/importers.py`
+- **masterdata/importers.py** (23 connections) — `web/masterdata/importers.py`
+- **ImportFileError** (11 connections) — `web/masterdata/importers.py`
 - **parse_material()** (8 connections) — `web/masterdata/importers.py`
+- **norm()** (7 connections) — `web/masterdata/importers.py`
 - **parse_location()** (7 connections) — `web/masterdata/importers.py`
 - **_code()** (6 connections) — `web/masterdata/importers.py`
 - **_num()** (6 connections) — `web/masterdata/importers.py`
 - **parse_stock()** (6 connections) — `web/masterdata/importers.py`
-- **ImportFileError** (5 connections) — `web/masterdata/importers.py`
+- **read_table()** (6 connections) — `web/masterdata/importers.py`
 - **_text()** (5 connections) — `web/masterdata/importers.py`
 - **_bool()** (4 connections) — `web/masterdata/importers.py`
 - **_cell()** (4 connections) — `web/masterdata/importers.py`
 - **map_columns()** (4 connections) — `web/masterdata/importers.py`
-- **norm()** (4 connections) — `web/masterdata/importers.py`
-- **read_table()** (4 connections) — `web/masterdata/importers.py`
 - **_date()** (3 connections) — `web/masterdata/importers.py`
 - **Import plików z danymi (xlsx / csv) — czysty Python, bez Django. `read_table`…** (1 connections) — `web/masterdata/importers.py`
 
 ## Relationships
 
 - [test_voice.py](test_voice.py.md) (6 shared connections)
-- [Fleet](Fleet.md) (2 shared connections)
-- [views_showcase.py](views_showcase.py.md) (1 shared connections)
+- [test_fleet_catalog.py](test_fleet_catalog.py.md) (2 shared connections)
+- [test_showcase.py](test_showcase.py.md) (1 shared connections)
 - [twinema_montage.py](twinema_montage.py.md) (1 shared connections)
 
 ## Source Files
@@ -33,8 +33,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 82 (93%)
-- INFERRED: 6 (7%)
+- EXTRACTED: 92 (91%)
+- INFERRED: 9 (9%)
 - AMBIGUOUS: 0 (0%)
 
 ---

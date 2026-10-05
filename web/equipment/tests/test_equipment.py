@@ -32,7 +32,8 @@ class SystemClassesTests(TestCase):
     def test_migration_seeds_anonymous_classes(self):
         sys = Equipment.objects.filter(is_system=True)
         self.assertEqual(set(sys.values_list("kind", flat=True)),
-                         {"pallet_truck", "counterbalance", "reach", "vna", "agv", "amr", "conveyor", "sorter"})
+                         {"pallet_truck", "counterbalance", "reach", "vna", "agv", "amr", "conveyor", "sorter",
+                          "stacker", "order_picker", "tractor"})                        # + K2 klasy rynkowe
         reach = sys.get(name="Reach truck 1,6 t / 10 m")
         self.assertEqual((reach.max_lift_m, reach.aisle_m, reach.capacity_kg), (10, 2.9, 1600))
         self.assertEqual(reach.rack_category, "reach")
@@ -41,7 +42,8 @@ class SystemClassesTests(TestCase):
         self.assertEqual(pick_class("reach", 9).name, "Reach truck 1,6 t / 10 m")
         self.assertEqual(pick_class("reach", 11).name, "Reach truck 2,0 t / 12 m")
         self.assertEqual(pick_class("vna", 15).name, "VNA kombi 1,2 t / 17 m")
-        self.assertEqual(pick_class("vna", 30).name, "VNA kombi 1,2 t / 17 m")   # żadna nie sięga → najwyższa
+        self.assertEqual(pick_class("reach", 13).name, "Reach truck 2,5 t / 14 m")
+        self.assertEqual(pick_class("vna", 30).name, "VNA kombi 1,6 t / 18 m")   # żadna nie sięga → najwyższa
         self.assertIsNone(pick_class("shelf", 1))
         racks = assign_classes([{"equipment": "vna", "n_levels": 5, "level_height_cm": 260},
                                 {"equipment": "shelf", "n_levels": 5, "level_height_cm": 45}])

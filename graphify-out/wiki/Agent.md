@@ -1,44 +1,44 @@
 # Agent
 
-> 19 nodes · cohesion 0.19
+> God node · 22 connections · `web/twin/blender_agents.py`
 
-## Key Concepts
+**Community:** [blender_route.py](blender_route.py.md)
 
-- **Agent** (22 connections) — `web/twin/blender_agents.py`
-- **._key()** (9 connections) — `web/twin/blender_agents.py`
-- **.move()** (7 connections) — `web/twin/blender_agents.py`
-- **.key()** (6 connections) — `web/twin/blender_agents.py`
-- **.wait()** (5 connections) — `web/twin/blender_agents.py`
-- **_r()** (5 connections) — `web/twin/blender_agents.py`
-- **.drop()** (4 connections) — `web/twin/blender_agents.py`
-- **.face()** (4 connections) — `web/twin/blender_agents.py`
-- **.pick_up()** (4 connections) — `web/twin/blender_agents.py`
-- **.wait_until()** (3 connections) — `web/twin/blender_agents.py`
-- **._carry_pose()** (2 connections) — `web/twin/blender_agents.py`
-- **.__init__()** (2 connections) — `web/twin/blender_agents.py`
-- **.lift_to()** (2 connections) — `web/twin/blender_agents.py`
-- **.as_dict()** (1 connections) — `web/twin/blender_agents.py`
-- **Postój do chwili `t` (realny znacznik zadania); zajęty agent nie cofa się w…** (1 connections) — `web/twin/blender_agents.py`
-- **Przejęcie ładunku: klatka „na miejscu" → po `handling` s ładunek jest na…** (1 connections) — `web/twin/blender_agents.py`
-- **Odłożenie ładunku w `pos` na wysokości `z` (np. gniazdo regału albo dok).** (1 connections) — `web/twin/blender_agents.py`
-- **Agent z osią czasu ruchu: rodzaj z `SPEED` (wózek, pracownik, kombi, AGV, EPT).** (1 connections) — `web/twin/blender_agents.py`
-- **Jazda/przejście trasą A* do `target`; trasa trafia też do mapy przepływów.** (1 connections) — `web/twin/blender_agents.py`
+## Connections by Relation
 
-## Relationships
+### calls
+- [build_scene()](build_scene%28%29.md) `EXTRACTED`
+- build_sim_scene() `EXTRACTED`
+- container_inbound() `EXTRACTED`
+- _task_forklifts() `EXTRACTED`
 
-- [kpi_facts](kpi_facts.md) (10 shared connections)
-- [blender_scene.py](blender_scene.py.md) (4 shared connections)
-- [test_design_sim_scene.py](test_design_sim_scene.py.md) (3 shared connections)
+### contains
+- blender_agents.py `EXTRACTED`
 
-## Source Files
+### imports
+- [blender_scene.py](blender_scene.py.md) `EXTRACTED`
+- blender_containers.py `EXTRACTED`
+- design_sim_scene.py `EXTRACTED`
 
-- `web/twin/blender_agents.py`
+### method
+- ._key() `EXTRACTED`
+- .move() `EXTRACTED`
+- .wait() `EXTRACTED`
+- .drop() `EXTRACTED`
+- .face() `EXTRACTED`
+- .pick_up() `EXTRACTED`
+- .wait_until() `EXTRACTED`
+- ._carry_pose() `EXTRACTED`
+- .__init__() `EXTRACTED`
+- .lift_to() `EXTRACTED`
+- .as_dict() `EXTRACTED`
 
-## Audit Trail
+### rationale_for
+- Agent z osią czasu ruchu: rodzaj z `SPEED` (wózek, pracownik, kombi, AGV, EPT). `EXTRACTED`
 
-- EXTRACTED: 79 (98%)
-- INFERRED: 2 (2%)
-- AMBIGUOUS: 0 (0%)
+### uses
+- CorridorRouter `INFERRED`
+- _Ctx `INFERRED`
 
 ---
 

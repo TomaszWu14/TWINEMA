@@ -24,6 +24,28 @@
   <a class="btn btn-sm {% if not kind %}btn-primary{% else %}btn-ghost{% endif %}" href="{% url 'equipment:list' %}"{% if not kind %} aria-current="page"{% endif %}>Wszystkie</a>
   {% for k, label in kinds %}<a class="btn btn-sm {% if kind == k %}btn-primary{% else %}btn-ghost{% endif %}" href="?typ={{ k }}"{% if kind == k %} aria-current="page"{% endif %}>{{ label }}</a>{% endfor %}
 </nav>
+{% if makers %}
+<form class="eq-filters" method="get" aria-label="Filtr producenta">
+  {% if kind %}<input type="hidden" name="typ" value="{{ kind }}">{% endif %}
+  <label for="eq-maker" class="text-sm">Producent</label>
+  <select id="eq-maker" name="producent" class="form-control" style="max-width:260px" onchange="this.form.submit()">
+    <option value="">— wszyscy —</option>
+    {% for m in makers %}<option value="{{ m }}"{% if m == maker %} selected{% endif %}>{{ m }}</option>{% endfor %}
+  </select>
+  <noscript><button class="btn btn-sm btn-ghost" type="submit">Filtruj</button></noscript>
+</form>
+{% endif %}
+{% if is_designer %}
+<div class="card" style="margin-bottom:16px"><div class="card-body">
+  <form method="post" action="{% url 'equipment:import' %}" enctype="multipart/form-data" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">{% csrf_token %}
+    <label for="eq-file" class="text-sm"><b>Import własnych modeli</b> (xlsx/csv, do 5 MB)</label>
+    <input id="eq-file" type="file" name="plik" accept=".xlsx,.csv" required class="form-control" style="max-width:320px">
+    <button class="btn btn-primary btn-sm" type="submit">Importuj</button>
+    <a class="btn btn-ghost btn-sm" href="{% url 'equipment:import_template' %}">Pobierz wzór</a>
+  </form>
+  <p class="text-muted text-sm" style="margin:8px 0 0">Model o tej samej nazwie zostanie zaktualizowany; brakujące parametry uzupełnia klasa ogólna danego typu (opis w uwagach modelu).</p>
+</div></div>
+{% endif %}
 
 <div class="card"><div class="card-body" style="overflow-x:auto">
   <table class="eq-table">
@@ -34,7 +56,7 @@
     <tbody>
     {% for e in items %}
       <tr><th scope="row"><a href="{% url 'equipment:detail' e.pk %}">{{ e.name }}</a></th><td>{{ e.get_kind_display }}</td>
-        <td>{% if e.is_system %}<span class="badge badge-gray">klasa systemowa</span>{% else %}<span class="badge badge-green">własny model</span>{% endif %}</td>
+        <td>{% if e.is_system %}<span class="badge badge-gray">klasa systemowa</span>{% else %}<span class="badge badge-green">własny model</span>{% if e.manufacturer %} {{ e.manufacturer }}{% endif %}{% endif %}</td>
         <td class="num">{{ e.speed_loaded_kmh|floatformat:"-1" }}</td><td class="num">{{ e.max_lift_m|default_if_none:"—"|floatformat:"-1" }}</td>
         <td class="num">{{ e.capacity_kg }}</td><td class="num">{{ e.aisle_m|default_if_none:"—"|floatformat:"-1" }}</td>
         <td class="num">{% if e.battery_h %}{{ e.battery_h|floatformat:"-1" }} / {{ e.charge_h|floatformat:"-1" }}{% else %}—{% endif %}</td></tr>

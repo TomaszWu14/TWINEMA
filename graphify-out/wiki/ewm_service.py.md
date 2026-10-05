@@ -1,46 +1,42 @@
 # ewm_service.py
 
-> 17 nodes · cohesion 0.19
+> 15 nodes · cohesion 0.18
 
 ## Key Concepts
 
-- **test_design_compare.py** (15 connections) — `web/twin/tests/test_design_compare.py`
-- **design_compare.py** (13 connections) — `web/twin/design_compare.py`
-- **required_fleet()** (9 connections) — `web/twin/design_compare.py`
-- **capacity()** (8 connections) — `web/twin/design_compare.py`
-- **CompareTests** (7 connections) — `web/twin/tests/test_design_compare.py`
-- **comparison()** (6 connections) — `web/twin/design_compare.py`
-- **variant_row()** (5 connections) — `web/twin/design_compare.py`
-- **.test_hall_without_vna_keeps_capacity_only()** (5 connections) — `web/twin/tests/test_design_compare.py`
-- **.test_required_fleet_settles_on_suggestion()** (3 connections) — `web/twin/tests/test_design_compare.py`
-- **.test_best_value_per_row()** (2 connections) — `web/twin/tests/test_design_compare.py`
-- **.test_capacity_matches_generator()** (2 connections) — `web/twin/tests/test_design_compare.py`
-- **Porównanie wariantów hali na tym samym dniu projektowym (plan 2026-10-02, etap…** (1 connections) — `web/twin/design_compare.py`
-- **Miejsca paletowe (regały nie-półkowe), lokalizacje kartonowe (półki K1), bramy,…** (1 connections) — `web/twin/design_compare.py`
-- **Symulacja z flotą sugerowaną przez poprzedni przebieg, aż flota się ustali (≤…** (1 connections) — `web/twin/design_compare.py`
-- **[{wiersz KPI z wartościami per wariant + najlepszy}] dla tabeli.** (1 connections) — `web/twin/design_compare.py`
-- **SimpleTestCase** (1 connections)
-- **Porównanie wariantów hali (plan 2026-10-02, etap 7).** (1 connections) — `web/twin/tests/test_design_compare.py`
+- **warehouse_model_ewm.py** (16 connections) — `web/twin/views/warehouse_model_ewm.py`
+- **compliance_for_model()** (7 connections) — `web/twin/ewm_service.py`
+- **_compliance_xlsx()** (5 connections) — `web/twin/views/warehouse_model_ewm.py`
+- **warehouse_model_compliance()** (5 connections) — `web/twin/views/warehouse_model_ewm.py`
+- **xlsx.py** (5 connections) — `web/twin/xlsx.py`
+- **warehouse_model_detect()** (4 connections) — `web/twin/views/warehouse_model_ewm.py`
+- **_finalize_xlsx()** (4 connections) — `web/twin/xlsx.py`
+- **_make_xlsx_response()** (4 connections) — `web/twin/xlsx.py`
+- **_safe()** (3 connections) — `web/twin/views/warehouse_model_ewm.py`
+- **safe_cell()** (3 connections) — `web/twin/xlsx.py`
+- **Raport zgodności planu modelu z aktywnym masterem (batch=None → brak kodów EWM).** (1 connections) — `web/twin/ewm_service.py`
+- **„Wykryj z EWM” (podgląd propozycji → zapis) i raport zgodności modelu z EWM (+…** (1 connections) — `web/twin/views/warehouse_model_ewm.py`
+- **Eksport XLSX z neutralizacją formuł (CSV/formula injection).** (1 connections) — `web/twin/xlsx.py`
+- **Tekst zaczynający się od = + - @ TAB CR → prefiks `'`. Liczby bez zmian.** (1 connections) — `web/twin/xlsx.py`
+- **(workbook, worksheet, HttpResponse) gotowe do wypełnienia.** (1 connections) — `web/twin/xlsx.py`
 
 ## Relationships
 
-- [test_sim.py](test_sim.py.md) (10 shared connections)
-- [simulate](simulate.md) (7 shared connections)
-- [masterdata/views.py](masterdata-views.py.md) (3 shared connections)
-- [RenderMontageTests](RenderMontageTests.md) (2 shared connections)
-- [test_dane.py](test_dane.py.md) (2 shared connections)
-- [ForecastTests](ForecastTests.md) (2 shared connections)
-- [blender_scene.py](blender_scene.py.md) (1 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (10 shared connections)
+- [day_demand](day_demand.md) (3 shared connections)
+- [test_sim.py](test_sim.py.md) (2 shared connections)
+- [SimViewTests](SimViewTests.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/design_compare.py`
-- `web/twin/tests/test_design_compare.py`
+- `web/twin/ewm_service.py`
+- `web/twin/views/warehouse_model_ewm.py`
+- `web/twin/xlsx.py`
 
 ## Audit Trail
 
-- EXTRACTED: 79 (98%)
-- INFERRED: 2 (2%)
+- EXTRACTED: 61 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

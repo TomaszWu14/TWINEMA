@@ -14,10 +14,45 @@ KINDS = [
     ("vna", "VNA / wózek systemowy (kombi)"),
     ("agv", "AGV paletowy"),
     ("amr", "AMR"),
+    ("stacker", "Wózek podnośnikowy (unoszący z masztem)"),
+    ("order_picker", "Wózek do kompletacji"),
+    ("tractor", "Ciągnik"),
     ("conveyor", "Przenośnik"),
     ("sorter", "Sorter"),
 ]
+# ponytail: stacker / kompletacja / ciągnik nie obsługują kategorii regału w layoucie (edytor wybiera spośród
+# reach/czołowy/VNA) — dodać tu, gdy layout zacznie przypisywać je do regałów.
 RACK_CATEGORY = {"reach": "reach", "counterbalance": "reach", "vna": "vna"}
+
+# Osprzęt: kod → (etykieta, redukcja udźwigu [%], dodatkowy czas na pobranie i na odłożenie [s]).
+# Wartości przybliżone (typowe rzędy wielkości), do nadpisania własnym modelem z karty katalogowej.
+ATTACHMENTS = {
+    "forks": ("Widły standardowe", 0, 0),
+    "sideshift": ("Przesuw boczny", 5, -3),
+    "positioner": ("Pozycjoner wideł", 8, 0),
+    "rotator": ("Obrotnica", 15, 8),
+    "carton_clamp": ("Zaciski do kartonów", 20, 8),
+    "drum_clamp": ("Zaciski do beczek", 20, 10),
+    "telescopic": ("Widły teleskopowe / podwójnej głębokości", 15, 12),
+    "double_pallet": ("Widły do dwóch palet (podwójny załadunek)", 0, 5),
+    "platform": ("Platforma / kosz dla operatora", 0, 0),
+}
+
+
+def apply_attachments(params, codes):
+    """Parametry sprzętu po osprzęcie: udźwig (i krzywa) pomniejszony o sumę redukcji, czasy obsługi palety
+    wydłużone. Nieznane kody pomijane. Zwraca nowy dict."""
+    known = [ATTACHMENTS[c] for c in codes or [] if c in ATTACHMENTS]
+    if not known:
+        return dict(params)
+    k = max(0.0, 1 - sum(a[1] for a in known) / 100)
+    extra = sum(a[2] for a in known)
+    out = dict(params)
+    out["capacity_kg"] = round((params.get("capacity_kg") or 0) * k)
+    out["lift_curve"] = [[h, round(kg * k)] for h, kg in params.get("lift_curve") or []]
+    for f in ("pick_s", "drop_s"):
+        out[f] = max(1.0, (params.get(f) or 20) + extra)
+    return out
 
 
 def capacity_at(nominal_kg, curve, height_m):

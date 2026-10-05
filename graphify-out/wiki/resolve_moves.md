@@ -26,7 +26,7 @@
 - [twin/models.py](twin-models.py.md) (4 shared connections)
 - [test_sim.py](test_sim.py.md) (2 shared connections)
 - [ScenarioViewTests](ScenarioViewTests.md) (2 shared connections)
-- [layout-hall.js](layout-hall.js.md) (1 shared connections)
+- [addressing.py](addressing.py.md) (1 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
 - [simulate](simulate.md) (1 shared connections)
 

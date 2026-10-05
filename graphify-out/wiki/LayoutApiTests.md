@@ -18,7 +18,7 @@
 
 - [test_voice.py](test_voice.py.md) (4 shared connections)
 - [layout-panels.js](layout-panels.js.md) (3 shared connections)
-- [views_showcase.py](views_showcase.py.md) (3 shared connections)
+- [test_showcase.py](test_showcase.py.md) (3 shared connections)
 
 ## Source Files
 

@@ -6,7 +6,7 @@ scenariusza (`scenario` — czas ruchu palety, bateria). Sam niczego nie importu
 from django.conf import settings
 from django.db import models
 
-from .catalog import KINDS, RACK_CATEGORY
+from .catalog import ATTACHMENTS, KINDS, RACK_CATEGORY, apply_attachments
 
 PARAM_FIELDS = ["speed_loaded_kmh", "speed_empty_kmh", "lift_speed_ms", "lower_speed_ms", "max_lift_m",
                 "capacity_kg", "lift_curve", "aisle_m", "pick_s", "drop_s", "battery_h", "charge_h",
@@ -16,6 +16,10 @@ PARAM_FIELDS = ["speed_loaded_kmh", "speed_empty_kmh", "lift_speed_ms", "lower_s
 class Equipment(models.Model):
     kind = models.CharField(max_length=16, choices=KINDS, verbose_name="Typ")
     name = models.CharField(max_length=120, verbose_name="Nazwa")
+    # K2: producent tylko jako tekst w bazie użytkownika (własne modele) — nigdy w repo / danych demo
+    manufacturer = models.CharField(max_length=80, blank=True, default="", verbose_name="Producent")
+    attachments = models.JSONField(default=list, blank=True, verbose_name="Osprzęt",
+                                   help_text="Kody osprzętu — zmniejszają udźwig i wydłużają obsługę palety.")
     is_system = models.BooleanField(default=False, editable=False, verbose_name="Klasa systemowa")
     speed_loaded_kmh = models.FloatField(verbose_name="Jazda z ładunkiem [km/h]")
     speed_empty_kmh = models.FloatField(verbose_name="Jazda bez ładunku [km/h]")
@@ -67,8 +71,14 @@ class Equipment(models.Model):
         a = float(a if a is not None else b)
         return a, float(b if b is not None else a)
 
+    @property
+    def attachment_labels(self):
+        return [ATTACHMENTS[c][0] for c in self.attachments or [] if c in ATTACHMENTS]
+
     def params(self):
-        return {f: getattr(self, f) for f in PARAM_FIELDS} | {"id": self.pk, "kind": self.kind, "name": self.name}
+        """Parametry robocze (z osprzętem) — jedno źródło dla layoutu i symulacji."""
+        raw = {f: getattr(self, f) for f in PARAM_FIELDS} | {"id": self.pk, "kind": self.kind, "name": self.name}
+        return apply_attachments(raw, self.attachments)
 
 
 class CostRate(models.Model):
