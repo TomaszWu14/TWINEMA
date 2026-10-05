@@ -61,10 +61,20 @@ class VariantEditViewTests(TestCase):
         n = self.wm.racks.count()
         r = self.client.post(f"/magazyn/model/{self.wm.pk}/kopia/")
         copy = WarehouseModel.objects.exclude(pk=self.wm.pk).get()
-        self.assertRedirects(r, f"/magazyn/model/{copy.pk}/strefy/", fetch_redirect_response=False)
+        self.assertRedirects(r, f"/magazyn/model/{copy.pk}/edytor/", fetch_redirect_response=False)
         self.assertEqual((copy.racks.count(), self.wm.racks.count()), (n, n))
         self.assertEqual(copy.features.count(), self.wm.features.count())
-        self.assertIn("wariant", copy.name)
+        self.assertIn("przyszły layout", copy.name)
+
+    def test_copy_keeps_hall_structure(self):
+        """Kopia „przyszłego layoutu” niesie konstrukcję hali z E2b: wysokość, słupy, sprzęt regałów."""
+        cols = {"pitch_x": 12, "pitch_y": 24, "offset_x": 0, "offset_y": 0, "size": 0.6, "removed": [[0, 0]], "extra": []}
+        WarehouseModel.objects.filter(pk=self.wm.pk).update(clear_height_m=11.5, columns=cols)
+        self.wm.racks.filter(zone="V").update(equipment="vna")
+        self.client.post(f"/magazyn/model/{self.wm.pk}/kopia/")
+        copy = WarehouseModel.objects.exclude(pk=self.wm.pk).get()
+        self.assertEqual((copy.clear_height_m, copy.columns), (11.5, cols))
+        self.assertEqual(set(copy.racks.filter(zone="V").values_list("equipment", flat=True)), {"vna"})
 
     def test_zone_edit_saves_and_deletes(self):
         k1_x = self.wm.racks.filter(zone="K1").first().x_m
@@ -87,5 +97,5 @@ class VariantEditViewTests(TestCase):
 
     def test_view_has_variant_buttons(self):
         r = self.client.get(f"/magazyn/model/{self.wm.pk}/view/")
-        self.assertContains(r, "Kopiuj jako wariant")
+        self.assertContains(r, "Utwórz przyszły layout (kopia)")
         self.assertContains(r, f"/magazyn/model/{self.wm.pk}/strefy/")

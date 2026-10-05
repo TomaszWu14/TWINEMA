@@ -1,29 +1,34 @@
 # addressing.py
 
-> 8 nodes · cohesion 0.36
+> 11 nodes · cohesion 0.27
 
 ## Key Concepts
 
-- **GeneratorViewTests** (8 connections) — `web/twin/tests/test_design_generator.py`
-- **._post()** (4 connections) — `web/twin/tests/test_design_generator.py`
-- **.test_create_saves_model_and_opens_3d()** (2 connections) — `web/twin/tests/test_design_generator.py`
-- **.test_invalid_input_shows_errors()** (2 connections) — `web/twin/tests/test_design_generator.py`
-- **.test_preview_does_not_save()** (2 connections) — `web/twin/tests/test_design_generator.py`
-- **.setUp()** (1 connections) — `web/twin/tests/test_design_generator.py`
-- **.test_get_shows_preset_summary()** (1 connections) — `web/twin/tests/test_design_generator.py`
-- **TestCase** (1 connections)
+- **test_ewm_detect.py** (10 connections) — `web/twin/tests/test_ewm_detect.py`
+- **.test_irregular_bay_gets_nearest_template_plus_skip_and_add()** (5 connections) — `web/twin/tests/test_ewm_detect.py`
+- **expand_proposal()** (4 connections) — `web/twin/tests/test_ewm_detect.py`
+- **DetectHeightsTests** (3 connections) — `web/twin/tests/test_ewm_detect.py`
+- **.test_level_heights_and_weights_are_medians_from_master()** (3 connections) — `web/twin/tests/test_ewm_detect.py`
+- **DetectIrregularBayTests** (3 connections) — `web/twin/tests/test_ewm_detect.py`
+- **rows_of()** (3 connections) — `web/twin/tests/test_ewm_detect.py`
+- **master_of()** (2 connections) — `web/twin/tests/test_ewm_detect.py`
+- **SimpleTestCase** (2 connections)
+- **„Wykryj z EWM”: propozycja szablonów, numeracji i wyjątków z kodów; round-trip…** (1 connections) — `web/twin/tests/test_ewm_detect.py`
+- **Propozycja → obiekty jak z bazy → rozwinięte kody per przejście.** (1 connections) — `web/twin/tests/test_ewm_detect.py`
 
 ## Relationships
 
-- [test_dane.py](test_dane.py.md) (1 shared connections)
+- [designer](designer.md) (4 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
+- [layout-panels.js](layout-panels.js.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/tests/test_design_generator.py`
+- `web/twin/tests/test_ewm_detect.py`
 
 ## Audit Trail
 
-- EXTRACTED: 21 (100%)
+- EXTRACTED: 37 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

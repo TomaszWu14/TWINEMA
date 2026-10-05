@@ -1,4 +1,4 @@
-# BayTemplateViewTests
+# test_bay_template_views.py
 
 > 16 nodes · cohesion 0.20
 

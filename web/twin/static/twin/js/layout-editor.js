@@ -4,6 +4,8 @@
 import { History, bbox, corners, rotateGroup, snap, svgTransform, zoneColors } from './layout-core.js';
 import { renderPanels } from './layout-panels.js';
 import { deleteSelectedColumn, drawColumns, drawUnderlay, hallPointer } from './layout-hall.js';
+import { initPreview, preview3d } from './layout-preview.js';
+import { bindFullscreenButton } from './fullscreen.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const CFG = JSON.parse(document.getElementById('le-config').textContent);
@@ -287,6 +289,7 @@ export function render() {
   $('le-undo').disabled = !history.past.length;
   $('le-redo').disabled = !history.future.length;
   renderPanels();
+  preview3d();
 }
 
 // ── mysz / dotyk ───────────────────────────────────────────────────────────────────────────
@@ -384,6 +387,7 @@ document.addEventListener('keydown', (e) => {
   else if (ctrl && k === 'd') duplicateSelected();
   else if (ctrl && k === 'a' && e.target === svg) selectKeys(all().map(keyOf));
   else if (!ctrl && k === 'r' && e.target === svg) rotateSelected(90);
+  else if (!ctrl && k === 'f') fullscreen.toggle();
   else if ((k === 'delete' || k === 'backspace') && e.target === svg) deleteSelectedColumn() || deleteSelected();
   else if (k === 'escape') { S.selCol = null; S.calib = null; selectKeys([]); }
   else handled = false;
@@ -400,4 +404,8 @@ $('le-reload').addEventListener('click', reload);
 $('le-fit').addEventListener('click', () => { fit(); render(); });
 $('le-zoomin').addEventListener('click', () => zoom(1 / 1.3));
 $('le-zoomout').addEventListener('click', () => zoom(1.3));
+initPreview();
+// Pełny ekran całego obszaru roboczego; po zmianie plan dopasowuje widok (3D przelicza się przez ResizeObserver).
+const fullscreen = bindFullscreenButton($('le-fs'), $('le-work'), { live: $('le-fs-live'),
+  onChange: () => requestAnimationFrame(() => { fit(); render(); }) });
 reload().catch(() => status('Nie udało się wczytać planu — odśwież stronę.', 'error'));

@@ -1,49 +1,43 @@
 # layout-editor.js
 
-> 18 nodes · cohesion 0.14
+> 13 nodes · cohesion 0.29
 
 ## Key Concepts
 
-- **addressing.py** (18 connections) — `web/twin/addressing.py`
-- **parse_bay_numbers()** (10 connections) — `web/twin/addressing.py`
-- **format_bay_numbers()** (6 connections) — `web/twin/addressing.py`
-- **row_bay_numbers()** (6 connections) — `web/twin/addressing.py`
-- **ParseTests** (6 connections) — `web/twin/tests/test_addressing.py`
-- **_bay_locations()** (4 connections) — `web/twin/addressing.py`
-- **make_code()** (4 connections) — `web/twin/addressing.py`
-- **validate_bay_numbers()** (3 connections) — `web/twin/models.py`
-- **.test_bay_numbers_ranges_round_trip()** (3 connections) — `web/twin/tests/test_addressing.py`
-- **.test_row_numbers_default_and_truncation()** (3 connections) — `web/twin/tests/test_addressing.py`
-- **.test_bay_numbers_invalid()** (2 connections) — `web/twin/tests/test_addressing.py`
-- **.test_parse_code_with_half_and_lowercase()** (2 connections) — `web/twin/tests/test_addressing.py`
-- **Adresy miejsc paletowych modelu magazynu: szablon gniazda + reguła rzędu +…** (1 connections) — `web/twin/addressing.py`
-- **„10-47,50” → [10, …, 47, 50]. Pusty tekst → []. Błędny zapis → ValueError.** (1 connections) — `web/twin/addressing.py`
-- **[10, …, 47, 50] → „10-47,50” (odwrotność parse_bay_numbers).** (1 connections) — `web/twin/addressing.py`
-- **Numery gniazd rzędu w kolejności fizycznej; pusta reguła = 1..n_bays; nadmiar…** (1 connections) — `web/twin/addressing.py`
-- **Miejsca jednego gniazda (numer `bay`, fizyczny indeks `slot`) wg szablonu i…** (1 connections) — `web/twin/addressing.py`
-- **Numeracja gniazd rzędu: zakresy „10-47,50”.** (1 connections) — `web/twin/models.py`
+- **resolve_moves()** (11 connections) — `web/twin/blender_tasks.py`
+- **._scene()** (8 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **ResolveMovesTests** (7 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **_row()** (7 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **SceneFromTasksTests** (7 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **.test_agent_is_resource_or_user()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **.test_endpoints_by_kind_and_unmapped_skipped()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **.test_times_from_confirmation_with_compression()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **.test_agents_from_resources_no_demo_forklifts()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **.test_busy_agent_starts_next_task_right_after()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **.test_task_starts_at_confirmation_and_times_monotonic()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
+- **SimpleTestCase** (2 connections)
+- **Wiersze WT (krotki ROW_FIELDS, rosnąco po potwierdzeniu) → (ruchy, pominięte).…** (1 connections) — `web/twin/blender_tasks.py`
 
 ## Relationships
 
-- [test_addressing.py](test_addressing.py.md) (10 shared connections)
-- [scenario/views.py](scenario-views.py.md) (6 shared connections)
-- [LayoutApiTests](LayoutApiTests.md) (3 shared connections)
-- [twin/models.py](twin-models.py.md) (3 shared connections)
-- [day_demand](day_demand.md) (3 shared connections)
-- [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
-- [SimViewTests](SimViewTests.md) (1 shared connections)
-- [parse_bay_numbers](parse_bay_numbers.md) (1 shared connections)
+- [twin/models.py](twin-models.py.md) (4 shared connections)
+- [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (3 shared connections)
+- [blender_scene.py](blender_scene.py.md) (2 shared connections)
+- [ScenarioViewTests](ScenarioViewTests.md) (2 shared connections)
+- [views_sim.py](views_sim.py.md) (1 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (1 shared connections)
+- [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
+- [test_ewm_tasks_flow.py](test_ewm_tasks_flow.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/addressing.py`
-- `web/twin/models.py`
-- `web/twin/tests/test_addressing.py`
+- `web/twin/blender_tasks.py`
+- `web/twin/tests/test_ewm_tasks_flow.py`
 
 ## Audit Trail
 
-- EXTRACTED: 73 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 59 (97%)
+- INFERRED: 2 (3%)
 - AMBIGUOUS: 0 (0%)
 
 ---

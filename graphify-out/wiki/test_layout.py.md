@@ -1,6 +1,6 @@
-# analyze
+# test_layout.py
 
-> 24 nodes · cohesion 0.14
+> 23 nodes · cohesion 0.14
 
 ## Key Concepts
 
@@ -27,13 +27,12 @@
 - **Zmienia regały strefy w miejscu (dicty jak `model_racks`) i zwraca listę…** (1 connections) — `web/twin/model_edit.py`
 - **SimpleTestCase** (1 connections)
 - **require_POST** (1 connections)
-- **Kopia modelu (regały + elementy hali) — wariant do przeróbek bez ruszania…** (1 connections) — `web/twin/views/warehouse_variant_edit.py`
 
 ## Relationships
 
-- [test_dane.py](test_dane.py.md) (7 shared connections)
-- [shared.py](shared.py.md) (4 shared connections)
-- [day_demand](day_demand.md) (3 shared connections)
+- [Material](Material.md) (7 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (4 shared connections)
+- [scenario/models.py](scenario-models.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
 - [blender_scene.py](blender_scene.py.md) (1 shared connections)
@@ -46,7 +45,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 114 (98%)
+- EXTRACTED: 113 (98%)
 - INFERRED: 2 (2%)
 - AMBIGUOUS: 0 (0%)
 

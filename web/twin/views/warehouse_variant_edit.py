@@ -1,5 +1,7 @@
 # Edycja wariantu hali (plan 2026-10-02, etap 4): kopia modelu jako wariant + operacje na całych
 # strefach regałów (przesunięcie, gniazda, poziomy, usunięcie) z kontrolą kolizji.
+from django.core.files.base import ContentFile
+
 from twin.shared import (
     _md_role, get_object_or_404, messages, redirect, render, require_POST, transaction,
     WarehouseHallFeature, WarehouseModel, WarehouseModelRack,
@@ -10,7 +12,8 @@ from twin.model_edit import apply_zone_edit, collisions, fit_floor, zone_summary
 __all__ = ["warehouse_model_copy", "warehouse_model_zones"]
 
 RACK_COPY_FIELDS = ("zone", "rack_id", "n_bays", "n_levels", "bay_width_cm", "depth_cm", "level_height_cm",
-                    "x_m", "y_m", "angle_deg", "template_id", "bay_numbers", "reverse")
+                    "x_m", "y_m", "angle_deg", "template_id", "bay_numbers", "reverse", "equipment")
+MODEL_COPY_FIELDS = ("notes", "floor_width_m", "floor_depth_m", "clear_height_m", "columns", "underlay_meta")
 FEATURE_COPY_FIELDS = ("kind", "label", "zone_code", "x_m", "y_m", "width_m", "depth_m", "angle_deg",
                        "color_hex", "notes")
 
@@ -18,19 +21,23 @@ FEATURE_COPY_FIELDS = ("kind", "label", "zone_code", "x_m", "y_m", "width_m", "d
 @require_POST
 @_md_role
 def warehouse_model_copy(request, pk):
-    """Kopia modelu (regały + elementy hali) — wariant do przeróbek bez ruszania oryginału.
-    Wyjątki adresów (LocationOverride) nie są kopiowane: wariant to nowa hala, nie adresy EWM."""
+    """Kopia modelu (hala ze słupami i podkładem, regały, elementy hali) — „przyszły layout” do przeróbek
+    w edytorze bez ruszania oryginału. Wyjątki adresów (LocationOverride) nie są kopiowane: to nowa hala,
+    nie adresy EWM. Podkład dostaje własny plik (usunięcie go w kopii nie kasuje pliku oryginału)."""
     src = get_object_or_404(WarehouseModel, pk=pk)
     with transaction.atomic():
-        wm = WarehouseModel.objects.create(name=f"{src.name} — wariant"[:200], notes=src.notes,
-                                           floor_width_m=src.floor_width_m, floor_depth_m=src.floor_depth_m)
+        wm = WarehouseModel.objects.create(name=f"{src.name} — przyszły layout"[:200],
+                                           **{f: getattr(src, f) for f in MODEL_COPY_FIELDS})
+        if src.underlay:
+            with src.underlay.open("rb") as fh:
+                wm.underlay.save(f"podklad_{wm.pk}.{src.underlay.name.rsplit('.', 1)[-1]}", ContentFile(fh.read()))
         WarehouseModelRack.objects.bulk_create([
             WarehouseModelRack(model=wm, **{f: getattr(r, f) for f in RACK_COPY_FIELDS}) for r in src.racks.all()])
         WarehouseHallFeature.objects.bulk_create([
             WarehouseHallFeature(model=wm, **{f: getattr(x, f) for f in FEATURE_COPY_FIELDS})
             for x in src.features.all()])
-    messages.success(request, f"Utworzono wariant „{wm.name}” — zmieniaj go w „Edycji stref”, oryginał zostaje.")
-    return redirect("twin:warehouse_model_zones", pk=wm.pk)
+    messages.success(request, f"Utworzono „{wm.name}” — przebuduj go w edytorze, oryginał zostaje bez zmian.")
+    return redirect("twin:warehouse_layout_editor", pk=wm.pk)
 
 
 def _num(raw, cast, lo, hi):

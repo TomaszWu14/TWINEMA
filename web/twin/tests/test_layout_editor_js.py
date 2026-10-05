@@ -24,7 +24,9 @@ def node_eval(code):
 @unittest.skipUnless(NODE, "brak Node.js")
 class LayoutCoreJsTests(unittest.TestCase):
     def test_node_unit_tests(self):
-        proc = subprocess.run([NODE, "--test", str(TWIN / "tests" / "js" / "layout_core.test.mjs")],
+        proc = subprocess.run([NODE, "--test", str(TWIN / "tests" / "js" / "layout_core.test.mjs"),
+                               str(TWIN / "tests" / "js" / "scene_data.test.mjs"),
+                               str(TWIN / "tests" / "js" / "fullscreen.test.mjs")],
                               capture_output=True, text=True, timeout=120)
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
 

@@ -151,3 +151,25 @@ class LayoutEditorPageTests(TestCase):
     def test_anonymous_redirects_to_login(self):
         r = self.client.get(reverse("twin:warehouse_layout_editor", args=[self.wm.pk]))
         self.assertEqual(r.status_code, 302)
+
+    def test_editor_has_3d_preview(self):
+        """E3: podgląd 3D obok planu — three.js z vendora (importmap, bez CDN), przełącznik układu,
+        sonda WebGL, link do animacji przepływów; przycisk kopii „przyszłego layoutu” w widoku i na liście."""
+        self.client.force_login(self.designer)
+        r = self.client.get(reverse("twin:warehouse_layout_editor", args=[self.wm.pk]))
+        self.assertContains(r, '<script type="importmap">')
+        self.assertContains(r, "/static/twin/vendor/three.module.js")
+        self.assertNotContains(r, "cdn.")
+        for marker in ('id="le-3d-canvas"', 'data-le-mode="split"', 'id="le-3d-sel"', "__tw3dNoWebGL",
+                       "Zobacz animację przepływów"):
+            self.assertContains(r, marker)
+        # Pełny ekran (wspólny static/twin/js/fullscreen.js): obszar roboczy edytora, scena 3D i plan 2D modelu.
+        for marker in ('id="le-fs" data-fs aria-pressed="false"', 'id="le-work"', 'id="le-fs-live" aria-live="polite"'):
+            self.assertContains(r, marker)
+        view = self.client.get(reverse("twin:warehouse_model_view", args=[self.wm.pk]))
+        for marker in ('id="fs-3d" data-fs', 'id="fs-2d" data-fs', 'id="fs-live" aria-live="polite"',
+                       "twin/js/fullscreen.js"):
+            self.assertContains(view, marker)
+        copy = reverse("twin:warehouse_model_copy", args=[self.wm.pk])
+        self.assertContains(self.client.get(reverse("twin:warehouse_model_view", args=[self.wm.pk])), copy)
+        self.assertContains(self.client.get(reverse("twin:warehouse_model_list")), copy)
