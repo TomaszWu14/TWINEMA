@@ -1,0 +1,67 @@
+{% extends "twin/base.html" %}{% load twin_extras %}
+{% block title %}Projektowanie magazynu — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .dh-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px; margin-bottom:28px; }
+  .dh-step { position:relative; display:block; padding:16px 16px 16px 48px; border:1px solid var(--border);
+             border-radius:var(--radius-lg); background:var(--surface); text-decoration:none; color:var(--fg); }
+  a.dh-step:hover { border-color:var(--primary); }
+  .dh-step__n { position:absolute; left:14px; top:15px; width:24px; height:24px; border-radius:50%;
+                background:var(--primary); color:var(--primary-fg); font:700 12px/24px var(--font-sans); text-align:center; }
+  .dh-step__t { font-weight:700; font-size:var(--fs-md); display:flex; align-items:center; gap:8px; }
+  .dh-step__d { font-size:var(--fs-sm); color:var(--fg-muted); margin-top:6px; line-height:1.45; }
+  .dh-step--off { background:var(--bg-disabled); color:var(--fg-disabled); }
+  .dh-step--off .dh-step__n { background:var(--border-strong); color:var(--fg-muted); }
+  .dh-step--off .dh-step__d { color:var(--fg-disabled); }
+  .dh-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:0 0 12px; }
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-header__title">Projektowanie magazynu</div>
+    <div class="page-header__sub">Nowa hala od zera: układ, dane o ruchu, kalibracja, prognoza, symulacja i porównanie wariantów.</div>
+  </div>
+</div>
+
+<h2 class="dh-sec">Kroki po kolei</h2>
+{% if not design_batch %}<p class="text-muted text-sm" style="margin:-4px 0 12px">Kroki 3–7 liczą się z historii zadań magazynowych — najpierw zaimportuj plik w kroku 2 (eksport z WMS albo plik demonstracyjny z <code>tools/ewm_demo_tasks.py</code>).</p>{% endif %}
+<div class="dh-grid">
+  <a class="dh-step" href="{% url 'twin:warehouse_model_generator' %}"><span class="dh-step__n">1</span>
+    <div class="dh-step__t">{% icon "warehouse" %} Generator hali</div>
+    <div class="dh-step__d">Pojemność, wysokość, doki → układ hali z widokiem 3D i animacją (AGV, kombi, EPT, kontener).</div></a>
+  <a class="dh-step" href="{% url 'twin:ewm_tasks_list' %}"><span class="dh-step__n">2</span>
+    <div class="dh-step__t">{% icon "file-spreadsheet" %} Import zadań magazynowych</div>
+    <div class="dh-step__d">Historia ruchów — wsad do dnia projektowego, kalibracji, prognozy i symulacji.</div></a>
+  {% if design_batch %}
+  <a class="dh-step" href="{% url 'twin:ewm_tasks_profile' design_batch.pk %}"><span class="dh-step__n">3</span>
+    <div class="dh-step__t">{% icon "chart-column" %} Dzień projektowy</div>
+    <div class="dh-step__d">P90/P95/P99, godzina szczytu, ABC/XYZ — import „{{ design_batch.name }}”.</div></a>
+  <a class="dh-step" href="{% url 'twin:ewm_tasks_calibration' design_batch.pk %}"><span class="dh-step__n">4</span>
+    <div class="dh-step__t">{% icon "sliders-horizontal" %} Kalibracja na obecnej hali</div>
+    <div class="dh-step__d">Realne tempo wózków i pickerów vs katalog → współczynniki do symulacji.</div></a>
+  <a class="dh-step" href="{% url 'twin:ewm_tasks_forecast' design_batch.pk %}"><span class="dh-step__n">5</span>
+    <div class="dh-step__t">{% icon "trending-up" %} Prognoza wzrostu</div>
+    <div class="dh-step__d">Trend z historii → mnożnik P50/P90 na horyzont lat.</div></a>
+  <a class="dh-step" href="{% url 'twin:ewm_tasks_simulate' design_batch.pk %}"><span class="dh-step__n">6</span>
+    <div class="dh-step__t">{% icon "forklift" %} Symulacja dnia</div>
+    <div class="dh-step__d">Flota AGV / kombi / EPT, czekanie, godziny — z animacją wybranej godziny w 3D.</div></a>
+  <a class="dh-step" href="{% url 'twin:ewm_tasks_compare' design_batch.pk %}"><span class="dh-step__n">7</span>
+    <div class="dh-step__t">{% icon "layers" %} Porównanie wariantów</div>
+    <div class="dh-step__d">Do 4 hal obok siebie — pojemność, wymagana flota, droga, czekanie.</div></a>
+  {% else %}
+  {% for n, t, d in design_steps_off %}<div class="dh-step dh-step--off" aria-disabled="true"><span class="dh-step__n">{{ n }}</span>
+    <div class="dh-step__t">{{ t }}</div><div class="dh-step__d">{{ d }}</div></div>{% endfor %}
+  {% endif %}
+</div>
+
+<h2 class="dh-sec">Warianty</h2>
+<div class="dh-grid">
+  <a class="dh-step" href="{% url 'twin:warehouse_model_list' %}"><span class="dh-step__n">·</span>
+    <div class="dh-step__t">{% icon "copy" %} Modele hali</div>
+    <div class="dh-step__d">Widok 3D modelu → „Kopiuj jako wariant” i „Edycja stref”.</div></a>
+  <a class="dh-step" href="{% url 'twin:warehouse_variants' %}"><span class="dh-step__n">·</span>
+    <div class="dh-step__t">{% icon "layers" %} Warianty z Blendera</div>
+    <div class="dh-step__d">Import wariantów zaprojektowanych zestawem <code>twinema_design_kit.py</code> i ich wskaźniki.</div></a>
+</div>
+{% endblock %}

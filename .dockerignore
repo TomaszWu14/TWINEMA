@@ -14,3 +14,4 @@ tools
 web/staticfiles
 web/media
 web/*/tests
+web/twin/static/twin/vendor

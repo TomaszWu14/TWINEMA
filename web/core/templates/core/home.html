@@ -1,16 +1,19 @@
 {% extends "core/base.html" %}
-{% block content %}
+{% block main %}
+<div class="wrap">
   <div class="eyebrow">Cyfrowy bliźniak magazynu</div>
-  <h1>Projektuj halę, symuluj przepływ, pokaż to jak film.</h1>
+  <h1 class="hero-title">Projektuj halę, symuluj przepływ, pokaż to jak film.</h1>
   <p class="lead">Od danych i układu regałów, przez symulację dnia pracy, do animacji w Blenderze
     z lektorem. Moduły pojawiają się po kolei — poniżej mapa drogi.</p>
-  <div class="grid">
+  <div class="hub">
     {% for m in modules %}
-      <section class="tile{% if not m.ready %} soon{% endif %}">
+      {% if m.url %}<a class="hub-tile" href="{{ m.url }}">{% else %}<section class="hub-tile hub-tile--soon">{% endif %}
         <h2>{{ m.name }}</h2>
         <p>{{ m.desc }}</p>
-        <div class="meta"><span>{{ m.phase }}</span><span class="badge">{% if m.ready %}gotowe{% else %}wkrótce{% endif %}</span></div>
-      </section>
+        <div class="hub-tile__meta"><span>{{ m.phase }}</span>
+          <span class="pill{% if m.url %} pill--ready{% endif %}">{% if m.url %}otwórz{% else %}wkrótce{% endif %}</span></div>
+      {% if m.url %}</a>{% else %}</section>{% endif %}
     {% endfor %}
   </div>
+</div>
 {% endblock %}

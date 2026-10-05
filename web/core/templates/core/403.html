@@ -1,8 +1,10 @@
 {% extends "core/base.html" %}
 {% block title %}Brak dostępu · {{ app_name }}{% endblock %}
-{% block content %}
+{% block main %}
+<div class="wrap">
   <div class="eyebrow">403</div>
-  <h1>Brak dostępu</h1>
+  <h1 class="hero-title">Brak dostępu</h1>
   <p class="lead">Ta część wymaga innej roli. Poproś administratora o dostęp.</p>
-  <a class="btn" href="{% url 'core:home' %}">Wróć na start</a>
+  <a class="btn btn-primary" href="{% url 'core:home' %}">Wróć na start</a>
+</div>
 {% endblock %}

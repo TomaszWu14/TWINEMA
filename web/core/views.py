@@ -1,23 +1,25 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+from django.urls import reverse
 
-# Moduły platformy w kolejności przepływu pracy. `ready=False` = zapowiedź na hubie.
+# Moduły platformy w kolejności przepływu pracy. `url` = nazwa widoku wejścia; brak = zapowiedź.
 MODULES = [
     {"key": "dane", "name": "Dane", "desc": "Materiały, nośniki, regały, historia ruchów — importy z plików.",
-     "phase": "F2", "ready": False},
+     "phase": "F2"},
     {"key": "model", "name": "Model hali", "desc": "Hala od zera albo z danych: regały, strefy, pola odkładcze.",
-     "phase": "F1", "ready": False},
+     "phase": "F1", "url": "twin:warehouse_model_list"},
     {"key": "symulacja", "name": "Symulacja", "desc": "Dzień projektowy, flota, kalibracja, porównanie wariantów.",
-     "phase": "F1", "ready": False},
+     "phase": "F1", "url": "twin:design_hub"},
     {"key": "ml", "name": "Prognozy i ML", "desc": "Wzrost wolumenów, segmentacja SKU, czas cyklu.",
-     "phase": "F4", "ready": False},
+     "phase": "F4"},
     {"key": "render", "name": "Render 3D", "desc": "Blender: ujęcia i animacje przepływów.",
-     "phase": "F3", "ready": False},
+     "phase": "F3"},
     {"key": "studio", "name": "Studio prezentacji", "desc": "Scenariusz, lektor, montaż — film i deck.",
-     "phase": "F5", "ready": False},
+     "phase": "F5"},
 ]
 
 
 @login_required
 def home(request):
-    return render(request, "core/home.html", {"modules": MODULES})
+    modules = [{**m, "url": reverse(m["url"]) if m.get("url") else ""} for m in MODULES]
+    return render(request, "core/home.html", {"modules": modules})
