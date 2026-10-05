@@ -146,7 +146,8 @@ export function decorParts(r, i) {
   const BAYS = Math.max(1, r.n_bays), LEVELS = Math.max(1, r.n_levels);
   const D = r.depth, LH = r.level_h, BW = r.width / BAYS;
   const fill = typeof r.fill_pct === 'number' ? Math.max(0, Math.min(100, r.fill_pct)) / 100 : DECOR_FILL;
-  const shelf = LH < 1.0 || D < 0.9;
+  // jeden predykat z serwera (rack_class); w edytorze — pole equipment; geometria tylko dla starych danych
+  const shelf = r.rack_class ? r.rack_class === 'shelf' : r.equipment ? r.equipment === 'shelf' : (LH < 1.0 || D < 0.9);
   const clear = LH - 0.12;                                 // światło pod belką wyższego poziomu
   for (let lvl = 0; lvl < LEVELS; lvl++) {
     const y = lvl * LH;

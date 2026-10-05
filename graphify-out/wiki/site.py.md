@@ -4,10 +4,10 @@
 
 ## Key Concepts
 
-- **design_kpi.py** (22 connections) — `web/twin/design_kpi.py`
-- **rack_axes()** (20 connections) — `web/twin/blender_route.py`
+- **rack_axes()** (23 connections) — `web/twin/blender_route.py`
+- **design_kpi.py** (23 connections) — `web/twin/design_kpi.py`
 - **test_design_variants.py** (16 connections) — `web/twin/tests/test_design_variants.py`
-- **rack_to_element()** (14 connections) — `web/twin/design_kpi.py`
+- **rack_to_element()** (15 connections) — `web/twin/design_kpi.py`
 - **compute_kpi()** (12 connections) — `web/twin/design_kpi.py`
 - **travel_stats()** (10 connections) — `web/twin/design_kpi.py`
 - **_el()** (9 connections) — `web/twin/tests/test_design_variants.py`
@@ -33,7 +33,7 @@
 
 ## Relationships
 
-- [twinema_design_kit.py](twinema_design_kit.py.md) (11 shared connections)
+- [twinema_design_kit.py](twinema_design_kit.py.md) (12 shared connections)
 - [scenario/services.py](scenario-services.py.md) (7 shared connections)
 - [layout-editor.js](layout-editor.js.md) (4 shared connections)
 - [blender_scene.py](blender_scene.py.md) (3 shared connections)
@@ -42,9 +42,9 @@
 - [scene-builder.js](scene-builder.js.md) (1 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [roles.py](roles.py.md) (1 shared connections)
-- [packaging.py](packaging.py.md) (1 shared connections)
-- [staffing.py](staffing.py.md) (1 shared connections)
+- [context_processors.py](context_processors.py.md) (1 shared connections)
+- [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
+- [DaneViewTests](DaneViewTests.md) (1 shared connections)
 
 ## Source Files
 
@@ -54,7 +54,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 168 (100%)
+- EXTRACTED: 173 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

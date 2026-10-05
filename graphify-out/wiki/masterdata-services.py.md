@@ -1,6 +1,6 @@
 # masterdata/services.py
 
-> 24 nodes · cohesion 0.12
+> 26 nodes · cohesion 0.12
 
 ## Key Concepts
 
@@ -21,18 +21,20 @@
 - **.test_racks_inside_hall_and_not_overlapping()** (2 connections) — `web/twin/tests/test_design_generator.py`
 - **_rect()** (2 connections) — `web/twin/tests/test_design_generator.py`
 - **Generator hali od parametrów — nowy magazyn „od zera” (plan 2026-10-02, etap…** (1 connections) — `web/twin/design_generator.py`
+- **Poziomy składowania z podłogą: góra najwyższej palety ≤ wysokość − tryskacze.** (1 connections) — `web/twin/design_generator.py`
+- **[korytarz][A|B][korytarz]… — y każdego rzędu; A patrzy na korytarz przed, B za.** (1 connections) — `web/twin/design_generator.py`
 - **.test_capacity_meets_targets()** (1 connections) — `web/twin/tests/test_design_generator.py`
 - **.test_docks_on_opposite_walls()** (1 connections) — `web/twin/tests/test_design_generator.py`
 - **.test_hall_size_and_aspect()** (1 connections) — `web/twin/tests/test_design_generator.py`
 - **.test_vna_aisles_wide_enough()** (1 connections) — `web/twin/tests/test_design_generator.py`
 - **SimpleTestCase** (1 connections)
 - **Generator hali od parametrów (plan 2026-10-02, etap 1): pojemność, geometria,…** (1 connections) — `web/twin/tests/test_design_generator.py`
-- **Edycja wariantu hali blokami (plan 2026-10-02, etap 4).** (1 connections) — `web/twin/tests/test_model_edit.py`
+- *... and 1 more nodes in this community*
 
 ## Relationships
 
 - [analyze](analyze.md) (7 shared connections)
-- [load_demo](load_demo.md) (5 shared connections)
+- [BuildSceneTests](BuildSceneTests.md) (5 shared connections)
 - [twin/models.py](twin-models.py.md) (4 shared connections)
 - [detect](detect.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
@@ -48,7 +50,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 125 (100%)
+- EXTRACTED: 127 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

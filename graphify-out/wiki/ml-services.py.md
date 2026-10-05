@@ -35,11 +35,11 @@
 - [scene-data.js](scene-data.js.md) (4 shared connections)
 - [test_design_forecast.py](test_design_forecast.py.md) (4 shared connections)
 - [forecast.py](forecast.py.md) (2 shared connections)
-- [test_deck.py](test_deck.py.md) (2 shared connections)
+- [build_deck](build_deck.md) (2 shared connections)
 - [scenario/models.py](scenario-models.py.md) (2 shared connections)
 - [test_voice.py](test_voice.py.md) (1 shared connections)
-- [views_showcase.py](views_showcase.py.md) (1 shared connections)
-- [roles.py](roles.py.md) (1 shared connections)
+- [test_showcase.py](test_showcase.py.md) (1 shared connections)
+- [context_processors.py](context_processors.py.md) (1 shared connections)
 
 ## Source Files
 

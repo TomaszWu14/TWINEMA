@@ -1,4 +1,4 @@
-# ParseTests
+# map_columns
 
 > 17 nodes · cohesion 0.22
 

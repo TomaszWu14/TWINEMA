@@ -30,7 +30,7 @@
 - [ForecastTests](ForecastTests.md) (2 shared connections)
 - [scene-data.js](scene-data.js.md) (1 shared connections)
 - [ScenarioViewTests](ScenarioViewTests.md) (1 shared connections)
-- [load_demo](load_demo.md) (1 shared connections)
+- [BuildSceneTests](BuildSceneTests.md) (1 shared connections)
 
 ## Source Files
 

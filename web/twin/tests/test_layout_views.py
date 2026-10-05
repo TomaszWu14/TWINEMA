@@ -96,6 +96,16 @@ class LayoutApiTests(TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertEqual([i["code"] for i in r.json()["issues"]], ["aisle"])
 
+    def test_issue_indexes_point_to_returned_order(self):
+        data = self._get()
+        data["racks"][1]["y"] = 7.6                                     # ostrzeżenie alejki V-001 / V-002
+        extra = {**data["racks"][0], "id": None, "zone": "A", "rack_id": "001", "x": 40, "y": 30}
+        data["racks"] = [data["racks"][1], data["racks"][0], extra]     # kolejność klienta ≠ sortowanie
+        r = self._post("save", data).json()
+        issue = next(i for i in r["issues"] if i["code"] == "aisle")
+        names = {f'{r["racks"][k]["zone"]}-{r["racks"][k]["rack_id"]}' for k in issue["racks"]}
+        self.assertEqual(names, {"V-001", "V-002"})
+
     def test_stale_version_is_409(self):
         data = self._get()
         self._post("save", self._get())                                 # ktoś inny zapisał w międzyczasie

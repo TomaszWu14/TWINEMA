@@ -10,6 +10,7 @@ from django.urls import reverse
 
 from twin.addressing import parse_bay_numbers
 from twin.blender_route import rack_corners
+from twin.blender_scene import rack_class
 from twin.ewm_service import active_master
 from twin.model_geometry import floor_size, is_geometry_csv, parse_geometry_csv
 from twin.models import BayTemplate, WarehouseTaskBatch
@@ -250,6 +251,7 @@ def model_scene_data(wm, racks=None):
             "angle": r.angle_deg,
             "n_levels": r.n_levels, "n_bays": r.n_bays,
             "level_h": r.level_height_cm / 100,
+            "rack_class": rack_class({"equipment": r.equipment, "level_h": r.level_height_cm / 100}),
             "color": zone_color.get(r.zone, "#3b82f6"),
             # Wypełnienie regału [%] dla wskaźnika 3D (kolor + %). None → „brak danych"
             # (szary). Realne źródło (stan magazynu) podpinane w osobnym kroku — na razie

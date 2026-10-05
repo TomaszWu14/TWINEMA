@@ -12,7 +12,7 @@
 
 ### imports
 - [warehouse_blender.py](warehouse_blender.py.md) `EXTRACTED`
-- warehouse_design_sim.py `EXTRACTED`
+- [warehouse_design_sim.py](warehouse_design_sim.py.md) `EXTRACTED`
 - [warehouse_tasks.py](warehouse_tasks.py.md) `EXTRACTED`
 - test_design_sim.py `EXTRACTED`
 - warehouse_compare.py `EXTRACTED`

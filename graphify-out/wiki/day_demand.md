@@ -1,17 +1,17 @@
 # day_demand
 
-> 46 nodes · cohesion 0.07
+> 43 nodes · cohesion 0.07
 
 ## Key Concepts
 
-- **warehouse_model.py** (34 connections) — `web/twin/views/warehouse_model.py`
-- **rack_corners()** (26 connections) — `web/twin/blender_route.py`
+- **warehouse_model.py** (36 connections) — `web/twin/views/warehouse_model.py`
+- **rack_corners()** (27 connections) — `web/twin/blender_route.py`
 - **test_model_geometry.py** (11 connections) — `web/twin/tests/test_model_geometry.py`
 - **parse_geometry_csv()** (9 connections) — `web/twin/model_geometry.py`
 - **active_master()** (8 connections) — `web/twin/ewm_service.py`
+- **hall_feature_kinds()** (8 connections) — `web/twin/shared.py`
 - **model_geometry.py** (7 connections) — `web/twin/model_geometry.py`
 - **floor_size()** (7 connections) — `web/twin/model_geometry.py`
-- **hall_feature_kinds()** (7 connections) — `web/twin/shared.py`
 - **GeometryUploadTests** (7 connections) — `web/twin/tests/test_model_geometry.py`
 - **_create_from_geometry()** (7 connections) — `web/twin/views/warehouse_model.py`
 - **is_geometry_csv()** (6 connections) — `web/twin/model_geometry.py`
@@ -29,7 +29,7 @@
 - **warehouse_model_coords()** (3 connections) — `web/twin/views/warehouse_model.py`
 - **_num()** (2 connections) — `web/twin/model_geometry.py`
 - **.test_detects_geometry_header_not_location_codes()** (2 connections) — `web/twin/tests/test_model_geometry.py`
-- *... and 21 more nodes in this community*
+- *... and 18 more nodes in this community*
 
 ## Relationships
 
@@ -40,10 +40,10 @@
 - [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
 - [ewm_service.py](ewm_service.py.md) (3 shared connections)
 - [layout-panels.js](layout-panels.js.md) (3 shared connections)
-- [ParseTests](ParseTests.md) (2 shared connections)
+- [blender_scene.py](blender_scene.py.md) (2 shared connections)
+- [map_columns](map_columns.md) (2 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [staffing.py](staffing.py.md) (1 shared connections)
-- [blender_scene.py](blender_scene.py.md) (1 shared connections)
+- [scenario/views.py](scenario-views.py.md) (1 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)
 
 ## Source Files
@@ -57,7 +57,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 213 (96%)
+- EXTRACTED: 214 (96%)
 - INFERRED: 8 (4%)
 - AMBIGUOUS: 0 (0%)
 

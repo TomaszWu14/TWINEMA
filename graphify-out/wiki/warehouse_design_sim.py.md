@@ -1,4 +1,4 @@
-# shared.py
+# warehouse_design_sim.py
 
 > 3 nodes · cohesion 0.67
 

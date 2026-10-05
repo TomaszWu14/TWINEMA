@@ -1,43 +1,54 @@
 # scenario/views.py
 
-> 16 nodes · cohesion 0.21
+> 35 nodes · cohesion 0.08
 
 ## Key Concepts
 
-- **detect()** (14 connections) — `web/twin/ewm_detect.py`
-- **ewm_detect.py** (13 connections) — `web/twin/ewm_detect.py`
-- **parse_code()** (8 connections) — `web/twin/addressing.py`
-- **letter_rank()** (5 connections) — `web/twin/addressing.py`
-- **_grid()** (5 connections) — `web/twin/ewm_detect.py`
-- **_shape()** (5 connections) — `web/twin/ewm_detect.py`
-- **_distance()** (4 connections) — `web/twin/ewm_detect.py`
-- **_template_sig()** (3 connections) — `web/twin/ewm_detect.py`
-- **_new_template()** (2 connections) — `web/twin/ewm_detect.py`
-- **Klucz sortowania liter poziomów: znane litery wg LETTER_ORDER, obce na końcu.** (1 connections) — `web/twin/addressing.py`
-- **Kod EWM → (strefa, przejście, gniazdo, pozycja, litera, połówka) albo None.** (1 connections) — `web/twin/addressing.py`
-- **„Wykryj z EWM”: kody lokalizacji z mastera → propozycja szablonów gniazd, reguł…** (1 connections) — `web/twin/ewm_detect.py`
-- **k pozycji × [(litera, split)] → zbiór komórek (pozycja, litera, połówka).** (1 connections) — `web/twin/ewm_detect.py`
-- **Komórki gniazda → (sygnatura obrysu, czy siatka regularna). Sygnatura = (k,…** (1 connections) — `web/twin/ewm_detect.py`
-- **Liczba różnic gniazda od szablonu: brakujące + nadmiarowe komórki + inne typy…** (1 connections) — `web/twin/ewm_detect.py`
-- **rows: [{"zone", "rack_id", "n_bays"}]; master: [(kod, typ_ewm, wysokość_mm,…** (1 connections) — `web/twin/ewm_detect.py`
+- **FloorGrid** (20 connections) — `web/twin/blender_route.py`
+- **BlenderExportViewTests** (10 connections) — `web/twin/tests/test_blender_export.py`
+- **BuildSceneTests** (9 connections) — `web/twin/tests/test_blender_export.py`
+- **.route()** (7 connections) — `web/twin/blender_route.py`
+- **_scene()** (7 connections) — `web/twin/tests/test_blender_export.py`
+- **.__init__()** (6 connections) — `web/twin/blender_route.py`
+- **RouteGeometryTests** (6 connections) — `web/twin/tests/test_blender_export.py`
+- **.nearest_free()** (5 connections) — `web/twin/blender_route.py`
+- **.cell_of()** (4 connections) — `web/twin/blender_route.py`
+- **._get()** (4 connections) — `web/twin/tests/test_blender_export.py`
+- **._astar()** (3 connections) — `web/twin/blender_route.py`
+- **.center()** (3 connections) — `web/twin/blender_route.py`
+- **._clamp_i()** (3 connections) — `web/twin/blender_route.py`
+- **._clamp_j()** (3 connections) — `web/twin/blender_route.py`
+- **.is_free()** (3 connections) — `web/twin/blender_route.py`
+- **_simplify()** (3 connections) — `web/twin/blender_route.py`
+- **.test_inbound_pallet_ends_in_rack_outbound_vanishes_at_dock()** (3 connections) — `web/twin/tests/test_blender_export.py`
+- **.test_route_never_crosses_a_rack()** (3 connections) — `web/twin/tests/test_blender_export.py`
+- **.test_unreachable_target_falls_back_to_straight_line()** (3 connections) — `web/twin/tests/test_blender_export.py`
+- **_dedupe()** (2 connections) — `web/twin/blender_route.py`
+- **.test_bad_forklift_param_falls_back()** (2 connections) — `web/twin/tests/test_blender_export.py`
+- **.test_demo_export_is_downloadable_json()** (2 connections) — `web/twin/tests/test_blender_export.py`
+- **.test_requires_login()** (2 connections) — `web/twin/tests/test_blender_export.py`
+- **.test_carried_pallet_rides_on_forks()** (2 connections) — `web/twin/tests/test_blender_export.py`
+- **.test_deterministic_for_same_model()** (2 connections) — `web/twin/tests/test_blender_export.py`
+- *... and 10 more nodes in this community*
 
 ## Relationships
 
-- [layout-panels.js](layout-panels.js.md) (6 shared connections)
-- [bay_templates.py](bay_templates.py.md) (4 shared connections)
-- [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
-- [SimViewTests](SimViewTests.md) (2 shared connections)
-- [StudioViewTests](StudioViewTests.md) (1 shared connections)
+- [twin/models.py](twin-models.py.md) (6 shared connections)
+- [blender_scene.py](blender_scene.py.md) (5 shared connections)
+- [kpi_facts](kpi_facts.md) (3 shared connections)
+- [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (3 shared connections)
+- [day_demand](day_demand.md) (1 shared connections)
+- [site.py](site.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/addressing.py`
-- `web/twin/ewm_detect.py`
+- `web/twin/blender_route.py`
+- `web/twin/tests/test_blender_export.py`
 
 ## Audit Trail
 
-- EXTRACTED: 64 (97%)
-- INFERRED: 2 (3%)
+- EXTRACTED: 126 (95%)
+- INFERRED: 7 (5%)
 - AMBIGUOUS: 0 (0%)
 
 ---

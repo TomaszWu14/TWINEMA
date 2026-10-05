@@ -100,7 +100,7 @@ def run_costs(run, rates=None):
     positions = {"reach": 0, "vna": 0, "shelf": 0}
     for r in model_racks(wm):
         p = rack_to_element(r)["params"]
-        positions[r.get("equipment") or "reach"] += p["bays"] * p["levels"] * p["pallets_per_bay"]
+        positions[{"pallet": "reach"}.get(r["rack_class"], r["rack_class"])] += p["bays"] * p["levels"] * p["pallets_per_bay"]
     kinds = list(wm.features.values_list("kind", flat=True))
     eq = sc.fleet_equipment
     fleet = {"name": eq.name if eq else "wózki", "units": sc.fleet_units,
@@ -109,12 +109,15 @@ def run_costs(run, rates=None):
     # miks dni w roku: ta symulacja + najnowsza symulacja drugiego typu dnia na tym samym modelu
     by_kind = {run.day_kind: run}
     other = "peak" if run.day_kind == "typical" else "typical"
-    if (o := ScenarioRun.objects.filter(scenario=sc, model=wm, day_kind=other).order_by("-created_at").first()):
+    if (o := ScenarioRun.objects.filter(scenario=sc, model=wm, day_kind=other)
+              .defer("events").order_by("-created_at").first()):
         by_kind[other] = o
     days = []
     for kind, n in costs.mix_days(sc.work_days, sc.peak_days_year, "peak" in by_kind, "typical" in by_kind):
         a, day = by_kind[kind].result["agg"], sc.days.filter(kind=kind).first()
-        days.append({"kind": kind, "days": n, "fleet_busy_h": a["fleet_util_pct"]["mean"] / 100 * sc.fleet_units * 24,
+        busy = (a["fleet_busy_h"]["mean"] if "fleet_busy_h" in a          # stare przebiegi: odtwarzane z %
+                else a["fleet_util_pct"]["mean"] / 100 * sc.fleet_units * 24)
+        days.append({"kind": kind, "days": n, "fleet_busy_h": busy,
                      "volumes": {"pallets": a["pallets_in"]["mean"] + a["pallets_out"]["mean"],
                                  "parcels": a["parcels"]["mean"], "orders": (day.orders_avg * sc.growth) if day else 0}})
     return costs.compute(

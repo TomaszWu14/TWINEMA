@@ -6,8 +6,8 @@
 
 - **Layout** (12 connections) — `web/twin/design_sim.py`
 - **_manh()** (8 connections) — `web/twin/design_sim.py`
+- **_is_shelf()** (7 connections) — `web/twin/blender_scene.py`
 - **.vna_slot()** (7 connections) — `web/twin/design_sim.py`
-- **_is_shelf()** (6 connections) — `web/twin/blender_scene.py`
 - **._front()** (6 connections) — `web/twin/design_sim.py`
 - **.__init__()** (6 connections) — `web/twin/design_sim.py`
 - **.ok()** (4 connections) — `web/twin/design_sim.py`
@@ -34,7 +34,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 58 (94%)
+- EXTRACTED: 59 (94%)
 - INFERRED: 4 (6%)
 - AMBIGUOUS: 0 (0%)
 

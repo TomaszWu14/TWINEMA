@@ -28,7 +28,7 @@
 - [simulate](simulate.md) (7 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (3 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (2 shared connections)
-- [load_demo](load_demo.md) (2 shared connections)
+- [BuildSceneTests](BuildSceneTests.md) (2 shared connections)
 - [ForecastTests](ForecastTests.md) (2 shared connections)
 - [blender_scene.py](blender_scene.py.md) (1 shared connections)
 

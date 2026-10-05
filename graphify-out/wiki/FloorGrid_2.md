@@ -2,7 +2,7 @@
 
 > God node · 20 connections · `web/twin/blender_route.py`
 
-**Community:** [staffing.py](staffing.py.md)
+**Community:** [scenario/views.py](scenario-views.py.md)
 
 ## Connections by Relation
 
@@ -34,7 +34,7 @@
 
 ### uses
 - BlenderExportViewTests `INFERRED`
-- BuildSceneTests `INFERRED`
+- [BuildSceneTests](BuildSceneTests.md) `INFERRED`
 - _Ctx `INFERRED`
 - RouteGeometryTests `INFERRED`
 

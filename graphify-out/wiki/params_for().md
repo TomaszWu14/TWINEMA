@@ -1,6 +1,6 @@
 # params_for()
 
-> God node · 19 connections · `web/twin/design_catalog.py`
+> God node · 21 connections · `web/twin/design_catalog.py`
 
 **Community:** [twinema_design_kit.py](twinema_design_kit.py.md)
 
@@ -16,6 +16,7 @@
 - _rack() `EXTRACTED`
 - load_variant() `EXTRACTED`
 - rebuild_all() `EXTRACTED`
+- rack() `EXTRACTED`
 - .test_variant_summary() `EXTRACTED`
 - .test_every_element_has_label_and_params() `EXTRACTED`
 - .test_footprint() `EXTRACTED`
@@ -29,6 +30,7 @@
 - design_kpi.py `EXTRACTED`
 - test_design_variants.py `EXTRACTED`
 - test_design_catalog.py `EXTRACTED`
+- [test_aisles.py](test_aisles.py.md) `EXTRACTED`
 
 ### rationale_for
 - Parametry elementu: domyślne z katalogu + nadpisania (tylko znane klucze). `EXTRACTED`

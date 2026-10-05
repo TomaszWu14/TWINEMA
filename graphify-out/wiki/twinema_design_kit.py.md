@@ -1,11 +1,11 @@
 # twinema_design_kit.py
 
-> 19 nodes · cohesion 0.15
+> 18 nodes · cohesion 0.15
 
 ## Key Concepts
 
-- **design_catalog.py** (20 connections) — `web/twin/design_catalog.py`
-- **params_for()** (19 connections) — `web/twin/design_catalog.py`
+- **design_catalog.py** (24 connections) — `web/twin/design_catalog.py`
+- **params_for()** (21 connections) — `web/twin/design_catalog.py`
 - **test_design_catalog.py** (13 connections) — `web/twin/tests/test_design_catalog.py`
 - **footprint()** (11 connections) — `web/twin/design_catalog.py`
 - **variant_summary()** (9 connections) — `web/twin/design_catalog.py`
@@ -14,7 +14,6 @@
 - **CatalogTests** (7 connections) — `web/twin/tests/test_design_catalog.py`
 - **pallet_positions()** (5 connections) — `web/twin/design_catalog.py`
 - **_geometry()** (4 connections) — `tools/blender/twinema_design_kit.py`
-- **_span()** (4 connections) — `web/twin/design_catalog.py`
 - **height()** (3 connections) — `web/twin/design_catalog.py`
 - **.test_every_element_has_label_and_params()** (3 connections) — `web/twin/tests/test_design_catalog.py`
 - **.test_footprint()** (3 connections) — `web/twin/tests/test_design_catalog.py`
@@ -26,8 +25,8 @@
 
 ## Relationships
 
-- [DaneViewTests](DaneViewTests.md) (13 shared connections)
-- [site.py](site.py.md) (11 shared connections)
+- [site.py](site.py.md) (12 shared connections)
+- [DaneViewTests](DaneViewTests.md) (12 shared connections)
 - [scene-builder.js](scene-builder.js.md) (9 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
 - [day_demand](day_demand.md) (1 shared connections)
@@ -41,7 +40,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 125 (100%)
+- EXTRACTED: 127 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

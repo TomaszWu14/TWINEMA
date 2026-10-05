@@ -25,9 +25,16 @@ class SimForm(forms.Form):
                                                               "max": services.MAX_RUNS}))
 
 
-def _cell(agg, key, fmt="{:g}"):
+def kpi_num(value, unit):
+    """Liczba KPI do wyświetlenia: sztuki (bez jednostki — palety, paczki, auta, zadania) jako całe,
+    czasy i procenty z jednym miejscem po przecinku. Średnie z przebiegów bywają ułamkowe („917,5 palet”)."""
+    return f"{round(value):d}" if not unit else f"{round(value, 1):g}"
+
+
+def _cell(agg, key):
     a = agg[key]
-    return {"label": a["label"], "unit": a["unit"], "mean": fmt.format(a["mean"]), "worst": fmt.format(a["worst"])}
+    return {"label": a["label"], "unit": a["unit"], "mean": kpi_num(a["mean"], a["unit"]),
+            "worst": kpi_num(a["worst"], a["unit"])}
 
 
 def _sim_view(run):

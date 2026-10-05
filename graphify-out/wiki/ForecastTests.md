@@ -25,7 +25,7 @@
 - [draft_script](draft_script.md) (2 shared connections)
 - [detect](detect.md) (2 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (1 shared connections)
-- [load_demo](load_demo.md) (1 shared connections)
+- [BuildSceneTests](BuildSceneTests.md) (1 shared connections)
 
 ## Source Files
 

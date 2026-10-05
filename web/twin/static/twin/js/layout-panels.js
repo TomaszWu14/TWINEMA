@@ -199,7 +199,7 @@ function initForms() {
     const w = v.bays * v.bay_width_cm / 100, d = v.rows * (v.depth_cm / 100 + v.aisle);
     addItems(makeBlock({ x: snap(cx - w / 2), y: snap(cy - d / 2), rows: v.rows, bays: v.bays, levels: v.levels,
       bayWidthCm: v.bay_width_cm, depthCm: v.depth_cm, levelHeightCm: v.level_height_cm, aisle: v.aisle, zone,
-      ids: nextRackIds(S.racks, zone, v.rows), backToBack: b.back.checked })
+      ids: nextRackIds(S.racks, zone, v.rows), backToBack: b.back.checked, backGap: CFG.backGap })
       .map((r) => ({ id: null, ...r, equipment: b.equipment.value })), S.racks);
   });
   const fk = $('le-feature-kind'), f = $('le-feature').elements;
