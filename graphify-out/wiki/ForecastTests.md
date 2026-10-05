@@ -21,11 +21,11 @@
 
 - [simulate](simulate.md) (3 shared connections)
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) (2 shared connections)
-- [places.py](places.py.md) (2 shared connections)
-- [StudioViewTests](StudioViewTests.md) (2 shared connections)
+- [scenario/services.py](scenario-services.py.md) (2 shared connections)
+- [draft_script](draft_script.md) (2 shared connections)
 - [detect](detect.md) (2 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (1 shared connections)
-- [test_dane.py](test_dane.py.md) (1 shared connections)
+- [load_demo](load_demo.md) (1 shared connections)
 
 ## Source Files
 

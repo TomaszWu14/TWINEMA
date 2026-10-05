@@ -1,0 +1,51 @@
+{% extends "core/base.html" %}
+{% block title %}Prezentacje 3D — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .sh-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:0 0 12px; }
+  .sh-new { display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1.3fr) auto; gap:12px; align-items:end; }
+  @media (max-width: 900px) { .sh-new { grid-template-columns:1fr; } }
+  .sh-new label { display:flex; flex-direction:column; gap:4px; font-size:var(--fs-sm); color:var(--fg-muted); }
+  .sh-items { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; margin-top:24px; }
+  .sh-item { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:14px 16px;
+             display:flex; flex-direction:column; gap:6px; color:inherit; text-decoration:none; }
+  .sh-item:hover, .sh-item:focus-visible { border-color:var(--primary); }
+  .sh-item h3 { margin:0; font-size:var(--fs-md); }
+  .sh-meta { font-size:var(--fs-xs); color:var(--fg-subtle); }
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-header__title">Prezentacje 3D</div>
+    <div class="page-header__sub">Pokaz projektu w przeglądarce zamiast filmu: przeloty po hali i działce, wyniki dnia, szczyt animacji, wąskie gardła, wnioski. Pełny ekran klawiszem F.</div>
+  </div>
+</div>
+
+{% if is_designer %}
+<div class="card"><div class="card-body">
+  <h2 class="sh-sec">Nowa prezentacja</h2>
+  <form class="sh-new" method="post" action="{% url 'scenario:showcase_create' %}">{% csrf_token %}
+    <label for="{{ form.title.id_for_label }}">{{ form.title.label }} {{ form.title }}</label>
+    <label for="{{ form.model.id_for_label }}">{{ form.model.label }} {{ form.model }}</label>
+    <label for="{{ form.run.id_for_label }}">{{ form.run.label }} (opcjonalnie) {{ form.run }}</label>
+    <button class="btn btn-primary" type="submit">Utwórz ze szablonu</button>
+  </form>
+  <p class="text-muted text-sm" style="margin:8px 0 0">Szablon: działka → hala → strefy → doki → wyniki → szczyt dnia → wąskie gardła → podsumowanie z liczbami. Potem poprawiasz podpisy i dodajesz własne ujęcia.</p>
+</div></div>
+{% endif %}
+
+{% if items %}
+<div class="sh-items">
+  {% for p in items %}
+  <a class="sh-item" href="{% url 'scenario:showcase' p.pk %}">
+    <h3>{{ p.title }}</h3>
+    <div class="sh-meta">„{{ p.model.name }}” · {{ p.slides|length }} slajdów{% if p.run %} · z wynikami symulacji{% endif %}</div>
+    <div class="sh-meta">{{ p.updated_at|date:"d.m.Y H:i" }}{% if p.created_by %} · {{ p.created_by }}{% endif %}</div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card" style="margin-top:24px"><div class="empty-state">Brak prezentacji.{% if is_designer %} Wybierz model hali (i wynik symulacji) powyżej.{% endif %}</div></div>
+{% endif %}
+{% endblock %}

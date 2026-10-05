@@ -336,3 +336,25 @@ class Shift(models.Model):
     def as_dict(self):
         return {"process": self.process, "start_h": self.start_h, "end_h": self.end_h,
                 "break_min": self.break_min, "people": self.people}
+
+
+class Showcase(models.Model):
+    """Prezentacja 3D dla zarządu (P1): model hali (+ działka) i opcjonalnie wynik symulacji; slajdy to lista
+    JSON (`showcase.clean_slides`), kolejność = kolejność listy. Zamiennik filmu — F5 `studio` zostaje osobno."""
+    title = models.CharField(max_length=200, verbose_name="Tytuł")
+    model = models.ForeignKey("twin.WarehouseModel", on_delete=models.CASCADE, related_name="showcases",
+                              verbose_name="Model hali")
+    run = models.ForeignKey(ScenarioRun, on_delete=models.SET_NULL, null=True, blank=True, related_name="showcases",
+                            verbose_name="Wynik symulacji")
+    slides = models.JSONField(default=list)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-updated_at", "-pk"]
+        verbose_name = "Prezentacja 3D"
+        verbose_name_plural = "Prezentacje 3D"
+
+    def __str__(self):
+        return self.title

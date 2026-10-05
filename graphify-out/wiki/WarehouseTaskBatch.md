@@ -2,7 +2,7 @@
 
 > God node · 22 connections · `web/twin/models_tasks.py`
 
-**Community:** [places.py](places.py.md)
+**Community:** [scenario/services.py](scenario-services.py.md)
 
 ## Connections by Relation
 
@@ -18,7 +18,7 @@
 - warehouse_compare.py `EXTRACTED`
 - warehouse_calibration.py `EXTRACTED`
 - ewm_tasks_import.py `EXTRACTED`
-- [ml/views.py](ml-views.py.md) `EXTRACTED`
+- ml/views.py `EXTRACTED`
 - [test_design_forecast.py](test_design_forecast.py.md) `EXTRACTED`
 - warehouse_design_day.py `EXTRACTED`
 - warehouse_forecast.py `EXTRACTED`

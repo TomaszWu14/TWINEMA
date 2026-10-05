@@ -1,48 +1,45 @@
 # StudioViewTests
 
-> 16 nodes · cohesion 0.13
+> 20 nodes · cohesion 0.23
 
 ## Key Concepts
 
-- **WarehouseTask** (15 connections) — `web/twin/models_tasks.py`
-- **ForecastViewTests** (8 connections) — `web/twin/tests/test_design_forecast.py`
-- **MlRunTests** (6 connections) — `web/ml/tests/test_ml.py`
-- **.setUpTestData()** (3 connections) — `web/twin/tests/test_design_forecast.py`
-- **.setUpTestData()** (3 connections) — `web/twin/tests/test_design_sim.py`
-- **.setUpTestData()** (2 connections) — `web/ml/tests/test_ml.py`
-- **Meta** (2 connections) — `web/twin/models_tasks.py`
-- **.test_home_lists_runs()** (1 connections) — `web/ml/tests/test_ml.py`
-- **.test_segmentation_run_and_csv()** (1 connections) — `web/ml/tests/test_ml.py`
-- **.test_viewer_cannot_run_designer_can_and_run_is_recorded()** (1 connections) — `web/ml/tests/test_ml.py`
-- **TestCase** (1 connections)
-- **.__str__()** (1 connections) — `web/twin/models_tasks.py`
-- **.setUp()** (1 connections) — `web/twin/tests/test_design_forecast.py`
-- **.test_page_shows_multiplier_and_links()** (1 connections) — `web/twin/tests/test_design_forecast.py`
-- **.test_profile_links_to_forecast()** (1 connections) — `web/twin/tests/test_design_forecast.py`
-- **TestCase** (1 connections)
+- **test_addressing.py** (15 connections) — `web/twin/tests/test_addressing.py`
+- **expand_row()** (14 connections) — `web/twin/addressing.py`
+- **row()** (11 connections) — `web/twin/tests/test_addressing.py`
+- **ExpandRowTests** (10 connections) — `web/twin/tests/test_addressing.py`
+- **codes()** (5 connections) — `web/twin/tests/test_addressing.py`
+- **.test_bay_skip_and_bay_template()** (5 connections) — `web/twin/tests/test_addressing.py`
+- **.test_split_and_unsplit()** (5 connections) — `web/twin/tests/test_addressing.py`
+- **.test_location_overrides()** (4 connections) — `web/twin/tests/test_addressing.py`
+- **.test_numbering_with_gaps()** (4 connections) — `web/twin/tests/test_addressing.py`
+- **.test_pick_template_with_halves()** (4 connections) — `web/twin/tests/test_addressing.py`
+- **ov()** (4 connections) — `web/twin/tests/test_addressing.py`
+- **ExpandModelTests** (3 connections) — `web/twin/tests/test_addressing.py`
+- **.test_duplicates_between_rows()** (3 connections) — `web/twin/tests/test_addressing.py`
+- **.test_geometry_along_and_z()** (3 connections) — `web/twin/tests/test_addressing.py`
+- **.test_reverse_mirrors_along()** (3 connections) — `web/twin/tests/test_addressing.py`
+- **.test_template_none_gives_nothing()** (3 connections) — `web/twin/tests/test_addressing.py`
+- **SimpleTestCase** (3 connections)
+- **Rząd + szablon domyślny + wyjątki → lista miejsc (dict). Klucze: code, bay,…** (1 connections) — `web/twin/addressing.py`
+- **lvl()** (1 connections) — `web/twin/tests/test_addressing.py`
+- **Generator adresów modelu magazynu: szablon gniazda + reguła rzędu + wyjątki…** (1 connections) — `web/twin/tests/test_addressing.py`
 
 ## Relationships
 
-- [test_design_forecast.py](test_design_forecast.py.md) (4 shared connections)
-- [places.py](places.py.md) (3 shared connections)
-- [warehouse_tasks.py](warehouse_tasks.py.md) (2 shared connections)
-- [simulate](simulate.md) (2 shared connections)
-- [ForecastTests](ForecastTests.md) (2 shared connections)
-- [scene-data.js](scene-data.js.md) (1 shared connections)
-- [ScenarioViewTests](ScenarioViewTests.md) (1 shared connections)
-- [test_dane.py](test_dane.py.md) (1 shared connections)
+- [layout-panels.js](layout-panels.js.md) (10 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
+- [scenario/views.py](scenario-views.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/ml/tests/test_ml.py`
-- `web/twin/models_tasks.py`
-- `web/twin/tests/test_design_forecast.py`
-- `web/twin/tests/test_design_sim.py`
+- `web/twin/addressing.py`
+- `web/twin/tests/test_addressing.py`
 
 ## Audit Trail
 
-- EXTRACTED: 39 (81%)
-- INFERRED: 9 (19%)
+- EXTRACTED: 102 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

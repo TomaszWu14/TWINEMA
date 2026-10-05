@@ -11,7 +11,7 @@
 ## Relationships
 
 - [twin/models.py](twin-models.py.md) (1 shared connections)
-- [places.py](places.py.md) (1 shared connections)
+- [scenario/services.py](scenario-services.py.md) (1 shared connections)
 
 ## Source Files
 

@@ -1,10 +1,10 @@
-# places.py
+# scenario/services.py
 
 > 82 nodes · cohesion 0.05
 
 ## Key Concepts
 
-- **shared.py** (40 connections) — `web/twin/shared.py`
+- **shared.py** (41 connections) — `web/twin/shared.py`
 - **warehouse_blender.py** (26 connections) — `web/twin/views/warehouse_blender.py`
 - **model_racks()** (24 connections) — `web/twin/blender_scene.py`
 - **hall_feature_dict()** (23 connections) — `web/twin/shared.py`
@@ -17,13 +17,13 @@
 - **views/__init__.py** (17 connections) — `web/twin/views/__init__.py`
 - **model_floor()** (14 connections) — `web/twin/blender_scene.py`
 - **load_inputs()** (13 connections) — `web/twin/design_day.py`
+- **safe_json()** (12 connections) — `web/twin/shared.py`
 - **ewm_tasks_compare()** (12 connections) — `web/twin/views/warehouse_compare.py`
 - **warehouse_design_day.py** (12 connections) — `web/twin/views/warehouse_design_day.py`
 - **warehouse_forecast.py** (12 connections) — `web/twin/views/warehouse_forecast.py`
 - **blender_tasks.py** (11 connections) — `web/twin/blender_tasks.py`
 - **_sim_scene()** (11 connections) — `web/twin/views/warehouse_blender.py`
 - **sim_params()** (11 connections) — `web/twin/views/warehouse_design_sim.py`
-- **safe_json()** (10 connections) — `web/twin/shared.py`
 - **ewm_tasks_calibration()** (10 connections) — `web/twin/views/warehouse_calibration.py`
 - **design_day()** (10 connections) — `web/twin/views/warehouse_design_sim.py`
 - **run_simulation()** (9 connections) — `web/twin/views/warehouse_design_sim.py`
@@ -40,10 +40,10 @@
 - [twin/models.py](twin-models.py.md) (9 shared connections)
 - [simulate](simulate.md) (9 shared connections)
 - [detect](detect.md) (9 shared connections)
-- [test_s3b_views.py](test_s3b_views.py.md) (8 shared connections)
+- [roles.py](roles.py.md) (8 shared connections)
 - [site.py](site.py.md) (7 shared connections)
-- [equipment/models.py](equipment-models.py.md) (6 shared connections)
-- [ml/views.py](ml-views.py.md) (5 shared connections)
+- [test_equipment.py](test_equipment.py.md) (6 shared connections)
+- [ml/services.py](ml-services.py.md) (5 shared connections)
 - [test_design_forecast.py](test_design_forecast.py.md) (5 shared connections)
 
 ## Source Files
@@ -68,7 +68,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 535 (99%)
+- EXTRACTED: 538 (99%)
 - INFERRED: 7 (1%)
 - AMBIGUOUS: 0 (0%)
 

@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **twin/models.py** (62 connections) — `web/twin/models.py`
-- **WarehouseModel** (43 connections) — `web/twin/models.py`
+- **twin/models.py** (64 connections) — `web/twin/models.py`
+- **WarehouseModel** (45 connections) — `web/twin/models.py`
 - **WarehouseModelRack** (24 connections) — `web/twin/models.py`
 - **test_design_calibration.py** (19 connections) — `web/twin/tests/test_design_calibration.py`
 - **test_ewm_tasks_flow.py** (19 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
@@ -34,17 +34,17 @@
 ## Relationships
 
 - [day_demand](day_demand.md) (12 shared connections)
-- [places.py](places.py.md) (9 shared connections)
-- [addressing.py](addressing.py.md) (7 shared connections)
+- [scenario/services.py](scenario-services.py.md) (9 shared connections)
+- [test_ml.py](test_ml.py.md) (7 shared connections)
 - [scene-data.js](scene-data.js.md) (6 shared connections)
-- [EwmViewsTests](EwmViewsTests.md) (6 shared connections)
-- [export.py](export.py.md) (6 shared connections)
+- [test_ewm_service.py](test_ewm_service.py.md) (6 shared connections)
+- [staffing.py](staffing.py.md) (6 shared connections)
 - [BayTemplate](BayTemplate.md) (5 shared connections)
 - [blender_scene.py](blender_scene.py.md) (5 shared connections)
-- [test_master_data.py](test_master_data.py.md) (4 shared connections)
-- [resolve_moves](resolve_moves.md) (4 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (4 shared connections)
+- [test_ewm_tasks_flow.py](test_ewm_tasks_flow.py.md) (4 shared connections)
 - [simulate](simulate.md) (4 shared connections)
-- [VoiceViewTests](VoiceViewTests.md) (4 shared connections)
+- [layout-hall.js](layout-hall.js.md) (4 shared connections)
 
 ## Source Files
 
@@ -62,7 +62,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 255 (96%)
+- EXTRACTED: 259 (96%)
 - INFERRED: 10 (4%)
 - AMBIGUOUS: 0 (0%)
 

@@ -1,0 +1,153 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}{{ sc.title }} — Prezentacja 3D — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .sh-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:0 0 10px; }
+  .sh-grid { display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:16px; align-items:start; }
+  .sh-grid.is-view { grid-template-columns:1fr; }
+  @media (max-width: 1100px) { .sh-grid { grid-template-columns:1fr; } }
+  #sh-stage { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:10px; }
+  .sh-bar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:8px; }
+  .sh-bar .btn[aria-pressed="true"] { background:var(--primary); color:var(--primary-fg, #111); border-color:var(--primary); }
+  .sh-count { font:600 var(--fs-sm) var(--font-mono); min-width:5ch; text-align:center; }
+  .sh-clock { font:700 var(--fs-md) var(--font-mono); color:var(--primary); }
+  #sh-wrap { position:relative; height:66vh; min-height:380px; border-radius:var(--radius); overflow:hidden; background:#0f172a; }
+  #sh-canvas { display:block; width:100% !important; height:100% !important; }
+  .sh-overlay { position:absolute; left:16px; right:16px; bottom:56px; z-index:4; pointer-events:none; display:grid; gap:4px;
+                max-width:min(760px, calc(100% - 32px)); background:rgba(15,23,42,.84); color:#f1f5f9; border-radius:10px; padding:12px 16px; }
+  .sh-overlay h2 { margin:0; font-size:1.25rem; line-height:1.25; }
+  .sh-overlay p { margin:0; font-size:var(--fs-sm); line-height:1.45; color:#cbd5e1; }
+  .sh-overlay.is-text { top:50%; bottom:auto; left:50%; right:auto; transform:translate(-50%,-50%); text-align:center; padding:28px 32px; }
+  .sh-overlay.is-text h2 { font-size:2rem; }
+  .sh-overlay.is-text p { font-size:var(--fs-md); }
+  .sh-kpi { position:absolute; left:16px; right:16px; top:16px; z-index:4; display:grid; gap:12px;
+            grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); max-height:calc(100% - 150px); overflow:auto; }
+  .sh-card { background:rgba(15,23,42,.88); color:#f1f5f9; border-radius:10px; padding:12px 14px; }
+  .sh-card h3 { margin:0 0 8px; font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.1em; color:var(--primary); }
+  .sh-card dl { display:grid; grid-template-columns:1fr auto; gap:4px 10px; margin:0; font-size:var(--fs-sm); }
+  .sh-card dd { margin:0; text-align:right; font-family:var(--font-mono); font-weight:600; white-space:nowrap; }
+  .sh-card dd small { display:block; font-weight:400; font-size:var(--fs-xs); color:#94a3b8; }
+  .sh-card dt { line-height:1.3; }
+  .sh-progress { display:flex; gap:4px; margin-top:8px; }
+  .sh-progress button { flex:1; height:8px; border:0; border-radius:4px; background:var(--border); cursor:pointer; padding:0; }
+  .sh-progress button[aria-current="step"] { background:var(--primary); }
+  .sh-progress button:focus-visible { outline:2px solid var(--primary); outline-offset:2px; }
+  #sh-stage:fullscreen, #sh-stage.is-pseudo-fs { padding:10px; }
+  #sh-stage:fullscreen #sh-wrap, #sh-stage.is-pseudo-fs #sh-wrap { height:calc(100vh - 90px); }
+  .sh-keys { font-size:var(--fs-xs); color:var(--fg-subtle); margin:8px 0 0; }
+  #sh-stage:fullscreen .sh-keys, #sh-stage.is-pseudo-fs .sh-keys { display:none; }
+  .sh-list { list-style:none; margin:0; padding:0; display:grid; gap:8px; max-height:60vh; overflow:auto; }
+  .sh-list li { border:1px solid var(--border); border-radius:var(--radius); padding:8px; display:grid; gap:6px; background:var(--surface-2); }
+  .sh-list li.is-current { border-color:var(--primary); }
+  .sh-list label { display:grid; gap:2px; font-size:var(--fs-xs); color:var(--fg-muted); }
+  .sh-row { display:flex; gap:4px; align-items:center; flex-wrap:wrap; }
+  .sh-type { font:600 var(--fs-xs) var(--font-mono); margin-right:auto; }
+  .sh-share { display:flex; gap:6px; }
+  .sh-share input { flex:1; min-width:0; }
+  .sh-text li { margin-bottom:8px; }
+</style>
+{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Ścieżka"><a href="{% url 'scenario:showcase_list' %}">Prezentacje 3D</a> / {{ sc.title }}</nav>
+<div class="page-header">
+  <div>
+    <div class="page-header__title">{{ sc.title }}</div>
+    <div class="page-header__sub">„{{ sc.model.name }}”{% if sc.run %} · wyniki: {{ sc.run.scenario.name }}, {{ sc.run.get_day_kind_display|lower }}{% endif %} · {{ sc.slides|length }} slajdów</div>
+  </div>
+</div>
+
+<div class="sh-grid{% if not is_designer %} is-view{% endif %}">
+  <section id="sh-stage" aria-label="Prezentacja">
+    <div class="sh-bar" role="group" aria-label="Sterowanie pokazem">
+      <button type="button" class="btn btn-ghost btn-sm" id="sh-prev" aria-label="Poprzedni slajd">← Wstecz</button>
+      <span class="sh-count" id="sh-count" aria-hidden="true">–</span>
+      <button type="button" class="btn btn-primary btn-sm" id="sh-next" aria-label="Następny slajd">Dalej →</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="sh-auto" aria-pressed="false">Odtwarzaj automatycznie</button>
+      <label class="text-sm">co <input type="number" id="sh-auto-sec" min="3" max="60" value="8" style="width:4.5em" class="form-control"> s</label>
+      <span class="sh-clock" id="sh-clock" aria-hidden="true"></span>
+      <span class="text-sm text-muted" id="sh-status" role="status"></span>
+      <button type="button" class="btn btn-secondary btn-sm" id="sh-fs" aria-pressed="false" title="Pełny ekran (F, wyjście Esc)" style="margin-left:auto">Pełny ekran</button>
+    </div>
+    <div id="sh-wrap">
+      <canvas id="sh-canvas" aria-label="Scena 3D projektu magazynu" role="img"></canvas>
+      {% include "twin/_3d_boot.html" with status_id="sh-3d-status" %}
+      <div class="sh-kpi" id="sh-kpi" hidden></div>
+      <div class="sh-overlay" id="sh-overlay"><h2 id="sh-title"></h2><p id="sh-caption"></p></div>
+    </div>
+    <nav class="sh-progress" id="sh-progress" aria-label="Slajdy"></nav>
+    <p class="sh-keys">← → / PageUp PageDown / spacja / klik w scenę — slajdy · Home End — początek i koniec · F — pełny ekran · obracanie: przeciągnij myszą</p>
+  </section>
+
+  {% if is_designer %}
+  <aside style="display:grid;gap:16px">
+    <div class="card"><div class="card-body">
+      <h2 class="sh-sec">Slajdy</h2>
+      <div class="sh-row" style="margin-bottom:8px">
+        <button type="button" class="btn btn-secondary btn-sm" id="sh-add-cam">+ Bieżące ujęcie</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="sh-add-text">+ Tekst</button>
+        <button type="button" class="btn btn-primary btn-sm" id="sh-save">Zapisz</button>
+      </div>
+      <p class="text-sm text-muted" id="sh-save-state" role="status" aria-live="polite" style="margin:0 0 8px"></p>
+      <ol class="sh-list" id="sh-list" aria-label="Lista slajdów (przeciągnij, aby zmienić kolejność)"></ol>
+    </div></div>
+    <div class="card"><div class="card-body" style="display:grid;gap:8px">
+      <h2 class="sh-sec">Udostępnij</h2>
+      <div class="sh-share">
+        <label class="sr-only" for="sh-share">Adres prezentacji</label>
+        <input class="form-control" id="sh-share" value="{{ share_url }}" readonly>
+        <button type="button" class="btn btn-ghost btn-sm" id="sh-copy">Kopiuj</button>
+      </div>
+      <p class="text-sm text-muted" style="margin:0">Dla zalogowanych — odbiorca z rolą Podgląd widzi tylko pokaz.</p>
+      <form method="post" action="{% url 'scenario:showcase_reset' sc.pk %}">{% csrf_token %}
+        <button type="submit" class="btn btn-ghost btn-sm">Zastąp slajdy szablonem startowym</button></form>
+      <form method="post" action="{% url 'scenario:showcase_delete' sc.pk %}">{% csrf_token %}
+        <button type="submit" class="btn btn-ghost btn-sm">Usuń prezentację</button></form>
+    </div></div>
+  </aside>
+  {% endif %}
+</div>
+
+<details class="card" style="margin-top:16px"><summary class="card-body" style="cursor:pointer">Wersja tekstowa slajdów (alternatywa dla 3D)</summary>
+  <div class="card-body">
+    <ol class="sh-text">
+      {% for s in sc.slides %}
+      <li><b>{{ s.title }}</b>{% if s.caption %} — {{ s.caption }}{% endif %}
+        {% if s.type == "kpi" %}<ul>{% for k in s.cards %}{% for key, c in cards.items %}{% if key == k %}
+          <li>{{ c.title }}: {% for r in c.rows %}{{ r.label }} {{ r.value }}{% if r.unit %} {{ r.unit }}{% endif %}{% if not forloop.last %}; {% endif %}{% endfor %}</li>
+        {% endif %}{% endfor %}{% endfor %}</ul>{% endif %}
+      </li>
+      {% empty %}<li>Brak slajdów.</li>{% endfor %}
+    </ol>
+  </div>
+</details>
+<p class="sr-only" id="sh-live" aria-live="polite"></p>
+<p class="sr-only" id="sh-fs-live" aria-live="polite"></p>
+{% csrf_token %}
+{% endblock %}
+
+{% block extra_scripts %}
+<script type="importmap">{"imports":{"three":"/static/twin/vendor/three.module.js","three/addons/":"/static/twin/vendor/addons/"}}</script>
+<script type="module">
+import { startShowcase } from '{% static "twin/js/showcase.js" %}';
+const $ = (id) => document.getElementById(id);
+if (window.__tw3dNoWebGL) {
+  window.tw3dFail('Twoja przeglądarka nie obsługuje grafiki 3D (WebGL) — zobacz wersję tekstową slajdów poniżej.');
+  throw new Error('WebGL unavailable');
+}
+$('sh-copy')?.addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText($('sh-share').value); $('sh-save-state').textContent = 'Skopiowano adres.'; }
+  catch { $('sh-share').select(); }
+});
+startShowcase({
+  cfg: {{ config_json|safe }}, editable: {{ is_designer|yesno:"true,false" }},
+  csrf: document.querySelector('[name=csrfmiddlewaretoken]').value,
+  el: { stage: $('sh-stage'), wrap: $('sh-wrap'), canvas: $('sh-canvas'), kpi: $('sh-kpi'), overlay: $('sh-overlay'),
+        title: $('sh-title'), caption: $('sh-caption'), counter: $('sh-count'), progress: $('sh-progress'),
+        prev: $('sh-prev'), next: $('sh-next'), auto: $('sh-auto'), autoSec: $('sh-auto-sec'), fs: $('sh-fs'),
+        fsLive: $('sh-fs-live'), live: $('sh-live'), clock: $('sh-clock'), status: $('sh-status'),
+        list: $('sh-list'), addCam: $('sh-add-cam'), addText: $('sh-add-text'), save: $('sh-save'),
+        saveState: $('sh-save-state') },
+});
+</script>
+{% endblock %}

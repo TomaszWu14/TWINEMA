@@ -1,43 +1,33 @@
 # VoiceViewTests
 
-> 13 nodes · cohesion 0.29
+> 11 nodes · cohesion 0.33
 
 ## Key Concepts
 
-- **resolve_moves()** (11 connections) — `web/twin/blender_tasks.py`
-- **._scene()** (8 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
-- **ResolveMovesTests** (7 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
-- **_row()** (7 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
-- **SceneFromTasksTests** (7 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
-- **.test_agent_is_resource_or_user()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
-- **.test_endpoints_by_kind_and_unmapped_skipped()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
-- **.test_times_from_confirmation_with_compression()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
-- **.test_agents_from_resources_no_demo_forklifts()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
-- **.test_busy_agent_starts_next_task_right_after()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
-- **.test_task_starts_at_confirmation_and_times_monotonic()** (3 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
-- **SimpleTestCase** (2 connections)
-- **Wiersze WT (krotki ROW_FIELDS, rosnąco po potwierdzeniu) → (ruchy, pominięte).…** (1 connections) — `web/twin/blender_tasks.py`
+- **Api** (8 connections) — `tools/render_worker.py`
+- **render_worker.py** (7 connections) — `tools/render_worker.py`
+- **.get()** (7 connections) — `tools/render_worker.py`
+- **main()** (7 connections) — `tools/render_worker.py`
+- **.post_form()** (4 connections) — `tools/render_worker.py`
+- **._req()** (4 connections) — `tools/render_worker.py`
+- **find_blender()** (4 connections) — `tools/render_worker.py`
+- **run_job()** (4 connections) — `tools/render_worker.py`
+- **.claim()** (3 connections) — `tools/render_worker.py`
+- **.__init__()** (1 connections) — `tools/render_worker.py`
+- **Worker renderów TWINEMA — uruchamiany na komputerze z Blenderem (np. z GPU).…** (1 connections) — `tools/render_worker.py`
 
 ## Relationships
 
-- [twin/models.py](twin-models.py.md) (4 shared connections)
-- [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (3 shared connections)
-- [blender_scene.py](blender_scene.py.md) (2 shared connections)
-- [ScenarioViewTests](ScenarioViewTests.md) (2 shared connections)
-- [test_s3b_views.py](test_s3b_views.py.md) (1 shared connections)
-- [places.py](places.py.md) (1 shared connections)
-- [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [resolve_moves](resolve_moves.md) (1 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `web/twin/blender_tasks.py`
-- `web/twin/tests/test_ewm_tasks_flow.py`
+- `tools/render_worker.py`
 
 ## Audit Trail
 
-- EXTRACTED: 59 (97%)
-- INFERRED: 2 (3%)
+- EXTRACTED: 49 (98%)
+- INFERRED: 1 (2%)
 - AMBIGUOUS: 0 (0%)
 
 ---

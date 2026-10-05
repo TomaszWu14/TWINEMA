@@ -6,7 +6,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { EDGE_KINDS, FLAT_KINDS, decorParts, effectiveQuality, extents, hallWalls, isoView, localToWorld, outward, sitePlan,
+import { EDGE_KINDS, FLAT_KINDS, camAt, decorParts, effectiveQuality, extents, hallWalls, isoView, localToWorld, outward, sitePlan,
   rackMatrices, steelMatrices, steelMode, wallHidden } from './scene-data.js';
 import { buildSite } from './scene-site.js';
 
@@ -411,14 +411,13 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
     requestRender();
   }
 
-  // Przelot kamery: płynne przejście ~0,6 s (render na żądanie podtrzymuje klatki do końca).
-  let fly = null;
+  // Przelot kamery: płynne przejście (domyślnie 0,6 s; prezentacja wydłuża) — render na żądanie podtrzymuje klatki.
+  let fly = null, flyMs = 600;
   function look(px, py, pz, tx, ty, tz, animate = false) {
     if (!animate) {
       camera.position.set(px, py, pz); controls.target.set(tx, ty, tz); controls.update(); requestRender(); return;
     }
-    fly = { t0: performance.now(), p0: camera.position.clone(), q0: controls.target.clone(),
-      p1: new THREE.Vector3(px, py, pz), q1: new THREE.Vector3(tx, ty, tz) };
+    fly = { t0: performance.now(), a: pose(), b: { pos: [px, py, pz], target: [tx, ty, tz] } };
     requestRender();
   }
   /** Ujęcia: 'top' z góry, 'iso' izometria kadrowana do hali, 'sel' przelot do zaznaczenia. */
@@ -454,8 +453,8 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
     queued = false;
     if (document.hidden) return;
     if (fly) {
-      const k = Math.min(1, (performance.now() - fly.t0) / 600), e = k * k * (3 - 2 * k);
-      camera.position.lerpVectors(fly.p0, fly.p1, e); controls.target.lerpVectors(fly.q0, fly.q1, e);
+      const k = Math.min(1, (performance.now() - fly.t0) / flyMs), c = camAt(fly.a, fly.b, k);
+      camera.position.set(...c.pos); controls.target.set(...c.target);
       if (k >= 1) fly = null;
     }
     const moving = controls.update();
@@ -506,9 +505,13 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
     requestRender();
   }
 
+  function pose() {
+    return { pos: camera.position.toArray(), target: controls.target.toArray() };
+  }
+
   const api = { scene, camera, renderer, controls, requestRender, setData, highlight, view, resize, setDecor,
-    setQuality, quality: () => quality,
-    renderNow: () => { fly && (camera.position.copy(fly.p1), controls.target.copy(fly.q1), fly = null);
+    setQuality, quality: () => quality, look, pose, setFlyMs: (ms) => { flyMs = ms; },
+    renderNow: () => { fly && (camera.position.set(...fly.b.pos), controls.target.set(...fly.b.target), fly = null);
       controls.update(); cameraDependent(); renderer.render(scene, camera); } };
   if (debug) window.__tw3d = api;              // diagnostyka: ?debug3d=1 (zachowany bufor do readPixels)
   return api;

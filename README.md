@@ -6,7 +6,7 @@ TWINEMA łączy projektowanie centrum dystrybucyjnego w 3D z symulacją pracy i 
 prezentacji: układ hali i regałów → symulacja dnia projektowego → animacja przepływów
 w Blenderze → film z lektorem (ElevenLabs) i deck PDF.
 
-> Status: **F5 — Studio prezentacji: z modelu hali powstaje film PL z lektorem i napisami + deck PDF, w całości z aplikacji.** Wcześniej: F4 ML (prognoza, segmentacja), F3 render w Blenderze przez kolejkę i workera, F2 dane z plików, F1 rdzeń modelowania i symulacji. Mapa drogi i decyzje: [`docs/PLAN.md`](docs/PLAN.md), stan: [`docs/HANDOFF.md`](docs/HANDOFF.md).
+> Status: **P1 — prezentacja 3D w przeglądarce: pokaz projektu dla zarządu (przeloty po hali i działce, wyniki dnia, szczyt animacji, wąskie gardła, wnioski) zamiast filmu.** Wcześniej: edytor layoutu z działką, scenariusze z symulacją i animacją dnia, katalog sprzętu, F5 Studio (film + deck PDF), F4 ML (prognoza, segmentacja), F3 render w Blenderze przez kolejkę i workera, F2 dane z plików, F1 rdzeń modelowania i symulacji. Mapa drogi i decyzje: [`docs/PLAN.md`](docs/PLAN.md), stan: [`docs/HANDOFF.md`](docs/HANDOFF.md).
 
 ## Moduły
 
@@ -20,7 +20,16 @@ w Blenderze → film z lektorem (ElevenLabs) i deck PDF.
 | Symulacja | dzień projektowy, flota, kalibracja, porównanie wariantów | F1 ✅ |
 | Prognozy i ML | Holt-Winters i spółka kontra baseline (MAPE), segmentacja materiałów k-means | F4 ✅ |
 | Render 3D | kolejka ujęć, worker Blendera na PC (HTTPS + token), presety kamery, PNG/MP4 w aplikacji | F3 ✅ |
+| Prezentacje 3D | pokaz w przeglądarce: slajdy z ujęciami kamery, planszami KPI, szczytem animacji dnia i wąskimi gardłami; szablon startowy z modelu i wyniku symulacji, edytor slajdów, pełny ekran, wersja tekstowa | P1 ✅ |
 | Studio prezentacji | scenariusz (szablon albo Claude), lektor ElevenLabs z napisami, klipy i kadry z Blendera, montaż MP4, deck PDF | F5 ✅ |
+
+### Jak pokazać projekt zarządowi
+
+1. **Model hali** z działką w edytorze (np. kopia obecnej hali jako „przyszły layout”).
+2. **Scenariusz** (dzień typowy / szczytowy) → „Uruchom symulację” na tym modelu.
+3. Przy wyniku symulacji: **„prezentacja 3D”** → „Utwórz ze szablonu” — powstaje pokaz: działka → hala → strefy → doki → wyniki dnia → pojemność i działka → szczyt dnia → wąskie gardła → podsumowanie z liczbami.
+4. Popraw podpisy, ustaw kamerę i kliknij **„+ Bieżące ujęcie”** dla własnych kadrów, zapisz.
+5. Wyślij adres prezentacji (przycisk „Kopiuj”) osobom z rolą **Podgląd** — widzą tylko pokaz (bez danych źródłowych). Pokaz: ← → albo klik, **F** — pełny ekran, „Odtwarzaj automatycznie”.
 
 ### Jak powstaje film i deck
 

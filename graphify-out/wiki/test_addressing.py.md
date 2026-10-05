@@ -15,7 +15,7 @@
 
 ## Relationships
 
-- [test_master_data.py](test_master_data.py.md) (1 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
 
 ## Source Files
 

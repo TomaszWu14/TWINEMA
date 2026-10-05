@@ -27,10 +27,10 @@
 
 ## Relationships
 
-- [places.py](places.py.md) (5 shared connections)
+- [scenario/services.py](scenario-services.py.md) (5 shared connections)
 - [day-timeline.js](day-timeline.js.md) (4 shared connections)
-- [ml/views.py](ml-views.py.md) (4 shared connections)
-- [StudioViewTests](StudioViewTests.md) (4 shared connections)
+- [ml/services.py](ml-services.py.md) (4 shared connections)
+- [draft_script](draft_script.md) (4 shared connections)
 
 ## Source Files
 

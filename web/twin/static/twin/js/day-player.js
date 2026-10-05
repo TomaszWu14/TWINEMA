@@ -283,6 +283,11 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
     setSpeed(x) { speed = x; ui.onSpeed?.(x); },
     get t() { return t; }, get playing() { return playing; }, get speed() { return speed; },
     get frameMs() { return frameMs; },
+    /** Prezentacja (P1): obiekty animacji (auta, ludzie, palety, plac, podświetlenia) ukryte poza jej slajdami. */
+    setVisible(on) {
+      [yard, hi, ...Object.values(mesh).flatMap((m) => m.parts)].forEach((o) => { o.visible = on; });
+      viewer.requestRender();
+    },
     focus(keys) {
       const ds = keys.filter((k) => k.startsWith('dock:')).map((k) => places.docks[k.slice(5)]).filter(Boolean);
       if (ds.length) { frameDocks(ds); return; }
