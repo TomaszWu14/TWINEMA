@@ -18,12 +18,12 @@
 ## Relationships
 
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (4 shared connections)
-- [blender_route.py](blender_route.py.md) (3 shared connections)
+- [Item](Item.md) (3 shared connections)
 - [ewm_levels.py](ewm_levels.py.md) (2 shared connections)
 - [design_kpi.py](design_kpi.py.md) (1 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
 - [SlotLocator](SlotLocator.md) (1 shared connections)
-- [EwmViewsTests](EwmViewsTests.md) (1 shared connections)
+- [test_ewm_service.py](test_ewm_service.py.md) (1 shared connections)
 - [test_voice.py](test_voice.py.md) (1 shared connections)
 
 ## Source Files

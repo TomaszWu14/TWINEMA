@@ -12,7 +12,7 @@
 
 ## Relationships
 
-- [build_scene](build_scene.md) (2 shared connections)
+- [design_calibration.py](design_calibration.py.md) (2 shared connections)
 - [test_dane.py](test_dane.py.md) (2 shared connections)
 - [warehouse_blender.py](warehouse_blender.py.md) (2 shared connections)
 - [test_voice.py](test_voice.py.md) (1 shared connections)

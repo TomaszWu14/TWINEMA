@@ -28,8 +28,8 @@
 ## Relationships
 
 - [warehouse_blender.py](warehouse_blender.py.md) (5 shared connections)
-- [build_scene](build_scene.md) (4 shared connections)
-- [ml/views.py](ml-views.py.md) (4 shared connections)
+- [design_calibration.py](design_calibration.py.md) (4 shared connections)
+- [ml/services.py](ml-services.py.md) (4 shared connections)
 - [StudioViewTests](StudioViewTests.md) (4 shared connections)
 
 ## Source Files

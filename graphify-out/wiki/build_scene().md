@@ -31,7 +31,7 @@
 
 ### imports
 - test_ewm_tasks_flow.py `EXTRACTED`
-- [test_blender_export.py](test_blender_export.py.md) `EXTRACTED`
+- test_blender_export.py `EXTRACTED`
 - [test_container_inbound.py](test_container_inbound.py.md) `EXTRACTED`
 - [test_equipment_agents.py](test_equipment_agents.py.md) `EXTRACTED`
 

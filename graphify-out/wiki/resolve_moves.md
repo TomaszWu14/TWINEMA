@@ -1,4 +1,4 @@
-# ._scene
+# resolve_moves
 
 > 13 nodes · cohesion 0.29
 
@@ -24,10 +24,10 @@
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (3 shared connections)
 - [blender_scene.py](blender_scene.py.md) (2 shared connections)
 - [CalibrationViewTests](CalibrationViewTests.md) (2 shared connections)
-- [blender_route.py](blender_route.py.md) (1 shared connections)
+- [Item](Item.md) (1 shared connections)
 - [warehouse_blender.py](warehouse_blender.py.md) (1 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [test_design_calibration.py](test_design_calibration.py.md) (1 shared connections)
+- [calibrate](calibrate.md) (1 shared connections)
 
 ## Source Files
 

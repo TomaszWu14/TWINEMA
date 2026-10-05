@@ -5,7 +5,7 @@ długość rzędów (gniazda), wysokość (poziomy), usunięcie. Do tego kontrol
 i dopasowanie hali do obrysu. Graficzny edytor „jak w grze” to osobna inicjatywa
 (edytor układu, część 2) — tu tylko szybkie przeróbki wariantu z generatora.
 """
-from .blender_route import rack_corners
+from .blender_route import bbox, near_pairs, overlap_depth, rack_corners
 
 
 def zone_summary(racks):
@@ -37,21 +37,16 @@ def apply_zone_edit(racks, zone, *, dx=0.0, dy=0.0, n_bays=None, n_levels=None):
 
 
 def _box(r):
-    xs, ys = zip(*rack_corners(r), strict=True)
-    return min(xs), min(ys), max(xs), max(ys)
+    return bbox(rack_corners(r))
 
 
 def collisions(racks, tol=0.05):
-    """Pary regałów nachodzących na siebie (obrysy osiowe, tolerancja `tol` m) — [(etykieta, etykieta)]."""
-    boxes = sorted(((_box(r), f"{r['zone']}-{r['rack_id']}") for r in racks), key=lambda b: b[0][0])
-    out = []
-    for i, (a, la) in enumerate(boxes):
-        for b, lb in boxes[i + 1:]:
-            if b[0] >= a[2] - tol:                 # posortowane po x — dalej już nic nie zachodzi
-                break
-            if min(a[3], b[3]) - max(a[1], b[1]) > tol and min(a[2], b[2]) - max(a[0], b[0]) > tol:
-                out.append((la, lb))
-    return out
+    """Pary regałów nachodzących na siebie o więcej niż `tol` m — obrócone prostokąty (SAT), więc
+    regał pod kątem nie „koliduje" fałszywie przez swój obrys osiowy. [(etykieta, etykieta)]"""
+    corners = [rack_corners(r) for r in racks]
+    return [(f"{racks[i]['zone']}-{racks[i]['rack_id']}", f"{racks[j]['zone']}-{racks[j]['rack_id']}")
+            for i, j in near_pairs([bbox(c) for c in corners])
+            if overlap_depth(corners[i], corners[j]) > tol]
 
 
 def fit_floor(racks, width, depth, margin=1.0):

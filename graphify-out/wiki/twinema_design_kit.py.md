@@ -7,11 +7,11 @@
 - **twinema_design_kit.py** (16 connections) — `tools/blender/twinema_design_kit.py`
 - **_coll()** (8 connections) — `tools/blender/twinema_design_kit.py`
 - **start()** (8 connections) — `tools/blender/twinema_design_kit.py`
-- **load_variant()** (7 connections) — `tools/blender/twinema_design_kit.py`
 - **_make()** (7 connections) — `tools/blender/twinema_design_kit.py`
 - **summary()** (7 connections) — `tools/blender/twinema_design_kit.py`
 - **add()** (6 connections) — `tools/blender/twinema_design_kit.py`
 - **elements()** (6 connections) — `tools/blender/twinema_design_kit.py`
+- **load_variant()** (6 connections) — `tools/blender/twinema_design_kit.py`
 - **rebuild_all()** (6 connections) — `tools/blender/twinema_design_kit.py`
 - **add_block()** (5 connections) — `tools/blender/twinema_design_kit.py`
 - **export_variant()** (5 connections) — `tools/blender/twinema_design_kit.py`
@@ -32,7 +32,6 @@
 - [design_catalog.py](design_catalog.py.md) (9 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
 - [design_kpi.py](design_kpi.py.md) (1 shared connections)
-- [ValueError](ValueError.md) (1 shared connections)
 
 ## Source Files
 
@@ -40,8 +39,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 97 (99%)
-- INFERRED: 1 (1%)
+- EXTRACTED: 97 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

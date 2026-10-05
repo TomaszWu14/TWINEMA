@@ -1,4 +1,4 @@
-# test_design_calibration.py
+# calibrate
 
 > 15 nodes · cohesion 0.21
 
@@ -26,7 +26,7 @@
 - [twin/models.py](twin-models.py.md) (4 shared connections)
 - [warehouse_blender.py](warehouse_blender.py.md) (2 shared connections)
 - [CalibrationViewTests](CalibrationViewTests.md) (2 shared connections)
-- [._scene](_scene.md) (1 shared connections)
+- [resolve_moves](resolve_moves.md) (1 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
 - [simulate](simulate.md) (1 shared connections)
 

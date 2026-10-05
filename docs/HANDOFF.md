@@ -15,6 +15,7 @@ Plik dla kolejnej sesji (człowieka albo AI). Aktualny na 2026-10-05, po scaleni
 | F5b | `studio` | #9 | lektor ElevenLabs (`ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`, `ELEVENLABS_MODEL`), nagrywanie kwestia po kwestii, cache `VoiceTrack` po hashu (tekst+głos+model), napisy SRT z wyrównania znaków |
 | F5c | `studio` | #10 | ujęcia jako `RenderJob` z kolejki F3 (Full HD, długość = nagranie + 0,5 s, cache po hashu scena+preset+długość), `MontageJob` + API workera (`/api/studio/montage/…`, ten sam token), `tools/twinema_montage.py` (plansze, tpad/apad, concat, napisy mov_text) — montuje `render_worker.py`, gdy ma ffmpeg |
 | F5d | `studio` | #11 | kadr PNG na ujęcie (ten sam klik co klipy, cache po hashu), deck PDF 16:9 (`studio/deck.py`, fpdf2 + DejaVu w repo): tytuł → liczby z KPI → ujęcie na slajd → koniec; film i deck na górze gotowej prezentacji i na liście |
+| E1 | `twin` | — | silnik edytora layoutu: `twin/layout.py` + API `uklad.json` / `uklad/sprawdz/` / `uklad/zapisz/`, nowy rodzaj cechy „Pole odkładcze” (`staging`) |
 
 Przepływ filmu: kwestie (szablon/Claude) → zatwierdź → „Nagraj lektora” → „Renderuj ujęcia i kadry” (worker
 z Blenderem) → „Zmontuj film” (worker z ffmpeg) → MP4 + deck PDF + SRT. Do Claude i ElevenLabs idzie wyłącznie
@@ -34,6 +35,8 @@ Testy: `cd web && python manage.py test --parallel 4` (env: `DJANGO_DEBUG=true D
   uruchomione razem (testy mockują API i komendy) — sprawdzić synchronizację głosu, plansze, napisy, kadry.
 
 ## Następny krok: F6 — szlif (wg burzy mózgów, `docs/PLAN.md` §2.2 i §6)
+- **Priorytet od 2026-10-05:** edytor layoutu E1 → E2 (plan 2D) → E3 (podgląd 3D) → tryb prezentacji 3D →
+  katalog sprzętu — szczegóły w `docs/PLAN.md` („Po F5: budowanie przyszłego layoutu”).
 - ML3: model czasu cyklu (gradient boosting vs mediana real÷sym, MAE na odłożonych dniach).
 - Porównania wariantów w filmie (split-screen „obecny vs wariant”), katalog rynku → CAPEX/OPEX.
 - Unieważnianie renderów po zmianie samego modelu hali (dziś dopiero przy ponownym „Renderuj ujęcia”).

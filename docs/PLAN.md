@@ -120,6 +120,19 @@ KPI wariantu → Scenariusz (Claude + edycja) → Lektor (ElevenLabs, timestamps
 
 Ścieżka krytyczna: F0 → F1 → F2 → F3 → F5; F4 równolegle z F3.
 
+### Po F5: budowanie przyszłego layoutu (priorytet od 2026-10-05)
+
+Film i montaż odstawione na bok; główny cel = pokazać w przeglądarce, jak może wyglądać przyszły layout.
+Kolejność: **E1** silnik edytora (walidacja + API) → **E2** edytor planu 2D (przeciąganie regałów, doków,
+pól odkładczych, stref; KPI i problemy na żywo) → **E3** podgląd 3D obok edytora → **tryb prezentacji 3D**
+(przelot kamery, animacja przepływów, plansze KPI, link dla roli Podgląd) → **katalog sprzętu** (CAPEX).
+
+Decyzje: edytor pracuje na `WarehouseModel` (na nim działają 3D, animacja i symulacja); przyszły layout =
+kopia modelu. Oglądanie i animacja — w przeglądarce (three.js); Blender tylko opcjonalnie do renderów.
+E1: `twin/layout.py` (kolizje na obróconych prostokątach, regał w doku/bramie/polu odkładczym/stanowisku/
+korytarzu = błąd, poza halą, duplikat adresu; alejki z `design_catalog.check_aisles`; KPI z `compute_kpi`),
+API `magazyn/model/<pk>/uklad.json` · `uklad/sprawdz/` · `uklad/zapisz/` (blokada optymistyczna po `version`).
+
 ---
 
 ## 7. Ryzyka

@@ -31,6 +31,49 @@ def rack_corners(rack):
     return [rack_point(rack, a, c) for a, c in ((0, 0), (w, 0), (w, d), (0, d))]
 
 
+def bbox(corners):
+    xs, ys = zip(*corners, strict=True)
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def overlap_depth(ca, cb):
+    """Głębokość nachodzenia dwóch obróconych prostokątów (narożniki w kolejności obwodu) — test
+    osi rozdzielającej (SAT). ≤ 0 = rozłączne albo stykają się krawędzią."""
+    depth = math.inf
+    for poly in (ca, cb):
+        for i in range(2):                                  # prostokąt: 2 różne kierunki krawędzi
+            ex, ey = poly[i + 1][0] - poly[i][0], poly[i + 1][1] - poly[i][1]
+            n = math.hypot(ex, ey) or 1.0
+            ax, ay = -ey / n, ex / n
+            pa = [x * ax + y * ay for x, y in ca]
+            pb = [x * ax + y * ay for x, y in cb]
+            depth = min(depth, min(max(pa), max(pb)) - max(min(pa), min(pb)))
+            if depth <= 0:
+                return depth
+    return depth
+
+
+def near_pairs(boxes, pad=0.0, cell=6.0):
+    """Pary (i, j), i < j, których obrysy osiowe poszerzone o `pad` się stykają — przez siatkę
+    kubełków zamiast porównywania każdego z każdym (1000 regałów: tysiące par, nie pół miliona)."""
+    h = pad / 2
+    grown = [(x0 - h, y0 - h, x1 + h, y1 + h) for x0, y0, x1, y1 in boxes]
+    buckets = {}
+    for i, (x0, y0, x1, y1) in enumerate(grown):
+        for gx in range(int(x0 // cell), int(x1 // cell) + 1):
+            for gy in range(int(y0 // cell), int(y1 // cell) + 1):
+                buckets.setdefault((gx, gy), []).append(i)
+    out = set()
+    for members in buckets.values():
+        for k, i in enumerate(members):
+            a = grown[i]
+            for j in members[k + 1:]:
+                b = grown[j]
+                if a[0] <= b[2] and b[0] <= a[2] and a[1] <= b[3] and b[1] <= a[3]:
+                    out.add((min(i, j), max(i, j)))
+    return sorted(out)
+
+
 def _inside(pt, rack, margin):
     """Czy punkt leży w obrysie regału poszerzonym o `margin` [m]."""
     u_w, u_d = rack_axes(rack["angle"])

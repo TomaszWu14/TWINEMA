@@ -6,12 +6,12 @@
 
 - **warehouse_tasks.py** (22 connections) — `web/twin/views/warehouse_tasks.py`
 - **ewm_tasks_import.py** (16 connections) — `web/twin/ewm_tasks_import.py`
-- **run_import()** (9 connections) — `web/twin/ewm_tasks_import.py`
+- **run_import()** (8 connections) — `web/twin/ewm_tasks_import.py`
 - **ewm_tasks_import()** (8 connections) — `web/twin/views/warehouse_tasks.py`
 - **ewm_tasks_preview()** (8 connections) — `web/twin/views/warehouse_tasks.py`
 - **location_report()** (7 connections) — `web/twin/ewm_tasks_import.py`
-- **save_upload()** (7 connections) — `web/twin/ewm_tasks_import.py`
 - **upload_path()** (7 connections) — `web/twin/ewm_tasks_import.py`
+- **save_upload()** (6 connections) — `web/twin/ewm_tasks_import.py`
 - **_md_role** (6 connections)
 - **ewm_tasks_status()** (5 connections) — `web/twin/views/warehouse_tasks.py`
 - **_form()** (5 connections) — `web/twin/views/warehouse_tasks.py`
@@ -34,11 +34,10 @@
 ## Relationships
 
 - [warehouse_blender.py](warehouse_blender.py.md) (10 shared connections)
-- [SimulationViewTests](SimulationViewTests.md) (4 shared connections)
+- [WarehouseTask](WarehouseTask.md) (4 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (2 shared connections)
 - [Scan](Scan.md) (2 shared connections)
 - [StudioViewTests](StudioViewTests.md) (2 shared connections)
-- [ValueError](ValueError.md) (2 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (2 shared connections)
 
 ## Source Files
@@ -48,8 +47,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 140 (97%)
-- INFERRED: 4 (3%)
+- EXTRACTED: 140 (99%)
+- INFERRED: 2 (1%)
 - AMBIGUOUS: 0 (0%)
 
 ---

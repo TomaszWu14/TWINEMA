@@ -80,7 +80,7 @@ def _parse_loc_code(code):
 # ── Elementy hali ─────────────────────────────────────────────────────────────
 HALL_FEATURE_COLORS = {
     "dock": "#64748b", "gate": "#0ea5e9", "corridor": "#94a3b8",
-    "block_zone": "#a855f7", "returns": "#f43f5e", "leader": "#22c55e",
+    "block_zone": "#a855f7", "staging": "#f59e0b", "returns": "#f43f5e", "leader": "#22c55e",
     "station": "#eab308", "other": "#6b7280",
 }
 

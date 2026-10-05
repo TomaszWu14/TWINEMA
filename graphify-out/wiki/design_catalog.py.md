@@ -1,11 +1,11 @@
 # design_catalog.py
 
-> 25 nodes · cohesion 0.15
+> 24 nodes · cohesion 0.15
 
 ## Key Concepts
 
-- **params_for()** (20 connections) — `web/twin/design_catalog.py`
-- **design_catalog.py** (16 connections) — `web/twin/design_catalog.py`
+- **design_catalog.py** (19 connections) — `web/twin/design_catalog.py`
+- **params_for()** (19 connections) — `web/twin/design_catalog.py`
 - **test_design_catalog.py** (13 connections) — `web/twin/tests/test_design_catalog.py`
 - **footprint()** (11 connections) — `web/twin/design_catalog.py`
 - **variant_summary()** (9 connections) — `web/twin/design_catalog.py`
@@ -25,18 +25,17 @@
 - **Liczba miejsc paletowych elementu (0 dla transportu/kompletacji).** (1 connections) — `web/twin/design_catalog.py`
 - **Rzędy bloku regałów: lista przesunięć „w głąb" [m] kolejnych rzędów.…** (1 connections) — `web/twin/design_catalog.py`
 - **Rzut obrysu elementu na oś: (początek, koniec) [m]; along=True → szerokość.** (1 connections) — `web/twin/design_catalog.py`
-- **Wskaźniki wariantu: miejsca paletowe, powierzchnia zabudowy, sprzęt, naruszenia.** (1 connections) — `web/twin/design_catalog.py`
 - **Parametry elementu: domyślne z katalogu + nadpisania (tylko znane klucze).** (1 connections) — `web/twin/design_catalog.py`
 - **(szerokość wzdłuż osi elementu, głębokość) [m].** (1 connections) — `web/twin/design_catalog.py`
 - **Katalog elementów projektowania wariantów — twin/design_catalog.py (wspólny z…** (1 connections) — `web/twin/tests/test_design_catalog.py`
 
 ## Relationships
 
-- [DaneViewTests](DaneViewTests.md) (12 shared connections)
+- [DaneViewTests](DaneViewTests.md) (13 shared connections)
 - [design_kpi.py](design_kpi.py.md) (11 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (9 shared connections)
-- [ValueError](ValueError.md) (2 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
+- [test_model_geometry.py](test_model_geometry.py.md) (1 shared connections)
 - [generate](generate.md) (1 shared connections)
 
 ## Source Files
@@ -47,8 +46,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 126 (98%)
-- INFERRED: 2 (2%)
+- EXTRACTED: 129 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -149,32 +149,39 @@ def _span(e, axis, along):
 def check_aisles(elements):
     """Kontrola szerokości alejek między równoległymi elementami składowania.
 
-    elements: dicty {kind, x, y, angle, params, label}. Dla każdej pary regałów o tym
+    elements: dicty {kind, x, y, angle, params, label}. Dla każdej pary sąsiednich regałów o tym
     samym kącie, nakładających się wzdłuż osi, liczy prześwit między frontami; prześwit
-    0,05–aisle_m (węższy niż wymaga sprzęt, a nie „plecami do siebie") = naruszenie."""
+    0,05–aisle_m (węższy niż wymaga sprzęt, a nie „plecami do siebie") = naruszenie.
+    `ia`/`ib` = indeksy pary w `elements`."""
     import math
 
-    racks = [e for e in elements if e["kind"] in RACK_KINDS]
-    issues = []
-    for i, a in enumerate(racks):
-        for b in racks[i + 1:]:
-            if abs(((a["angle"] - b["angle"]) + 180) % 360 - 180) > 1:
-                continue
-            t = math.radians(a["angle"] or 0)
-            u_w, u_d = (math.cos(t), -math.sin(t)), (math.sin(t), math.cos(t))
+    from .blender_route import bbox, near_pairs, rack_corners
 
-            aw, bw = _span(a, u_w, along=True), _span(b, u_w, along=True)
-            if min(aw[1], bw[1]) - max(aw[0], bw[0]) <= 0.2:     # nie leżą naprzeciw siebie
-                continue
-            ad, bd = _span(a, u_d, along=False), _span(b, u_d, along=False)
-            gap = max(bd[0] - ad[1], ad[0] - bd[1])
-            need = max(ELEMENTS[a["kind"]].get("aisle_m", 0), ELEMENTS[b["kind"]].get("aisle_m", 0))
-            if gap < -0.01:
-                issues.append({"type": "kolizja", "a": a.get("label"), "b": b.get("label"),
-                               "gap_m": round(gap, 2), "need_m": need})
-            elif 0.3 < gap < need - 0.01:
-                issues.append({"type": "za wąska alejka", "a": a.get("label"), "b": b.get("label"),
-                               "gap_m": round(gap, 2), "need_m": need})
+    idx = [n for n, e in enumerate(elements) if e["kind"] in RACK_KINDS]
+    racks = [elements[n] for n in idx]
+    boxes = []
+    for e in racks:
+        w, d = footprint(e["kind"], e["params"])
+        boxes.append(bbox(rack_corners({"x": e["x"], "y": e["y"], "angle": e["angle"], "width": w, "depth": d})))
+    pad = max(ELEMENTS[k].get("aisle_m", 0) for k in RACK_KINDS) + 0.1     # dalej niż alejka = bez znaczenia
+    issues = []
+    for i, j in near_pairs(boxes, pad):
+        a, b = racks[i], racks[j]
+        if abs(((a["angle"] - b["angle"]) + 180) % 360 - 180) > 1:
+            continue
+        t = math.radians(a["angle"] or 0)
+        u_w, u_d = (math.cos(t), -math.sin(t)), (math.sin(t), math.cos(t))
+
+        aw, bw = _span(a, u_w, along=True), _span(b, u_w, along=True)
+        if min(aw[1], bw[1]) - max(aw[0], bw[0]) <= 0.2:     # nie leżą naprzeciw siebie
+            continue
+        ad, bd = _span(a, u_d, along=False), _span(b, u_d, along=False)
+        gap = max(bd[0] - ad[1], ad[0] - bd[1])
+        need = max(ELEMENTS[a["kind"]].get("aisle_m", 0), ELEMENTS[b["kind"]].get("aisle_m", 0))
+        kind = "kolizja" if gap < -0.01 else "za wąska alejka" if 0.3 < gap < need - 0.01 else None
+        if kind:
+            issues.append({"type": kind, "a": a.get("label"), "b": b.get("label"),
+                           "gap_m": round(gap, 2), "need_m": need, "ia": idx[i], "ib": idx[j]})
     return issues
 
 

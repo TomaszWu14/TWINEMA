@@ -255,6 +255,7 @@ class WarehouseHallFeature(models.Model):
         ("gate",       "Brama"),
         ("corridor",   "Korytarz / ciąg komunikacyjny"),
         ("block_zone", "Strefa blokowa / nietypowa"),
+        ("staging",    "Pole odkładcze"),
         ("returns",    "Strefa zwrotów"),
         ("leader",     "Stanowisko lidera"),
         ("station",    "Stanowisko / punkt kontroli"),

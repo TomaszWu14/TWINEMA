@@ -5,15 +5,15 @@
 ## Key Concepts
 
 - **twinema_warehouse_anim.py** (28 connections) — `tools/blender/twinema_warehouse_anim.py`
-- **build()** (14 connections) — `tools/blender/twinema_warehouse_anim.py`
+- **build()** (13 connections) — `tools/blender/twinema_warehouse_anim.py`
 - **_mat()** (12 connections) — `tools/blender/twinema_warehouse_anim.py`
 - **_obj()** (11 connections) — `tools/blender/twinema_warehouse_anim.py`
 - **_bl()** (10 connections) — `tools/blender/twinema_warehouse_anim.py`
 - **_box_mesh()** (10 connections) — `tools/blender/twinema_warehouse_anim.py`
 - **_animate_item()** (8 connections) — `tools/blender/twinema_warehouse_anim.py`
 - **_legend()** (8 connections) — `tools/blender/twinema_warehouse_anim.py`
-- **recolor()** (8 connections) — `tools/blender/twinema_warehouse_anim.py`
 - **_build_pallets()** (7 connections) — `tools/blender/twinema_warehouse_anim.py`
+- **recolor()** (7 connections) — `tools/blender/twinema_warehouse_anim.py`
 - **_animate_agent()** (6 connections) — `tools/blender/twinema_warehouse_anim.py`
 - **_build_feature()** (6 connections) — `tools/blender/twinema_warehouse_anim.py`
 - **_build_rack()** (6 connections) — `tools/blender/twinema_warehouse_anim.py`
@@ -33,7 +33,7 @@
 
 ## Relationships
 
-- [ValueError](ValueError.md) (2 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
@@ -41,8 +41,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 198 (99%)
-- INFERRED: 2 (1%)
+- EXTRACTED: 198 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

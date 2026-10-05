@@ -1,48 +1,53 @@
 # blender_route.py
 
-> 12 nodes · cohesion 0.18
+> 24 nodes · cohesion 0.14
 
 ## Key Concepts
 
-- **blender_stock.py** (24 connections) — `web/twin/blender_stock.py`
-- **build_scene_for_model()** (16 connections) — `web/twin/blender_scene.py`
-- **stock_for_scene()** (5 connections) — `web/masterdata/services.py`
-- **load_stock_inputs()** (5 connections) — `web/twin/blender_stock.py`
-- **window_source()** (4 connections) — `web/twin/blender_tasks.py`
-- **_activity_picks()** (3 connections) — `web/twin/blender_scene.py`
-- **Pozycje stanu jako dicty `build_pallets`: location, hu, sku, name, lot, expiry,…** (1 connections) — `web/masterdata/services.py`
-- **Aktywność pickerów (picker, kod, materiał; kolejność = confirmed_at) → trasy.…** (1 connections) — `web/twin/blender_scene.py`
-- **Scena dla `WarehouseModel`. `batch` = PickerActivityBatch (None → demo…** (1 connections) — `web/twin/blender_scene.py`
-- **Rzeczywiste palety w lokalizacjach → scena Blendera („cyfrowe zdjęcie"…** (1 connections) — `web/twin/blender_stock.py`
-- **Dane do `build_pallets`: (wiersze migawki, stany, aktywność). Stany = najnowszy…** (1 connections) — `web/twin/blender_stock.py`
-- **Opis źródła wózków do `scene.source` (odtwarzacz pokazuje go pod animacją).** (1 connections) — `web/twin/blender_tasks.py`
+- **model_edit.py** (14 connections) — `web/twin/model_edit.py`
+- **collisions()** (13 connections) — `web/twin/model_edit.py`
+- **warehouse_variant_edit.py** (12 connections) — `web/twin/views/warehouse_variant_edit.py`
+- **apply_zone_edit()** (8 connections) — `web/twin/model_edit.py`
+- **warehouse_model_zones()** (8 connections) — `web/twin/views/warehouse_variant_edit.py`
+- **fit_floor()** (7 connections) — `web/twin/model_edit.py`
+- **ModelEditTests** (7 connections) — `web/twin/tests/test_model_edit.py`
+- **zone_summary()** (6 connections) — `web/twin/model_edit.py`
+- **warehouse_model_copy()** (6 connections) — `web/twin/views/warehouse_variant_edit.py`
+- **_copy()** (5 connections) — `web/twin/tests/test_model_edit.py`
+- **_box()** (4 connections) — `web/twin/model_edit.py`
+- **.test_fit_floor_grows_with_racks()** (4 connections) — `web/twin/tests/test_model_edit.py`
+- **.test_longer_rows_keep_bay_width_and_can_collide()** (4 connections) — `web/twin/tests/test_model_edit.py`
+- **.test_generated_hall_has_no_collisions()** (3 connections) — `web/twin/tests/test_model_edit.py`
+- **.test_shift_moves_only_that_zone()** (3 connections) — `web/twin/tests/test_model_edit.py`
+- **.test_zone_summary()** (2 connections) — `web/twin/tests/test_model_edit.py`
+- **_num()** (2 connections) — `web/twin/views/warehouse_variant_edit.py`
+- **_md_role** (2 connections)
+- **Edycja wariantu hali blokami (plan 2026-10-02, etap 4) — czysty Python.…** (1 connections) — `web/twin/model_edit.py`
+- **{strefa: liczba rzędów, gniazd w rzędzie (maks.), poziomy (maks.)} dla…** (1 connections) — `web/twin/model_edit.py`
+- **Zmienia regały strefy w miejscu (dicty jak `model_racks`) i zwraca listę…** (1 connections) — `web/twin/model_edit.py`
+- **SimpleTestCase** (1 connections)
+- **require_POST** (1 connections)
+- **Kopia modelu (regały + elementy hali) — wariant do przeróbek bez ruszania…** (1 connections) — `web/twin/views/warehouse_variant_edit.py`
 
 ## Relationships
 
-- [warehouse_blender.py](warehouse_blender.py.md) (8 shared connections)
-- [blender_scene.py](blender_scene.py.md) (6 shared connections)
-- [SlotLocator](SlotLocator.md) (4 shared connections)
-- [blender_stock.py](blender_stock.py.md) (3 shared connections)
-- [ewm_levels.py](ewm_levels.py.md) (3 shared connections)
-- [test_dane.py](test_dane.py.md) (2 shared connections)
+- [generate](generate.md) (7 shared connections)
+- [warehouse_blender.py](warehouse_blender.py.md) (4 shared connections)
+- [test_model_geometry.py](test_model_geometry.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [test_voice.py](test_voice.py.md) (1 shared connections)
-- [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
-- [._scene](_scene.md) (1 shared connections)
-- [studio/api.py](studio-api.py.md) (1 shared connections)
-- [ml/views.py](ml-views.py.md) (1 shared connections)
+- [kpi_facts](kpi_facts.md) (1 shared connections)
+- [blender_scene.py](blender_scene.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/masterdata/services.py`
-- `web/twin/blender_scene.py`
-- `web/twin/blender_stock.py`
-- `web/twin/blender_tasks.py`
+- `web/twin/model_edit.py`
+- `web/twin/tests/test_model_edit.py`
+- `web/twin/views/warehouse_variant_edit.py`
 
 ## Audit Trail
 
-- EXTRACTED: 63 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 114 (98%)
+- INFERRED: 2 (2%)
 - AMBIGUOUS: 0 (0%)
 
 ---

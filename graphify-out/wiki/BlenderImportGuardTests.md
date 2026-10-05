@@ -1,12 +1,12 @@
-# params_for
+# BlenderImportGuardTests
 
 > 9 nodes · cohesion 0.33
 
 ## Key Concepts
 
 - **twinema_render.py** (6 connections) — `tools/blender/twinema_render.py`
-- **apply_preset()** (5 connections) — `tools/blender/twinema_render.py`
-- **render()** (5 connections) — `tools/blender/twinema_render.py`
+- **apply_preset()** (4 connections) — `tools/blender/twinema_render.py`
+- **render()** (4 connections) — `tools/blender/twinema_render.py`
 - **_video_settings()** (3 connections) — `tools/blender/twinema_render.py`
 - **_key()** (2 connections) — `tools/blender/twinema_render.py`
 - **main()** (2 connections) — `tools/blender/twinema_render.py`
@@ -16,7 +16,7 @@
 
 ## Relationships
 
-- [ValueError](ValueError.md) (2 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
@@ -24,8 +24,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 24 (92%)
-- INFERRED: 2 (8%)
+- EXTRACTED: 24 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

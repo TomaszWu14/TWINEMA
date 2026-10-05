@@ -5,9 +5,9 @@
 ## Key Concepts
 
 - **ewm_tasks.py** (22 connections) — `web/twin/ewm_tasks.py`
-- **iter_table()** (7 connections) — `web/twin/ewm_tasks.py`
-- **_parse_dt()** (5 connections) — `web/twin/ewm_tasks.py`
+- **iter_table()** (6 connections) — `web/twin/ewm_tasks.py`
 - **norm_header()** (4 connections) — `web/twin/ewm_tasks.py`
+- **_parse_dt()** (4 connections) — `web/twin/ewm_tasks.py`
 - **is_cancelled()** (3 connections) — `web/twin/ewm_tasks.py`
 - **kind_from_word()** (3 connections) — `web/twin/ewm_tasks.py`
 - **_parse_time()** (3 connections) — `web/twin/ewm_tasks.py`
@@ -26,9 +26,8 @@
 - [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (5 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (3 shared connections)
 - [studio/models.py](studio-models.py.md) (3 shared connections)
-- [SimulationViewTests](SimulationViewTests.md) (2 shared connections)
+- [WarehouseTask](WarehouseTask.md) (2 shared connections)
 - [warehouse_tasks.py](warehouse_tasks.py.md) (2 shared connections)
-- [ValueError](ValueError.md) (2 shared connections)
 
 ## Source Files
 
@@ -36,8 +35,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 59 (97%)
-- INFERRED: 2 (3%)
+- EXTRACTED: 59 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

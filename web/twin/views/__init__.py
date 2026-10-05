@@ -8,6 +8,7 @@ from .warehouse_design_day import *  # noqa: F401,F403
 from .warehouse_design_sim import *  # noqa: F401,F403
 from .warehouse_forecast import *  # noqa: F401,F403
 from .warehouse_generator import *  # noqa: F401,F403
+from .warehouse_layout import *  # noqa: F401,F403
 from .warehouse_model import *  # noqa: F401,F403
 from .warehouse_model_ewm import *  # noqa: F401,F403
 from .warehouse_racktype import *  # noqa: F401,F403
