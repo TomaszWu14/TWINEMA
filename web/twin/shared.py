@@ -82,6 +82,8 @@ HALL_FEATURE_COLORS = {
     "dock": "#64748b", "gate": "#0ea5e9", "corridor": "#94a3b8",
     "block_zone": "#a855f7", "staging": "#f59e0b", "returns": "#f43f5e", "leader": "#22c55e",
     "station": "#eab308", "other": "#6b7280",
+    "fire_route": "#dc2626", "charging": "#14b8a6", "walkway": "#4ade80", "truckway": "#facc15",
+    "zone_temp": "#38bdf8", "zone_adr": "#ea580c", "zone_oversize": "#78716c", "zone_value": "#c026d3",
 }
 
 
@@ -101,6 +103,17 @@ def hall_feature_dict(f):
         "color": (f.color_hex or HALL_FEATURE_COLORS.get(f.kind, "#6b7280")),
         "zone_code": f.zone_code,
     }
+
+
+def model_columns(wm):
+    """Słupy hali jako elementy „column” (format hall_feature_dict + `height`) dla widoku 3D i Blendera."""
+    from .layout import column_list
+
+    h = wm.clear_height_m or 8.0
+    return [{"id": None, "kind": "column", "kind_label": "Słup", "label": "", "zone_code": "",
+             "x": c["x"] - c["size"] / 2, "y": c["y"] - c["size"] / 2, "width": c["size"], "depth": c["size"],
+             "angle": 0.0, "color": "#475569", "height": h}
+            for c in column_list(wm.columns, {"width": wm.floor_width_m, "depth": wm.floor_depth_m})]
 
 
 def save_hall_features(request, owner_field, owner_obj):

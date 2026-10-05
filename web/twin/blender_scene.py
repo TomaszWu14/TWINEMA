@@ -384,7 +384,7 @@ def model_racks(wm):
         "id": r.pk, "zone": r.zone, "rack_id": r.rack_id,
         "x": r.x_m or 0.0, "y": r.y_m or 0.0, "angle": r.angle_deg or 0.0,
         "width": r.width_m, "depth": r.depth_cm / 100, "level_h": r.level_height_cm / 100,
-        "n_bays": max(1, r.n_bays), "n_levels": max(1, r.n_levels),
+        "n_bays": max(1, r.n_bays), "n_levels": max(1, r.n_levels), "equipment": r.equipment,
     } for r in wm.racks.order_by("zone", "rack_id")]
 
 
@@ -401,10 +401,10 @@ def build_scene_for_model(wm, batch=None, *, snapshot=None, with_pallets=True,
     """Scena dla `WarehouseModel`. `batch` = PickerActivityBatch (None → demo kompletacji),
     `snapshot` = WarehouseSnapshot (zajętość/blokady z SAP); palety HU na stanie zawsze.
     `wt` = okno zadań EWM z `blender_tasks.load_window` (None → wózki demo)."""
-    from twin.shared import hall_feature_dict
+    from twin.shared import hall_feature_dict, model_columns
 
     racks = model_racks(wm)
-    features = [hall_feature_dict(f) for f in wm.features.all()]
+    features = [hall_feature_dict(f) for f in wm.features.all()] + model_columns(wm)
     floor = model_floor(wm, racks)
 
     snap_rows, stock, activity = ([], [], [])

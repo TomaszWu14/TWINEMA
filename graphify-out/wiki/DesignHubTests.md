@@ -1,4 +1,4 @@
-# test_design_hub.py
+# DesignHubTests
 
 > 5 nodes · cohesion 0.40
 
@@ -12,7 +12,7 @@
 
 ## Relationships
 
-- [load_inputs](load_inputs.md) (1 shared connections)
+- [warehouse_design_sim.py](warehouse_design_sim.py.md) (1 shared connections)
 - [studio/views.py](studio-views.py.md) (1 shared connections)
 
 ## Source Files

@@ -20,8 +20,8 @@
     "semantic_hash": "08cf8732e5ba011bea30b01dc7dbe609"
   },
   "tools/blender/twinema_warehouse_anim.py": {
-    "mtime": 1791205745.6501002,
-    "ast_hash": "092505622a3549d7e3aa8c87d5aa81a4",
+    "mtime": 1791207058.346315,
+    "ast_hash": "e4ef4f409e048fb2d6056d3680f5f54e",
     "semantic_hash": ""
   },
   "tools/ewm_demo_tasks.py": {
@@ -330,9 +330,9 @@
     "semantic_hash": ""
   },
   "web/twin/blender_scene.py": {
-    "mtime": 1791205745.659077,
-    "ast_hash": "083ec2eaa765af5528b8aa0b05b91319",
-    "semantic_hash": "083ec2eaa765af5528b8aa0b05b91319"
+    "mtime": 1791207058.3483305,
+    "ast_hash": "2fab2e34af59ec0d3dbb445939def918",
+    "semantic_hash": ""
   },
   "web/twin/blender_stock.py": {
     "mtime": 1791205745.6645246,
@@ -350,8 +350,8 @@
     "semantic_hash": "f12b639923b535ce120115397ae57226"
   },
   "web/twin/design_catalog.py": {
-    "mtime": 1791205745.6746335,
-    "ast_hash": "355c165645bfa9f63a10a29beb60dae8",
+    "mtime": 1791207058.3493288,
+    "ast_hash": "5964ff071dd1f3896d0ea706b51832fa",
     "semantic_hash": ""
   },
   "web/twin/design_compare.py": {
@@ -370,14 +370,14 @@
     "semantic_hash": "37c52fd4408eb9e79436263096e2db84"
   },
   "web/twin/design_generator.py": {
-    "mtime": 1791205745.6903155,
-    "ast_hash": "1fb79a3051d53b290a68c4a4a46a138d",
+    "mtime": 1791207058.350331,
+    "ast_hash": "8577b7a4e0ea1f9f149a9001a5349493",
     "semantic_hash": ""
   },
   "web/twin/design_kpi.py": {
-    "mtime": 1791205745.6943352,
-    "ast_hash": "699be9c224c140ecb4d6bb3856c7a43b",
-    "semantic_hash": "699be9c224c140ecb4d6bb3856c7a43b"
+    "mtime": 1791207058.3513284,
+    "ast_hash": "eb8f0f2a6bc9537ee30ef81a9c5cf48b",
+    "semantic_hash": ""
   },
   "web/twin/design_sim.py": {
     "mtime": 1791205745.6973376,
@@ -450,8 +450,8 @@
     "semantic_hash": "86427b6d102f74563be266183e4ef30f"
   },
   "web/twin/models.py": {
-    "mtime": 1791205745.6308951,
-    "ast_hash": "32ba6a50eb986dd613612919cf63fc06",
+    "mtime": 1791207058.3557556,
+    "ast_hash": "7a8db096e9ea7e115064b8b0fa61d0a7",
     "semantic_hash": ""
   },
   "web/twin/models_tasks.py": {
@@ -460,8 +460,8 @@
     "semantic_hash": "b52486d1ac398d5a9d3c7df6f4c3af60"
   },
   "web/twin/shared.py": {
-    "mtime": 1791205745.6402154,
-    "ast_hash": "206c57405f50dc3b80844afc8d5678e5",
+    "mtime": 1791207058.3572023,
+    "ast_hash": "760819de88bf36d01c3d50d46f48ebac",
     "semantic_hash": ""
   },
   "web/twin/static/twin/js/flow-player.js": {
@@ -640,8 +640,8 @@
     "semantic_hash": "9cef73397ec1d376e2329122e81f7923"
   },
   "web/twin/urls.py": {
-    "mtime": 1791205745.68832,
-    "ast_hash": "d26fdeb66616ee72b7b28b1bbbc1cc0a",
+    "mtime": 1791207058.3662398,
+    "ast_hash": "319ef02049e8ca5576608bb01ca00f2c",
     "semantic_hash": ""
   },
   "web/twin/views/__init__.py": {
@@ -690,14 +690,14 @@
     "semantic_hash": "a0334ecc1d0a01239f0c981a6dbf8722"
   },
   "web/twin/views/warehouse_generator.py": {
-    "mtime": 1791205745.7174654,
-    "ast_hash": "5383fdcf2196bfc810ff652493cc8391",
-    "semantic_hash": "5383fdcf2196bfc810ff652493cc8391"
+    "mtime": 1791207058.3672214,
+    "ast_hash": "64d7f70336a74aead7554f5345244955",
+    "semantic_hash": ""
   },
   "web/twin/views/warehouse_model.py": {
-    "mtime": 1791205745.721711,
-    "ast_hash": "e4c65d3aa665333c9f849c70e1825abb",
-    "semantic_hash": "e4c65d3aa665333c9f849c70e1825abb"
+    "mtime": 1791207058.3692195,
+    "ast_hash": "bdf85c97a5d1158a9830e41e9f90be4d",
+    "semantic_hash": ""
   },
   "web/twin/views/warehouse_model_ewm.py": {
     "mtime": 1791205745.723736,
@@ -795,18 +795,18 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1791206403.4565828,
-    "ast_hash": "895acc70a4a1d978bbccd1febfde3dcf",
+    "mtime": 1791207058.2215426,
+    "ast_hash": "cda1bf459a5d9c3203e652eb87698d6c",
     "semantic_hash": ""
   },
   "docs/HANDOFF.md": {
-    "mtime": 1791206403.4582012,
-    "ast_hash": "ecd253a973558f42bf0f798c7a4a8ed0",
+    "mtime": 1791207075.5643551,
+    "ast_hash": "a0198c44cb582e2edf8b1b84472d2baf",
     "semantic_hash": ""
   },
   "docs/PLAN.md": {
-    "mtime": 1791206403.4582012,
-    "ast_hash": "c254d664920aed0bf6c22f8828489448",
+    "mtime": 1791207058.2235258,
+    "ast_hash": "7ec56b5d217696b2f37624e432a0149c",
     "semantic_hash": ""
   },
   "docs/adr/0001-kopia-nie-przeniesienie.md": {
@@ -820,8 +820,8 @@
     "semantic_hash": ""
   },
   "requirements.txt": {
-    "mtime": 1791205745.634878,
-    "ast_hash": "72a3e09bffb7ecc66575b1a09d5a8d61",
+    "mtime": 1791207058.3453145,
+    "ast_hash": "a971145cb0f67f9726c118826afef58e",
     "semantic_hash": ""
   },
   "web/core/templates/core/403.html": {
@@ -1005,8 +1005,8 @@
     "semantic_hash": ""
   },
   "web/twin/templates/twin/warehouse_model/view.html": {
-    "mtime": 1791205745.6426723,
-    "ast_hash": "54572bdd6e37684b20db0b4fdcd51cf6",
+    "mtime": 1791207058.3632455,
+    "ast_hash": "cec7e168ebaa4004d96c734cc316058a",
     "semantic_hash": ""
   },
   "web/twin/templates/twin/warehouse_model/zones.html": {
@@ -1170,8 +1170,8 @@
     "semantic_hash": ""
   },
   "web/twin/layout.py": {
-    "mtime": 1791205745.721711,
-    "ast_hash": "5cd1c2356b07278387bd4e464379e5f4",
+    "mtime": 1791207058.3533294,
+    "ast_hash": "768779be3d3b798b17dcb40540633e8b",
     "semantic_hash": ""
   },
   "web/twin/migrations/0002_pole_odkladcze.py": {
@@ -1190,8 +1190,8 @@
     "semantic_hash": ""
   },
   "web/twin/views/warehouse_layout.py": {
-    "mtime": 1791205745.719469,
-    "ast_hash": "f3154bd478ea431338f3e442f1663571",
+    "mtime": 1791207058.3682213,
+    "ast_hash": "405cd86168931c691e1686d6d62acce5",
     "semantic_hash": ""
   },
   "web/scenario/__init__.py": {
@@ -1285,13 +1285,13 @@
     "semantic_hash": ""
   },
   "web/twin/static/twin/js/layout-editor.js": {
-    "mtime": 1791205745.6614943,
-    "ast_hash": "f97c07b0e99599b0767640b65b874182",
+    "mtime": 1791207058.3582187,
+    "ast_hash": "633276ac14fb18c51957f67e8b4d79bc",
     "semantic_hash": ""
   },
   "web/twin/static/twin/js/layout-panels.js": {
-    "mtime": 1791205745.6656086,
-    "ast_hash": "7bb4f0835d3d4d0c29798eec556366d0",
+    "mtime": 1791207058.3602197,
+    "ast_hash": "3d134f26c84d1c38583e7b2b87e6ff50",
     "semantic_hash": ""
   },
   "web/twin/tests/js/layout_core.test.mjs": {
@@ -1305,8 +1305,8 @@
     "semantic_hash": ""
   },
   "web/twin/templates/twin/warehouse_model/editor.html": {
-    "mtime": 1791205745.7292018,
-    "ast_hash": "7355d70118de3aa4c163664330d78d81",
+    "mtime": 1791207058.3622217,
+    "ast_hash": "97e066d3f181235bc63f0d28196d5eb7",
     "semantic_hash": ""
   },
   "web/scenario/migrations/0002_wydania_obsada.py": {
@@ -1327,6 +1327,26 @@
   "web/scenario/tests/test_outbound.py": {
     "mtime": 1791205745.6183436,
     "ast_hash": "c8fe9e004476d1a3e0611320d3e89fb3",
+    "semantic_hash": ""
+  },
+  "web/twin/migrations/0003_konstrukcja_hali.py": {
+    "mtime": 1791207058.3543308,
+    "ast_hash": "353c175610708055989ac6bca4374ec9",
+    "semantic_hash": ""
+  },
+  "web/twin/static/twin/js/layout-hall.js": {
+    "mtime": 1791207058.359221,
+    "ast_hash": "1acb5b26280a1ec4e4884bee291b2b3c",
+    "semantic_hash": ""
+  },
+  "web/twin/tests/test_layout_structure.py": {
+    "mtime": 1791207058.364248,
+    "ast_hash": "979e09184204fb2f7465492cffc68216",
+    "semantic_hash": ""
+  },
+  "web/twin/tests/test_layout_structure_views.py": {
+    "mtime": 1791207058.3652313,
+    "ast_hash": "fabf3ccd044d3926699f37725d15be3a",
     "semantic_hash": ""
   },
   "web/masterdata/migrations/0002_opakowania_nosniki.py": {

@@ -1,6 +1,6 @@
-# DaneViewTests
+# test_dane.py
 
-> 13 nodes · cohesion 0.24
+> 12 nodes · cohesion 0.24
 
 ## Key Concepts
 
@@ -15,13 +15,12 @@
 - **BlenderImportGuardTests** (3 connections) — `web/twin/tests/test_design_catalog.py`
 - **SimpleTestCase** (3 connections)
 - **.test_catalog_and_geometry_import_without_django()** (2 connections) — `web/twin/tests/test_design_catalog.py`
-- **Kontrola szerokości alejek między równoległymi elementami składowania.…** (1 connections) — `web/twin/design_catalog.py`
 - **Blender importuje te moduły bez Django — żadnego importu Django na poziomie…** (1 connections) — `web/twin/tests/test_design_catalog.py`
 
 ## Relationships
 
 - [design_catalog.py](design_catalog.py.md) (13 shared connections)
-- [scenario/models.py](scenario-models.py.md) (1 shared connections)
+- [day_demand](day_demand.md) (1 shared connections)
 
 ## Source Files
 
@@ -30,7 +29,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 54 (100%)
+- EXTRACTED: 53 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

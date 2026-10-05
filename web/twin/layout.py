@@ -1,32 +1,41 @@
 """Layout hali dla edytora planu (czysty Python — bez Django, testowalny bez bazy).
 
 Format edytora (JSON, metry, konwencja repo: narożnik (x, y) + kąt w stopniach, y „w głąb” hali):
-  {"floor": {"width", "depth"},
+  {"floor": {"width", "depth", "clear_height"?},
    "racks":    [{"id"?, "zone", "rack_id", "x", "y", "angle", "n_bays", "n_levels",
-                 "bay_width_cm", "depth_cm", "level_height_cm"}],
+                 "bay_width_cm", "depth_cm", "level_height_cm", "equipment"?}],
    "features": [{"id"?, "kind", "label", "x", "y", "width", "depth", "angle"}],
+   "columns":  {"pitch_x", "pitch_y", "offset_x", "offset_y", "size", "removed": [[i, j]], "extra": [[x, y]]},
+   "underlay": {"scale", "x", "y", "opacity"} | null,
    "version": "<updated_at modelu, ISO>"}
 `id` = klucz wiersza w bazie (brak = nowy element). Problemy wskazują elementy po INDEKSIE na listach.
 
   • `clean_layout` — walidacja wejścia z przeglądarki (typy, zakresy) → LayoutError z opisem.
   • `rack_row` / `feature_row` — wiersz bazy → dict edytora (konwerter w drugą stronę robi widok zapisu).
-  • `check_layout` — kolizje na obróconych prostokątach (SAT), regał w polu odkładczym/doku…,
-    poza halą, duplikat adresu regału.
+  • `column_list` — słupy z siatki (minus usunięte, plus dodane ręcznie) jako kwadraty na planie.
+  • `check_layout` — kolizje na obróconych prostokątach (SAT): regał–regał, regał w polu odkładczym/doku/
+    drodze pożarowej…, regał lub dok/brama na słupie, poza halą, duplikat adresu, wysokość w świetle,
+    regał na drodze ruchu (ostrzeżenie).
   • `analyze` — KPI jak w wariantach (`design_kpi.compute_kpi`) + problemy, w tym alejki
-    z `design_catalog.check_aisles` (jedna reguła w repo).
+    z `design_catalog.check_aisles` (jedna reguła w repo; wymagana alejka zależy od sprzętu regału).
 """
 import math
 
 from .blender_route import bbox, near_pairs, overlap_depth, rack_corners
 from .design_kpi import compute_kpi, rack_to_element
 
-# Cechy hali, w których nie wolno stawiać regałów: ruch i obsługa. Obszary (strefa blokowa, zwroty,
-# „inny”) to tylko oznaczenia na planie — regały mogą w nich stać.
-BLOCKING_KINDS = {"dock", "gate", "staging", "station", "leader", "corridor"}
-OVERLAP_TOL_M = 0.02          # styk krawędzią / plecami do siebie to nie kolizja
+# Cechy hali, w których nie wolno stawiać regałów: ruch, obsługa, bezpieczeństwo. Obszary (strefa blokowa,
+# zwroty, strefy specjalne, „inny”) to tylko oznaczenia na planie — regały mogą w nich stać.
+BLOCKING_KINDS = {"dock", "gate", "staging", "station", "leader", "corridor", "fire_route", "charging"}
+TRAFFIC_KINDS = {"walkway", "truckway"}      # drogi ruchu: regał na nich = ostrzeżenie (oznaczenie, nie mur)
+COLUMN_BLOCKS = {"dock", "gate"}             # słup w doku/bramie = błąd (auto musi podjechać)
+SPECIAL_ZONE_KINDS = {"zone_temp", "zone_adr", "zone_oversize", "zone_value"}   # reguły rozmieszczenia → S3
+EQUIPMENT = ("reach", "vna", "shelf")
+ROOF_GAP_M = 0.5        # zapas nad najwyższym poziomem regału pod konstrukcją dachu / tryskaczami
+OVERLAP_TOL_M = 0.02    # styk krawędzią / plecami do siebie to nie kolizja
 OUTSIDE_TOL_M = 0.05
 
-MAX_RACKS, MAX_FEATURES = 5000, 1000
+MAX_RACKS, MAX_FEATURES, MAX_COLUMNS = 5000, 1000, 20_000
 RACK_LIMITS = {"n_bays": (1, 500), "n_levels": (1, 40), "bay_width_cm": (20, 2000),
                "depth_cm": (20, 1000), "level_height_cm": (20, 1000)}
 
@@ -62,6 +71,42 @@ def _text(v, what, max_len, required=True):
     return s
 
 
+def clean_columns(c):
+    """Siatka słupów z edytora. Brak = hala bez słupów (zwraca {}); rozstaw 0 = bez siatki (same dodane)."""
+    if not c:
+        return {}
+    if not isinstance(c, dict):
+        raise LayoutError("Słupy: oczekiwany obiekt.")
+    out = {"pitch_x": _num(c.get("pitch_x", 0), "Słupy: rozstaw X", 0, 500),
+           "pitch_y": _num(c.get("pitch_y", 0), "Słupy: rozstaw Y", 0, 500),
+           "offset_x": _num(c.get("offset_x", 0), "Słupy: przesunięcie X", 0, 500),
+           "offset_y": _num(c.get("offset_y", 0), "Słupy: przesunięcie Y", 0, 500),
+           "size": _num(c.get("size", 0.6), "Słupy: wymiar", 0.1, 5)}
+    if any(0 < out[k] < 2 for k in ("pitch_x", "pitch_y")):
+        raise LayoutError("Słupy: rozstaw musi wynosić 0 (brak siatki) albo co najmniej 2 m.")
+    removed, extra = c.get("removed") or [], c.get("extra") or []
+    if not isinstance(removed, list) or not isinstance(extra, list) or len(removed) + len(extra) > MAX_COLUMNS:
+        raise LayoutError("Słupy: niepoprawne listy usuniętych / dodanych.")
+    if any(not isinstance(p, list) or len(p) != 2 for p in removed + extra):
+        raise LayoutError("Słupy: każdy wpis to para liczb.")
+    out["removed"] = sorted({(_int(i, "Słup: indeks", 0, 10_000), _int(j, "Słup: indeks", 0, 10_000))
+                             for i, j in removed})
+    out["removed"] = [list(p) for p in out["removed"]]
+    out["extra"] = [[_num(x, "Słup: X"), _num(y, "Słup: Y")] for x, y in extra]
+    return out
+
+
+def clean_underlay(u):
+    """Położenie i skala podkładu (sam plik przychodzi osobnym uploadem)."""
+    if not u:
+        return None
+    if not isinstance(u, dict):
+        raise LayoutError("Podkład: oczekiwany obiekt.")
+    return {"scale": _num(u.get("scale"), "Podkład: skala [m/px]", 1e-5, 100),
+            "x": _num(u.get("x", 0), "Podkład: X"), "y": _num(u.get("y", 0), "Podkład: Y"),
+            "opacity": _num(u.get("opacity", 0.5), "Podkład: przezroczystość", 0, 1)}
+
+
 def clean_layout(data, feature_kinds):
     """Dane z przeglądarki → znormalizowany layout. `feature_kinds` = dozwolone rodzaje cech hali."""
     if not isinstance(data, dict):
@@ -71,9 +116,13 @@ def clean_layout(data, feature_kinds):
         raise LayoutError("Brak pól floor / racks / features.")
     if len(racks) > MAX_RACKS or len(feats) > MAX_FEATURES:
         raise LayoutError(f"Za dużo elementów (maks. {MAX_RACKS} regałów, {MAX_FEATURES} elementów hali).")
+    clear_h = floor.get("clear_height")
     out = {"floor": {"width": _num(floor.get("width"), "Szerokość hali", 1, 5000),
-                     "depth": _num(floor.get("depth"), "Głębokość hali", 1, 5000)},
-           "racks": [], "features": [], "version": data.get("version") if isinstance(data.get("version"), str) else ""}
+                     "depth": _num(floor.get("depth"), "Głębokość hali", 1, 5000),
+                     "clear_height": None if clear_h in (None, "") else _num(clear_h, "Wysokość w świetle", 2, 100)},
+           "racks": [], "features": [], "columns": clean_columns(data.get("columns")),
+           "underlay": clean_underlay(data.get("underlay")),
+           "version": data.get("version") if isinstance(data.get("version"), str) else ""}
     for i, r in enumerate(racks, 1):
         if not isinstance(r, dict):
             raise LayoutError(f"Regał {i}: oczekiwany obiekt.")
@@ -84,6 +133,9 @@ def clean_layout(data, feature_kinds):
                "angle": _num(r.get("angle", 0), f"Regał {i} kąt", -3600, 3600) % 360}
         for k, (lo, hi) in RACK_LIMITS.items():
             row[k] = _int(r.get(k), f"Regał {i} {k}", lo, hi)
+        row["equipment"] = r.get("equipment") or "reach"
+        if row["equipment"] not in EQUIPMENT:
+            raise LayoutError(f"Regał {i}: nieznany sprzęt {row['equipment']!r}.")
         out["racks"].append(row)
     for i, f in enumerate(feats, 1):
         if not isinstance(f, dict):
@@ -101,11 +153,34 @@ def clean_layout(data, feature_kinds):
     return out
 
 
+def column_list(columns, floor):
+    """[{x, y, size, ref}] — środki słupów. `ref` = [i, j] dla siatki, ["e", k] dla dodanych ręcznie."""
+    if not columns:
+        return []
+    size, px, py = columns.get("size", 0.6), columns.get("pitch_x", 0), columns.get("pitch_y", 0)
+    ox, oy = columns.get("offset_x", 0), columns.get("offset_y", 0)
+    out = []
+    if px and py:
+        nx, ny = int((floor["width"] - ox) // px) + 1, int((floor["depth"] - oy) // py) + 1
+        if nx * ny > MAX_COLUMNS:
+            raise LayoutError(f"Za gęsta siatka słupów ({nx * ny}); maks. {MAX_COLUMNS}.")
+        removed = {tuple(p) for p in columns.get("removed", [])}
+        out = [{"x": round(ox + i * px, 3), "y": round(oy + j * py, 3), "size": size, "ref": [i, j]}
+               for i in range(nx) for j in range(ny) if (i, j) not in removed]
+    return out + [{"x": x, "y": y, "size": size, "ref": ["e", k]} for k, (x, y) in enumerate(columns.get("extra", []))]
+
+
+def _column_corners(c):
+    h = c["size"] / 2
+    return rack_corners({"x": c["x"] - h, "y": c["y"] - h, "angle": 0.0, "width": c["size"], "depth": c["size"]})
+
+
 # ── Konwersja: wiersz bazy → dict edytora (obiekty z atrybutami jak modele Django) ─────────────
 def rack_row(r):
     return {"id": r.pk, "zone": r.zone, "rack_id": r.rack_id, "x": r.x_m or 0.0, "y": r.y_m or 0.0,
             "angle": r.angle_deg or 0.0, "n_bays": r.n_bays, "n_levels": r.n_levels,
-            "bay_width_cm": r.bay_width_cm, "depth_cm": r.depth_cm, "level_height_cm": r.level_height_cm}
+            "bay_width_cm": r.bay_width_cm, "depth_cm": r.depth_cm, "level_height_cm": r.level_height_cm,
+            "equipment": getattr(r, "equipment", None) or "reach"}
 
 
 def feature_row(f):
@@ -117,7 +192,8 @@ def rack_geom(r):
     """Regał edytora → dict sceny (jak `blender_scene.model_racks`) dla geometrii i KPI."""
     return {"zone": r["zone"], "rack_id": r["rack_id"], "x": r["x"], "y": r["y"], "angle": r["angle"],
             "width": r["n_bays"] * r["bay_width_cm"] / 100, "depth": r["depth_cm"] / 100,
-            "level_h": r["level_height_cm"] / 100, "n_bays": r["n_bays"], "n_levels": r["n_levels"]}
+            "level_h": r["level_height_cm"] / 100, "n_bays": r["n_bays"], "n_levels": r["n_levels"],
+            "equipment": r.get("equipment") or "reach"}
 
 
 def _issue(code, severity, message, racks=(), features=()):
@@ -127,6 +203,10 @@ def _issue(code, severity, message, racks=(), features=()):
 
 def _name(r):
     return f"{r['zone']}-{r['rack_id']}"
+
+
+def _fname(f):
+    return f["label"] or f["kind"]
 
 
 def check_layout(layout):
@@ -151,30 +231,68 @@ def check_layout(layout):
                 if kind == "rack":
                     issues.append(_issue("outside", "error", f"Regał {_name(items[i])} wychodzi poza halę.", [i]))
                 else:                                       # rampa doku bywa przed ścianą — tylko ostrzeżenie
-                    issues.append(_issue("outside", "warning", f"Element „{items[i]['label'] or items[i]['kind']}” "
-                                                               "wychodzi poza halę.", (), [i]))
+                    issues.append(_issue("outside", "warning", f"Element „{_fname(items[i])}” wychodzi poza halę.",
+                                         (), [i]))
 
-    # Kolizje: regały + blokujące cechy hali w jednym indeksie siatki.
-    blocking = [j for j, f in enumerate(feats) if f["kind"] in BLOCKING_KINDS]
-    shapes = rc + [fc[j] for j in blocking]
-    n = len(rc)
-    for a, b in near_pairs([bbox(c) for c in shapes]):
-        if a >= n:                                         # cecha–cecha: doki przy bramach są normalne
+    # Jeden indeks siatki: regały | cechy blokujące i drogi ruchu | słupy. Pary sprawdzamy, gdy biorą
+    # w nich udział regały albo słup z dokiem/bramą (cecha–cecha i słup–słup są normalne).
+    shown = [j for j, f in enumerate(feats) if f["kind"] in BLOCKING_KINDS | TRAFFIC_KINDS]
+    cols = column_list(layout.get("columns"), floor)
+    shapes = rc + [fc[j] for j in shown] + [_column_corners(c) for c in cols]
+    n, m = len(rc), len(rc) + len(shown)
+    for a, b in near_pairs([bbox(c) for c in shapes]):                  # a < b
+        feature_column = n <= a < m <= b and feats[shown[a - n]]["kind"] in COLUMN_BLOCKS
+        if a >= n and not feature_column:
             continue
         depth = overlap_depth(shapes[a], shapes[b])
         if depth <= OVERLAP_TOL_M:
             continue
-        if b < n:
+        if b >= m:
+            c = cols[b - m]
+            where = f"słupem w punkcie ({c['x']:g}; {c['y']:g}) m"
+            if a < n:
+                issues.append(_issue("column", "error", f"Regał {_name(racks[a])} koliduje ze {where}.", [a]))
+            else:
+                issues.append(_issue("column", "error", f"„{_fname(feats[shown[a - n]])}” koliduje ze {where} — "
+                                                        "dok i brama muszą być wolne.", (), [shown[a - n]]))
+        elif b < n:
             issues.append(_issue("collision", "error",
                                  f"Regały {_name(racks[a])} i {_name(racks[b])} nachodzą na siebie ({depth:.2f} m).",
                                  [a, b]))
         else:
-            f = feats[blocking[b - n]]
-            issues.append(_issue("blocked", "error",
-                                 f"Regał {_name(racks[a])} stoi w obszarze „{f['label'] or f['kind']}” — "
-                                 "tu musi być wolna posadzka.", [a], [blocking[b - n]]))
+            j = shown[b - n]
+            if feats[j]["kind"] in TRAFFIC_KINDS:
+                issues.append(_issue("traffic", "warning", f"Regał {_name(racks[a])} stoi na drodze ruchu "
+                                                           f"„{_fname(feats[j])}”.", [a], [j]))
+            else:
+                issues.append(_issue("blocked", "error", f"Regał {_name(racks[a])} stoi w obszarze "
+                                                         f"„{_fname(feats[j])}” — tu musi być wolna posadzka.",
+                                     [a], [j]))
 
+    H = floor.get("clear_height")
+    if H:
+        usable = H - ROOF_GAP_M
+        for i, r in enumerate(racks):
+            top = r["n_levels"] * r["level_height_cm"] / 100
+            if top > usable + 1e-6:
+                issues.append(_issue("height", "error", f"Regał {_name(r)} ma {top:.2f} m — ponad wysokość użytkową "
+                                                        f"{usable:.2f} m (hala {H:g} m − {ROOF_GAP_M:g} m zapasu).",
+                                     [i]))
     return issues
+
+
+def height_kpi(layout):
+    """Wysokość w świetle → maks. poziomów per strefa (przy wysokości poziomu jej regałów)."""
+    H = layout["floor"].get("clear_height")
+    if not H:
+        return None
+    zones = {}
+    for r in layout["racks"]:
+        z = zones.setdefault(r["zone"], {"levels": 0, "max_levels": None})
+        z["levels"] = max(z["levels"], r["n_levels"])
+        fit = int((H - ROOF_GAP_M) // (r["level_height_cm"] / 100))
+        z["max_levels"] = fit if z["max_levels"] is None else min(z["max_levels"], fit)
+    return {"clear_m": H, "usable_m": round(H - ROOF_GAP_M, 2), "zones": zones}
 
 
 def analyze(layout):
@@ -190,4 +308,6 @@ def analyze(layout):
             issues.append(_issue("aisle", "warning",
                                  f"Alejka {it['a']} / {it['b']}: {it['gap_m']:.2f} m, sprzęt wymaga {it['need_m']} m.",
                                  [it["ia"], it["ib"]]))
+    kpi["height"] = height_kpi(layout)
+    kpi["columns"] = len(column_list(layout.get("columns"), layout["floor"]))
     return kpi, issues

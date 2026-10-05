@@ -20,8 +20,8 @@
 
 ## Relationships
 
-- [ml/services.py](ml-services.py.md) (2 shared connections)
-- [roles.py](roles.py.md) (1 shared connections)
+- [blender_stock.py](blender_stock.py.md) (2 shared connections)
+- [context_processors.py](context_processors.py.md) (1 shared connections)
 
 ## Source Files
 

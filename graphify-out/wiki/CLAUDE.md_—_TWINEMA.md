@@ -22,10 +22,10 @@
 ## Relationships
 
 - [Scan](Scan.md) (5 shared connections)
-- [Presentation](Presentation.md) (4 shared connections)
+- [roles.py](roles.py.md) (4 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (4 shared connections)
 - [studio/views.py](studio-views.py.md) (3 shared connections)
-- [test_design_sim.py](test_design_sim.py.md) (3 shared connections)
+- [StudioViewTests](StudioViewTests.md) (3 shared connections)
 
 ## Source Files
 

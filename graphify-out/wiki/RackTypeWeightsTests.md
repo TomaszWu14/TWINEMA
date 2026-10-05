@@ -18,9 +18,9 @@
 ## Relationships
 
 - [design_kpi.py](design_kpi.py.md) (1 shared connections)
+- [test_ewm_service.py](test_ewm_service.py.md) (1 shared connections)
 - [twin/models.py](twin-models.py.md) (1 shared connections)
-- [WarehouseModel](WarehouseModel.md) (1 shared connections)
-- [load_inputs](load_inputs.md) (1 shared connections)
+- [warehouse_design_sim.py](warehouse_design_sim.py.md) (1 shared connections)
 
 ## Source Files
 

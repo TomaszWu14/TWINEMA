@@ -1,6 +1,6 @@
 # design_kpi.py
 
-> 30 nodes · cohesion 0.12
+> 29 nodes · cohesion 0.12
 
 ## Key Concepts
 
@@ -26,25 +26,25 @@
 - **.test_clean_elements()** (2 connections) — `web/twin/tests/test_design_variants.py`
 - **(u_w, u_d) — jednostkowe osie szerokości i głębokości regału w układzie hali.** (1 connections) — `web/twin/blender_route.py`
 - **Wskaźniki wariantu projektu magazynu (czysty Python — testowalny bez bazy i…** (1 connections) — `web/twin/design_kpi.py`
-- **Regał modelu magazynu (dict jak w scenie: width/depth/level_h/n_bays/n_levels)…** (1 connections) — `web/twin/design_kpi.py`
-- **Walidacja elementów z pliku: znany rodzaj, liczby, parametry przez params_for.…** (1 connections) — `web/twin/design_kpi.py`
+- **Regał modelu magazynu (dict jak w scenie: width/depth/level_h/n_bays/n_levels,…** (1 connections) — `web/twin/design_kpi.py`
 - **Punkty obsługi: doki/bramy/stanowiska z hali + stanowiska kompletacji z…** (1 connections) — `web/twin/design_kpi.py`
-- *... and 5 more nodes in this community*
+- **Liczba rzeczywistych punktów obsługi (0 → droga liczona od przodu hali).** (1 connections) — `web/twin/design_kpi.py`
+- *... and 4 more nodes in this community*
 
 ## Relationships
 
 - [design_catalog.py](design_catalog.py.md) (11 shared connections)
-- [load_inputs](load_inputs.md) (7 shared connections)
+- [warehouse_design_sim.py](warehouse_design_sim.py.md) (7 shared connections)
 - [VariantViewTests](VariantViewTests.md) (4 shared connections)
-- [blender_scene.py](blender_scene.py.md) (3 shared connections)
+- [build_scene](build_scene.md) (3 shared connections)
 - [kpi_facts](kpi_facts.md) (2 shared connections)
-- [WarehouseModel](WarehouseModel.md) (2 shared connections)
+- [twin/models.py](twin-models.py.md) (2 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [analyze](analyze.md) (1 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (1 shared connections)
-- [staffing.py](staffing.py.md) (1 shared connections)
+- [layout.py](layout.py.md) (1 shared connections)
+- [packaging.py](packaging.py.md) (1 shared connections)
+- [test_outbound.py](test_outbound.py.md) (1 shared connections)
 
 ## Source Files
 
@@ -54,7 +54,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 155 (100%)
+- EXTRACTED: 154 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

@@ -1,10 +1,10 @@
-# load_inputs
+# warehouse_design_sim.py
 
-> 83 nodes · cohesion 0.05
+> 82 nodes · cohesion 0.05
 
 ## Key Concepts
 
-- **shared.py** (36 connections) — `web/twin/shared.py`
+- **shared.py** (38 connections) — `web/twin/shared.py`
 - **warehouse_blender.py** (26 connections) — `web/twin/views/warehouse_blender.py`
 - **warehouse_design_sim.py** (23 connections) — `web/twin/views/warehouse_design_sim.py`
 - **WarehouseTaskBatch** (22 connections) — `web/twin/models_tasks.py`
@@ -29,22 +29,22 @@
 - **load_master_levels()** (8 connections) — `web/twin/blender_stock.py`
 - **load_day_tasks()** (8 connections) — `web/twin/design_sim.py`
 - **safe_json()** (8 connections) — `web/twin/shared.py`
-- *... and 58 more nodes in this community*
+- *... and 57 more nodes in this community*
 
 ## Relationships
 
-- [scenario/models.py](scenario-models.py.md) (11 shared connections)
-- [model_edit.py](model_edit.py.md) (11 shared connections)
-- [blender_scene.py](blender_scene.py.md) (10 shared connections)
+- [day_demand](day_demand.md) (11 shared connections)
+- [test_model_edit.py](test_model_edit.py.md) (11 shared connections)
+- [build_scene](build_scene.md) (10 shared connections)
 - [warehouse_tasks.py](warehouse_tasks.py.md) (10 shared connections)
-- [WarehouseModel](WarehouseModel.md) (9 shared connections)
+- [twin/models.py](twin-models.py.md) (9 shared connections)
 - [simulate](simulate.md) (9 shared connections)
-- [test_design_compare.py](test_design_compare.py.md) (9 shared connections)
-- [analyze](analyze.md) (8 shared connections)
+- [warehouse_compare.py](warehouse_compare.py.md) (9 shared connections)
+- [layout.py](layout.py.md) (8 shared connections)
 - [design_kpi.py](design_kpi.py.md) (7 shared connections)
 - [studio/api.py](studio-api.py.md) (6 shared connections)
-- [ml/services.py](ml-services.py.md) (5 shared connections)
-- [test_design_forecast.py](test_design_forecast.py.md) (5 shared connections)
+- [blender_stock.py](blender_stock.py.md) (5 shared connections)
+- [WarehouseTask](WarehouseTask.md) (5 shared connections)
 
 ## Source Files
 
@@ -68,7 +68,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 522 (99%)
+- EXTRACTED: 523 (99%)
 - INFERRED: 6 (1%)
 - AMBIGUOUS: 0 (0%)
 

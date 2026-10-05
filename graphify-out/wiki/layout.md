@@ -1,4 +1,4 @@
-# test_layout.py
+# layout
 
 > 24 nodes · cohesion 0.14
 
@@ -31,12 +31,12 @@
 
 ## Relationships
 
-- [GeneratorTests](GeneratorTests.md) (7 shared connections)
-- [load_inputs](load_inputs.md) (4 shared connections)
-- [scenario/models.py](scenario-models.py.md) (3 shared connections)
-- [WarehouseModel](WarehouseModel.md) (2 shared connections)
+- [Material](Material.md) (7 shared connections)
+- [warehouse_design_sim.py](warehouse_design_sim.py.md) (4 shared connections)
+- [day_demand](day_demand.md) (3 shared connections)
+- [twin/models.py](twin-models.py.md) (2 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
-- [blender_scene.py](blender_scene.py.md) (1 shared connections)
+- [build_scene](build_scene.md) (1 shared connections)
 
 ## Source Files
 

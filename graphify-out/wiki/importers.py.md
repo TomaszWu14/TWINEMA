@@ -23,7 +23,7 @@
 ## Relationships
 
 - [test_voice.py](test_voice.py.md) (6 shared connections)
-- [current_stock_log](current_stock_log.md) (2 shared connections)
+- [masterdata/views.py](masterdata-views.py.md) (2 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
 - [twinema_montage.py](twinema_montage.py.md) (1 shared connections)
 

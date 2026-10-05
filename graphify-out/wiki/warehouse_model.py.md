@@ -1,39 +1,30 @@
 # warehouse_model.py
 
-> 10 nodes · cohesion 0.24
+> 4 nodes · cohesion 0.40
 
 ## Key Concepts
 
-- **.slot()** (11 connections) — `web/twin/blender_stock.py`
-- **parse_code()** (6 connections) — `web/twin/locations.py`
-- **._parse()** (5 connections) — `web/twin/blender_stock.py`
-- **_half()** (3 connections) — `web/twin/blender_stock.py`
-- **.__init__()** (3 connections) — `web/twin/blender_stock.py`
-- **.rack_and_bay()** (3 connections) — `web/twin/blender_stock.py`
-- **_deg()** (2 connections) — `web/twin/blender_stock.py`
-- **1/2 dla połówki miejsca (kod z końcówką -1/-2, np. B0-07-300C-1), inaczej 0.…** (1 connections) — `web/twin/blender_stock.py`
-- **dict gniazda: x, y, z (dół palety), heading, rozmiar [w, d] (+ half 1/2) albo…** (1 connections) — `web/twin/blender_stock.py`
-- **Kod → (zone, rack_id, bay, col_idx, level) albo None.** (1 connections) — `web/twin/locations.py`
+- **load_groups()** (7 connections) — `web/twin/design_day.py`
+- **groups_for()** (4 connections) — `web/masterdata/services.py`
+- **.test_groups_for_design_day()** (2 connections) — `web/masterdata/tests/test_dane.py`
+- **{materiał z zadań: grupa towarowa} z modułu Dane; None, gdy materiałów jeszcze…** (1 connections) — `web/twin/design_day.py`
 
 ## Relationships
 
-- [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (4 shared connections)
-- [analyze](analyze.md) (3 shared connections)
-- [shared.py](shared.py.md) (2 shared connections)
-- [design_kpi.py](design_kpi.py.md) (1 shared connections)
-- [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [Scenario](Scenario.md) (1 shared connections)
-- [twin/models.py](twin-models.py.md) (1 shared connections)
+- [test_model_edit.py](test_model_edit.py.md) (2 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (2 shared connections)
+- [warehouse_design_sim.py](warehouse_design_sim.py.md) (2 shared connections)
 - [test_voice.py](test_voice.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/blender_stock.py`
-- `web/twin/locations.py`
+- `web/masterdata/services.py`
+- `web/masterdata/tests/test_dane.py`
+- `web/twin/design_day.py`
 
 ## Audit Trail
 
-- EXTRACTED: 36 (100%)
+- EXTRACTED: 14 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

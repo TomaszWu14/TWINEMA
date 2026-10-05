@@ -1,6 +1,6 @@
 # design_catalog.py
 
-> 24 nodes · cohesion 0.15
+> 19 nodes · cohesion 0.15
 
 ## Key Concepts
 
@@ -22,21 +22,16 @@
 - **.test_block_rows_pairs_and_equipment_aisle()** (2 connections) — `web/twin/tests/test_design_catalog.py`
 - **.test_params_override_and_unknown()** (2 connections) — `web/twin/tests/test_design_catalog.py`
 - **Katalog elementów do projektowania wariantów magazynu — JEDNO źródło prawdy.…** (1 connections) — `web/twin/design_catalog.py`
-- **Liczba miejsc paletowych elementu (0 dla transportu/kompletacji).** (1 connections) — `web/twin/design_catalog.py`
-- **Rzędy bloku regałów: lista przesunięć „w głąb" [m] kolejnych rzędów.…** (1 connections) — `web/twin/design_catalog.py`
-- **Rzut obrysu elementu na oś: (początek, koniec) [m]; along=True → szerokość.** (1 connections) — `web/twin/design_catalog.py`
-- **Parametry elementu: domyślne z katalogu + nadpisania (tylko znane klucze).** (1 connections) — `web/twin/design_catalog.py`
-- **(szerokość wzdłuż osi elementu, głębokość) [m].** (1 connections) — `web/twin/design_catalog.py`
 - **Katalog elementów projektowania wariantów — twin/design_catalog.py (wspólny z…** (1 connections) — `web/twin/tests/test_design_catalog.py`
 
 ## Relationships
 
-- [DaneViewTests](DaneViewTests.md) (13 shared connections)
+- [test_dane.py](test_dane.py.md) (13 shared connections)
 - [design_kpi.py](design_kpi.py.md) (11 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (9 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
-- [scenario/models.py](scenario-models.py.md) (1 shared connections)
-- [GeneratorTests](GeneratorTests.md) (1 shared connections)
+- [day_demand](day_demand.md) (1 shared connections)
+- [Material](Material.md) (1 shared connections)
 
 ## Source Files
 
@@ -46,7 +41,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 130 (100%)
+- EXTRACTED: 125 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

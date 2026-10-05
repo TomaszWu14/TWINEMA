@@ -1,11 +1,11 @@
-# scenario/models.py
+# day_demand
 
-> 49 nodes · cohesion 0.07
+> 48 nodes · cohesion 0.07
 
 ## Key Concepts
 
-- **warehouse_model.py** (30 connections) — `web/twin/views/warehouse_model.py`
-- **rack_corners()** (21 connections) — `web/twin/blender_route.py`
+- **warehouse_model.py** (31 connections) — `web/twin/views/warehouse_model.py`
+- **rack_corners()** (22 connections) — `web/twin/blender_route.py`
 - **test_model_geometry.py** (11 connections) — `web/twin/tests/test_model_geometry.py`
 - **parse_geometry_csv()** (9 connections) — `web/twin/model_geometry.py`
 - **active_master()** (8 connections) — `web/twin/ewm_service.py`
@@ -20,30 +20,30 @@
 - **GeometryParserTests** (6 connections) — `web/twin/tests/test_model_geometry.py`
 - **warehouse_model_paste()** (6 connections) — `web/twin/views/warehouse_model.py`
 - **warehouse_model_view()** (6 connections) — `web/twin/views/warehouse_model.py`
+- **_features_data()** (5 connections) — `web/twin/views/warehouse_model.py`
 - **_md_role** (5 connections)
 - **.test_floor_fits_rotated_racks()** (4 connections) — `web/twin/tests/test_model_geometry.py`
 - **._upload()** (4 connections) — `web/twin/tests/test_model_geometry.py`
-- **_features_data()** (4 connections) — `web/twin/views/warehouse_model.py`
 - **_parse_pasted_codes()** (4 connections) — `web/twin/views/warehouse_model.py`
 - **warehouse_model_features()** (4 connections) — `web/twin/views/warehouse_model.py`
 - **warehouse_model_coords()** (3 connections) — `web/twin/views/warehouse_model.py`
 - **_num()** (2 connections) — `web/twin/model_geometry.py`
 - **.test_detects_geometry_header_not_location_codes()** (2 connections) — `web/twin/tests/test_model_geometry.py`
-- *... and 24 more nodes in this community*
+- *... and 23 more nodes in this community*
 
 ## Relationships
 
-- [WarehouseModel](WarehouseModel.md) (12 shared connections)
-- [load_inputs](load_inputs.md) (11 shared connections)
+- [twin/models.py](twin-models.py.md) (12 shared connections)
+- [warehouse_design_sim.py](warehouse_design_sim.py.md) (11 shared connections)
 - [kpi_facts](kpi_facts.md) (3 shared connections)
-- [test_layout.py](test_layout.py.md) (3 shared connections)
+- [layout](layout.md) (3 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
-- [warehouse_model_ewm.py](warehouse_model_ewm.py.md) (3 shared connections)
+- [ewm_service.py](ewm_service.py.md) (3 shared connections)
 - [layout-editor.js](layout-editor.js.md) (3 shared connections)
 - [ParseTests](ParseTests.md) (2 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [staffing.py](staffing.py.md) (1 shared connections)
-- [blender_scene.py](blender_scene.py.md) (1 shared connections)
+- [test_outbound.py](test_outbound.py.md) (1 shared connections)
+- [build_scene](build_scene.md) (1 shared connections)
 - [design_catalog.py](design_catalog.py.md) (1 shared connections)
 
 ## Source Files
@@ -57,7 +57,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 206 (96%)
+- EXTRACTED: 208 (96%)
 - INFERRED: 8 (4%)
 - AMBIGUOUS: 0 (0%)
 
