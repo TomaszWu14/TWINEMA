@@ -26,7 +26,7 @@
 - [blender_scene.py](blender_scene.py.md) (5 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (3 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
-- [map_columns](map_columns.md) (1 shared connections)
+- [ParseTests](ParseTests.md) (1 shared connections)
 
 ## Source Files
 

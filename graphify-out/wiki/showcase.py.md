@@ -1,4 +1,4 @@
-# test_showcase.py
+# showcase.py
 
 > 29 nodes · cohesion 0.13
 
@@ -34,10 +34,10 @@
 ## Relationships
 
 - [test_voice.py](test_voice.py.md) (7 shared connections)
-- [Equipment](Equipment.md) (4 shared connections)
+- [ewm_levels.py](ewm_levels.py.md) (4 shared connections)
 - [LayoutApiTests](LayoutApiTests.md) (3 shared connections)
-- [context_processors.py](context_processors.py.md) (2 shared connections)
-- [test_aisles.py](test_aisles.py.md) (2 shared connections)
+- [scenario/services.py](scenario-services.py.md) (2 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [ml/services.py](ml-services.py.md) (1 shared connections)
 - [scene-data.js](scene-data.js.md) (1 shared connections)

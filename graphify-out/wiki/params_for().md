@@ -30,7 +30,7 @@
 - design_kpi.py `EXTRACTED`
 - test_design_variants.py `EXTRACTED`
 - test_design_catalog.py `EXTRACTED`
-- [test_aisles.py](test_aisles.py.md) `EXTRACTED`
+- test_aisles.py `EXTRACTED`
 
 ### rationale_for
 - Parametry elementu: domyślne z katalogu + nadpisania (tylko znane klucze). `EXTRACTED`

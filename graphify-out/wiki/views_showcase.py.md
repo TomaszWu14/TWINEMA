@@ -1,4 +1,4 @@
-# BuildSceneTests
+# views_showcase.py
 
 > 13 nodes · cohesion 0.19
 
@@ -6,7 +6,7 @@
 
 - **_save()** (11 connections) — `web/twin/views/warehouse_generator.py`
 - **warehouse_generator.py** (10 connections) — `web/twin/views/warehouse_generator.py`
-- **CompareViewTests** (7 connections) — `web/twin/tests/test_design_compare.py`
+- **CompareViewTests** (8 connections) — `web/twin/tests/test_design_compare.py`
 - **warehouse_model_generator()** (6 connections) — `web/twin/views/warehouse_generator.py`
 - **.setUpTestData()** (3 connections) — `web/twin/tests/test_design_compare.py`
 - **HallGeneratorForm** (3 connections) — `web/twin/views/warehouse_generator.py`
@@ -20,9 +20,9 @@
 
 ## Relationships
 
-- [masterdata/services.py](masterdata-services.py.md) (5 shared connections)
-- [detect](detect.md) (2 shared connections)
-- [scenario/services.py](scenario-services.py.md) (2 shared connections)
+- [Material](Material.md) (5 shared connections)
+- [addressing.py](addressing.py.md) (2 shared connections)
+- [places.py](places.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [ForecastTests](ForecastTests.md) (1 shared connections)
 - [simulate](simulate.md) (1 shared connections)
@@ -36,7 +36,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 45 (94%)
+- EXTRACTED: 46 (94%)
 - INFERRED: 3 (6%)
 - AMBIGUOUS: 0 (0%)
 

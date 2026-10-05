@@ -3,7 +3,7 @@ from functools import wraps
 # ── ZAMROŻONY KONTRAKT: nazwy grup ───────────────────────────────────────────
 # Stringi po prawej to wiersze w tabeli auth_group. Zmiana stringu = nowa, pusta grupa
 # i cichy odpływ uprawnień. Identyfikator po lewej wolno refaktorować, stringu nie.
-# Pilnuje tego core/tests/test_group_contract.py.
+# Pilnuje tego core/tests/test_foundation.py.
 GROUP_ADMIN = "Administratorzy"
 GROUP_DESIGNER = "Projektant"      # modeluje hale, warianty, symulacje, prezentacje
 GROUP_VIEWER = "Podgląd"           # ogląda gotowe modele i filmy (zarząd, rekruter)

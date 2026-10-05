@@ -1,13 +1,13 @@
-# RenderJob
+# equipment/models.py
 
-> 45 nodes · cohesion 0.07
+> 42 nodes · cohesion 0.07
 
 ## Key Concepts
 
 - **RenderJob** (15 connections) — `web/render/models.py`
 - **render/api.py** (14 connections) — `web/render/api.py`
+- **_scene_from_request()** (14 connections) — `web/twin/views/warehouse_blender.py`
 - **render/views.py** (12 connections) — `web/render/views.py`
-- **_scene_from_request()** (12 connections) — `web/twin/views/warehouse_blender.py`
 - **worker_required()** (11 connections) — `web/render/api.py`
 - **render/models.py** (9 connections) — `web/render/models.py`
 - **_forbidden()** (8 connections) — `web/render/api.py`
@@ -29,14 +29,14 @@
 - **.scene_query()** (3 connections) — `web/render/views.py`
 - **status_json()** (3 connections) — `web/render/views.py`
 - **Meta** (2 connections) — `web/render/views.py`
-- *... and 20 more nodes in this community*
+- *... and 17 more nodes in this community*
 
 ## Relationships
 
-- [scenario/services.py](scenario-services.py.md) (6 shared connections)
+- [places.py](places.py.md) (6 shared connections)
 - [scene-data.js](scene-data.js.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [context_processors.py](context_processors.py.md) (1 shared connections)
+- [scenario/services.py](scenario-services.py.md) (1 shared connections)
 
 ## Source Files
 
@@ -49,7 +49,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 172 (98%)
+- EXTRACTED: 171 (98%)
 - INFERRED: 4 (2%)
 - AMBIGUOUS: 0 (0%)
 

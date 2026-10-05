@@ -19,9 +19,9 @@
 ## Relationships
 
 - [BayTemplate](BayTemplate.md) (2 shared connections)
-- [scenario/services.py](scenario-services.py.md) (2 shared connections)
+- [places.py](places.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (1 shared connections)
-- [EwmViewsTests](EwmViewsTests.md) (1 shared connections)
+- [WarehouseHallFeature](WarehouseHallFeature.md) (1 shared connections)
 
 ## Source Files
 

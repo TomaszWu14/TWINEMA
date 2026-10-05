@@ -27,9 +27,9 @@
 ## Relationships
 
 - [day-timeline.js](day-timeline.js.md) (11 shared connections)
-- [scenario/services.py](scenario-services.py.md) (1 shared connections)
+- [places.py](places.py.md) (1 shared connections)
 - [twin/models.py](twin-models.py.md) (1 shared connections)
-- [LoadAndViewTests](LoadAndViewTests.md) (1 shared connections)
+- [load_inputs](load_inputs.md) (1 shared connections)
 
 ## Source Files
 

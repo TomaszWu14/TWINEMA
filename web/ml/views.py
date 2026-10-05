@@ -58,7 +58,7 @@ def detail(request, pk):
     return render(request, f"ml/{mr.kind}.html", ctx)
 
 
-@any_role
+@designer
 def segments_csv(request, pk):
     mr = get_object_or_404(ModelRun, pk=pk, kind="segmentation")
     names = {s["id"]: s["name"] for s in mr.result.get("segments", [])}

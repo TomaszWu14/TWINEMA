@@ -1,4 +1,4 @@
-# masterdata/services.py
+# Material
 
 > 26 nodes · cohesion 0.12
 
@@ -34,9 +34,9 @@
 ## Relationships
 
 - [analyze](analyze.md) (7 shared connections)
-- [BuildSceneTests](BuildSceneTests.md) (5 shared connections)
+- [views_showcase.py](views_showcase.py.md) (5 shared connections)
 - [twin/models.py](twin-models.py.md) (4 shared connections)
-- [detect](detect.md) (3 shared connections)
+- [addressing.py](addressing.py.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
 - [equipment/views.py](equipment-views.py.md) (2 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)

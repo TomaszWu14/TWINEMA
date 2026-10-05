@@ -1,13 +1,13 @@
-# detect
+# addressing.py
 
 > 17 nodes · cohesion 0.19
 
 ## Key Concepts
 
-- **test_design_compare.py** (14 connections) — `web/twin/tests/test_design_compare.py`
+- **test_design_compare.py** (15 connections) — `web/twin/tests/test_design_compare.py`
 - **design_compare.py** (13 connections) — `web/twin/design_compare.py`
+- **required_fleet()** (9 connections) — `web/twin/design_compare.py`
 - **capacity()** (8 connections) — `web/twin/design_compare.py`
-- **required_fleet()** (8 connections) — `web/twin/design_compare.py`
 - **CompareTests** (7 connections) — `web/twin/tests/test_design_compare.py`
 - **comparison()** (6 connections) — `web/twin/design_compare.py`
 - **variant_row()** (5 connections) — `web/twin/design_compare.py`
@@ -24,11 +24,11 @@
 
 ## Relationships
 
-- [scenario/services.py](scenario-services.py.md) (9 shared connections)
+- [places.py](places.py.md) (10 shared connections)
 - [simulate](simulate.md) (7 shared connections)
-- [masterdata/services.py](masterdata-services.py.md) (3 shared connections)
+- [Material](Material.md) (3 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (2 shared connections)
-- [BuildSceneTests](BuildSceneTests.md) (2 shared connections)
+- [views_showcase.py](views_showcase.py.md) (2 shared connections)
 - [ForecastTests](ForecastTests.md) (2 shared connections)
 - [blender_scene.py](blender_scene.py.md) (1 shared connections)
 
@@ -39,8 +39,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 78 (99%)
-- INFERRED: 1 (1%)
+- EXTRACTED: 79 (98%)
+- INFERRED: 2 (2%)
 - AMBIGUOUS: 0 (0%)
 
 ---

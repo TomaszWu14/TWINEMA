@@ -75,9 +75,9 @@
     "semantic_hash": "1855d36bd9a9d65e29c47b14f7d11611"
   },
   "web/core/roles.py": {
-    "mtime": 1791222223.744191,
-    "ast_hash": "415fdba76b4d6e60a06bd8b1ceafcc9e",
-    "semantic_hash": "415fdba76b4d6e60a06bd8b1ceafcc9e"
+    "mtime": 1791224056.4897058,
+    "ast_hash": "cce20da42d2129ee54bf147799d8e200",
+    "semantic_hash": ""
   },
   "web/core/tests/__init__.py": {
     "mtime": 1791222223.7910745,
@@ -240,9 +240,9 @@
     "semantic_hash": "9b90e6e1ffddb987a72f24608cd196b2"
   },
   "web/ml/views.py": {
-    "mtime": 1791222224.0848155,
-    "ast_hash": "2d4b3b6a4ec757e3c67f3004e553f8cc",
-    "semantic_hash": "2d4b3b6a4ec757e3c67f3004e553f8cc"
+    "mtime": 1791224056.493706,
+    "ast_hash": "7226d6a7c19f1bb31e651a1e219352ef",
+    "semantic_hash": ""
   },
   "web/render/__init__.py": {
     "mtime": 1791222224.0853357,
@@ -460,13 +460,13 @@
     "semantic_hash": "b52486d1ac398d5a9d3c7df6f4c3af60"
   },
   "web/twin/shared.py": {
-    "mtime": 1791222223.7591057,
-    "ast_hash": "5dbced0cadd1d13a37a9302a13012490",
+    "mtime": 1791224056.4947054,
+    "ast_hash": "19d91b959b020bff372bcf072675a30d",
     "semantic_hash": ""
   },
   "web/twin/static/twin/js/flow-player.js": {
-    "mtime": 1791222223.7910745,
-    "ast_hash": "2789727b3120beadb5c0a7bbb97b0f27",
+    "mtime": 1791224056.495709,
+    "ast_hash": "090274c3548fef82c521f80ec6b4b2db",
     "semantic_hash": ""
   },
   "web/twin/templatetags/__init__.py": {
@@ -530,9 +530,9 @@
     "semantic_hash": "7b1bea1bd68318426cb785faa8d12aad"
   },
   "web/twin/tests/test_design_compare.py": {
-    "mtime": 1791222224.0685272,
-    "ast_hash": "96e0d3967ff9744f4ed907abdd011ed1",
-    "semantic_hash": "96e0d3967ff9744f4ed907abdd011ed1"
+    "mtime": 1791224056.4991796,
+    "ast_hash": "a16a0feb72f725b9ada7a4deb3a6e7d7",
+    "semantic_hash": ""
   },
   "web/twin/tests/test_design_day.py": {
     "mtime": 1791222224.0715487,
@@ -600,9 +600,9 @@
     "semantic_hash": "7f35f049127a1c91179ea7c0be9a998d"
   },
   "web/twin/tests/test_ewm_views.py": {
-    "mtime": 1791222223.7676682,
-    "ast_hash": "79a0c44d4d2afe94385dc2ad288ecf0f",
-    "semantic_hash": "79a0c44d4d2afe94385dc2ad288ecf0f"
+    "mtime": 1791224056.5006433,
+    "ast_hash": "245f409fab185b03bc65d51ce92f8911",
+    "semantic_hash": ""
   },
   "web/twin/tests/test_flow_player.py": {
     "mtime": 1791222223.7724824,
@@ -660,9 +660,9 @@
     "semantic_hash": "b45956854d15782c4416fc10074a302f"
   },
   "web/twin/views/warehouse_blender.py": {
-    "mtime": 1791222223.986866,
-    "ast_hash": "5d7940cc030f237b567eb560e6ede049",
-    "semantic_hash": "5d7940cc030f237b567eb560e6ede049"
+    "mtime": 1791224056.502748,
+    "ast_hash": "ada31a87051378785b462610fd066c35",
+    "semantic_hash": ""
   },
   "web/twin/views/warehouse_calibration.py": {
     "mtime": 1791222223.989202,
@@ -670,9 +670,9 @@
     "semantic_hash": "3cfba62dd0e729aa39961d56e24b6328"
   },
   "web/twin/views/warehouse_compare.py": {
-    "mtime": 1791222223.9952447,
-    "ast_hash": "0d79d6b23dfae901f621298a9ee20bd2",
-    "semantic_hash": "0d79d6b23dfae901f621298a9ee20bd2"
+    "mtime": 1791224056.502748,
+    "ast_hash": "d94854f543e6a8f5e9f2c1a5cb04141c",
+    "semantic_hash": ""
   },
   "web/twin/views/warehouse_design_day.py": {
     "mtime": 1791222223.9986327,
@@ -700,9 +700,9 @@
     "semantic_hash": ""
   },
   "web/twin/views/warehouse_model_ewm.py": {
-    "mtime": 1791222224.0508733,
-    "ast_hash": "f8445bd9048f720c0fbdf479d5131d7b",
-    "semantic_hash": "f8445bd9048f720c0fbdf479d5131d7b"
+    "mtime": 1791224056.5037467,
+    "ast_hash": "267d4ade3e51a791ac9357aac8fac026",
+    "semantic_hash": ""
   },
   "web/twin/views/warehouse_racktype.py": {
     "mtime": 1791222224.0528712,
@@ -800,8 +800,8 @@
     "semantic_hash": ""
   },
   "docs/HANDOFF.md": {
-    "mtime": 1791223356.4279127,
-    "ast_hash": "56431cfa4bd42a4fee5db9231d50fc0c",
+    "mtime": 1791224056.3866136,
+    "ast_hash": "d600ac43fe5e39693f079faa6673d877",
     "semantic_hash": ""
   },
   "docs/PLAN.md": {
@@ -870,8 +870,8 @@
     "semantic_hash": ""
   },
   "web/ml/templates/ml/segmentation.html": {
-    "mtime": 1791222224.0789032,
-    "ast_hash": "f62f01cb72642ed28a1f3fe61cf3826a",
+    "mtime": 1791224056.4927292,
+    "ast_hash": "e43a7ce4b272d5269e9f65a52592ea4e",
     "semantic_hash": ""
   },
   "web/render/templates/render/jobs.html": {
@@ -900,8 +900,8 @@
     "semantic_hash": ""
   },
   "web/twin/templates/twin/ewm_tasks/compare.html": {
-    "mtime": 1791222223.9074967,
-    "ast_hash": "74b64f45eab6eb21371ebc7064e54a72",
+    "mtime": 1791224056.4967144,
+    "ast_hash": "c2af3b1d838d38f93654bb32d74bb124",
     "semantic_hash": ""
   },
   "web/twin/templates/twin/ewm_tasks/detail.html": {
@@ -1005,8 +1005,8 @@
     "semantic_hash": ""
   },
   "web/twin/templates/twin/warehouse_model/view.html": {
-    "mtime": 1791222223.796129,
-    "ast_hash": "23828ac662d616d1236c2e959d0bc68a",
+    "mtime": 1791224056.4991796,
+    "ast_hash": "ec9f9426b716de28619c0b2c5e288582",
     "semantic_hash": ""
   },
   "web/twin/templates/twin/warehouse_model/zones.html": {
@@ -1742,6 +1742,11 @@
   "web/scenario/templates/scenario/showcase_list.html": {
     "mtime": 1791222224.0467274,
     "ast_hash": "ae6563a686f7cd26d87da299cfb0de25",
+    "semantic_hash": ""
+  },
+  "web/core/tests/test_role_matrix.py": {
+    "mtime": 1791224056.491712,
+    "ast_hash": "43cabb5a4e8325b616ac789052e0aeca",
     "semantic_hash": ""
   },
   "web/scenario/tests/test_r2.py": {

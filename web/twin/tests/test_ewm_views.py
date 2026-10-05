@@ -20,13 +20,22 @@ class EwmViewsTests(TestCase):
         self.wm, self.batch = make_model_and_master(extra_codes=["B0-60-100A"])
 
     def test_detect_preview_lists_templates_and_rows_without_saving(self):
-        self.client.force_login(self.viewer)
+        self.client.force_login(self.admin)
         r = self.client.get(reverse("twin:warehouse_model_detect", args=[self.wm.pk]))
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "3 pal. · A X Y Z · 0052/0010")
         self.assertContains(r, "10-47,50")
-        self.assertNotContains(r, reverse("twin:warehouse_model_detect_save", args=[self.wm.pk]))  # brak roli MD
         self.assertEqual(BayTemplate.objects.count(), 0)
+
+    def test_viewer_has_no_ewm_codes(self):
+        """Kody lokalizacji z mastera EWM to dane źródłowe — Podgląd ich nie widzi (ZALOZENIA #25)."""
+        self.client.force_login(self.viewer)
+        for name, q in (("twin:warehouse_model_detect", ""), ("twin:warehouse_model_compliance", ""),
+                        ("twin:warehouse_model_compliance", "?format=xlsx")):
+            with self.subTest(name=name, q=q):
+                self.assertEqual(self.client.get(reverse(name, args=[self.wm.pk]) + q).status_code, 403)
+        page = self.client.get(reverse("twin:warehouse_model_view", args=[self.wm.pk]))
+        self.assertNotContains(page, reverse("twin:warehouse_model_compliance", args=[self.wm.pk]))
 
     def test_viewer_cannot_save(self):
         self.client.force_login(self.viewer)
@@ -44,7 +53,7 @@ class EwmViewsTests(TestCase):
         self.assertContains(r, "3 / 4")                              # zgodne przejścia / wszystkie
 
     def test_compliance_xlsx(self):
-        self.client.force_login(self.viewer)
+        self.client.force_login(self.admin)
         r = self.client.get(reverse("twin:warehouse_model_compliance", args=[self.wm.pk]) + "?format=xlsx")
         self.assertEqual(r["Content-Type"],
                          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")

@@ -15,8 +15,8 @@
 
 ## Relationships
 
-- [masterdata/services.py](masterdata-services.py.md) (2 shared connections)
-- [BuildSceneTests](BuildSceneTests.md) (1 shared connections)
+- [Material](Material.md) (2 shared connections)
+- [views_showcase.py](views_showcase.py.md) (1 shared connections)
 
 ## Source Files
 

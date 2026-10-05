@@ -1,6 +1,6 @@
 # WarehouseModel
 
-> God node · 46 connections · `web/twin/models.py`
+> God node · 47 connections · `web/twin/models.py`
 
 **Community:** [twin/models.py](twin-models.py.md)
 
@@ -13,10 +13,10 @@
 ### imports
 - [studio/views.py](studio-views.py.md) `EXTRACTED`
 - [scenario/views.py](scenario-views.py.md) `EXTRACTED`
-- shared.py `EXTRACTED`
-- views_showcase.py `EXTRACTED`
-- test_dane.py `EXTRACTED`
-- [masterdata/views.py](masterdata-views.py.md) `EXTRACTED`
+- [shared.py](shared.py.md) `EXTRACTED`
+- [views_showcase.py](views_showcase.py.md) `EXTRACTED`
+- [test_dane.py](test_dane.py.md) `EXTRACTED`
+- masterdata/views.py `EXTRACTED`
 - views_sim.py `EXTRACTED`
 - demo_scenariusz.py `EXTRACTED`
 - test_s3b_views.py `EXTRACTED`
@@ -27,8 +27,8 @@
 - test_fleet_catalog.py `EXTRACTED`
 - test_blender_export.py `EXTRACTED`
 - test_layout_equipment.py `EXTRACTED`
-- [test_showcase.py](test_showcase.py.md) `EXTRACTED`
-- test_deck.py `EXTRACTED`
+- test_showcase.py `EXTRACTED`
+- [test_deck.py](test_deck.py.md) `EXTRACTED`
 - test_model_edit.py `EXTRACTED`
 - test_r2.py `EXTRACTED`
 

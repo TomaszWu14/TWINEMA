@@ -1,31 +1,44 @@
 # test_design_calibration.py
 
-> 9 nodes · cohesion 0.33
+> 15 nodes · cohesion 0.21
 
 ## Key Concepts
 
-- **twinema_render.py** (6 connections) — `tools/blender/twinema_render.py`
-- **apply_preset()** (4 connections) — `tools/blender/twinema_render.py`
-- **render()** (4 connections) — `tools/blender/twinema_render.py`
-- **_video_settings()** (3 connections) — `tools/blender/twinema_render.py`
-- **_key()** (2 connections) — `tools/blender/twinema_render.py`
-- **main()** (2 connections) — `tools/blender/twinema_render.py`
-- **TWINEMA → Blender: render ujęcia (preset kamery) ze sceny „twinema.scene”.…** (1 connections) — `tools/blender/twinema_render.py`
-- **FFmpeg H.264 w MP4 — Blender 5 przeniósł format wideo do `media_type`.** (1 connections) — `tools/blender/twinema_render.py`
-- **Ustawia „Kamerę TWINEMA” i jej cel wg presetu na klatkach 1…frames.** (1 connections) — `tools/blender/twinema_render.py`
+- **calibrate()** (13 connections) — `web/twin/design_calibration.py`
+- **CalibrationTests** (11 connections) — `web/twin/tests/test_design_calibration.py`
+- **_rows()** (7 connections) — `web/twin/tests/test_design_calibration.py`
+- **ideal_cycle()** (6 connections) — `web/twin/design_calibration.py`
+- **.test_ratio_tracks_real_pace()** (4 connections) — `web/twin/tests/test_design_calibration.py`
+- **.test_breaks_longer_than_limit_are_not_cycles()** (3 connections) — `web/twin/tests/test_design_calibration.py`
+- **.test_pairs_only_within_one_resource()** (3 connections) — `web/twin/tests/test_design_calibration.py`
+- **.test_unmapped_locations_are_counted()** (3 connections) — `web/twin/tests/test_design_calibration.py`
+- **.test_ideal_cycle_includes_lift()** (2 connections) — `web/twin/tests/test_design_calibration.py`
+- **.test_picking_is_its_own_group()** (2 connections) — `web/twin/tests/test_design_calibration.py`
+- **Czas cyklu wg fizyki symulacji: dojazd prev → src, chwyt, przewóz src → dst,…** (1 connections) — `web/twin/design_calibration.py`
+- **rows: krotki `blender_tasks.ROW_FIELDS` jednego dnia (rosnąco po potwierdzeniu).** (1 connections) — `web/twin/design_calibration.py`
+- **SimpleTestCase** (1 connections)
+- **Wózek przewozi palety między dwoma gniazdami co `gap_s` sekund.** (1 connections) — `web/twin/tests/test_design_calibration.py`
+- **Ten sam ruch co 2 min vs co 4 min → współczynnik rośnie dwukrotnie.** (1 connections) — `web/twin/tests/test_design_calibration.py`
 
 ## Relationships
 
-- No strong cross-community connections detected
+- [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (4 shared connections)
+- [twin/models.py](twin-models.py.md) (4 shared connections)
+- [places.py](places.py.md) (2 shared connections)
+- [ScenarioViewTests](ScenarioViewTests.md) (2 shared connections)
+- [layout-hall.js](layout-hall.js.md) (1 shared connections)
+- [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
+- [simulate](simulate.md) (1 shared connections)
 
 ## Source Files
 
-- `tools/blender/twinema_render.py`
+- `web/twin/design_calibration.py`
+- `web/twin/tests/test_design_calibration.py`
 
 ## Audit Trail
 
-- EXTRACTED: 24 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 58 (98%)
+- INFERRED: 1 (2%)
 - AMBIGUOUS: 0 (0%)
 
 ---

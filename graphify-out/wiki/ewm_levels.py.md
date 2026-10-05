@@ -1,44 +1,46 @@
 # ewm_levels.py
 
-> 19 nodes · cohesion 0.13
+> 14 nodes · cohesion 0.17
 
 ## Key Concepts
 
-- **ewm_levels.py** (11 connections) — `web/twin/ewm_levels.py`
-- **letter_slot()** (10 connections) — `web/twin/ewm_levels.py`
-- **code_slot()** (5 connections) — `web/twin/ewm_levels.py`
-- **letter_level()** (5 connections) — `web/twin/ewm_levels.py`
-- **LetterSlot** (4 connections) — `web/twin/ewm_levels.py`
-- **level_height_keys()** (4 connections) — `web/twin/ewm_levels.py`
-- **shelves_in_opening()** (4 connections) — `web/twin/ewm_levels.py`
-- **_split_letter()** (4 connections) — `web/twin/ewm_levels.py`
-- **is_hall_a()** (3 connections) — `web/twin/ewm_levels.py`
-- **NamedTuple** (1 connections)
-- **Litera kodu lokalizacji EWM → fizyczne miejsce w stosie (JEDNO źródło prawdy).…** (1 connections) — `web/twin/ewm_levels.py`
-- **Na ile części (w pionie) dzielony jest otwór poziomu danej półki; całe miejsce…** (1 connections) — `web/twin/ewm_levels.py`
-- **Sam numer poziomu 1..5 (``default`` dla nieznanej litery).** (1 connections) — `web/twin/ewm_levels.py`
-- **Klucze ``WarehouseRackType.level_heights`` w kolejności wyszukiwania.…** (1 connections) — `web/twin/ewm_levels.py`
-- **Fizyczne miejsce litery w stosie. level — poziom 1..5 (1 = dół / picking),…** (1 connections) — `web/twin/ewm_levels.py`
-- **Strefa hali A (A0–A3…): litery A–E to kolejne poziomy.** (1 connections) — `web/twin/ewm_levels.py`
-- **„C-1” → („C”, 1); „c” → („C”, half).** (1 connections) — `web/twin/ewm_levels.py`
-- **(strefa, litera[, połówka 1/2]) → LetterSlot albo None dla nieznanej litery.…** (1 connections) — `web/twin/ewm_levels.py`
-- **Pełny kod EWM („B0-07-300C-1”) → LetterSlot albo None (brak litery / nieznana /…** (1 connections) — `web/twin/ewm_levels.py`
+- **masterdata/views.py** (23 connections) — `web/masterdata/views.py`
+- **masterdata/__init__.py** (6 connections) — `web/masterdata/__init__.py`
+- **designer** (6 connections)
+- **current_stock_log()** (5 connections) — `web/masterdata/services.py`
+- **demo()** (4 connections) — `web/masterdata/views.py`
+- **home()** (4 connections) — `web/masterdata/views.py`
+- **materials()** (4 connections) — `web/masterdata/views.py`
+- **upload()** (4 connections) — `web/masterdata/views.py`
+- **template_csv()** (3 connections) — `web/masterdata/importers.py`
+- **template()** (3 connections) — `web/masterdata/views.py`
+- **masterdata/urls.py** (2 connections) — `web/masterdata/urls.py`
+- **log_detail()** (2 connections) — `web/masterdata/views.py`
+- **any_role** (2 connections)
+- **require_POST** (2 connections)
 
 ## Relationships
 
-- [context_processors.py](context_processors.py.md) (3 shared connections)
-- [scenario/services.py](scenario-services.py.md) (3 shared connections)
-- [masterdata/views.py](masterdata-views.py.md) (2 shared connections)
-- [day_demand](day_demand.md) (1 shared connections)
-- [test_voice.py](test_voice.py.md) (1 shared connections)
+- [test_voice.py](test_voice.py.md) (5 shared connections)
+- [showcase.py](showcase.py.md) (4 shared connections)
+- [importers.py](importers.py.md) (2 shared connections)
+- [twinema_montage.py](twinema_montage.py.md) (1 shared connections)
+- [scenario/services.py](scenario-services.py.md) (1 shared connections)
+- [scene-data.js](scene-data.js.md) (1 shared connections)
+- [test_ewm_service.py](test_ewm_service.py.md) (1 shared connections)
+- [twin/models.py](twin-models.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/ewm_levels.py`
+- `web/masterdata/__init__.py`
+- `web/masterdata/importers.py`
+- `web/masterdata/services.py`
+- `web/masterdata/urls.py`
+- `web/masterdata/views.py`
 
 ## Audit Trail
 
-- EXTRACTED: 60 (100%)
+- EXTRACTED: 70 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

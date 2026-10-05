@@ -1,6 +1,6 @@
 # test_voice.py
 
-> 18 nodes · cohesion 0.13
+> 17 nodes · cohesion 0.13
 
 ## Key Concepts
 
@@ -21,22 +21,21 @@
 - **BaseCommand** (1 connections)
 - **Zapis importów do bazy + odczyt danych dla bliźniaka (stany do sceny, grupy do…** (1 connections) — `web/masterdata/services.py`
 - **Plik → ImportLog z raportem. ImportFileError, gdy pliku nie da się czytać albo…** (1 connections) — `web/masterdata/services.py`
-- **B0-01-100A → (aisle, stack, col_code, col_idx, level); aisle zawiera strefę…** (1 connections) — `web/twin/shared.py`
 
 ## Relationships
 
-- [test_showcase.py](test_showcase.py.md) (7 shared connections)
+- [showcase.py](showcase.py.md) (7 shared connections)
 - [importers.py](importers.py.md) (6 shared connections)
-- [Equipment](Equipment.md) (5 shared connections)
+- [ewm_levels.py](ewm_levels.py.md) (5 shared connections)
 - [LayoutApiTests](LayoutApiTests.md) (4 shared connections)
 - [test_ewm_service.py](test_ewm_service.py.md) (4 shared connections)
-- [scenario/services.py](scenario-services.py.md) (3 shared connections)
+- [places.py](places.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [test_aisles.py](test_aisles.py.md) (1 shared connections)
-- [context_processors.py](context_processors.py.md) (1 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (1 shared connections)
+- [scenario/services.py](scenario-services.py.md) (1 shared connections)
 - [ml/services.py](ml-services.py.md) (1 shared connections)
-- [ewm_levels.py](ewm_levels.py.md) (1 shared connections)
-- [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
+- [check_site](check_site.md) (1 shared connections)
+- [packaging.py](packaging.py.md) (1 shared connections)
 
 ## Source Files
 
@@ -47,7 +46,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 100 (94%)
+- EXTRACTED: 99 (94%)
 - INFERRED: 6 (6%)
 - AMBIGUOUS: 0 (0%)
 
