@@ -15,7 +15,7 @@
 
 ## Relationships
 
-- [generate](generate.md) (1 shared connections)
+- [GeneratorTests](GeneratorTests.md) (1 shared connections)
 
 ## Source Files
 

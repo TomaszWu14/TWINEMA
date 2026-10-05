@@ -34,13 +34,13 @@
 ## Relationships
 
 - [day_demand](day_demand.md) (11 shared connections)
-- [FloorGrid](FloorGrid.md) (11 shared connections)
-- [build_scene](build_scene.md) (10 shared connections)
+- [model_edit.py](model_edit.py.md) (11 shared connections)
+- [blender_scene.py](blender_scene.py.md) (10 shared connections)
 - [warehouse_tasks.py](warehouse_tasks.py.md) (10 shared connections)
 - [twin/models.py](twin-models.py.md) (9 shared connections)
 - [simulate](simulate.md) (9 shared connections)
-- [test_design_compare.py](test_design_compare.py.md) (9 shared connections)
-- [blender_route.py](blender_route.py.md) (8 shared connections)
+- [warehouse_compare.py](warehouse_compare.py.md) (9 shared connections)
+- [layout.py](layout.py.md) (8 shared connections)
 - [design_kpi.py](design_kpi.py.md) (7 shared connections)
 - [studio/api.py](studio-api.py.md) (6 shared connections)
 - [ml/services.py](ml-services.py.md) (5 shared connections)

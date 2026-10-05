@@ -24,12 +24,12 @@
 - [test_design_calibration.py](test_design_calibration.py.md) `EXTRACTED`
 - test_ewm_tasks_flow.py `EXTRACTED`
 - [test_ewm_service.py](test_ewm_service.py.md) `EXTRACTED`
-- [test_blender_export.py](test_blender_export.py.md) `EXTRACTED`
+- test_blender_export.py `EXTRACTED`
 - test_flow_player.py `EXTRACTED`
 - test_bay_template_model.py `EXTRACTED`
 - test_bay_template_views.py `EXTRACTED`
-- test_warehouse_model_view.py `EXTRACTED`
 - test_layout_views.py `EXTRACTED`
+- test_warehouse_model_view.py `EXTRACTED`
 - test_warehouse_model_paste.py `EXTRACTED`
 
 ### method

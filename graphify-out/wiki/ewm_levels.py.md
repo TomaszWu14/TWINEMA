@@ -28,9 +28,9 @@
 
 ## Relationships
 
-- [blender_route.py](blender_route.py.md) (3 shared connections)
+- [layout.py](layout.py.md) (3 shared connections)
 - [shared.py](shared.py.md) (3 shared connections)
-- [blender_stock.py](blender_stock.py.md) (2 shared connections)
+- [rack_corners](rack_corners.md) (2 shared connections)
 - [day_demand](day_demand.md) (1 shared connections)
 - [test_voice.py](test_voice.py.md) (1 shared connections)
 
