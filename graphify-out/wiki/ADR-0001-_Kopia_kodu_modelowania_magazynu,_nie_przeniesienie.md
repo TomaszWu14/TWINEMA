@@ -20,15 +20,15 @@
 ## Relationships
 
 - [Scenario](Scenario.md) (7 shared connections)
-- [rack_corners](rack_corners.md) (4 shared connections)
-- [test_outbound.py](test_outbound.py.md) (3 shared connections)
-- [twin/models.py](twin-models.py.md) (3 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (4 shared connections)
+- [staffing.py](staffing.py.md) (3 shared connections)
+- [WarehouseModel](WarehouseModel.md) (3 shared connections)
 - [EquipmentAgentsTests](EquipmentAgentsTests.md) (3 shared connections)
 - [ScenarioViewTests](ScenarioViewTests.md) (3 shared connections)
 - [render/views.py](render-views.py.md) (3 shared connections)
 - [ParseTests](ParseTests.md) (2 shared connections)
 - [warehouse_tasks.py](warehouse_tasks.py.md) (2 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (2 shared connections)
+- [load_inputs](load_inputs.md) (2 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
 - [design_kpi.py](design_kpi.py.md) (1 shared connections)
 

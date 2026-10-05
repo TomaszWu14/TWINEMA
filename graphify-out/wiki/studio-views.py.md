@@ -23,11 +23,11 @@
 
 - [Scan](Scan.md) (6 shared connections)
 - [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (3 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (3 shared connections)
-- [SimulationViewTests](SimulationViewTests.md) (2 shared connections)
-- [Shot](Shot.md) (2 shared connections)
+- [load_inputs](load_inputs.md) (3 shared connections)
+- [test_design_sim.py](test_design_sim.py.md) (2 shared connections)
+- [Presentation](Presentation.md) (2 shared connections)
 - [ewm_demo_tasks.py](ewm_demo_tasks.py.md) (1 shared connections)
-- [DesignHubTests](DesignHubTests.md) (1 shared connections)
+- [test_design_hub.py](test_design_hub.py.md) (1 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (1 shared connections)
 
 ## Source Files

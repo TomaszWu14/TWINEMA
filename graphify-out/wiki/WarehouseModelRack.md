@@ -2,7 +2,7 @@
 
 > God node · 22 connections · `web/twin/models.py`
 
-**Community:** [twin/models.py](twin-models.py.md)
+**Community:** [WarehouseModel](WarehouseModel.md)
 
 ## Connections by Relation
 

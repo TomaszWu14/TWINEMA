@@ -27,9 +27,9 @@
 
 ## Relationships
 
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (5 shared connections)
+- [load_inputs](load_inputs.md) (5 shared connections)
 - [model_edit.py](model_edit.py.md) (4 shared connections)
-- [blender_stock.py](blender_stock.py.md) (4 shared connections)
+- [ml/services.py](ml-services.py.md) (4 shared connections)
 - [draft_script](draft_script.md) (4 shared connections)
 
 ## Source Files

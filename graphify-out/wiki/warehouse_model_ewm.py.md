@@ -26,7 +26,7 @@
 
 - [warehouse_variants.py](warehouse_variants.py.md) (8 shared connections)
 - [scenario/models.py](scenario-models.py.md) (3 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (2 shared connections)
+- [load_inputs](load_inputs.md) (2 shared connections)
 - [ewm_tasks.py](ewm_tasks.py.md) (1 shared connections)
 
 ## Source Files

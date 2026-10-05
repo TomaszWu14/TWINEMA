@@ -24,7 +24,7 @@
 
 ## Relationships
 
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (9 shared connections)
+- [load_inputs](load_inputs.md) (9 shared connections)
 - [simulate](simulate.md) (7 shared connections)
 - [GeneratorTests](GeneratorTests.md) (3 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (2 shared connections)

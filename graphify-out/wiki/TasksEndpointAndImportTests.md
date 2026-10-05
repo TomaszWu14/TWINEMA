@@ -28,7 +28,7 @@
 ## Relationships
 
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
-- [twin/models.py](twin-models.py.md) (1 shared connections)
+- [WarehouseModel](WarehouseModel.md) (1 shared connections)
 
 ## Source Files
 

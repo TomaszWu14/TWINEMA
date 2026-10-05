@@ -19,8 +19,8 @@
 ## Relationships
 
 - [BayTemplate](BayTemplate.md) (2 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (2 shared connections)
-- [twin/models.py](twin-models.py.md) (1 shared connections)
+- [load_inputs](load_inputs.md) (2 shared connections)
+- [WarehouseModel](WarehouseModel.md) (1 shared connections)
 - [EwmViewsTests](EwmViewsTests.md) (1 shared connections)
 
 ## Source Files

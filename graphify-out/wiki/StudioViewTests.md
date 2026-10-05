@@ -22,8 +22,8 @@
 
 - [GeneratorTests](GeneratorTests.md) (5 shared connections)
 - [test_design_compare.py](test_design_compare.py.md) (2 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (2 shared connections)
-- [twin/models.py](twin-models.py.md) (2 shared connections)
+- [load_inputs](load_inputs.md) (2 shared connections)
+- [WarehouseModel](WarehouseModel.md) (2 shared connections)
 - [ForecastTests](ForecastTests.md) (1 shared connections)
 - [simulate](simulate.md) (1 shared connections)
 - [draft_script](draft_script.md) (1 shared connections)

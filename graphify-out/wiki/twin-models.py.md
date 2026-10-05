@@ -1,69 +1,61 @@
 # twin/models.py
 
-> 31 nodes · cohesion 0.11
+> 24 nodes · cohesion 0.12
 
 ## Key Concepts
 
-- **twin/models.py** (50 connections) — `web/twin/models.py`
-- **WarehouseModel** (32 connections) — `web/twin/models.py`
-- **WarehouseModelRack** (22 connections) — `web/twin/models.py`
-- **test_design_calibration.py** (19 connections) — `web/twin/tests/test_design_calibration.py`
-- **test_ewm_tasks_flow.py** (19 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
-- **test_blender_export.py** (17 connections) — `web/twin/tests/test_blender_export.py`
-- **WarehouseHallFeature** (15 connections) — `web/twin/models.py`
-- **test_flow_player.py** (11 connections) — `web/twin/tests/test_flow_player.py`
-- **test_bay_template_views.py** (9 connections) — `web/twin/tests/test_bay_template_views.py`
-- **warehouse_model_upload()** (7 connections) — `web/twin/views/warehouse_model.py`
-- **WarehouseModelForm** (5 connections) — `web/twin/forms.py`
-- **test_warehouse_hall_features.py** (5 connections) — `web/twin/tests/test_warehouse_hall_features.py`
-- **test_warehouse_model_paste.py** (5 connections) — `web/twin/tests/test_warehouse_model_paste.py`
-- **forms.py** (3 connections) — `web/twin/forms.py`
-- **Meta** (2 connections) — `web/twin/forms.py`
-- **twin/migrations/0001_initial.py** (2 connections) — `web/twin/migrations/0001_initial.py`
-- **Migration** (1 connections) — `web/twin/migrations/0001_initial.py`
-- **Modele cyfrowego bliźniaka magazynu: typy regałów, master lokalizacji, szablony…** (1 connections) — `web/twin/models.py`
-- **Element hali, którego siatka regałów nie odwzoruje: dok, brama, korytarz,…** (1 connections) — `web/twin/models.py`
+- **test_ewm_service.py** (18 connections) — `web/twin/tests/test_ewm_service.py`
+- **WarehouseLocationMasterBatch** (12 connections) — `web/twin/models.py`
+- **WarehouseLocationMaster** (10 connections) — `web/twin/models.py`
+- **make_model_and_master()** (9 connections) — `web/twin/tests/test_ewm_service.py`
+- **test_ewm_views.py** (8 connections) — `web/twin/tests/test_ewm_views.py`
+- **locations.py** (7 connections) — `web/twin/locations.py`
+- **ServiceTests** (6 connections) — `web/twin/tests/test_ewm_service.py`
+- **load_sample()** (4 connections) — `web/twin/tests/ewm_sample.py`
+- **ewm_sample.py** (3 connections) — `web/twin/tests/ewm_sample.py`
+- **active_master_qs()** (2 connections) — `web/twin/locations.py`
+- **.test_detect_apply_and_compliance_is_100_percent()** (2 connections) — `web/twin/tests/test_ewm_service.py`
+- **.test_master_rows_filters_by_zone_and_active_master()** (2 connections) — `web/twin/tests/test_ewm_service.py`
+- **.test_rack_without_template_and_missing_master()** (2 connections) — `web/twin/tests/test_ewm_service.py`
+- **.test_second_detect_reuses_templates_and_replaces_overrides()** (2 connections) — `web/twin/tests/test_ewm_service.py`
+- **Kody lokalizacji magazynu — wspólna konwencja mapy 3D / eksportu SAP. Litera na…** (1 connections) — `web/twin/locations.py`
+- **Lokalizacje z aktywnej partii master-daty (pusty queryset, gdy brak partii).…** (1 connections) — `web/twin/locations.py`
+- **One import of location master data (height, volume, weight, type).** (1 connections) — `web/twin/models.py`
+- **Master data for a single warehouse location.** (1 connections) — `web/twin/models.py`
 - **.__str__()** (1 connections) — `web/twin/models.py`
-- **.rack_count()** (1 connections) — `web/twin/models.py`
-- **.__str__()** (1 connections) — `web/twin/models.py`
-- **.__str__()** (1 connections) — `web/twin/models.py`
-- **.width_m()** (1 connections) — `web/twin/models.py`
-- **Ekran szablonów gniazd (CRUD, role) + kolumny szablon/numeracja/kierunek w…** (1 connections) — `web/twin/tests/test_bay_template_views.py`
-- *... and 6 more nodes in this community*
+- **Syntetyczna próbka mastera lokalizacji (hala B0) dla testów „Wykryj z EWM” i…** (1 connections) — `web/twin/tests/ewm_sample.py`
+- **[(kod, typ EWM)] — kod B0-<rząd>-<gniazdo><pozycja palety><litera poziomu>.** (1 connections) — `web/twin/tests/ewm_sample.py`
+- **TestCase** (1 connections)
+- **Warstwa ORM części 1: zapis „Wykryj z EWM” + raport zgodności na syntetycznej…** (1 connections) — `web/twin/tests/test_ewm_service.py`
+- **Ekrany „Wykryj z EWM” (podgląd → zapis) i „Zgodność z EWM” (+ XLSX), z rolami.** (1 connections) — `web/twin/tests/test_ewm_views.py`
 
 ## Relationships
 
-- [scenario/models.py](scenario-models.py.md) (12 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (9 shared connections)
-- [EwmViewsTests](EwmViewsTests.md) (7 shared connections)
-- [roles.py](roles.py.md) (6 shared connections)
-- [shared.py](shared.py.md) (6 shared connections)
-- [test_outbound.py](test_outbound.py.md) (6 shared connections)
-- [BayTemplate](BayTemplate.md) (5 shared connections)
-- [blender_scene.py](blender_scene.py.md) (5 shared connections)
-- [GeneratorTests](GeneratorTests.md) (4 shared connections)
-- [resolve_moves](resolve_moves.md) (4 shared connections)
-- [simulate](simulate.md) (4 shared connections)
-- [render/views.py](render-views.py.md) (4 shared connections)
+- [WarehouseModel](WarehouseModel.md) (6 shared connections)
+- [test_voice.py](test_voice.py.md) (4 shared connections)
+- [EwmViewsTests](EwmViewsTests.md) (4 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
+- [ewm_tasks.py](ewm_tasks.py.md) (3 shared connections)
+- [load_inputs](load_inputs.md) (2 shared connections)
+- [BayTemplate](BayTemplate.md) (2 shared connections)
+- [FloorGrid](FloorGrid.md) (2 shared connections)
+- [analyze](analyze.md) (1 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (1 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
+- [current_stock_log](current_stock_log.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/forms.py`
-- `web/twin/migrations/0001_initial.py`
+- `web/twin/locations.py`
 - `web/twin/models.py`
-- `web/twin/tests/test_bay_template_views.py`
-- `web/twin/tests/test_blender_export.py`
-- `web/twin/tests/test_design_calibration.py`
-- `web/twin/tests/test_ewm_tasks_flow.py`
-- `web/twin/tests/test_flow_player.py`
-- `web/twin/tests/test_warehouse_hall_features.py`
-- `web/twin/tests/test_warehouse_model_paste.py`
-- `web/twin/views/warehouse_model.py`
+- `web/twin/tests/ewm_sample.py`
+- `web/twin/tests/test_ewm_service.py`
+- `web/twin/tests/test_ewm_views.py`
 
 ## Audit Trail
 
-- EXTRACTED: 228 (96%)
-- INFERRED: 10 (4%)
+- EXTRACTED: 97 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

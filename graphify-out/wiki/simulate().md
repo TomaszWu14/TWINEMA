@@ -33,7 +33,7 @@
 
 ### imports
 - warehouse_design_sim.py `EXTRACTED`
-- test_design_sim.py `EXTRACTED`
+- [test_design_sim.py](test_design_sim.py.md) `EXTRACTED`
 - test_design_calibration.py `EXTRACTED`
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) `EXTRACTED`
 - design_compare.py `EXTRACTED`

@@ -1,4 +1,4 @@
-# blender_stock.py
+# ml/services.py
 
 > 23 nodes · cohesion 0.14
 
@@ -7,8 +7,8 @@
 - **ml/services.py** (18 connections) — `web/ml/services.py`
 - **ml/views.py** (13 connections) — `web/ml/views.py`
 - **weekly()** (10 connections) — `web/twin/design_forecast.py`
+- **ModelRun** (7 connections) — `web/ml/models.py`
 - **run_segmentation()** (7 connections) — `web/ml/services.py`
-- **ModelRun** (6 connections) — `web/ml/models.py`
 - **run_forecast()** (6 connections) — `web/ml/services.py`
 - **run()** (6 connections) — `web/ml/views.py`
 - **ml/models.py** (5 connections) — `web/ml/models.py`
@@ -31,14 +31,15 @@
 ## Relationships
 
 - [model_edit.py](model_edit.py.md) (7 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (5 shared connections)
+- [load_inputs](load_inputs.md) (5 shared connections)
 - [roles.py](roles.py.md) (4 shared connections)
 - [test_design_forecast.py](test_design_forecast.py.md) (4 shared connections)
 - [forecast.py](forecast.py.md) (2 shared connections)
 - [build_deck](build_deck.md) (2 shared connections)
 - [Scenario](Scenario.md) (2 shared connections)
+- [test_voice.py](test_voice.py.md) (1 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
-- [layout.py](layout.py.md) (1 shared connections)
+- [analyze](analyze.md) (1 shared connections)
 
 ## Source Files
 
@@ -51,7 +52,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 98 (100%)
+- EXTRACTED: 99 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

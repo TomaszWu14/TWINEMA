@@ -1,4 +1,4 @@
-# SimulationViewTests
+# test_design_sim.py
 
 > 15 nodes · cohesion 0.23
 
@@ -27,7 +27,7 @@
 - [Scan](Scan.md) (2 shared connections)
 - [studio/views.py](studio-views.py.md) (2 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (2 shared connections)
-- [Shot](Shot.md) (2 shared connections)
+- [Presentation](Presentation.md) (2 shared connections)
 
 ## Source Files
 

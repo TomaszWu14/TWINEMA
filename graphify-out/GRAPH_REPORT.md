@@ -1,46 +1,46 @@
-# Graph Report - agent-a8f2388dc31ef0f10  (2026-10-05)
+# Graph Report - agent-a5630f42a5dc34fd2  (2026-10-05)
 
 ## Corpus Check
-- 214 files · ~125,132 words
+- 218 files · ~129,568 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2368 nodes · 4805 edges · 157 communities (126 shown, 31 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 161 edges (avg confidence: 0.53)
+- 2434 nodes · 4939 edges · 162 communities (130 shown, 32 thin omitted)
+- Extraction: 96% EXTRACTED · 4% INFERRED · 0% AMBIGUOUS · INFERRED: 180 edges (avg confidence: 0.53)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `99f00ba7`
+- Built from commit: `8ce48312`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
-- WarehouseTaskBatch
+- load_inputs
 - scenario/models.py
 - studio/api.py
-- test_outbound.py
+- staffing.py
 - twinema_warehouse_anim.py
 - test_foundation.py
 - warehouse_tasks.py
 - simulate
-- twin/models.py
+- WarehouseModel
 - masterdata/services.py
 - design_kpi.py
 - blender_scene.py
 - GeneratorTests
 - test_layout.py
 - design_catalog.py
-- shared.py
-- blender_stock.py
+- twin/models.py
+- ml/services.py
 - test_design_sim_scene.py
 - twinema_design_kit.py
 - importers.py
 - roles.py
 - test_voice.py
-- ewm_levels.py
+- shared.py
 - WorkerApiTests
 - twinema_montage.py
-- addressing.py
+- test_addressing.py
 - test_design_forecast.py
 - flow-player.js
 - TasksEndpointAndImportTests
@@ -56,7 +56,7 @@
 - test_design_compare.py
 - warehouse_model_ewm.py
 - warehouse_variants.py
-- masterdata/views.py
+- current_stock_log
 - draft_script
 - scenario/views.py
 - model_edit.py
@@ -66,7 +66,7 @@
 - Scenario
 - resolve_moves
 - Scan
-- SimulationViewTests
+- test_design_sim.py
 - studio/views.py
 - CLAUDE.md — TWINEMA
 - WarehouseModelPasteTests
@@ -74,10 +74,10 @@
 - ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie
 - RenderMontageTests
 - render/views.py
-- Material
+- DaneViewTests
 - StudioViewTests
 - VoiceViewTests
-- layout.py
+- analyze
 - pre-push
 - ForecastTests
 - WarehouseHallFeatureTests
@@ -89,20 +89,20 @@
 - FlowSceneEndpointTests
 - bay_templates.py
 - ewm_demo_tasks.py
-- rack_corners
+- warehouse_model.py
 - RackTypeWeightsTests
 - EwmViewsTests
 - calibrate
 - Pochodzenie kodu
 - ScenarioViewTests
-- Shot
+- Presentation
 - LoadAndViewTests
-- ScenarioDay
+- masterdata/views.py
 - segmentation.py
 - ewm_tasks.py
 - icon
-- warehouse_model.py
-- DesignHubTests
+- packaging.py
+- test_design_hub.py
 - CoreConfig
 - health
 - MasterdataConfig
@@ -115,8 +115,8 @@
 - masterdata/migrations/0001_initial.py
 - ml/migrations/0001_initial.py
 - render/migrations/0001_initial.py
-- map_columns
 - test_ewm_tasks_parser.py
+- parse_stamp
 - SlotLocator
 - parse_overrides
 - TWINEMA — założenia master daty i scenariuszy
@@ -131,8 +131,8 @@
 - params_for
 - build_pallets
 - warehouse_layout.py
-- demo_stock
-- MlRunTests
+- test_dane.py
+- layout.py
 - 0003_render_montaz.py
 - design_calibration.py
 - demo_scenariusz.py
@@ -140,15 +140,20 @@
 - test_ewm_tasks_refresh.py
 - scenario/migrations/0001_initial.py
 - 0004_kadry.py
-- Command
+- make_model_and_master
 - warehouse_design_sim.py
 - GeneratorViewTests
-- test_design_sim.py
+- VariantEditViewTests
 - GeometryUploadTests
-- warehouse_generator.py
+- _save
 - near_pairs
 - 0002_wydania_obsada.py
-- WarehouseTask
+- CalibrationViewTests
+- designer
+- blender_stock.py
+- CompareViewTests
+- 0003_domyslne_nosniki_klasy.py
+- 0002_opakowania_nosniki.py
 
 ## God Nodes (most connected - your core abstractions)
 1. `SlotLocator` - 33 edges
@@ -159,8 +164,8 @@
 6. `Agent` - 22 edges
 7. `WarehouseModelRack` - 22 edges
 8. `WarehouseTaskBatch` - 22 edges
-9. `rack_corners()` - 21 edges
-10. `model_racks()` - 21 edges
+9. `Material` - 21 edges
+10. `rack_corners()` - 21 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `start()` --calls--> `params_for()`  [EXTRACTED]
@@ -177,22 +182,22 @@
 ## Import Cycles
 - None detected.
 
-## Communities (157 total, 31 thin omitted)
+## Communities (162 total, 32 thin omitted)
 
-### Community 0 - "WarehouseTaskBatch"
-Cohesion: 0.10
-Nodes (21): groups_for(), {materiał: grupa towarowa} albo None, gdy materiałów jeszcze nie zaimportowano.…, load_groups(), {materiał z zadań: grupa towarowa} z modułu Dane; None, gdy materiałów jeszcze…, Zadania magazynowe EWM (WT) — import z monitora magazynu (/SCWM/MON) do…, WarehouseTaskBatch, JSON bezpieczny do osadzenia w <script> przez |safe (escapuje <, >, & i…, safe_json() (+13 more)
+### Community 0 - "load_inputs"
+Cohesion: 0.13
+Nodes (19): groups_for(), {materiał: grupa towarowa} albo None, gdy materiałów jeszcze nie zaimportowano.…, load_groups(), load_inputs(), {materiał z zadań: grupa towarowa} z modułu Dane; None, gdy materiałów jeszcze…, Agregaty zadań potwierdzonych partii (czas lokalny) — liczone w bazie, nie w…, JSON bezpieczny do osadzenia w <script> przez |safe (escapuje <, >, & i…, safe_json() (+11 more)
 
 ### Community 1 - "scenario/models.py"
-Cohesion: 0.11
+Cohesion: 0.12
 Nodes (21): arrivals_count(), day_demand(), _hhmm(), peak_concurrency(), _pick(), Plan przyjęć → zapotrzebowanie dnia (czysty Python — bez Django, testowalny bez…, Liczba przyjazdów po wzroście — zaokrąglenie w górę (auto albo jest, albo go…, n przyjazdów równomiernie w oknie [od, do): środki n równych odcinków. (+13 more)
 
 ### Community 2 - "studio/api.py"
 Cohesion: 0.16
 Nodes (24): claim(), _claimed_job(), fail(), _forbidden(), require_GET, require_POST, API workera renderów. Uwierzytelnienie: nagłówek X-Worker-Token…, Zlecenia „w toku” dłużej niż RENDER_STALE_MIN (worker padł) wracają do kolejki. (+16 more)
 
-### Community 3 - "test_outbound.py"
-Cohesion: 0.21
+### Community 3 - "staffing.py"
+Cohesion: 0.19
 Nodes (11): cutoff_risk(), process_hours(), productive_h(), Obsada: potrzebna vs zakładana per proces i zmiana + ryzyko cut-off kurierów…, → [{process, label, hours, shifts:[{…, needed, gap}], needed, assumed, short}]…, Czy pakowanie (wszystkie paczki) zdąży do ostatniego odbioru kuriera przy…, span(), staffing() (+3 more)
 
 ### Community 4 - "twinema_warehouse_anim.py"
@@ -208,44 +213,44 @@ Cohesion: 0.11
 Nodes (31): never_cache, location_report(), purge_stale(), Import zadań magazynowych EWM do bazy: `ewm_tasks.Scan` (strumień) →…, Lokalizacje z zadań partii vs regały modelu: ile trafia w gniazda, ile jest…, Porzucone podglądy (nikt nie kliknął „Importuj”) — kasowane po dobie., Zapis uploadu na dysk kawałkami → token (nazwa pliku) do podglądu i importu., Ścieżka pliku po tokenie z formularza — tylko nasz format nazwy (bez path… (+23 more)
 
 ### Community 7 - "simulate"
-Cohesion: 0.11
-Nodes (21): _Agent, _kpi(), Layout, _manh(), _p95(), _pick(), Symulacja dnia projektowego na wariancie hali (plan 2026-10-02, etap 3a) —…, Mnożnik wzrostu: > 1 dokłada losowe kopie zadań (czas ±15 min), < 1 losowo… (+13 more)
-
-### Community 8 - "twin/models.py"
 Cohesion: 0.10
-Nodes (18): Moduł Dane z bazą: zapis importów, demo, widoki i podpięcie do bliźniaka…, Meta, WarehouseModelForm, Migration, Modele cyfrowego bliźniaka magazynu: typy regałów, master lokalizacji, szablony…, Element hali, którego siatka regałów nie odwzoruje: dok, brama, korytarz,…, WarehouseHallFeature, WarehouseModel (+10 more)
+Nodes (24): _is_shelf(), Gniazdo regału: środek boku `bay_idx` (0..n-1) na poziomie `level` (1 =…, _slot(), _Agent, _kpi(), Layout, _manh(), _p95() (+16 more)
+
+### Community 8 - "WarehouseModel"
+Cohesion: 0.09
+Nodes (18): Meta, WarehouseModelForm, Meta, Element hali, którego siatka regałów nie odwzoruje: dok, brama, korytarz,…, Wariant projektu magazynu: elementy z katalogu `twin.design_catalog` (regały,…, WarehouseDesignVariant, WarehouseHallFeature, WarehouseModel (+10 more)
 
 ### Community 9 - "masterdata/services.py"
-Cohesion: 0.17
-Nodes (16): missing_required(), parse_rows(), → (poprawne dicty, odrzucone [{row, reason}] — próbka), liczba odrzuconych.…, import_file(), _level_of(), load_demo(), Zapis importów do bazy + odczyt danych dla bliźniaka (stany do sceny, grupy do…, Materiały demo (upsert) + import stanów demo dla modelu hali → (liczba… (+8 more)
+Cohesion: 0.12
+Nodes (20): missing_required(), parse_rows(), → (poprawne dicty, odrzucone [{row, reason}] — próbka), liczba odrzuconych.…, Command, BaseCommand, Pozycja stanu: materiał w lokalizacji (z jednego importu stanów)., StockItem, import_file() (+12 more)
 
 ### Community 10 - "design_kpi.py"
-Cohesion: 0.15
-Nodes (18): rack_axes(), (u_w, u_d) — jednostkowe osie szerokości i głębokości regału w układzie hali., anchor_count(), anchors(), _center(), compute_kpi(), equipment_capacity(), Wskaźniki wariantu projektu magazynu (czysty Python — testowalny bez bazy i… (+10 more)
+Cohesion: 0.12
+Nodes (22): rack_axes(), (u_w, u_d) — jednostkowe osie szerokości i głębokości regału w układzie hali., anchor_count(), anchors(), _center(), clean_elements(), compute_kpi(), equipment_capacity() (+14 more)
 
 ### Community 11 - "blender_scene.py"
-Cohesion: 0.10
-Nodes (37): rack_point(), Punkt hali: `along` [m] wzdłuż szerokości, `across` [m] wzdłuż głębokości…, _access(), _activity_picks(), _aisle_m(), build_scene(), _carry(), _container_flow() (+29 more)
+Cohesion: 0.11
+Nodes (34): rack_point(), Punkt hali: `along` [m] wzdłuż szerokości, `across` [m] wzdłuż głębokości…, _access(), _activity_picks(), _aisle_m(), build_scene(), _carry(), _container_flow() (+26 more)
 
 ### Community 12 - "GeneratorTests"
-Cohesion: 0.18
+Cohesion: 0.20
 Nodes (3): GeneratorTests, SimpleTestCase, _rect()
 
 ### Community 13 - "test_layout.py"
-Cohesion: 0.17
-Nodes (17): clean_layout(), feature_row(), _id(), _int(), LayoutError, _num(), ValueError, Nieprawidłowe dane z edytora — komunikat do pokazania użytkownikowi. (+9 more)
+Cohesion: 0.24
+Nodes (12): check_layout(), _issue(), _name(), Lista problemów: error blokuje zapis, warning tylko ostrzega., CheckLayoutTests, CleanLayoutTests, codes(), feat() (+4 more)
 
 ### Community 14 - "design_catalog.py"
 Cohesion: 0.15
 Nodes (19): _geometry(), block_rows(), check_aisles(), element_summary(), footprint(), height(), pallet_positions(), Katalog elementów do projektowania wariantów magazynu — JEDNO źródło prawdy.… (+11 more)
 
-### Community 15 - "shared.py"
-Cohesion: 0.08
-Nodes (23): active_master_qs(), Kody lokalizacji magazynu — wspólna konwencja mapy 3D / eksportu SAP. Litera na…, Lokalizacje z aktywnej partii master-daty (pusty queryset, gdy brak partii).…, LocationOverride, Meta, Named location type template — dimensions apply to all locations with matching…, Wyjątek adresu: nadpisuje wynik szablonu dla jednego miejsca albo całego…, Wariant projektu magazynu: elementy z katalogu `twin.design_catalog` (regały,… (+15 more)
+### Community 15 - "twin/models.py"
+Cohesion: 0.07
+Nodes (34): expand_model(), parse_bay_numbers(), Adresy miejsc paletowych modelu magazynu: szablon gniazda + reguła rzędu +…, [(rząd, szablon, wyjątki), …] → (miejsca z kluczami zone/aisle, {kod: [„B0-07”,…, „10-47,50” → [10, …, 47, 50]. Pusty tekst → []. Błędny zapis → ValueError., compliance(), Raport zgodności modelu z EWM: kody z planu (expand_model) vs kody z mastera,…, rows: [{"zone", "rack_id", "has_template"}]; locations/duplicates: wynik… (+26 more)
 
-### Community 16 - "blender_stock.py"
-Cohesion: 0.10
-Nodes (24): Pozycje stanu jako dicty `build_pallets`: location, hu, sku, name, lot, expiry,…, stock_for_scene(), Meta, ModelRun, Przebiegi modeli ML: wersja algorytmu, dane wejściowe, parametry, miary i wynik…, Przebiegi ML na imporcie zadań: dane z bliźniaka → czyste moduły…, run_forecast(), run_segmentation() (+16 more)
+### Community 16 - "ml/services.py"
+Cohesion: 0.15
+Nodes (15): Meta, ModelRun, Przebiegi modeli ML: wersja algorytmu, dane wejściowe, parametry, miary i wynik…, Przebiegi ML na imporcie zadań: dane z bliźniaka → czyste moduły…, run_forecast(), run_segmentation(), _user(), detail() (+7 more)
 
 ### Community 17 - "test_design_sim_scene.py"
 Cohesion: 0.09
@@ -257,19 +262,19 @@ Nodes (21): add(), add_block(), _clear(), _coll(), elements(), export_variant(),
 
 ### Community 19 - "importers.py"
 Cohesion: 0.18
-Nodes (21): _bool(), _cell(), _code(), _date(), ImportFileError, map_columns(), norm(), _num() (+13 more)
+Nodes (22): _bool(), _cell(), _code(), _date(), ImportFileError, map_columns(), norm(), _num() (+14 more)
 
 ### Community 20 - "roles.py"
-Cohesion: 0.08
-Nodes (16): Flagi ról do szablonów — jedno zapytanie zamiast wielu has_role()., user_roles(), Command, BaseCommand, Dekorator: wymaga zalogowania + członkostwa w grupie (superuser zawsze…, role_required(), ML1 prognoza + ML2 segmentacja: czyste moduły, zapis przebiegów, ekrany., Meta (+8 more)
+Cohesion: 0.06
+Nodes (20): Flagi ról do szablonów — jedno zapytanie zamiast wielu has_role()., user_roles(), Command, BaseCommand, Dekorator: wymaga zalogowania + członkostwa w grupie (superuser zawsze…, role_required(), ML1 prognoza + ML2 segmentacja: czyste moduły, zapis przebiegów, ekrany., Meta (+12 more)
 
 ### Community 21 - "test_voice.py"
 Cohesion: 0.11
 Nodes (24): align(), AlignmentTests, CueTests, TestCase, Czysta logika lektora: hash cache, długość, słowa, plansze napisów, SRT., Sztuczne wyrównanie: każdy znak trwa per_char sekund., SrtTests, VoiceKeyTests (+16 more)
 
-### Community 22 - "ewm_levels.py"
-Cohesion: 0.15
-Nodes (18): NamedTuple, code_slot(), is_hall_a(), letter_level(), letter_slot(), LetterSlot, level_height_keys(), level_height_mm() (+10 more)
+### Community 22 - "shared.py"
+Cohesion: 0.13
+Nodes (21): NamedTuple, code_slot(), is_hall_a(), letter_level(), letter_slot(), LetterSlot, level_height_keys(), level_height_mm() (+13 more)
 
 ### Community 23 - "WorkerApiTests"
 Cohesion: 0.16
@@ -279,13 +284,13 @@ Nodes (4): override_settings, TestCase, RenderScreenTests, WorkerApiTests
 Cohesion: 0.06
 Nodes (32): Api, find_blender(), main(), Worker renderów TWINEMA — uruchamiany na komputerze z Blenderem (np. z GPU).…, Montaż filmu: pobierz ujęcia i nagrania, wykonaj komendy z…, BLENDER_BIN / --blender → PATH → typowe katalogi instalacji (najnowsza wersja)., run_job(), run_montage() (+24 more)
 
-### Community 25 - "addressing.py"
-Cohesion: 0.06
-Nodes (45): expand_model(), expand_row(), format_bay_numbers(), letter_rank(), parse_code(), Adresy miejsc paletowych modelu magazynu: szablon gniazda + reguła rzędu +…, Rząd + szablon domyślny + wyjątki → lista miejsc (dict). Klucze: code, bay,…, [(rząd, szablon, wyjątki), …] → (miejsca z kluczami zone/aisle, {kod: [„B0-07”,… (+37 more)
+### Community 25 - "test_addressing.py"
+Cohesion: 0.07
+Nodes (39): _bay_locations(), expand_row(), format_bay_numbers(), letter_rank(), parse_code(), Rząd + szablon domyślny + wyjątki → lista miejsc (dict). Klucze: code, bay,…, Klucz sortowania liter poziomów: znane litery wg LETTER_ORDER, obce na końcu., Kod EWM → (strefa, przejście, gniazdo, pozycja, litera, połówka) albo None. (+31 more)
 
 ### Community 26 - "test_design_forecast.py"
-Cohesion: 0.18
-Nodes (15): backtest(), fit(), forecast(), Prognoza wzrostu wolumenów z historii zadań EWM (plan 2026-10-02, etap 5) —…, [(poniedziałek tygodnia, suma)] — tylko pełne tygodnie (bez pierwszego i…, series: [(dzień porządkowy, wartość)] → (nachylenie log/tydzień, wyraz wolny,…, MAPE [%] prognozy ostatnich `weeks` tygodni z modelu uczonego bez nich (None —…, Wzrost per strumień: roczne tempo P50/P90, mnożnik na `years` lat, MAPE testu… (+7 more)
+Cohesion: 0.13
+Nodes (17): backtest(), fit(), forecast(), Prognoza wzrostu wolumenów z historii zadań EWM (plan 2026-10-02, etap 5) —…, [(poniedziałek tygodnia, suma)] — tylko pełne tygodnie (bez pierwszego i…, series: [(dzień porządkowy, wartość)] → (nachylenie log/tydzień, wyraz wolny,…, MAPE [%] prognozy ostatnich `weeks` tygodni z modelu uczonego bez nich (None —…, Wzrost per strumień: roczne tempo P50/P90, mnożnik na `years` lat, MAPE testu… (+9 more)
 
 ### Community 27 - "flow-player.js"
 Cohesion: 0.10
@@ -336,24 +341,24 @@ Cohesion: 0.19
 Nodes (11): capacity(), comparison(), Porównanie wariantów hali na tym samym dniu projektowym (plan 2026-10-02, etap…, Miejsca paletowe (regały nie-półkowe), lokalizacje kartonowe (półki K1), bramy,…, Symulacja z flotą sugerowaną przez poprzedni przebieg, aż flota się ustali (≤…, [{wiersz KPI z wartościami per wariant + najlepszy}] dla tabeli., required_fleet(), variant_row() (+3 more)
 
 ### Community 39 - "warehouse_model_ewm.py"
-Cohesion: 0.10
-Nodes (27): apply_proposal(), compliance_for_model(), detect_for_model(), master_rows(), plan_for_model(), atomic, [(kod, typ EWM, wysokość mm, udźwig kg)] z mastera — tylko kody stref modelu., Propozycja „Wykryj z EWM” dla rzędów modelu (nic nie zapisuje). (+19 more)
+Cohesion: 0.13
+Nodes (21): active_master(), apply_proposal(), atomic, Aktywny (najnowszy) import mastera lokalizacji albo None., Zapis propozycji: nowe szablony, szablon domyślny + numeracja rzędów, wyjątki…, _compliance_xlsx(), _md_role, _planner (+13 more)
 
 ### Community 40 - "warehouse_variants.py"
-Cohesion: 0.19
-Nodes (15): clean_elements(), Walidacja elementów z pliku: znany rodzaj, liczby, parametry przez params_for.…, _comparison(), _get(), _md_role, _planner, require_POST, Wariant jako twinema.design-variant — do dalszej edycji w Blenderze… (+7 more)
+Cohesion: 0.24
+Nodes (13): _comparison(), _get(), _md_role, _planner, require_POST, Wariant jako twinema.design-variant — do dalszej edycji w Blenderze…, Wiersze tabeli: wartości per wariant + oznaczenie najlepszej + różnica do…, _save_variant() (+5 more)
 
-### Community 41 - "masterdata/views.py"
-Cohesion: 0.17
-Nodes (13): Wzór pliku: nagłówki (pierwszy alias = polska nazwa) — do pobrania z ekranu…, template_csv(), current_stock_log(), Najnowszy import stanów = aktualny stan magazynu (None, gdy brak)., demo(), home(), log_detail(), materials() (+5 more)
+### Community 41 - "current_stock_log"
+Cohesion: 0.22
+Nodes (9): Wzór pliku: nagłówki (pierwszy alias = polska nazwa) — do pobrania z ekranu…, template_csv(), current_stock_log(), Najnowszy import stanów = aktualny stan magazynu (None, gdy brak)., _counts(), home(), any_role, [(etykieta, liczba materiałów)] — zbiorcze liczby, które widzi też rola Podgląd. (+1 more)
 
 ### Community 42 - "draft_script"
 Cohesion: 0.19
 Nodes (16): BaseModel, draft_script(), enabled(), Exception, Szkic scenariusza z Claude API. Do modelu trafiają WYŁĄCZNIE zdania z…, Błąd do pokazania użytkownikowi (bez szczegółów technicznych)., facts: lista zdań z liczbami → (shots, ostrzeżenia). Rzuca ScriptAIError., ScriptAIError (+8 more)
 
 ### Community 43 - "scenario/views.py"
-Cohesion: 0.15
-Nodes (21): has_role(), True dla superusera albo członka którejś z grup., _arrival_rows(), day_save(), _errors(), _fc(), _hours_rows(), _num() (+13 more)
+Cohesion: 0.13
+Nodes (23): has_role(), True dla superusera albo członka którejś z grup., cartons_per_pallet_hint(), Podpowiedź do normy scenariusza „kartonów na paletę”: średnia ważona liczbą…, _arrival_rows(), day_save(), _errors(), _fc() (+15 more)
 
 ### Community 44 - "model_edit.py"
 Cohesion: 0.13
@@ -372,24 +377,24 @@ Cohesion: 0.13
 Nodes (9): client_ip(), Middleware przekrojowe: identyfikator żądania (korelacja logów) + nagłówki…, Dopisuje `record.request_id` z bieżącego żądania ("-" poza żądaniem)., Bierze X-Request-ID od proxy albo nadaje nowy; odsyła go w odpowiedzi., Permissions-Policy + Content-Security-Policy (domyślnie report-only)., IP klienta dla django-axes za jednym zaufanym proxy (Traefik/Coolify): ostatni…, RequestIDLogFilter, RequestIDMiddleware (+1 more)
 
 ### Community 48 - "Scenario"
-Cohesion: 0.13
-Nodes (21): InboundStream, Meta, OutboundStream, Dzień typowy i szczytowy; nowe dostają domyślne strumienie i profil (szczyt:…, Auta wyjazdowe — jak przyjęcia. Koniec okna = cut-off (odjazd / odbiór kuriera)., Zmiana procesu: godziny, przerwa, zakładana obsada. Koniec ≤ początek = zmiana…, Scenario, Shift (+13 more)
+Cohesion: 0.09
+Nodes (24): check_triples(), InboundStream, Meta, OutboundStream, Dzień typowy i szczytowy; nowe dostają domyślne strumienie i profil (szczyt:…, Auta wyjazdowe — jak przyjęcia. Koniec okna = cut-off (odjazd / odbiór kuriera)., Zmiana procesu: godziny, przerwa, zakładana obsada. Koniec ≤ początek = zmiana…, Scenario (+16 more)
 
 ### Community 49 - "resolve_moves"
-Cohesion: 0.23
-Nodes (7): Wiersze WT (krotki ROW_FIELDS, rosnąco po potwierdzeniu) → (ruchy, pominięte).…, resolve_moves(), SimpleTestCase, _racks(), ResolveMovesTests, _row(), SceneFromTasksTests
+Cohesion: 0.29
+Nodes (6): Wiersze WT (krotki ROW_FIELDS, rosnąco po potwierdzeniu) → (ruchy, pominięte).…, resolve_moves(), SimpleTestCase, ResolveMovesTests, _row(), SceneFromTasksTests
 
 ### Community 50 - "Scan"
 Cohesion: 0.23
 Nodes (5): Przebieg po pliku: nagłówek → mapowanie kolumn → wiersze sparsowane albo błędy,…, Poprawne, nieanulowane zadania (dicty pól modelu)., [(etykieta pola, nagłówek z pliku)] w kolejności pól., Scan, ScanFileTests
 
-### Community 51 - "SimulationViewTests"
-Cohesion: 0.17
-Nodes (4): CompareViewTests, TestCase, TestCase, SimulationViewTests
+### Community 51 - "test_design_sim.py"
+Cohesion: 0.12
+Nodes (7): MlRunTests, TestCase, Meta, WarehouseTask, TestCase, Symulacja dnia projektowego na hali z generatora (plan 2026-10-02, etap 3a)., SimulationViewTests
 
 ### Community 52 - "studio/views.py"
-Cohesion: 0.12
-Nodes (34): approve(), deck_pdf(), _draft_or_back(), film_file(), model_kpi(), montage_create(), montage_input_key(), montage_ready() (+26 more)
+Cohesion: 0.13
+Nodes (32): approve(), deck_pdf(), _draft_or_back(), film_file(), model_kpi(), montage_create(), montage_input_key(), montage_ready() (+24 more)
 
 ### Community 53 - "CLAUDE.md — TWINEMA"
 Cohesion: 0.33
@@ -411,9 +416,9 @@ Nodes (4): override_settings, TestCase, RenderMontageTests, _voice()
 Cohesion: 0.18
 Nodes (12): create(), delete(), jobs(), Meta, any_role, designer, require_POST, Stan zleceń w toku — strona odpytuje i przeładowuje się, gdy coś się zmieni. (+4 more)
 
-### Community 59 - "Material"
-Cohesion: 0.12
-Nodes (13): ImportLog, Material, Meta, Dane podstawowe bliźniaka: materiały, stany w lokalizacjach i dziennik…, Jeden import pliku: rodzaj, wynik i próbka odrzuconych wierszy. Import stanów…, Materiał (SKU): opakowanie zbiorcze i paletyzacja — wejście do rozmieszczenia i…, Pozycja stanu: materiał w lokalizacji (z jednego importu stanów)., StockItem (+5 more)
+### Community 59 - "DaneViewTests"
+Cohesion: 0.17
+Nodes (5): _csv(), DaneViewTests, DemoAndSceneTests, ImportServiceTests, TestCase
 
 ### Community 60 - "StudioViewTests"
 Cohesion: 0.23
@@ -423,9 +428,9 @@ Nodes (3): override_settings, TestCase, StudioViewTests
 Cohesion: 0.10
 Nodes (18): FakeResp, opener_err(), opener_ok(), override_settings, SimpleTestCase, Klient ElevenLabs — zawsze z podstawionym `opener` (bez sieci)., SynthesizeTests, fake_tts() (+10 more)
 
-### Community 62 - "layout.py"
-Cohesion: 0.19
-Nodes (13): skipUnless, analyze(), check_layout(), _issue(), _name(), rack_geom(), Layout hali dla edytora planu (czysty Python — bez Django, testowalny bez…, Regał edytora → dict sceny (jak `blender_scene.model_racks`) dla geometrii i… (+5 more)
+### Community 62 - "analyze"
+Cohesion: 0.22
+Nodes (8): skipUnless, analyze(), rack_geom(), Regał edytora → dict sceny (jak `blender_scene.model_racks`) dla geometrii i…, (kpi, issues) — KPI tym samym wzorem co warianty (`design_kpi.compute_kpi`), a…, LayoutCoreJsTests, node_eval(), Czyste funkcje JS edytora layoutu (static/twin/js/layout-core.js): testy `node…
 
 ### Community 64 - "ForecastTests"
 Cohesion: 0.17
@@ -456,68 +461,72 @@ Cohesion: 0.24
 Nodes (3): FlowPlayerPanelTests, FlowSceneEndpointTests, TestCase
 
 ### Community 72 - "bay_templates.py"
-Cohesion: 0.25
-Nodes (10): bay_template_delete(), bay_template_form(), bay_template_list(), _int(), _levels_from_post(), _md_role, _planner, require_POST (+2 more)
+Cohesion: 0.19
+Nodes (12): Named location type template — dimensions apply to all locations with matching…, WarehouseRackType, bay_template_delete(), bay_template_form(), bay_template_list(), _int(), _levels_from_post(), _md_role (+4 more)
 
 ### Community 73 - "ewm_demo_tasks.py"
 Cohesion: 0.31
 Nodes (9): bin_code(), day_tasks(), main(), Demonstracyjny eksport zadań magazynowych EWM (/SCWM/MON) do importu w TWINEMA.…, Zadania jednego dnia: [(rodzaj, materiał, dokument)] w kolejności do rozdania…, `n` chwil potwierdzeń jednego zasobu w zmianie: start + odstępy ~ mean_gap,…, row(), rows_for_day() (+1 more)
 
-### Community 74 - "rack_corners"
-Cohesion: 0.17
-Nodes (14): rack_corners(), floor_size(), is_geometry_csv(), _num(), parse_geometry_csv(), Geometria regałów z pliku CSV (np. odczytana z rysunku hali) → regały modelu…, Plik geometrii poznajemy po nagłówku (plik kodów lokalizacji go nie ma)., Tekst CSV → (racks, errors). Wiersz z błędem trafia do `errors` (nr linii +… (+6 more)
+### Community 74 - "warehouse_model.py"
+Cohesion: 0.09
+Nodes (33): rack_corners(), floor_size(), is_geometry_csv(), _num(), parse_geometry_csv(), Geometria regałów z pliku CSV (np. odczytana z rysunku hali) → regały modelu…, Plik geometrii poznajemy po nagłówku (plik kodów lokalizacji go nie ma)., Tekst CSV → (racks, errors). Wiersz z błędem trafia do `errors` (nr linii +… (+25 more)
 
 ### Community 75 - "RackTypeWeightsTests"
 Cohesion: 0.20
 Nodes (3): TestCase, RackTypeWeightsTests, Typy regałów A/B/C/D: nośność per poziom (level_weights) — zapis w edytorze,…
 
 ### Community 77 - "calibrate"
-Cohesion: 0.19
+Cohesion: 0.21
 Nodes (9): calibrate(), ideal_cycle(), Czas cyklu wg fizyki symulacji: dojazd prev → src, chwyt, przewóz src → dst,…, rows: krotki `blender_tasks.ROW_FIELDS` jednego dnia (rosnąco po potwierdzeniu)., CalibrationTests, SimpleTestCase, Wózek przewozi palety między dwoma gniazdami co `gap_s` sekund., Ten sam ruch co 2 min vs co 4 min → współczynnik rośnie dwukrotnie. (+1 more)
 
 ### Community 79 - "ScenarioViewTests"
 Cohesion: 0.19
 Nodes (3): hhmm(), TestCase, ScenarioViewTests
 
-### Community 80 - "Shot"
-Cohesion: 0.11
-Nodes (12): Meta, MontageJob, Presentation, Nagranie pasuje do obecnego tekstu i głosu (po poprawce kwestii — nieaktualne)., Długość klipu: nagranie + zapas 0,5 s, w granicach kolejki renderów (2–60 s)., Render pasuje do obecnego presetu i długości kwestii (stan zlecenia osobno)., Montaż filmu (ffmpeg w workerze na PC). Cache: ten sam `input_key` i gotowe →…, Nagranie lektora — cache po hashu (tekst + głos + model), współdzielony między… (+4 more)
+### Community 80 - "Presentation"
+Cohesion: 0.18
+Nodes (8): Meta, MontageJob, Presentation, Montaż filmu (ffmpeg w workerze na PC). Cache: ten sam `input_key` i gotowe →…, Nagranie lektora — cache po hashu (tekst + głos + model), współdzielony między…, VoiceTrack, Meta, PresentationForm
 
-### Community 82 - "ScenarioDay"
-Cohesion: 0.16
-Nodes (3): check_triples(), ScenarioDay, triple()
+### Community 82 - "masterdata/views.py"
+Cohesion: 0.08
+Nodes (18): PureTestCase, Carrier, ImportLog, Material, Meta, PalletClass, Dane podstawowe bliźniaka: materiały, stany w lokalizacjach i dziennik…, Jeden import pliku: rodzaj, wynik i próbka odrzuconych wierszy. Import stanów… (+10 more)
 
 ### Community 83 - "segmentation.py"
 Cohesion: 0.23
 Nodes (12): _demo(), _dist2(), features(), kmeans(), _name(), ML2 — segmentacja materiałów pod rozmieszczenie (slotting): k-means na profilu…, {materiał: {hits, cv, active, volume?}} — tylko materiały z ruchem., k-means++ → (przypisania, centroidy, inercja). Deterministyczne dla danego… (+4 more)
 
 ### Community 84 - "ewm_tasks.py"
-Cohesion: 0.18
-Nodes (13): _delimiter(), _encoding(), is_cancelled(), iter_table(), kind_from_word(), norm_header(), _parse_dt(), _parse_time() (+5 more)
+Cohesion: 0.23
+Nodes (10): _delimiter(), _encoding(), is_cancelled(), iter_table(), kind_from_word(), norm_header(), Parser eksportu zadań magazynowych EWM (WT) z monitora magazynu (/SCWM/MON) →…, Wiersze pliku jako listy wartości — strumieniowo, bez ładowania całości do… (+2 more)
 
 ### Community 85 - "icon"
 Cohesion: 0.40
 Nodes (4): simple_tag, icon(), Tagi szablonów modułu: ikony Lucide ze sprite'a static/twin/icons/lucide.svg., {% icon "package" %} → dekoracyjna (aria-hidden); z label → role=img + aria-…
 
-### Community 86 - "warehouse_model.py"
-Cohesion: 0.11
-Nodes (26): parse_bay_numbers(), „10-47,50” → [10, …, 47, 50]. Pusty tekst → []. Błędny zapis → ValueError., active_master(), Warstwa ORM nad czystymi modułami adresowania: master EWM, plan modelu, zapis…, Aktywny (najnowszy) import mastera lokalizacji albo None., Numeracja gniazd rzędu: zakresy „10-47,50”., validate_bay_numbers(), _parse_location_code() (+18 more)
+### Community 86 - "packaging.py"
+Cohesion: 0.16
+Nodes (19): cartons_per_pallet(), classify(), pallet_height_cm(), pallet_weight_kg(), Hierarchia opakowań sztuka → karton → paleta (czysty Python, bez Django).…, Kartonów/warstwę × warstw/paletę, gdy oba znane; inaczej wartość wpisana., Wpisana wysokość palety z towarem albo warstwy × wys. kartonu + wys. nośnika., Najmniejsza klasa z limitem ≥ wartość: classes = [(id, limit)]. Ponad… (+11 more)
+
+### Community 87 - "test_design_hub.py"
+Cohesion: 0.22
+Nodes (5): DemoFileTests, DesignHubTests, SimpleTestCase, TestCase, Zakładka „Projektowanie magazynu” w Magazyn 3D + plik demonstracyjny WT…
 
 ### Community 95 - "warehouse_blender.py"
-Cohesion: 0.11
-Nodes (24): build_scene_for_model(), Scena dla `WarehouseModel`. `batch` = PickerActivityBatch (None → demo…, default_start(), load_window(), parse_start(), Wózki w animacji z realnych zadań magazynowych EWM (WT) zamiast symulacji demo.…, Początek pierwszej pełnej godziny z zadaniami partii (czas lokalny)., „2026-03-02T06:00” (input datetime-local, czas lokalny) → datetime ze strefą… (+16 more)
+Cohesion: 0.12
+Nodes (22): default_start(), load_window(), parse_start(), Wózki w animacji z realnych zadań magazynowych EWM (WT) zamiast symulacji demo.…, Początek pierwszej pełnej godziny z zadaniami partii (czas lokalny)., „2026-03-02T06:00” (input datetime-local, czas lokalny) → datetime ze strefą…, Zadania partii potwierdzone w oknie [start, start + hours) — najwyżej `limit`…, Opis źródła wózków do `scene.source` (odtwarzacz pokazuje go pod animacją). (+14 more)
 
-### Community 117 - "map_columns"
-Cohesion: 0.24
-Nodes (7): map_columns(), missing_required(), {pole: indeks kolumny}. Najpierw dokładne aliasy, potem nagłówek zaczynający…, DemoFileTests, SimpleTestCase, Zakładka „Projektowanie magazynu” w Magazyn 3D + plik demonstracyjny WT…, HeaderAliasTests
+### Community 117 - "test_ewm_tasks_parser.py"
+Cohesion: 0.30
+Nodes (5): map_columns(), missing_required(), {pole: indeks kolumny}. Najpierw dokładne aliasy, potem nagłówek zaczynający…, HeaderAliasTests, Parser eksportu zadań magazynowych EWM (WT): aliasy nagłówków, liczby, daty,…
 
-### Community 118 - "test_ewm_tasks_parser.py"
-Cohesion: 0.22
-Nodes (6): parse_number(), parse_stamp(), „1.234,5” / „1,234.5” / „1 234,5” / „5-” (minus SAP na końcu) / liczba → float;…, Data (+ osobny czas, jak w eksporcie SAP) → datetime ze strefą `tz` albo None., Parser eksportu zadań magazynowych EWM (WT): aliasy nagłówków, liczby, daty,…, ValueParsingTests
+### Community 118 - "parse_stamp"
+Cohesion: 0.26
+Nodes (6): _parse_dt(), parse_stamp(), _parse_time(), → (datetime naiwny, czy_ma_czas) albo None; ValueError przy nieczytelnym…, Data (+ osobny czas, jak w eksporcie SAP) → datetime ze strefą `tz` albo None., ValueParsingTests
 
 ### Community 119 - "SlotLocator"
-Cohesion: 0.25
-Nodes (6): _inside(), Czy punkt leży w obrysie regału poszerzonym o `margin` [m]., Kod lokalizacji → gniazdo w regale modelu (środek palety, wysokość, obrót).…, SlotLocator, Palety w lokalizacjach (stan magazynu) w scenie Blendera —…, SlotLocatorTests
+Cohesion: 0.28
+Nodes (5): _inside(), Czy punkt leży w obrysie regału poszerzonym o `margin` [m]., Kod lokalizacji → gniazdo w regale modelu (środek palety, wysokość, obrót).…, SlotLocator, SlotLocatorTests
 
 ### Community 120 - "parse_overrides"
 Cohesion: 0.28
@@ -528,8 +537,8 @@ Cohesion: 0.17
 Nodes (11): Cel i odbiorcy, Dodatkowe (runda 3, 9 pytań), Ludzie i czas, Materiał i nośniki, Przyjęcia, Scenariusz (niezależny od layoutu), Składowanie i kompletacja, TWINEMA — założenia master daty i scenariuszy (+3 more)
 
 ### Community 123 - "parse_row"
-Cohesion: 0.46
-Nodes (3): parse_row(), Wiersz → dict pól `WarehouseTask` (+ `cancelled`); None = pusty wiersz;…, RowTests
+Cohesion: 0.29
+Nodes (5): parse_number(), parse_row(), „1.234,5” / „1,234.5” / „1 234,5” / „5-” (minus SAP na końcu) / liczba → float;…, Wiersz → dict pól `WarehouseTask` (+ `cancelled`); None = pusty wiersz;…, RowTests
 
 ### Community 125 - "twinema_render.py"
 Cohesion: 0.33
@@ -540,24 +549,28 @@ Cohesion: 0.20
 Nodes (8): _deg(), _half(), 1/2 dla połówki miejsca (kod z końcówką -1/-2, np. B0-07-300C-1), inaczej 0.…, dict gniazda: x, y, z (dół palety), heading, rozmiar [w, d] (+ half 1/2) albo…, Na ile części (w pionie) dzielony jest otwór poziomu danej półki; całe miejsce…, shelves_in_opening(), parse_code(), Kod → (zone, rack_id, bay, col_idx, level) albo None.
 
 ### Community 128 - "generate"
-Cohesion: 0.28
-Nodes (11): _docks(), _feature(), generate(), _pair_pitch(), _rack(), Generator hali od parametrów — nowy magazyn „od zera” (plan 2026-10-02, etap…, Poziomy składowania z podłogą: góra najwyższej palety ≤ wysokość − tryskacze., [korytarz][A|B][korytarz]… — y każdego rzędu; A patrzy na korytarz przed, B za. (+3 more)
+Cohesion: 0.22
+Nodes (12): _docks(), _feature(), generate(), _pair_pitch(), _rack(), Generator hali od parametrów — nowy magazyn „od zera” (plan 2026-10-02, etap…, Poziomy składowania z podłogą: góra najwyższej palety ≤ wysokość − tryskacze., [korytarz][A|B][korytarz]… — y każdego rzędu; A patrzy na korytarz przed, B za. (+4 more)
 
 ### Community 132 - "params_for"
 Cohesion: 0.24
 Nodes (6): params_for(), Parametry elementu: domyślne z katalogu + nadpisania (tylko znane klucze)., BlenderImportGuardTests, CatalogTests, SimpleTestCase, Blender importuje te moduły bez Django — żadnego importu Django na poziomie…
 
 ### Community 133 - "build_pallets"
-Cohesion: 0.20
-Nodes (5): build_pallets(), Czysta funkcja: dane wejściowe jako proste krotki/dicty → (pallets, stats,…, BuildPalletsTests, ParseCodeTests, SimpleTestCase
+Cohesion: 0.18
+Nodes (8): abc_by_hits(), build_pallets(), Klasa ABC wg udziału w pobraniach (ta sama reguła progów co…, Czysta funkcja: dane wejściowe jako proste krotki/dicty → (pallets, stats,…, BuildPalletsTests, ParseCodeTests, SimpleTestCase, Palety w lokalizacjach (stan magazynu) w scenie Blendera —…
 
 ### Community 134 - "warehouse_layout.py"
-Cohesion: 0.25
-Nodes (14): rack_row(), hall_feature_kinds(), _layout(), _parse(), _md_role, _planner, require_POST, → (layout, None) albo (None, odpowiedź błędu). (+6 more)
+Cohesion: 0.22
+Nodes (15): feature_row(), rack_row(), hall_feature_kinds(), _layout(), _parse(), _md_role, _planner, require_POST (+7 more)
 
-### Community 135 - "demo_stock"
+### Community 135 - "test_dane.py"
 Cohesion: 0.19
-Nodes (11): demo_materials(), demo_stock(), material_codes(), Dane demonstracyjne (syntetyczne): materiały zgodne z `tools/ewm_demo_tasks.py`…, Wiersze materiałów (dicty pól Material) z losowymi, ale wiarygodnymi wymiarami., Pozycje stanu dla regałów modelu: ~`fill` miejsc zajętych, materiały wg rotacji…, DemoStockTests, SimpleTestCase (+3 more)
+Nodes (10): demo_materials(), demo_stock(), material_codes(), Dane demonstracyjne (syntetyczne): materiały zgodne z `tools/ewm_demo_tasks.py`…, Wiersze materiałów (dicty pól Material) z losowymi, ale wiarygodnymi wymiarami:…, Pozycje stanu dla regałów modelu: ~`fill` miejsc zajętych, materiały wg rotacji…, DemoStockTests, SimpleTestCase (+2 more)
+
+### Community 136 - "layout.py"
+Cohesion: 0.35
+Nodes (10): clean_layout(), _id(), _int(), LayoutError, _num(), ValueError, Layout hali dla edytora planu (czysty Python — bez Django, testowalny bez…, Nieprawidłowe dane z edytora — komunikat do pokazania użytkownikowi. (+2 more)
 
 ### Community 138 - "design_calibration.py"
 Cohesion: 0.28
@@ -571,40 +584,48 @@ Nodes (5): Command, atomic, BaseCommand, _r(), Scenariusz referencyjny (syntetyc
 Cohesion: 0.40
 Nodes (3): MetaRefreshGuardTests, SimpleTestCase, Audyt UX-004 (WCAG 2.2.1): szczegóły importu zadań EWM nie przeładowują się co…
 
+### Community 148 - "make_model_and_master"
+Cohesion: 0.24
+Nodes (6): load_sample(), Syntetyczna próbka mastera lokalizacji (hala B0) dla testów „Wykryj z EWM” i…, [(kod, typ EWM)] — kod B0-<rząd>-<gniazdo><pozycja palety><litera poziomu>., make_model_and_master(), TestCase, ServiceTests
+
 ### Community 149 - "warehouse_design_sim.py"
-Cohesion: 0.16
-Nodes (25): model_floor(), model_racks(), Regały WarehouseModel jako dicty w formacie sceny (x, y, width, depth,…, Hala co najmniej tak duża, jak obrys regałów (dane bywają „poza halą")., load_master_levels(), {kod: poziom} z aktywnego mastera lokalizacji (pusty dict, gdy brak)., load_day_tasks(), Zadania potwierdzone w dniu `day` (czas lokalny) jako sekundy od DAY_START_H. (+17 more)
+Cohesion: 0.12
+Nodes (31): build_scene_for_model(), model_floor(), model_racks(), Regały WarehouseModel jako dicty w formacie sceny (x, y, width, depth,…, Hala co najmniej tak duża, jak obrys regałów (dane bywają „poza halą")., Scena dla `WarehouseModel`. `batch` = PickerActivityBatch (None → demo…, load_master_levels(), {kod: poziom} z aktywnego mastera lokalizacji (pusty dict, gdy brak). (+23 more)
 
-### Community 151 - "test_design_sim.py"
-Cohesion: 0.15
-Nodes (5): Symulacja dnia projektowego na hali z generatora (plan 2026-10-02, etap 3a)., TestCase, Edycja wariantu hali blokami (plan 2026-10-02, etap 4)., VariantEditViewTests, _save()
-
-### Community 153 - "warehouse_generator.py"
-Cohesion: 0.47
-Nodes (4): HallGeneratorForm, _initial(), _md_role, warehouse_model_generator()
+### Community 153 - "_save"
+Cohesion: 0.43
+Nodes (5): HallGeneratorForm, _initial(), _md_role, _save(), warehouse_model_generator()
 
 ### Community 154 - "near_pairs"
-Cohesion: 0.29
-Nodes (4): near_pairs(), Pary (i, j), i < j, których obrysy osiowe poszerzone o `pad` się stykają —…, GeometryTests, TestCase
+Cohesion: 0.33
+Nodes (3): near_pairs(), Pary (i, j), i < j, których obrysy osiowe poszerzone o `pad` się stykają —…, GeometryTests
 
-### Community 156 - "WarehouseTask"
-Cohesion: 0.14
-Nodes (6): Meta, WarehouseTask, CalibrationViewTests, TestCase, ForecastViewTests, TestCase
+### Community 156 - "CalibrationViewTests"
+Cohesion: 0.22
+Nodes (3): CalibrationViewTests, TestCase, _racks()
+
+### Community 157 - "designer"
+Cohesion: 0.33
+Nodes (7): catalog(), demo(), log_detail(), designer, require_POST, Nośniki i klasy wysokości/wagi — dwa formsety, każdy z własnym przyciskiem…, upload()
+
+### Community 158 - "blender_stock.py"
+Cohesion: 0.40
+Nodes (5): Pozycje stanu jako dicty `build_pallets`: location, hu, sku, name, lot, expiry,…, stock_for_scene(), load_stock_inputs(), Rzeczywiste palety w lokalizacjach → scena Blendera („cyfrowe zdjęcie"…, Dane do `build_pallets`: (wiersze migawki, stany, aktywność). Stany = najnowszy…
 
 ## Knowledge Gaps
-- **70 isolated node(s):** `docker-entrypoint.sh script`, `Migration`, `Migration`, `Meta`, `Migration` (+65 more)
+- **72 isolated node(s):** `docker-entrypoint.sh script`, `Migration`, `Migration`, `Migration`, `Migration` (+67 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **31 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **32 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `WarehouseModel` connect `twin/models.py` to `generate`, `BayTemplate`, `masterdata/views.py`, `rack_corners`, `shared.py`, `roles.py`, `studio/views.py`, `test_design_sim.py`, `render/views.py`?**
-  _High betweenness centrality (0.051) - this node is a cross-community bridge._
+- **Why does `WarehouseModel` connect `WarehouseModel` to `generate`, `BayTemplate`, `test_dane.py`, `masterdata/services.py`, `warehouse_model.py`, `twin/models.py`, `masterdata/views.py`, `roles.py`, `studio/views.py`, `shared.py`, `render/views.py`?**
+  _High betweenness centrality (0.060) - this node is a cross-community bridge._
 - **Why does `synthesize()` connect `VoiceViewTests` to `twinema_montage.py`, `studio/views.py`?**
-  _High betweenness centrality (0.036) - this node is a cross-community bridge._
+  _High betweenness centrality (0.035) - this node is a cross-community bridge._
 - **Why does `Api` connect `twinema_montage.py` to `VoiceViewTests`?**
-  _High betweenness centrality (0.034) - this node is a cross-community bridge._
+  _High betweenness centrality (0.033) - this node is a cross-community bridge._
 - **Are the 8 inferred relationships involving `SlotLocator` (e.g. with `BuildPalletsTests` and `ParseCodeTests`) actually correct?**
   _`SlotLocator` has 8 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 2 inferred relationships involving `WarehouseModel` (e.g. with `Meta` and `WarehouseModelForm`) actually correct?**
@@ -612,4 +633,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 5 inferred relationships involving `Scan` (e.g. with `HeaderAliasTests` and `KindMappingTests`) actually correct?**
   _`Scan` has 5 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `docker-entrypoint.sh script`, `Migration`, `Migration` to the rest of the system?**
-  _70 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _72 weakly-connected nodes found - possible documentation gaps or missing edges._

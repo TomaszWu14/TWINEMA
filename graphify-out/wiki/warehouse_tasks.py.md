@@ -33,8 +33,8 @@
 
 ## Relationships
 
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (10 shared connections)
-- [SimulationViewTests](SimulationViewTests.md) (4 shared connections)
+- [load_inputs](load_inputs.md) (10 shared connections)
+- [test_design_sim.py](test_design_sim.py.md) (4 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (2 shared connections)
 - [Scan](Scan.md) (2 shared connections)
 - [draft_script](draft_script.md) (2 shared connections)

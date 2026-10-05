@@ -14,7 +14,7 @@
 
 ## Relationships
 
-- [shared.py](shared.py.md) (3 shared connections)
+- [twin/models.py](twin-models.py.md) (3 shared connections)
 - [scenario/views.py](scenario-views.py.md) (2 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
 - [layout-editor.js](layout-editor.js.md) (1 shared connections)

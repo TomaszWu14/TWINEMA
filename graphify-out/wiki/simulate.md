@@ -34,11 +34,11 @@
 ## Relationships
 
 - [RenderMontageTests](RenderMontageTests.md) (15 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (9 shared connections)
+- [load_inputs](load_inputs.md) (9 shared connections)
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) (8 shared connections)
 - [test_design_compare.py](test_design_compare.py.md) (7 shared connections)
 - [kpi_facts](kpi_facts.md) (4 shared connections)
-- [twin/models.py](twin-models.py.md) (4 shared connections)
+- [WarehouseModel](WarehouseModel.md) (4 shared connections)
 - [blender_scene.py](blender_scene.py.md) (3 shared connections)
 - [GeneratorTests](GeneratorTests.md) (3 shared connections)
 - [ForecastTests](ForecastTests.md) (3 shared connections)

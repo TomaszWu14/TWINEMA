@@ -31,7 +31,7 @@
 
 ## Relationships
 
-- [Material](Material.md) (13 shared connections)
+- [DaneViewTests](DaneViewTests.md) (13 shared connections)
 - [design_kpi.py](design_kpi.py.md) (11 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (9 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)

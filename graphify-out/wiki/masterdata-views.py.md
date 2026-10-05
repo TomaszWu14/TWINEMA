@@ -1,48 +1,29 @@
 # masterdata/views.py
 
-> 16 nodes · cohesion 0.17
+> 8 nodes · cohesion 0.36
 
 ## Key Concepts
 
-- **masterdata/views.py** (16 connections) — `web/masterdata/views.py`
-- **masterdata/__init__.py** (5 connections) — `web/masterdata/__init__.py`
-- **current_stock_log()** (4 connections) — `web/masterdata/services.py`
-- **demo()** (4 connections) — `web/masterdata/views.py`
-- **any_role** (4 connections)
-- **upload()** (4 connections) — `web/masterdata/views.py`
-- **template_csv()** (3 connections) — `web/masterdata/importers.py`
-- **home()** (3 connections) — `web/masterdata/views.py`
-- **template()** (3 connections) — `web/masterdata/views.py`
-- **masterdata/urls.py** (2 connections) — `web/masterdata/urls.py`
-- **log_detail()** (2 connections) — `web/masterdata/views.py`
-- **materials()** (2 connections) — `web/masterdata/views.py`
-- **designer** (2 connections)
-- **require_POST** (2 connections)
-- **Wzór pliku: nagłówki (pierwszy alias = polska nazwa) — do pobrania z ekranu…** (1 connections) — `web/masterdata/importers.py`
-- **Najnowszy import stanów = aktualny stan magazynu (None, gdy brak).** (1 connections) — `web/masterdata/services.py`
+- **GeneratorViewTests** (8 connections) — `web/twin/tests/test_design_generator.py`
+- **._post()** (4 connections) — `web/twin/tests/test_design_generator.py`
+- **.test_create_saves_model_and_opens_3d()** (2 connections) — `web/twin/tests/test_design_generator.py`
+- **.test_invalid_input_shows_errors()** (2 connections) — `web/twin/tests/test_design_generator.py`
+- **.test_preview_does_not_save()** (2 connections) — `web/twin/tests/test_design_generator.py`
+- **.setUp()** (1 connections) — `web/twin/tests/test_design_generator.py`
+- **.test_get_shows_preset_summary()** (1 connections) — `web/twin/tests/test_design_generator.py`
+- **TestCase** (1 connections)
 
 ## Relationships
 
-- [test_voice.py](test_voice.py.md) (5 shared connections)
-- [masterdata/services.py](masterdata-services.py.md) (4 shared connections)
-- [importers.py](importers.py.md) (2 shared connections)
-- [twinema_montage.py](twinema_montage.py.md) (1 shared connections)
-- [layout.py](layout.py.md) (1 shared connections)
-- [roles.py](roles.py.md) (1 shared connections)
-- [shared.py](shared.py.md) (1 shared connections)
-- [twin/models.py](twin-models.py.md) (1 shared connections)
+- [GeneratorTests](GeneratorTests.md) (1 shared connections)
 
 ## Source Files
 
-- `web/masterdata/__init__.py`
-- `web/masterdata/importers.py`
-- `web/masterdata/services.py`
-- `web/masterdata/urls.py`
-- `web/masterdata/views.py`
+- `web/twin/tests/test_design_generator.py`
 
 ## Audit Trail
 
-- EXTRACTED: 58 (100%)
+- EXTRACTED: 21 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

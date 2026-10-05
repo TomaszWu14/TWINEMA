@@ -20,12 +20,12 @@
 
 ## Relationships
 
-- [twin/models.py](twin-models.py.md) (4 shared connections)
+- [WarehouseModel](WarehouseModel.md) (4 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (3 shared connections)
 - [blender_scene.py](blender_scene.py.md) (2 shared connections)
 - [ScenarioViewTests](ScenarioViewTests.md) (2 shared connections)
-- [layout.py](layout.py.md) (1 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (1 shared connections)
+- [analyze](analyze.md) (1 shared connections)
+- [load_inputs](load_inputs.md) (1 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
 - [resolve_moves](resolve_moves.md) (1 shared connections)
 

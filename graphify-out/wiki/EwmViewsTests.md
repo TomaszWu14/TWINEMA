@@ -16,9 +16,9 @@
 
 ## Relationships
 
-- [twin/models.py](twin-models.py.md) (7 shared connections)
-- [shared.py](shared.py.md) (4 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (3 shared connections)
+- [WarehouseModel](WarehouseModel.md) (7 shared connections)
+- [twin/models.py](twin-models.py.md) (4 shared connections)
+- [load_inputs](load_inputs.md) (3 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
 - [BayTemplate](BayTemplate.md) (2 shared connections)
 - [design_kpi.py](design_kpi.py.md) (1 shared connections)

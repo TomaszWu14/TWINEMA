@@ -21,7 +21,7 @@
 
 - [simulate](simulate.md) (3 shared connections)
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) (2 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (2 shared connections)
+- [load_inputs](load_inputs.md) (2 shared connections)
 - [draft_script](draft_script.md) (2 shared connections)
 - [test_design_compare.py](test_design_compare.py.md) (2 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (1 shared connections)

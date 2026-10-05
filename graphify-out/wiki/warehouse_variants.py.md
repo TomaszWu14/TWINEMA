@@ -23,14 +23,14 @@
 ## Relationships
 
 - [warehouse_model_ewm.py](warehouse_model_ewm.py.md) (8 shared connections)
-- [addressing.py](addressing.py.md) (3 shared connections)
+- [test_addressing.py](test_addressing.py.md) (3 shared connections)
 - [scenario/views.py](scenario-views.py.md) (3 shared connections)
 - [scenario/models.py](scenario-models.py.md) (3 shared connections)
-- [shared.py](shared.py.md) (3 shared connections)
+- [twin/models.py](twin-models.py.md) (3 shared connections)
 - [layout-editor.js](layout-editor.js.md) (2 shared connections)
 - [test_container_inbound.py](test_container_inbound.py.md) (2 shared connections)
 - [ewm_tasks.py](ewm_tasks.py.md) (2 shared connections)
-- [twin/models.py](twin-models.py.md) (2 shared connections)
+- [WarehouseModel](WarehouseModel.md) (2 shared connections)
 - [EwmViewsTests](EwmViewsTests.md) (2 shared connections)
 - [BayTemplate](BayTemplate.md) (1 shared connections)
 
