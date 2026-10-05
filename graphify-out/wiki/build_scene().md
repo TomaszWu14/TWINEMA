@@ -2,7 +2,7 @@
 
 > God node · 24 connections · `web/twin/blender_scene.py`
 
-**Community:** [build_scene](build_scene.md)
+**Community:** [blender_scene.py](blender_scene.py.md)
 
 ## Connections by Relation
 

@@ -1,4 +1,4 @@
-# test_warehouse_model_view.py
+# WarehouseModelViewTests
 
 > 20 nodes · cohesion 0.12
 
@@ -27,7 +27,7 @@
 
 ## Relationships
 
-- [twin/models.py](twin-models.py.md) (3 shared connections)
+- [WarehouseModel](WarehouseModel.md) (3 shared connections)
 
 ## Source Files
 

@@ -1,4 +1,4 @@
-# build_deck
+# test_deck.py
 
 > 13 nodes · cohesion 0.23
 
@@ -20,8 +20,8 @@
 
 ## Relationships
 
-- [blender_stock.py](blender_stock.py.md) (2 shared connections)
-- [context_processors.py](context_processors.py.md) (1 shared connections)
+- [ml/services.py](ml-services.py.md) (2 shared connections)
+- [layout-editor.js](layout-editor.js.md) (1 shared connections)
 
 ## Source Files
 

@@ -12,7 +12,7 @@
 
 ## Relationships
 
-- [warehouse_design_sim.py](warehouse_design_sim.py.md) (1 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (1 shared connections)
 - [studio/views.py](studio-views.py.md) (1 shared connections)
 
 ## Source Files

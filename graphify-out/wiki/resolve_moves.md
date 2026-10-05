@@ -23,10 +23,10 @@
 ## Relationships
 
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (4 shared connections)
-- [twin/models.py](twin-models.py.md) (4 shared connections)
-- [warehouse_design_sim.py](warehouse_design_sim.py.md) (2 shared connections)
+- [WarehouseModel](WarehouseModel.md) (4 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (2 shared connections)
 - [ScenarioViewTests](ScenarioViewTests.md) (2 shared connections)
-- [render/views.py](render-views.py.md) (1 shared connections)
+- [RenderJob](RenderJob.md) (1 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
 - [simulate](simulate.md) (1 shared connections)
 

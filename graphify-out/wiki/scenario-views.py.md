@@ -23,10 +23,10 @@
 
 ## Relationships
 
-- [layout-editor.js](layout-editor.js.md) (6 shared connections)
+- [layout-panels.js](layout-panels.js.md) (6 shared connections)
 - [test_container_inbound.py](test_container_inbound.py.md) (4 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
-- [compliance](compliance.md) (2 shared connections)
+- [rack_point](rack_point.md) (2 shared connections)
 - [test_addressing.py](test_addressing.py.md) (1 shared connections)
 
 ## Source Files

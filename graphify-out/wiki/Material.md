@@ -35,12 +35,12 @@
 
 - [layout](layout.md) (7 shared connections)
 - [test_layout_structure.py](test_layout_structure.py.md) (5 shared connections)
-- [twin/models.py](twin-models.py.md) (4 shared connections)
-- [warehouse_compare.py](warehouse_compare.py.md) (3 shared connections)
+- [WarehouseModel](WarehouseModel.md) (4 shared connections)
+- [test_design_compare.py](test_design_compare.py.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
 - [segmentation.py](segmentation.py.md) (2 shared connections)
 - [design_catalog.py](design_catalog.py.md) (1 shared connections)
-- [addressing.py](addressing.py.md) (1 shared connections)
+- [layout-core.js](layout-core.js.md) (1 shared connections)
 
 ## Source Files
 

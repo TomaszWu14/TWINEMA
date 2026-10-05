@@ -1,43 +1,48 @@
 # StudioViewTests
 
-> 15 nodes · cohesion 0.23
+> 16 nodes · cohesion 0.13
 
 ## Key Concepts
 
-- **Scan** (23 connections) — `web/twin/ewm_tasks.py`
-- **ScanFileTests** (8 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **.__iter__()** (4 connections) — `web/twin/ewm_tasks.py`
-- **._file()** (4 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **.columns()** (3 connections) — `web/twin/ewm_tasks.py`
-- **.stats()** (3 connections) — `web/twin/ewm_tasks.py`
-- **.test_cp1250_semicolon_csv_with_title_line()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **.test_missing_columns_yield_nothing()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **.test_xls_rejected_with_hint()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **._count()** (2 connections) — `web/twin/ewm_tasks.py`
-- **.unmapped_headers()** (2 connections) — `web/twin/ewm_tasks.py`
-- **.test_xlsx_with_excel_date_and_time_cells()** (2 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **Przebieg po pliku: nagłówek → mapowanie kolumn → wiersze sparsowane albo błędy,…** (1 connections) — `web/twin/ewm_tasks.py`
-- **Poprawne, nieanulowane zadania (dicty pól modelu).** (1 connections) — `web/twin/ewm_tasks.py`
-- **[(etykieta pola, nagłówek z pliku)] w kolejności pól.** (1 connections) — `web/twin/ewm_tasks.py`
+- **WarehouseTask** (15 connections) — `web/twin/models_tasks.py`
+- **ForecastViewTests** (8 connections) — `web/twin/tests/test_design_forecast.py`
+- **MlRunTests** (6 connections) — `web/ml/tests/test_ml.py`
+- **.setUpTestData()** (3 connections) — `web/twin/tests/test_design_forecast.py`
+- **.setUpTestData()** (3 connections) — `web/twin/tests/test_design_sim.py`
+- **.setUpTestData()** (2 connections) — `web/ml/tests/test_ml.py`
+- **Meta** (2 connections) — `web/twin/models_tasks.py`
+- **.test_home_lists_runs()** (1 connections) — `web/ml/tests/test_ml.py`
+- **.test_segmentation_run_and_csv()** (1 connections) — `web/ml/tests/test_ml.py`
+- **.test_viewer_cannot_run_designer_can_and_run_is_recorded()** (1 connections) — `web/ml/tests/test_ml.py`
+- **TestCase** (1 connections)
+- **.__str__()** (1 connections) — `web/twin/models_tasks.py`
+- **.setUp()** (1 connections) — `web/twin/tests/test_design_forecast.py`
+- **.test_page_shows_multiplier_and_links()** (1 connections) — `web/twin/tests/test_design_forecast.py`
+- **.test_profile_links_to_forecast()** (1 connections) — `web/twin/tests/test_design_forecast.py`
+- **TestCase** (1 connections)
 
 ## Relationships
 
-- [warehouse_tasks.py](warehouse_tasks.py.md) (4 shared connections)
-- [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (3 shared connections)
-- [Scan](Scan.md) (2 shared connections)
-- [studio/views.py](studio-views.py.md) (2 shared connections)
-- [Pochodzenie kodu](Pochodzenie_kodu.md) (2 shared connections)
-- [roles.py](roles.py.md) (2 shared connections)
+- [test_design_forecast.py](test_design_forecast.py.md) (4 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (3 shared connections)
+- [warehouse_tasks.py](warehouse_tasks.py.md) (2 shared connections)
+- [simulate](simulate.md) (2 shared connections)
+- [ForecastTests](ForecastTests.md) (2 shared connections)
+- [layout-editor.js](layout-editor.js.md) (1 shared connections)
+- [ScenarioViewTests](ScenarioViewTests.md) (1 shared connections)
+- [test_layout_structure.py](test_layout_structure.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/ewm_tasks.py`
-- `web/twin/tests/test_ewm_tasks_parser.py`
+- `web/ml/tests/test_ml.py`
+- `web/twin/models_tasks.py`
+- `web/twin/tests/test_design_forecast.py`
+- `web/twin/tests/test_design_sim.py`
 
 ## Audit Trail
 
-- EXTRACTED: 57 (90%)
-- INFERRED: 6 (10%)
+- EXTRACTED: 39 (81%)
+- INFERRED: 9 (19%)
 - AMBIGUOUS: 0 (0%)
 
 ---

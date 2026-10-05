@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **VariantEditViewTests** (8 connections) — `web/twin/tests/test_model_edit.py`
+- **VariantEditViewTests** (9 connections) — `web/twin/tests/test_model_edit.py`
 - **.setUpTestData()** (3 connections) — `web/twin/tests/test_model_edit.py`
 - **TestCase** (1 connections)
 - **.setUp()** (1 connections) — `web/twin/tests/test_model_edit.py`
@@ -24,7 +24,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 17 (100%)
+- EXTRACTED: 18 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

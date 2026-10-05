@@ -1,4 +1,4 @@
-# addressing.py
+# layout-core.js
 
 > 8 nodes · cohesion 0.36
 

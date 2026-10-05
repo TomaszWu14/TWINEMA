@@ -1,4 +1,4 @@
-# ewm_service.py
+# warehouse_model_ewm.py
 
 > 17 nodes · cohesion 0.18
 
@@ -25,9 +25,9 @@
 ## Relationships
 
 - [warehouse_variants.py](warehouse_variants.py.md) (8 shared connections)
-- [day_demand](day_demand.md) (3 shared connections)
-- [warehouse_design_sim.py](warehouse_design_sim.py.md) (2 shared connections)
-- [compliance](compliance.md) (1 shared connections)
+- [scenario/models.py](scenario-models.py.md) (3 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (2 shared connections)
+- [rack_point](rack_point.md) (1 shared connections)
 
 ## Source Files
 
