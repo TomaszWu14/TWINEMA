@@ -1,34 +1,42 @@
 # FloorGrid
 
-> 11 nodes · cohesion 0.18
+> God node · 20 connections · `web/twin/blender_route.py`
 
-## Key Concepts
+**Community:** [engine.py](engine.py.md)
 
-- **EwmViewsTests** (11 connections) — `web/twin/tests/test_ewm_views.py`
-- **.setUp()** (2 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_compliance_xlsx()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_compliance_xlsx_escapes_formula_injection()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_detect_preview_lists_templates_and_rows_without_saving()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_model_view_detect_button_disabled_without_master()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_model_view_links()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_no_active_master_disables_detect()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_save_then_compliance_shows_ok_and_no_row()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_viewer_cannot_save()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **TestCase** (1 connections)
+## Connections by Relation
 
-## Relationships
+### calls
+- .__init__() `EXTRACTED`
+- .test_route_never_crosses_a_rack() `EXTRACTED`
+- .test_unreachable_target_falls_back_to_straight_line() `EXTRACTED`
 
-- [test_ewm_service.py](test_ewm_service.py.md) (2 shared connections)
+### contains
+- [blender_route.py](blender_route.py.md) `EXTRACTED`
 
-## Source Files
+### imports
+- [blender_scene.py](blender_scene.py.md) `EXTRACTED`
+- test_blender_export.py `EXTRACTED`
 
-- `web/twin/tests/test_ewm_views.py`
+### method
+- .route() `EXTRACTED`
+- .__init__() `EXTRACTED`
+- .nearest_free() `EXTRACTED`
+- .cell_of() `EXTRACTED`
+- ._astar() `EXTRACTED`
+- .center() `EXTRACTED`
+- ._clamp_i() `EXTRACTED`
+- ._clamp_j() `EXTRACTED`
+- .is_free() `EXTRACTED`
 
-## Audit Trail
+### rationale_for
+- Siatka zajętości posadzki: komórka zablokowana, jeśli leży w obrysie regału.… `EXTRACTED`
 
-- EXTRACTED: 22 (100%)
-- INFERRED: 0 (0%)
-- AMBIGUOUS: 0 (0%)
+### uses
+- BlenderExportViewTests `INFERRED`
+- BuildSceneTests `INFERRED`
+- _Ctx `INFERRED`
+- RouteGeometryTests `INFERRED`
 
 ---
 

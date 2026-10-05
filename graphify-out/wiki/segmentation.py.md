@@ -16,7 +16,7 @@
 ## Relationships
 
 - [Material](Material.md) (2 shared connections)
-- [sim/__init__.py](sim-__init__.py.md) (1 shared connections)
+- [test_sim.py](test_sim.py.md) (1 shared connections)
 
 ## Source Files
 

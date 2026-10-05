@@ -12,7 +12,7 @@
 
 ## Relationships
 
-- [warehouse_model.py](warehouse_model.py.md) (1 shared connections)
+- [shared.py](shared.py.md) (1 shared connections)
 - [studio/views.py](studio-views.py.md) (1 shared connections)
 
 ## Source Files

@@ -1,46 +1,39 @@
 # masterdata/views.py
 
-> 14 nodes · cohesion 0.17
+> 10 nodes · cohesion 0.24
 
 ## Key Concepts
 
-- **masterdata/views.py** (23 connections) — `web/masterdata/views.py`
-- **masterdata/__init__.py** (6 connections) — `web/masterdata/__init__.py`
-- **designer** (6 connections)
-- **current_stock_log()** (5 connections) — `web/masterdata/services.py`
-- **demo()** (4 connections) — `web/masterdata/views.py`
-- **home()** (4 connections) — `web/masterdata/views.py`
-- **materials()** (4 connections) — `web/masterdata/views.py`
-- **upload()** (4 connections) — `web/masterdata/views.py`
-- **template_csv()** (3 connections) — `web/masterdata/importers.py`
-- **template()** (3 connections) — `web/masterdata/views.py`
-- **masterdata/urls.py** (2 connections) — `web/masterdata/urls.py`
-- **log_detail()** (2 connections) — `web/masterdata/views.py`
-- **any_role** (2 connections)
-- **require_POST** (2 connections)
+- **.slot()** (11 connections) — `web/twin/blender_stock.py`
+- **parse_code()** (6 connections) — `web/twin/locations.py`
+- **._parse()** (5 connections) — `web/twin/blender_stock.py`
+- **_half()** (3 connections) — `web/twin/blender_stock.py`
+- **.__init__()** (3 connections) — `web/twin/blender_stock.py`
+- **.rack_and_bay()** (3 connections) — `web/twin/blender_stock.py`
+- **_deg()** (2 connections) — `web/twin/blender_stock.py`
+- **1/2 dla połówki miejsca (kod z końcówką -1/-2, np. B0-07-300C-1), inaczej 0.…** (1 connections) — `web/twin/blender_stock.py`
+- **dict gniazda: x, y, z (dół palety), heading, rozmiar [w, d] (+ half 1/2) albo…** (1 connections) — `web/twin/blender_stock.py`
+- **Kod → (zone, rack_id, bay, col_idx, level) albo None.** (1 connections) — `web/twin/locations.py`
 
 ## Relationships
 
-- [test_voice.py](test_voice.py.md) (5 shared connections)
-- [masterdata/services.py](masterdata-services.py.md) (4 shared connections)
-- [importers.py](importers.py.md) (2 shared connections)
-- [twinema_montage.py](twinema_montage.py.md) (1 shared connections)
-- [views_sim.py](views_sim.py.md) (1 shared connections)
-- [roles.py](roles.py.md) (1 shared connections)
+- [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (4 shared connections)
+- [views_sim.py](views_sim.py.md) (3 shared connections)
+- [ewm_levels.py](ewm_levels.py.md) (2 shared connections)
+- [design_kpi.py](design_kpi.py.md) (1 shared connections)
+- [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
+- [Scenario](Scenario.md) (1 shared connections)
 - [test_ewm_service.py](test_ewm_service.py.md) (1 shared connections)
-- [twin/models.py](twin-models.py.md) (1 shared connections)
+- [test_voice.py](test_voice.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/masterdata/__init__.py`
-- `web/masterdata/importers.py`
-- `web/masterdata/services.py`
-- `web/masterdata/urls.py`
-- `web/masterdata/views.py`
+- `web/twin/blender_stock.py`
+- `web/twin/locations.py`
 
 ## Audit Trail
 
-- EXTRACTED: 70 (100%)
+- EXTRACTED: 36 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

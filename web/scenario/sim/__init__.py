@@ -19,9 +19,13 @@ Format zdarzeń (dla odtwarzacza 3D, S4) — lista krotek posortowana po czasie:
     kind  — container | truck | courier | pallet | parcel,
     what  — arrive (brama) · dock (podjazd do doku) · depart (odjazd) · built (paleta z paletyzacji) ·
             staging (na polu odkładczym) · move (wózek zabiera z pola) · stored (na regale) ·
-            retrieved (zdjęta z regału / z kompletacji) · packed (paczki zamówienia gotowe),
+            retrieved (zdjęta z regału / z kompletacji) · packed (paczki zamówienia gotowe) ·
+            loaded (paleta zabrana z pola wydań na auto w doku; od S4),
     place — gate | dock:<id elementu hali> | staging_in | staging_out | palletize | pack | pick | rack.
 Id doku = id `WarehouseHallFeature` (albo „d<n>” bez id; „x-…” = dok dodany w podpowiedzi).
+Rozszerzenia S4 (zgodne z v1 — stare pola bez zmian): kurier ma też arrive (gate) i depart (dok);
+„packed” ma opcjonalną 6. kolumnę n = liczba paczek zamówienia. Starsze przebiegi tych zdarzeń nie mają —
+odtwarzacz radzi sobie bez nich (palety wydań znikają z pola przy odjeździe auta, paczka = 1).
 """
 import copy
 

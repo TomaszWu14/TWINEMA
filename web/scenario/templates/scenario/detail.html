@@ -148,6 +148,7 @@
   {% for v in sim_runs %}
   <div style="margin-top:20px">
     <p class="sc-sub" style="margin-top:0">{{ v.run.get_day_kind_display }} na „{{ v.run.model.name }}” · {{ v.run.runs }} przebiegów · {{ v.run.created_at|date:"d.m.Y H:i" }} · {{ v.run.duration_s|floatformat:"-1" }} s
+      · <a class="btn btn-primary btn-sm" href="{% url 'scenario:run_play' v.run.pk %}">Animacja dnia</a>
       · <a href="{% url 'scenario:run_events' v.run.pk %}">zdarzenia (JSON)</a></p>
     {% for w in v.warnings %}<p class="text-sm" style="margin:0 0 6px">⚠ {{ w }}</p>{% endfor %}
     <h3 class="sc-sub">Wąskie gardła {% if v.bottlenecks %}({{ v.bottlenecks|length }}{% if v.errors %}, krytyczne: {{ v.errors }}{% endif %}){% endif %}</h3>

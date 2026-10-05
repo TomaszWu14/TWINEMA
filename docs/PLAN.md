@@ -164,6 +164,10 @@ S3a ✅: `scenario/sim/` — zdarzeniowa symulacja dnia na layoucie (doki z rola
 flota z ładowaniem, pola odkładcze, cut-off kurierów), wiele przebiegów → średnia i P95, wąskie gardła
 z podpowiedzią „+N” z ponownej symulacji, zdarzenia przebiegu reprezentatywnego dla animacji (S4). S3b: pojemność
 vs stan, reguły rozmieszczenia (nośność, ADR/temperatura), tabela layout × scenariusz, eksport xlsx.
+S4 ✅: animacja dnia w przeglądarce (`scenariusze/symulacja/<pk>/animacja/`) — scena hali (createViewer) + każdy
+kontener, auto, kurier i paleta z przebiegu reprezentatywnego (InstancedMesh), stos paczek przy pakowaniu; zegar,
+suwak, ×10–×300, skok do szczytu, liczniki, wąskie gardła na czerwono w oknie czasu + dymek z podpowiedzią (klik =
+skok czasu i kamery), pełny ekran (F), klawiatura, tabela godzinowa jako alternatywa tekstowa.
 
 ---
 

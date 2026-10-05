@@ -1,35 +1,42 @@
 # studio/models.py
 
-> 8 nodes · cohesion 0.46
+> 20 nodes · cohesion 0.10
 
 ## Key Concepts
 
-- **parse_row()** (15 connections) — `web/twin/ewm_tasks.py`
-- **RowTests** (8 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **._row()** (4 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **.test_bad_rows_raise_with_polish_reason()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **.test_excel_number_codes_become_text()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **.test_valid_row()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **.test_blank_row_is_skipped_not_an_error()** (2 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
-- **Wiersz → dict pól `WarehouseTask` (+ `cancelled`); None = pusty wiersz;…** (1 connections) — `web/twin/ewm_tasks.py`
+- **flow-player.js** (19 connections) — `web/twin/static/twin/js/flow-player.js`
+- **createFlowPlayer()** (2 connections) — `web/twin/static/twin/js/flow-player.js`
+- **_m** (2 connections) — `web/twin/static/twin/js/flow-player.js`
+- **_q** (2 connections) — `web/twin/static/twin/js/flow-player.js`
+- **boxes()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **disposeTree()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **_e** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **FLOW_LABELS** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **FLOW_Y** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **fmtTime()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **labelSprite()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **_p** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **palletColor()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **ribbon()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **_s** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **sampleKeyframes()** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **SIM_KEYS** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **SKU_PALETTE** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **UNIT_BOX** (1 connections) — `web/twin/static/twin/js/flow-player.js`
+- **_up** (1 connections) — `web/twin/static/twin/js/flow-player.js`
 
 ## Relationships
 
-- [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (4 shared connections)
-- [Scan](Scan.md) (3 shared connections)
-- [Pochodzenie kodu](Pochodzenie_kodu.md) (2 shared connections)
-- [layout-core.js](layout-core.js.md) (2 shared connections)
-- [studio/views.py](studio-views.py.md) (2 shared connections)
+- No strong cross-community connections detected
 
 ## Source Files
 
-- `web/twin/ewm_tasks.py`
-- `web/twin/tests/test_ewm_tasks_parser.py`
+- `web/twin/static/twin/js/flow-player.js`
 
 ## Audit Trail
 
-- EXTRACTED: 38 (97%)
-- INFERRED: 1 (3%)
+- EXTRACTED: 40 (98%)
+- INFERRED: 1 (2%)
 - AMBIGUOUS: 0 (0%)
 
 ---
