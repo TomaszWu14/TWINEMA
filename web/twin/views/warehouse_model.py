@@ -14,6 +14,7 @@ from twin.blender_scene import rack_class
 from twin.ewm_service import active_master
 from twin.model_geometry import floor_size, is_geometry_csv, parse_geometry_csv
 from twin.models import BayTemplate, WarehouseTaskBatch
+from twin.signals import touch_model
 
 
 @_planner
@@ -230,6 +231,7 @@ def warehouse_model_coords(request, pk):
                     ["x_m", "y_m", "angle_deg", "bay_width_cm", "depth_cm", "level_height_cm",
                      "template", "bay_numbers", "reverse"],
                 )
+                touch_model(wm.pk)
         messages.success(request, "Współrzędne zapisane.")
         for msg in bad_numbers[:10]:
             messages.warning(request, f"Numeracja gniazd nie zmieniona — {msg}")

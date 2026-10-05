@@ -105,7 +105,7 @@ def peak_index(timeline):
 
 @any_role
 def run_play(request, pk):
-    run = get_object_or_404(ScenarioRun.objects.select_related("model", "scenario__fleet_equipment"), pk=pk)
+    run = get_object_or_404(ScenarioRun.objects.defer("events").select_related("model", "scenario__fleet_equipment"), pk=pk)
     wm = run.model
     racks, features, _ = model_scene_data(wm)
     floor = {"width": wm.floor_width_m, "depth": wm.floor_depth_m}
@@ -116,7 +116,7 @@ def run_play(request, pk):
     people = {p: v["busy"] for p, v in (tl.get("people") or {}).items()}
     return render(request, "scenario/play.html", {
         "run": run, "wm": wm, "bottlenecks": bns, "peak_t": peak * 900, "speeds": SPEEDS,
-        "has_events": bool(run.events),
+        "has_events": run.has_events,
         "data_json": safe_json({
             "floor": floor, "racks": racks, "features": features, "places": places, "bottlenecks": bns,
             "site": wm.site or {},
