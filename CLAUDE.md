@@ -23,6 +23,15 @@ python manage.py check && python manage.py test
 ruff check ..
 ```
 
+## Graphify query-first
+Pytanie „jak/gdzie/co woła co” (orientacja, nie edycja znanego pliku) → najpierw
+`graphify query "<pytanie>" --budget 1500` zamiast grep + czytania całych plików. Graf w
+`graphify-out/` jest commitowany; przed poleganiem na nim porównaj „Built from commit” w
+`graphify-out/GRAPH_REPORT.md` z `git rev-parse HEAD`, odśwież `graphify update .` (bez LLM),
+wiki: `graphify export wiki`. Wynik grafu weryfikuj w realnym pliku. Hooki: README „Git hooks i graf wiedzy”.
+
+Skrót: `graphify query "…"` · `graphify explain "X"` · `graphify path "A" "B"` · `graphify affected "X"` · `graphify god-nodes`
+
 ## Git
 Gałąź `claude/<nazwa>` → PR na `main` → CI (`test`) → auto-merge → `deploy.yml` (Coolify + smoke).
 Jedna zmiana = jeden PR. PR od razu gotowy (nie draft).

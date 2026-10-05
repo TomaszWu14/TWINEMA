@@ -1,0 +1,43 @@
+# Hooki pre-commit — lint i strażnicy PRZED commitem, nie tylko w CI.
+# Instalacja:  pip install pre-commit && pre-commit install
+#   (wyklucza się z `git config core.hooksPath .githooks` — patrz README „Git hooks i graf wiedzy”)
+# Na całości:  pre-commit run --all-files
+# Konfiguracja ruffa żyje w pyproject.toml ([tool.ruff]) — ta sama co w CI.
+# ruff-format celowo pominięty: repo nie jest sformatowane ruffem (masowy reformat = osobny PR).
+minimum_pre_commit_version: "3.5.0"
+exclude: '^graphify-out/|/vendor/'
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: '\.(md|csv)$'
+      - id: end-of-file-fixer
+        exclude: '\.csv$'
+      - id: check-yaml
+      - id: check-toml
+      - id: check-added-large-files
+        args: ["--maxkb=2048"]
+      - id: check-merge-conflict
+      - id: debug-statements
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.16.9   # = ruff z requirements-dev.txt
+    hooks:
+      - id: ruff
+        args: ["--fix"]
+
+  - repo: local
+    hooks:
+      - id: django-migrations-check
+        name: django makemigrations --check
+        entry: bash -c "cd web && DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*' python manage.py makemigrations --check --dry-run"
+        language: system
+        pass_filenames: false
+        files: '(^|/)models[^/]*\.py$|(^|/)models/'
+
+  # Lustro workflow Security (gitleaks blokuje w CI) — sekret łapany przed historią.
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.4
+    hooks:
+      - id: gitleaks

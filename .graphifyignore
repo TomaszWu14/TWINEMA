@@ -1,0 +1,6 @@
+# Biblioteki JS pobierane skryptem (vendor) i środowiska — nie nasz kod, szum w grafie.
+*.min.js
+web/twin/static/twin/vendor/
+.venv/
+web/media/
+web/staticfiles/

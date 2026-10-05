@@ -1,0 +1,15 @@
+#!/bin/bash
+# Opcjonalnie: sync wiki grafu wiedzy (graphify-out/wiki/) do vaulta Obsidian.
+# Nigdy nie blokuje pusha — zawsze exit 0.
+#
+# AKTYWACJA (świeży klon tego hooka nie widzi):
+#   git config core.hooksPath .githooks
+# UWAGA: ustawiony core.hooksPath WYKLUCZA `pre-commit install` — patrz README,
+# sekcja „Git hooks i graf wiedzy (Obsidian)”. Dotyczy tylko maszyny z
+# ~/graphify-workspace; wszędzie indziej hook cicho nic nie robi.
+sync=~/graphify-workspace/sync-knowledge-graph.sh
+if [ -x "$sync" ]; then
+    echo "Synchronizuję graf wiedzy do Obsidian..."
+    "$sync" || echo "graf-sync nie powiódł się (nieblokujące) — push idzie dalej"
+fi
+exit 0

@@ -1,0 +1,56 @@
+# Community 3
+
+> 39 nodes · cohesion 0.08
+
+## Key Concepts
+
+- **FloorGrid** (20 connections) — `web/twin/blender_route.py`
+- **BlenderExportViewTests** (10 connections) — `web/twin/tests/test_blender_export.py`
+- **BuildSceneTests** (9 connections) — `web/twin/tests/test_blender_export.py`
+- **.route()** (7 connections) — `web/twin/blender_route.py`
+- **_scene()** (7 connections) — `web/twin/tests/test_blender_export.py`
+- **.__init__()** (6 connections) — `web/twin/blender_route.py`
+- **RouteGeometryTests** (6 connections) — `web/twin/tests/test_blender_export.py`
+- **.nearest_free()** (5 connections) — `web/twin/blender_route.py`
+- **.cell_of()** (4 connections) — `web/twin/blender_route.py`
+- **._get()** (4 connections) — `web/twin/tests/test_blender_export.py`
+- **._astar()** (3 connections) — `web/twin/blender_route.py`
+- **.center()** (3 connections) — `web/twin/blender_route.py`
+- **._clamp_i()** (3 connections) — `web/twin/blender_route.py`
+- **._clamp_j()** (3 connections) — `web/twin/blender_route.py`
+- **.is_free()** (3 connections) — `web/twin/blender_route.py`
+- **_simplify()** (3 connections) — `web/twin/blender_route.py`
+- **.test_inbound_pallet_ends_in_rack_outbound_vanishes_at_dock()** (3 connections) — `web/twin/tests/test_blender_export.py`
+- **.test_route_never_crosses_a_rack()** (3 connections) — `web/twin/tests/test_blender_export.py`
+- **.test_unreachable_target_falls_back_to_straight_line()** (3 connections) — `web/twin/tests/test_blender_export.py`
+- **_dedupe()** (2 connections) — `web/twin/blender_route.py`
+- **.test_bad_forklift_param_falls_back()** (2 connections) — `web/twin/tests/test_blender_export.py`
+- **.test_demo_export_is_downloadable_json()** (2 connections) — `web/twin/tests/test_blender_export.py`
+- **.test_requires_login()** (2 connections) — `web/twin/tests/test_blender_export.py`
+- **.test_carried_pallet_rides_on_forks()** (2 connections) — `web/twin/tests/test_blender_export.py`
+- **.test_deterministic_for_same_model()** (2 connections) — `web/twin/tests/test_blender_export.py`
+- *... and 14 more nodes in this community*
+
+## Relationships
+
+- [Community 8](Community_8.md) (6 shared connections)
+- [Community 11](Community_11.md) (5 shared connections)
+- [Community 34](Community_34.md) (3 shared connections)
+- [Community 56](Community_56.md) (3 shared connections)
+- [Community 1](Community_1.md) (1 shared connections)
+- [Community 10](Community_10.md) (1 shared connections)
+
+## Source Files
+
+- `web/twin/blender_route.py`
+- `web/twin/tests/test_blender_export.py`
+
+## Audit Trail
+
+- EXTRACTED: 130 (95%)
+- INFERRED: 7 (5%)
+- AMBIGUOUS: 0 (0%)
+
+---
+
+*Part of the graphify knowledge wiki. See [index](index.md) to navigate.*

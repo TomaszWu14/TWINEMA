@@ -44,6 +44,32 @@ Ręcznie: `blender -b -P tools/blender/twinema_render.py -- scena.json wynik.mp4
 
 Testy: `python manage.py test` (z katalogu `web/`, z tym samym env).
 
+## Git hooks i graf wiedzy (Obsidian)
+
+Dwie powierzchnie hooków git — wzajemnie się wykluczają, więc wybierz świadomie:
+
+1. **`pre-commit install`** (zalecane dla każdego dewelopera) — ruff, `makemigrations --check`
+   przy zmianach modeli i gitleaks z [`.pre-commit-config.yaml`](.pre-commit-config.yaml).
+2. **`git config core.hooksPath .githooks`** — aktywuje [`.githooks/pre-push`](.githooks/pre-push):
+   nieblokującą synchronizację wiki grafu (`graphify-out/wiki/`) do vaulta Obsidian. Działa tylko
+   tam, gdzie istnieje `~/graphify-workspace/sync-knowledge-graph.sh`; wszędzie indziej cicho nic
+   nie robi. **Uwaga:** ustawiony `core.hooksPath` blokuje `pre-commit install` — na tej maszynie
+   lintery odpalaj ręcznie (`pre-commit run --all-files`) albo polegaj na CI.
+
+Graf wiedzy (`graphify-out/`: `graph.json`, `GRAPH_REPORT.md`, `wiki/`) jest **generowany lokalnie**
+(graphify nie działa w CI) i commitowany — korzysta z niego `graphify query` (patrz `CLAUDE.md`).
+Odświeżenie po zmianach w kodzie:
+
+```bash
+graphify update .        # przyrostowo, bez LLM; pełny rebuild: graphify . --code-only
+graphify export wiki     # strony wiki (update ich nie odświeża)
+# zacommituj zmienione graphify-out/ i wypchnij (PR)
+```
+
+Workflow [`graph-freshness.yml`](.github/workflows/graph-freshness.yml) (poniedziałki 06:00 UTC
++ ręcznie) otwiera issue `graf-wiedzy`, gdy graf odstaje od `main` (≥ 30 commitów albo ≥ 7 dni
+i ≥ 5 commitów).
+
 ## Stack
 
 Python 3.13 · Django 5.2 LTS · PostgreSQL 17 · Docker + Coolify · Blender 4.x (headless) ·
