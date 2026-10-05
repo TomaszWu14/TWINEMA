@@ -3,6 +3,7 @@
 import { makeBlock, mode, nextRackIds, snap, zoneColors } from './layout-core.js';
 import { S, addItems, change, deleteSelected, duplicateSelected, keysAt, rotateSelected, selectZone, selected,
   showKeys, viewCenter } from './layout-editor.js';
+import { renderHall } from './layout-hall.js';
 
 const $ = (id) => document.getElementById(id);
 const CFG = JSON.parse($('le-config').textContent);
@@ -10,7 +11,18 @@ const fmt = (v, d = 0) => (typeof v === 'number' ? v.toLocaleString('pl-PL', { m
 const last = {};
 // Domyślne wymiary nowych elementów hali [m] (szer. × głęb.) — do poprawienia w panelu właściwości.
 const FEATURE_SIZE = { dock: [3.5, 2], gate: [4, 0.5], staging: [10, 6], station: [3, 3], leader: [3, 3],
-  corridor: [20, 3], block_zone: [10, 10], returns: [6, 6], other: [5, 5] };
+  corridor: [20, 3], block_zone: [10, 10], returns: [6, 6], other: [5, 5], fire_route: [30, 4], charging: [8, 5],
+  walkway: [30, 1.2], truckway: [30, 3.5], zone_temp: [15, 10], zone_adr: [10, 8], zone_oversize: [15, 8],
+  zone_value: [8, 6] };
+
+/** Lista wyboru sprzętu regału(ów) — zmienia wszystkie zaznaczone naraz (np. cały blok VNA). */
+function equipmentSelect(racks) {
+  const same = racks.every((r) => r.equipment === racks[0].equipment) ? racks[0].equipment : '';
+  return h('label', { class: 'le-wide' }, racks.length > 1 ? `Sprzęt (${racks.length} regałów)` : 'Sprzęt obsługi',
+    h('select', { class: 'form-control', onchange: (e) => change(() => racks.forEach((r) => { r.equipment = e.target.value; })) },
+      ...(same ? [] : [h('option', { value: '', disabled: true, selected: true }, '— różny —')]),
+      ...Object.entries(CFG.equipment).map(([k, v]) => h('option', { value: k, selected: k === same }, v))));
+}
 
 function h(tag, attrs = {}, ...children) {
   const e = document.createElement(tag);
@@ -77,7 +89,7 @@ function renderProps() {
       field('Gniazda', r, 'n_bays', num('n_bays')), field('Poziomy', r, 'n_levels', num('n_levels')),
       field('Szer. gniazda [cm]', r, 'bay_width_cm', num('bay_width_cm')), field('Głębokość [cm]', r, 'depth_cm', num('depth_cm')),
       field('Wys. poziomu [cm]', r, 'level_height_cm', num('level_height_cm')), field('Kąt [°]', r, 'angle', { ...pos, min: -360, max: 360 }),
-      field('X [m]', r, 'x', pos), field('Y [m]', r, 'y', pos));
+      field('X [m]', r, 'x', pos), field('Y [m]', r, 'y', pos), equipmentSelect([r]));
   } else if (items.length === 1) {
     const f = items[0];
     const kind = h('select', { class: 'form-control', onchange: (e) => change(() => { f.kind = e.target.value; }) },
@@ -87,7 +99,9 @@ function renderProps() {
       field('Szerokość [m]', f, 'width', { ...pos, min: 0.1, max: 5000 }), field('Głębokość [m]', f, 'depth', { ...pos, min: 0.1, max: 5000 }),
       field('X [m]', f, 'x', pos), field('Y [m]', f, 'y', pos), field('Kąt [°]', f, 'angle', { ...pos, min: -360, max: 360 }));
   } else {
-    form = h('p', { class: 'text-sm', style: 'margin:0 0 8px' }, `Zaznaczono ${items.length} elementów.`);
+    const racks = items.filter((it) => it.n_bays !== undefined);
+    form = h('div', { class: 'le-form' }, h('p', { class: 'text-sm le-wide', style: 'margin:0' }, `Zaznaczono ${items.length} elementów.`),
+      racks.length ? equipmentSelect(racks) : null);
   }
   const actions = items.length ? h('div', { style: 'display:flex;flex-wrap:wrap;gap:6px;margin-top:10px' },
     h('button', { type: 'button', class: 'btn btn-secondary btn-sm', onclick: () => rotateSelected(90) }, 'Obróć 90°'),
@@ -98,11 +112,15 @@ function renderProps() {
 }
 
 function renderKpi() {
-  const k = S.kpi || {}, t = k.travel || {};
+  const k = S.kpi || {}, t = k.travel || {}, hk = k.height;
   const rows = [['Miejsca paletowe', fmt(k.pallet_positions)], ['Miejsca na m² hali', fmt(k.positions_per_m2, 2)],
     ['Powierzchnia hali', `${fmt(k.floor_area_m2)} m²`], ['Zabudowa', `${fmt(k.built_area_m2)} m²`],
     ['Śr. droga do miejsca', `${fmt(t.avg_m, 1)} m`], ['Śr. droga — strefa A', `${fmt(t.a_zone_avg_m, 1)} m`],
-    ['Regały', fmt(S.racks.length)], ['Elementy hali', fmt(S.features.length)]];
+    ['Regały', fmt(S.racks.length)], ['Elementy hali', fmt(S.features.length)], ['Słupy', fmt(k.columns)]];
+  if (hk) {
+    rows.push(['Wysokość użytkowa', `${fmt(hk.usable_m, 2)} m`]);
+    for (const [z, v] of Object.entries(hk.zones)) rows.push([`Poziomy ${z} (maks.)`, `${v.levels} / ${v.max_levels}`]);
+  }
   $('le-kpi').replaceChildren(...rows.flatMap(([a, b]) => [h('dt', {}, a), h('dd', {}, b)]));
 }
 
@@ -127,6 +145,8 @@ function initForms() {
   b.level_height_cm.value = mode(S.racks.map((r) => r.level_height_cm), 180);
   b.levels.value = mode(S.racks.map((r) => r.n_levels), 5);
   b.aisle.value = CFG.aisle;
+  b.equipment.replaceChildren(...Object.entries(CFG.equipment).map(([k, v]) => h('option', { value: k }, v)));
+  b.equipment.addEventListener('change', () => { b.aisle.value = CFG.aisles[b.equipment.value]; });
   $('le-block').addEventListener('submit', (e) => {
     e.preventDefault();
     const v = Object.fromEntries(['rows', 'bays', 'levels', 'bay_width_cm', 'depth_cm', 'level_height_cm', 'aisle']
@@ -135,7 +155,8 @@ function initForms() {
     const w = v.bays * v.bay_width_cm / 100, d = v.rows * (v.depth_cm / 100 + v.aisle);
     addItems(makeBlock({ x: snap(cx - w / 2), y: snap(cy - d / 2), rows: v.rows, bays: v.bays, levels: v.levels,
       bayWidthCm: v.bay_width_cm, depthCm: v.depth_cm, levelHeightCm: v.level_height_cm, aisle: v.aisle, zone,
-      ids: nextRackIds(S.racks, zone, v.rows), backToBack: b.back.checked }).map((r) => ({ id: null, ...r })), S.racks);
+      ids: nextRackIds(S.racks, zone, v.rows), backToBack: b.back.checked })
+      .map((r) => ({ id: null, ...r, equipment: b.equipment.value })), S.racks);
   });
   const fk = $('le-feature-kind'), f = $('le-feature').elements;
   fk.replaceChildren(...Object.entries(S.kinds).map(([k, v]) => h('option', { value: k }, v)));
@@ -157,4 +178,5 @@ export function renderPanels() {
   renderProps();
   renderKpi();
   renderIssues();
+  renderHall();
 }

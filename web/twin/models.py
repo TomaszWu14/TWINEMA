@@ -164,6 +164,12 @@ class WarehouseModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     floor_width_m = models.FloatField(default=50, verbose_name="Szerokość hali [m]")
     floor_depth_m = models.FloatField(default=30, verbose_name="Głębokość hali [m]")
+    # E2b: konstrukcja hali (edytor layoutu). Słupy: siatka {pitch_x, pitch_y, offset_x, offset_y, size,
+    # removed: [[i, j]], extra: [[x, y]]} — prostokąty liczy `twin.layout.column_list`.
+    clear_height_m = models.FloatField(null=True, blank=True, verbose_name="Wysokość w świetle [m]")
+    columns = models.JSONField(default=dict, blank=True, verbose_name="Siatka słupów")
+    underlay = models.FileField(upload_to="underlays/%Y/%m/", blank=True, verbose_name="Podkład (rzut hali)")
+    underlay_meta = models.JSONField(default=dict, blank=True, verbose_name="Podkład: skala i położenie")
 
     class Meta:
         ordering = ["-created_at"]
@@ -179,6 +185,11 @@ class WarehouseModel(models.Model):
 
 
 class WarehouseModelRack(models.Model):
+    EQUIPMENT_CHOICES = [
+        ("reach", "Reach truck (alejka ~3,0 m)"),
+        ("vna", "Wózek systemowy VNA (alejka ~1,8 m)"),
+        ("shelf", "Półki, kompletacja z wózka EPT (alejka ~2,0 m)"),
+    ]
     model = models.ForeignKey(WarehouseModel, on_delete=models.CASCADE, related_name="racks")
     zone = models.CharField(max_length=20, verbose_name="Strefa", db_index=True)
     rack_id = models.CharField(max_length=20, verbose_name="Nr regału")
@@ -190,6 +201,8 @@ class WarehouseModelRack(models.Model):
     x_m = models.FloatField(null=True, blank=True, verbose_name="Pozycja X [m]")
     y_m = models.FloatField(null=True, blank=True, verbose_name="Pozycja Y [m]")
     angle_deg = models.FloatField(default=0, verbose_name="Kąt obrotu [°]")
+    equipment = models.CharField(max_length=6, choices=EQUIPMENT_CHOICES, default="reach",
+                                 verbose_name="Sprzęt obsługi (wymagana alejka)")
     # Edytor układu, część 1: szablon domyślny gniazd + reguła adresu (numeracja, kierunek).
     template = models.ForeignKey(BayTemplate, on_delete=models.SET_NULL, null=True, blank=True,
                                  related_name="racks", verbose_name="Szablon gniazda")
@@ -260,6 +273,14 @@ class WarehouseHallFeature(models.Model):
         ("leader",     "Stanowisko lidera"),
         ("station",    "Stanowisko / punkt kontroli"),
         ("other",      "Inny obszar"),
+        ("fire_route", "Droga pożarowa / ewakuacyjna"),
+        ("charging",   "Strefa ładowania (wózki / AGV)"),
+        ("walkway",    "Droga ruchu pieszego"),
+        ("truckway",   "Droga ruchu wózków"),
+        ("zone_temp",  "Strefa specjalna: temperatura kontrolowana"),
+        ("zone_adr",   "Strefa specjalna: ADR (towary niebezpieczne)"),
+        ("zone_oversize", "Strefa specjalna: gabaryty / dłużyca"),
+        ("zone_value", "Strefa specjalna: towary wysokiej wartości"),
     ]
     model = models.ForeignKey(WarehouseModel, on_delete=models.CASCADE, related_name="features")
     kind = models.CharField(max_length=20, choices=KIND_CHOICES, default="other", verbose_name="Typ elementu")

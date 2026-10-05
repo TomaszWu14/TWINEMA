@@ -12,7 +12,7 @@ Wymiary hali wynikają z pojemności; liczba par rzędów VNA dobrana do proporc
 """
 import math
 
-from .design_catalog import ELEMENTS
+from .design_catalog import ELEMENTS, SHELF_AISLE_M
 
 VNA = ELEMENTS["rack_vna"]["params"]
 VNA_AISLE = ELEMENTS["rack_vna"]["aisle_m"]
@@ -34,7 +34,7 @@ OUTBOUND_BAND_M = 20.0          # bufor wydań przy dokach
 TRANSFER_M = 5.0                # przejazd poprzeczny (AGV / wózki VNA zmieniają korytarz)
 DOCK_PITCH_M, DOCK_W_M, DOCK_D_M = 5.0, 3.5, 4.0
 # K1 — regał półkowy: gniazdo 1,0 × 0,6 m, 5 półek × 3 lokalizacje, korytarz 2 m (EPT)
-K1 = {"bay_w": 1.0, "depth": 0.6, "levels": 5, "level_h": 0.45, "per_level": 3, "aisle": 2.0}
+K1 = {"bay_w": 1.0, "depth": 0.6, "levels": 5, "level_h": 0.45, "per_level": 3, "aisle": SHELF_AISLE_M}
 
 
 def vna_levels(clear_h, pallet_h):
@@ -56,8 +56,8 @@ def _row_pairs(n_pairs, depth, aisle, y0):
     return ys
 
 
-def _rack(zone, i, x, y, bays, bay_w, depth, levels, level_h):
-    return {"zone": zone, "rack_id": f"{i:03d}", "n_bays": bays, "n_levels": levels,
+def _rack(zone, i, x, y, bays, bay_w, depth, levels, level_h, equipment):
+    return {"zone": zone, "rack_id": f"{i:03d}", "n_bays": bays, "n_levels": levels, "equipment": equipment,
             "bay_width_cm": round(bay_w * 100), "depth_cm": round(depth * 100),
             "level_height_cm": round(level_h * 100), "x_m": round(x, 2), "y_m": round(y, 2),
             "angle_deg": 0.0}
@@ -107,11 +107,11 @@ def generate(**overrides):
     _, n_pairs, bays_row, length, W, D = best
 
     x_vna = INBOUND_BAND_M + TRANSFER_M
-    racks = [_rack("V", i + 1, x_vna, y, bays_row, VNA["bay_width"], VNA["depth"], levels, level_h)
+    racks = [_rack("V", i + 1, x_vna, y, bays_row, VNA["bay_width"], VNA["depth"], levels, level_h, "vna")
              for i, y in enumerate(_row_pairs(n_pairs, VNA["depth"], VNA_AISLE, WALL_M))]
     x_k1 = x_vna + length + TRANSFER_M
     if k1_bays:
-        racks += [_rack("K1", i + 1, x_k1, y, k1_len, K1["bay_w"], K1["depth"], K1["levels"], K1["level_h"])
+        racks += [_rack("K1", i + 1, x_k1, y, k1_len, K1["bay_w"], K1["depth"], K1["levels"], K1["level_h"], "shelf")
                   for i, y in enumerate(_row_pairs(k1_pairs, K1["depth"], K1["aisle"], WALL_M))]
 
     # Ściana przyjęć (x = 0)

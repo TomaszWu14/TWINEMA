@@ -68,6 +68,7 @@ ELEMENTS = {
 }
 
 RACK_KINDS = ("rack_std", "rack_vna", "shuttle")
+SHELF_AISLE_M = 2.0      # regał półkowy, kompletacja ręczna z wózka EPT (strefa K1 generatora)
 
 
 def params_for(kind, **overrides):
@@ -149,7 +150,8 @@ def _span(e, axis, along):
 def check_aisles(elements):
     """Kontrola szerokości alejek między równoległymi elementami składowania.
 
-    elements: dicty {kind, x, y, angle, params, label}. Dla każdej pary sąsiednich regałów o tym
+    elements: dicty {kind, x, y, angle, params, label, aisle_m?} (`aisle_m` nadpisuje katalog,
+    np. półki z kompletacją). Dla każdej pary sąsiednich regałów o tym
     samym kącie, nakładających się wzdłuż osi, liczy prześwit między frontami; prześwit
     0,05–aisle_m (węższy niż wymaga sprzęt, a nie „plecami do siebie") = naruszenie.
     `ia`/`ib` = indeksy pary w `elements`."""
@@ -177,7 +179,7 @@ def check_aisles(elements):
             continue
         ad, bd = _span(a, u_d, along=False), _span(b, u_d, along=False)
         gap = max(bd[0] - ad[1], ad[0] - bd[1])
-        need = max(ELEMENTS[a["kind"]].get("aisle_m", 0), ELEMENTS[b["kind"]].get("aisle_m", 0))
+        need = max(e.get("aisle_m") or ELEMENTS[e["kind"]].get("aisle_m", 0) for e in (a, b))
         kind = "kolizja" if gap < -0.01 else "za wąska alejka" if 0.3 < gap < need - 0.01 else None
         if kind:
             issues.append({"type": kind, "a": a.get("label"), "b": b.get("label"),
