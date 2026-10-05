@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **shared.py** (42 connections) — `web/twin/shared.py`
+- **shared.py** (43 connections) — `web/twin/shared.py`
 - **warehouse_blender.py** (31 connections) — `web/twin/views/warehouse_blender.py`
 - **model_racks()** (25 connections) — `web/twin/blender_scene.py`
 - **warehouse_compare.py** (25 connections) — `web/twin/views/warehouse_compare.py`
@@ -40,11 +40,11 @@
 - [staffing.py](staffing.py.md) (10 shared connections)
 - [twin/models.py](twin-models.py.md) (9 shared connections)
 - [simulate](simulate.md) (9 shared connections)
-- [scenario/services.py](scenario-services.py.md) (8 shared connections)
+- [views_sim.py](views_sim.py.md) (8 shared connections)
 - [site.py](site.py.md) (7 shared connections)
 - [scene-data.js](scene-data.js.md) (6 shared connections)
-- [CatalogViewTests](CatalogViewTests.md) (6 shared connections)
-- [ml/services.py](ml-services.py.md) (5 shared connections)
+- [Equipment](Equipment.md) (6 shared connections)
+- [ml/views.py](ml-views.py.md) (5 shared connections)
 
 ## Source Files
 
@@ -68,7 +68,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 550 (99%)
+- EXTRACTED: 551 (99%)
 - INFERRED: 7 (1%)
 - AMBIGUOUS: 0 (0%)
 

@@ -27,7 +27,7 @@
 
 ## Relationships
 
-- [test_fleet_catalog.py](test_fleet_catalog.py.md) (1 shared connections)
+- [CostViewsTests](CostViewsTests.md) (1 shared connections)
 - [masterdata/importers.py](masterdata-importers.py.md) (1 shared connections)
 
 ## Source Files

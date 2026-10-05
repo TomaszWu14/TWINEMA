@@ -1,4 +1,4 @@
-# analyze
+# layout
 
 > 23 nodes · cohesion 0.14
 
