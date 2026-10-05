@@ -2,7 +2,7 @@
 
 > God node · 24 connections · `web/twin/blender_scene.py`
 
-**Community:** [Community 11](Community_11.md)
+**Community:** [blender_scene.py](blender_scene.py.md)
 
 ## Connections by Relation
 
@@ -27,12 +27,12 @@
 - .test_no_racks_gives_static_scene() `EXTRACTED`
 
 ### contains
-- blender_scene.py `EXTRACTED`
+- [blender_scene.py](blender_scene.py.md) `EXTRACTED`
 
 ### imports
 - test_ewm_tasks_flow.py `EXTRACTED`
 - test_blender_export.py `EXTRACTED`
-- test_container_inbound.py `EXTRACTED`
+- [test_container_inbound.py](test_container_inbound.py.md) `EXTRACTED`
 - test_equipment_agents.py `EXTRACTED`
 
 ### rationale_for

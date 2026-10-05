@@ -1,0 +1,129 @@
+{% extends "core/base.html" %}
+{% block title %}{{ p.title }} — Studio — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .st-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:0 0 12px; }
+  .st-steps { display:flex; flex-wrap:wrap; gap:6px; list-style:none; padding:0; margin:0 0 20px; counter-reset:step; }
+  .st-steps li { counter-increment:step; font-size:var(--fs-sm); padding:6px 12px; border-radius:999px;
+                 border:1px solid var(--border); color:var(--fg-subtle); }
+  .st-steps li::before { content:counter(step) ". "; font-family:var(--font-mono); }
+  .st-steps .is-done { color:var(--fg-muted); border-color:var(--border-strong, var(--border)); }
+  .st-steps [aria-current] { color:var(--fg); border-color:var(--primary); background:var(--surface-2); font-weight:600; }
+  .st-grid { display:grid; grid-template-columns:minmax(0,3fr) minmax(0,2fr); gap:16px; align-items:start; }
+  @media (max-width: 960px) { .st-grid { grid-template-columns:1fr; } }
+  .st-shot { display:grid; grid-template-columns:70px 180px minmax(0,1fr) auto; gap:10px; align-items:start;
+             padding:12px 0; border-top:1px solid var(--border); }
+  .st-shot:first-of-type { border-top:0; }
+  @media (max-width: 700px) { .st-shot { grid-template-columns:70px minmax(0,1fr); } .st-shot .st-text { grid-column:1 / -1; } }
+  .st-shot label { display:flex; flex-direction:column; gap:4px; font-size:var(--fs-xs); color:var(--fg-muted); }
+  .st-del { flex-direction:row !important; align-items:center; gap:6px; align-self:center; }
+  .st-est { font-size:var(--fs-xs); color:var(--fg-subtle); }
+  .st-read { padding:12px 0; border-top:1px solid var(--border); }
+  .st-read:first-of-type { border-top:0; }
+  .st-read p { margin:4px 0 0; }
+  .st-facts { margin:0; padding-left:18px; font-size:var(--fs-sm); display:grid; gap:4px; }
+  .st-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .st-actions form { margin:0; }
+  .st-sum { font-size:var(--fs-sm); color:var(--fg-muted); margin:12px 0 0; }
+</style>
+{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Ścieżka"><a href="{% url 'studio:list' %}">Studio</a> / {{ p.title }}</nav>
+<div class="page-header">
+  <div>
+    <div class="page-header__title">{{ p.title }}</div>
+    <div class="page-header__sub">Model hali: {{ p.model.name }}{% if p.approved_at %} · tekst zatwierdzony {{ p.approved_at|date:"d.m.Y H:i" }}{% endif %}</div>
+  </div>
+</div>
+
+<ol class="st-steps" aria-label="Etapy prezentacji">
+  {% for key, label in steps %}
+  <li{% if forloop.counter0 == step_index %} aria-current="step"{% elif forloop.counter0 < step_index %} class="is-done"{% endif %}>{{ label }}</li>
+  {% endfor %}
+</ol>
+
+<div class="st-grid">
+  <div class="card"><div class="card-body">
+    <h2 class="st-sec">Kwestie lektora</h2>
+    {% if formset and is_designer %}
+    <form method="post" action="{% url 'studio:shots_save' p.pk %}">{% csrf_token %}
+      {{ formset.management_form }}
+      {% for f in formset %}
+      <fieldset class="st-shot" style="border-left:0;border-right:0;border-bottom:0;margin:0">
+        <legend class="sr-only">Ujęcie {{ forloop.counter }}</legend>
+        {{ f.id }}
+        <label for="{{ f.order.id_for_label }}">Kolejność {{ f.order }}</label>
+        <label for="{{ f.preset.id_for_label }}">Ujęcie kamery {{ f.preset }}</label>
+        <label class="st-text" for="{{ f.text.id_for_label }}">{% if f.instance.pk %}Kwestia{% else %}Nowa kwestia (opcjonalnie){% endif %} {{ f.text }}
+          {% if f.instance.pk %}<span class="st-est">ok. {{ f.instance.estimated_seconds }} s czytania</span>{% endif %}</label>
+        {% if f.instance.pk %}<label class="st-del" for="{{ f.DELETE.id_for_label }}">{{ f.DELETE }} Usuń</label>{% endif %}
+      </fieldset>
+      {% endfor %}
+      <div class="st-actions" style="margin-top:12px"><button class="btn btn-primary" type="submit">Zapisz kwestie</button></div>
+    </form>
+    {% else %}
+      {% for s in shots %}
+      <div class="st-read">
+        <div class="st-est">{{ forloop.counter }}. {{ s.get_preset_display }} · ok. {{ s.estimated_seconds }} s</div>
+        <p>{{ s.text }}</p>
+      </div>
+      {% empty %}<div class="empty-state">Brak kwestii.</div>{% endfor %}
+    {% endif %}
+    <p class="st-sum">Razem {{ words }} słów ≈ {{ seconds }} s filmu (cel: {{ target_words.0 }}–{{ target_words.1 }} słów, 2–3 min).
+      Dokładną długość ujęć wyznaczy nagranie lektora.</p>
+  </div></div>
+
+  <div style="display:grid;gap:16px">
+    <div class="card"><div class="card-body">
+      <h2 class="st-sec">Tekst</h2>
+      {% if is_designer %}
+        {% if p.is_draft %}
+        <div class="st-actions">
+          <form method="post" action="{% url 'studio:approve' p.pk %}">{% csrf_token %}<button class="btn btn-primary" type="submit">Zatwierdź tekst</button></form>
+          <form method="post" action="{% url 'studio:shots_template' p.pk %}">{% csrf_token %}<button class="btn btn-ghost" type="submit">Szkic z szablonu</button></form>
+          <form method="post" action="{% url 'studio:shots_ai' p.pk %}" id="st-ai">{% csrf_token %}
+            <button class="btn btn-ghost" type="submit"{% if not ai_enabled %} disabled aria-describedby="st-ai-off"{% endif %}>Szkic z Claude</button>
+          </form>
+        </div>
+        <p class="text-muted text-sm" style="margin:10px 0 0">Oba szkice zastępują obecne kwestie. Zapisz najpierw swoje poprawki.</p>
+        {% if ai_enabled %}
+          <p class="text-muted text-sm" style="margin:6px 0 0">Model: <code>{{ claude_model }}</code>, zwykle 15–60 s.</p>
+        {% else %}
+          <p class="text-sm" id="st-ai-off" style="margin:6px 0 0">Szkic z Claude wyłączony — ustaw <code>ANTHROPIC_API_KEY</code> w zmiennych serwera.</p>
+        {% endif %}
+        <p class="text-sm" id="st-ai-live" role="status" aria-live="polite" style="margin:6px 0 0"></p>
+        {% else %}
+        <p class="text-sm" style="margin:0 0 10px">Tekst zatwierdzony — kolejne etapy (lektor, render, montaż) korzystają z tych kwestii.</p>
+        <form method="post" action="{% url 'studio:reopen' p.pk %}">{% csrf_token %}<button class="btn btn-ghost" type="submit">Wróć do edycji</button></form>
+        {% endif %}
+        <form method="post" action="{% url 'studio:delete' p.pk %}" style="margin-top:16px">{% csrf_token %}
+          <button class="btn btn-ghost btn-sm" type="submit">Usuń prezentację</button></form>
+      {% else %}
+        <p class="text-muted text-sm" style="margin:0">Edycję i akceptację tekstu wykonuje Projektant.</p>
+      {% endif %}
+    </div></div>
+
+    <div class="card"><div class="card-body">
+      <h2 class="st-sec">Fakty z modelu</h2>
+      {% if facts %}
+      <ul class="st-facts">{% for f in facts %}<li>{{ f }}</li>{% endfor %}</ul>
+      <p class="text-muted text-sm" style="margin:10px 0 0">Tylko te zdania (bez nazwy modelu i danych źródłowych) trafiają do Claude przy szkicu z AI.</p>
+      {% else %}
+      <p class="text-sm" style="margin:0">Model nie ma regałów — brak wskaźników do opowiedzenia.</p>
+      {% endif %}
+    </div></div>
+  </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<script>
+(function () {
+  var f = document.getElementById('st-ai');
+  if (!f) return;
+  f.addEventListener('submit', function () {
+    f.querySelector('button').disabled = true;
+    document.getElementById('st-ai-live').textContent = 'Claude pisze szkic — to potrwa do minuty…';
+  });
+})();
+</script>
+{% endblock %}

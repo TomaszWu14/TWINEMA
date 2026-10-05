@@ -22,6 +22,7 @@
         <a href="{% url 'masterdata:home' %}"{% if rm.app_name == 'masterdata' %} class="is-active"{% endif %}>Dane</a>
         <a href="{% url 'ml:home' %}"{% if rm.app_name == 'ml' %} class="is-active"{% endif %}>ML</a>
         <a href="{% url 'render:jobs' %}"{% if rm.app_name == 'render' %} class="is-active"{% endif %}>Render</a>
+        <a href="{% url 'studio:list' %}"{% if rm.app_name == 'studio' %} class="is-active"{% endif %}>Studio</a>
         <a href="{% url 'twin:ewm_tasks_list' %}"{% if 'ewm_tasks' in rm.url_name %} class="is-active"{% endif %}>Zadania i symulacja</a>
       </nav>
       {% endwith %}

@@ -1,0 +1,67 @@
+"""Studio prezentacji: film o modelu hali składany z ujęć (preset kamery + kwestia lektora).
+
+Statusy idą tylko do przodu: szkic → tekst zatwierdzony → audio → render → montaż → gotowe.
+Kwestie wolno edytować wyłącznie w szkicu — nic nie idzie do lektora ani renderu przed akceptacją.
+"""
+from django.conf import settings
+from django.db import models
+
+from render.models import RenderJob
+
+from .script import estimate_seconds
+
+
+class Presentation(models.Model):
+    STATUS_CHOICES = [
+        ("draft", "Szkic"),
+        ("approved", "Tekst zatwierdzony"),
+        ("audio", "Lektor"),
+        ("render", "Render ujęć"),
+        ("montage", "Montaż"),
+        ("done", "Gotowe"),
+    ]
+
+    model = models.ForeignKey("twin.WarehouseModel", on_delete=models.CASCADE, related_name="presentations",
+                              verbose_name="Model hali")
+    title = models.CharField(max_length=200, verbose_name="Tytuł filmu")
+    status = models.CharField(max_length=8, choices=STATUS_CHOICES, default="draft", db_index=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    approved_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-updated_at", "-pk"]
+        verbose_name = "Prezentacja"
+        verbose_name_plural = "Prezentacje"
+
+    def __str__(self):
+        return self.title
+
+    @property
+    def is_draft(self):
+        return self.status == "draft"
+
+    @property
+    def estimated_seconds(self):
+        return round(sum(estimate_seconds(s.text) for s in self.shots.all()))
+
+
+class Shot(models.Model):
+    presentation = models.ForeignKey(Presentation, on_delete=models.CASCADE, related_name="shots")
+    order = models.PositiveSmallIntegerField(default=0, verbose_name="Kolejność")
+    preset = models.CharField(max_length=12, choices=RenderJob.PRESET_CHOICES, default="ogolny",
+                              verbose_name="Ujęcie")
+    text = models.TextField(verbose_name="Kwestia lektora")
+
+    class Meta:
+        ordering = ["order", "pk"]
+        verbose_name = "Ujęcie prezentacji"
+        verbose_name_plural = "Ujęcia prezentacji"
+
+    def __str__(self):
+        return f"{self.order}. {self.get_preset_display()}"
+
+    @property
+    def estimated_seconds(self):
+        return estimate_seconds(self.text)

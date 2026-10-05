@@ -2,7 +2,7 @@
 
 > God node · 20 connections · `web/twin/models.py`
 
-**Community:** [Community 8](Community_8.md)
+**Community:** [twin/models.py](twin-models.py.md)
 
 ## Connections by Relation
 
@@ -14,20 +14,20 @@
 - warehouse_model_copy() `INFERRED`
 
 ### contains
-- twin/models.py `EXTRACTED`
+- [twin/models.py](twin-models.py.md) `EXTRACTED`
 - Meta `EXTRACTED`
 
 ### imports
-- shared.py `EXTRACTED`
-- ewm_service.py `EXTRACTED`
+- [shared.py](shared.py.md) `EXTRACTED`
+- [ewm_service.py](ewm_service.py.md) `EXTRACTED`
 - test_design_calibration.py `EXTRACTED`
 - test_ewm_tasks_flow.py `EXTRACTED`
-- test_ewm_service.py `EXTRACTED`
+- [test_ewm_service.py](test_ewm_service.py.md) `EXTRACTED`
 - test_blender_export.py `EXTRACTED`
 - test_flow_player.py `EXTRACTED`
 - test_bay_template_model.py `EXTRACTED`
 - test_bay_template_views.py `EXTRACTED`
-- test_warehouse_model_view.py `EXTRACTED`
+- [test_warehouse_model_view.py](test_warehouse_model_view.py.md) `EXTRACTED`
 - test_warehouse_model_paste.py `EXTRACTED`
 
 ### method

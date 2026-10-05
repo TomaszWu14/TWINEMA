@@ -2,18 +2,18 @@
 
 > God node · 20 connections · `web/twin/design_catalog.py`
 
-**Community:** [Community 14](Community_14.md)
+**Community:** [params_for](params_for.md)
 
 ## Connections by Relation
 
 ### calls
-- ValueError `INFERRED`
+- [ValueError](ValueError.md) `INFERRED`
+- rack_to_element() `EXTRACTED`
 - _el() `EXTRACTED`
 - start() `EXTRACTED`
 - block_rows() `EXTRACTED`
 - clean_elements() `EXTRACTED`
 - load_variant() `EXTRACTED`
-- rack_to_element() `EXTRACTED`
 - _rack() `EXTRACTED`
 - add() `EXTRACTED`
 - rebuild_all() `EXTRACTED`
@@ -27,7 +27,7 @@
 - design_catalog.py `EXTRACTED`
 
 ### imports
-- design_kpi.py `EXTRACTED`
+- [design_kpi.py](design_kpi.py.md) `EXTRACTED`
 - test_design_variants.py `EXTRACTED`
 - test_design_catalog.py `EXTRACTED`
 

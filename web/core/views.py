@@ -15,7 +15,7 @@ MODULES = [
     {"key": "render", "name": "Render 3D", "desc": "Blender: ujęcia i animacje przepływów.",
      "phase": "F3", "url": "render:jobs"},
     {"key": "studio", "name": "Studio prezentacji", "desc": "Scenariusz, lektor, montaż — film i deck.",
-     "phase": "F5"},
+     "phase": "F5", "url": "studio:list"},
 ]
 
 

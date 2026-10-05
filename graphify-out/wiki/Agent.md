@@ -2,7 +2,7 @@
 
 > God node · 22 connections · `web/twin/blender_agents.py`
 
-**Community:** [Community 30](Community_30.md)
+**Community:** [blender_route.py](blender_route.py.md)
 
 ## Connections by Relation
 
@@ -16,7 +16,7 @@
 - blender_agents.py `EXTRACTED`
 
 ### imports
-- blender_scene.py `EXTRACTED`
+- [blender_scene.py](blender_scene.py.md) `EXTRACTED`
 - blender_containers.py `EXTRACTED`
 - design_sim_scene.py `EXTRACTED`
 
