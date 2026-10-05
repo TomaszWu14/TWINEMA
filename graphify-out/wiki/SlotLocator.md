@@ -26,8 +26,8 @@
 - blender_stock.py `EXTRACTED`
 
 ### imports
-- [test_design_calibration.py](test_design_calibration.py.md) `EXTRACTED`
-- [test_ewm_tasks_flow.py](test_ewm_tasks_flow.py.md) `EXTRACTED`
+- test_design_calibration.py `EXTRACTED`
+- test_ewm_tasks_flow.py `EXTRACTED`
 - warehouse_calibration.py `EXTRACTED`
 - ewm_tasks_import.py `EXTRACTED`
 - test_blender_stock.py `EXTRACTED`
@@ -44,7 +44,7 @@
 ### uses
 - [TasksEndpointAndImportTests](TasksEndpointAndImportTests.md) `INFERRED`
 - SlotLocatorTests `INFERRED`
-- CalibrationTests `INFERRED`
+- [CalibrationTests](CalibrationTests.md) `INFERRED`
 - CalibrationViewTests `INFERRED`
 - ResolveMovesTests `INFERRED`
 - SceneFromTasksTests `INFERRED`

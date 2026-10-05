@@ -1,4 +1,4 @@
-# sim/__init__.py
+# test_sim.py
 
 > 13 nodes · cohesion 0.19
 
@@ -21,12 +21,12 @@
 ## Relationships
 
 - [Material](Material.md) (5 shared connections)
-- [test_design_compare.py](test_design_compare.py.md) (2 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (2 shared connections)
+- [warehouse_compare.py](warehouse_compare.py.md) (2 shared connections)
+- [shared.py](shared.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [ForecastTests](ForecastTests.md) (1 shared connections)
 - [simulate](simulate.md) (1 shared connections)
-- [StudioViewTests](StudioViewTests.md) (1 shared connections)
+- [draft_script](draft_script.md) (1 shared connections)
 - [segmentation.py](segmentation.py.md) (1 shared connections)
 
 ## Source Files

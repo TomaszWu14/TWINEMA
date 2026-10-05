@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **design_kpi.py** (20 connections) — `web/twin/design_kpi.py`
+- **design_kpi.py** (21 connections) — `web/twin/design_kpi.py`
 - **test_design_variants.py** (16 connections) — `web/twin/tests/test_design_variants.py`
 - **rack_axes()** (15 connections) — `web/twin/blender_route.py`
 - **compute_kpi()** (12 connections) — `web/twin/design_kpi.py`
@@ -15,9 +15,9 @@
 - **clean_elements()** (7 connections) — `web/twin/design_kpi.py`
 - **storage_faces()** (6 connections) — `web/twin/design_kpi.py`
 - **anchors()** (5 connections) — `web/twin/design_kpi.py`
+- **_center()** (5 connections) — `web/twin/design_kpi.py`
 - **equipment_capacity()** (5 connections) — `web/twin/design_kpi.py`
 - **anchor_count()** (3 connections) — `web/twin/design_kpi.py`
-- **_center()** (3 connections) — `web/twin/design_kpi.py`
 - **.test_amr_station_is_an_anchor_and_no_anchor_falls_back()** (3 connections) — `web/twin/tests/test_design_variants.py`
 - **.test_equipment_capacity_sums()** (3 connections) — `web/twin/tests/test_design_variants.py`
 - **.test_rack_to_element()** (3 connections) — `web/twin/tests/test_design_variants.py`
@@ -34,7 +34,7 @@
 ## Relationships
 
 - [design_catalog.py](design_catalog.py.md) (11 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (7 shared connections)
+- [shared.py](shared.py.md) (7 shared connections)
 - [layout-hall.js](layout-hall.js.md) (4 shared connections)
 - [blender_scene.py](blender_scene.py.md) (3 shared connections)
 - [kpi_facts](kpi_facts.md) (2 shared connections)
@@ -43,8 +43,8 @@
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
 - [views_sim.py](views_sim.py.md) (1 shared connections)
-- [packaging.py](packaging.py.md) (1 shared connections)
-- [simulate_plan](simulate_plan.md) (1 shared connections)
+- [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
+- [engine.py](engine.py.md) (1 shared connections)
 
 ## Source Files
 
@@ -54,7 +54,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 154 (100%)
+- EXTRACTED: 157 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

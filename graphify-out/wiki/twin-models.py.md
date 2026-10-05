@@ -4,8 +4,8 @@
 
 ## Key Concepts
 
-- **twin/models.py** (56 connections) — `web/twin/models.py`
-- **WarehouseModel** (37 connections) — `web/twin/models.py`
+- **twin/models.py** (57 connections) — `web/twin/models.py`
+- **WarehouseModel** (38 connections) — `web/twin/models.py`
 - **WarehouseModelRack** (24 connections) — `web/twin/models.py`
 - **test_design_calibration.py** (19 connections) — `web/twin/tests/test_design_calibration.py`
 - **test_ewm_tasks_flow.py** (19 connections) — `web/twin/tests/test_ewm_tasks_flow.py`
@@ -33,16 +33,16 @@
 
 ## Relationships
 
-- [scenario/models.py](scenario-models.py.md) (12 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (9 shared connections)
+- [day_demand](day_demand.md) (12 shared connections)
+- [shared.py](shared.py.md) (9 shared connections)
 - [EwmViewsTests](EwmViewsTests.md) (7 shared connections)
-- [roles.py](roles.py.md) (6 shared connections)
+- [context_processors.py](context_processors.py.md) (6 shared connections)
 - [test_ewm_service.py](test_ewm_service.py.md) (6 shared connections)
-- [simulate_plan](simulate_plan.md) (6 shared connections)
+- [engine.py](engine.py.md) (6 shared connections)
 - [BayTemplate](BayTemplate.md) (5 shared connections)
 - [blender_scene.py](blender_scene.py.md) (5 shared connections)
 - [Material](Material.md) (4 shared connections)
-- [test_ewm_tasks_flow.py](test_ewm_tasks_flow.py.md) (4 shared connections)
+- [._scene](_scene.md) (4 shared connections)
 - [simulate](simulate.md) (4 shared connections)
 - [layout-editor.js](layout-editor.js.md) (4 shared connections)
 
@@ -62,7 +62,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 243 (96%)
+- EXTRACTED: 245 (96%)
 - INFERRED: 10 (4%)
 - AMBIGUOUS: 0 (0%)
 
