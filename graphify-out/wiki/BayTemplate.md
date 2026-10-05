@@ -26,11 +26,11 @@
 ## Relationships
 
 - [twin/models.py](twin-models.py.md) (5 shared connections)
-- [test_ewm_detect.py](test_ewm_detect.py.md) (2 shared connections)
-- [test_ewm_service.py](test_ewm_service.py.md) (2 shared connections)
+- [test_ml.py](test_ml.py.md) (2 shared connections)
+- [EwmViewsTests](EwmViewsTests.md) (2 shared connections)
 - [bay_templates.py](bay_templates.py.md) (2 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (1 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (1 shared connections)
+- [rack_corners](rack_corners.md) (1 shared connections)
 
 ## Source Files
 

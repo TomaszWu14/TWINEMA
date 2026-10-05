@@ -33,17 +33,17 @@
 
 ## Relationships
 
-- [params_for](params_for.md) (11 shared connections)
-- [shared.py](shared.py.md) (7 shared connections)
+- [design_catalog.py](design_catalog.py.md) (11 shared connections)
+- [warehouse_blender.py](warehouse_blender.py.md) (7 shared connections)
 - [VariantViewTests](VariantViewTests.md) (4 shared connections)
 - [blender_scene.py](blender_scene.py.md) (3 shared connections)
-- [script.py](script.py.md) (2 shared connections)
+- [kpi_facts](kpi_facts.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
 - [blender_route.py](blender_route.py.md) (1 shared connections)
-- [.slot](slot.md) (1 shared connections)
+- [blender_stock.py](blender_stock.py.md) (1 shared connections)
 - [FloorGrid](FloorGrid.md) (1 shared connections)
 
 ## Source Files

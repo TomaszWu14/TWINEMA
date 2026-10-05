@@ -1,10 +1,10 @@
-# roles.py
+# context_processors.py
 
 > 22 nodes · cohesion 0.09
 
 ## Key Concepts
 
-- **roles.py** (18 connections) — `web/core/roles.py`
+- **roles.py** (19 connections) — `web/core/roles.py`
 - **test_ml.py** (11 connections) — `web/ml/tests/test_ml.py`
 - **test_render.py** (8 connections) — `web/render/tests/test_render.py`
 - **test_ewm_tasks_refresh.py** (6 connections) — `web/twin/tests/test_ewm_tasks_refresh.py`
@@ -30,16 +30,16 @@
 ## Relationships
 
 - [twin/models.py](twin-models.py.md) (6 shared connections)
-- [blender_stock.py](blender_stock.py.md) (4 shared connections)
+- [ml/views.py](ml-views.py.md) (4 shared connections)
 - [studio/api.py](studio-api.py.md) (3 shared connections)
 - [pre-push](pre-push.md) (2 shared connections)
 - [WorkerApiTests](WorkerApiTests.md) (2 shared connections)
 - [test_foundation.py](test_foundation.py.md) (1 shared connections)
 - [test_dane.py](test_dane.py.md) (1 shared connections)
 - [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
-- [shared.py](shared.py.md) (1 shared connections)
+- [warehouse_blender.py](warehouse_blender.py.md) (1 shared connections)
 - [forecast.py](forecast.py.md) (1 shared connections)
-- [Przekazanie — stan projektu i następny krok (F5)](Przekazanie_%E2%80%94_stan_projektu_i_nast%C4%99pny_krok_%28F5%29.md) (1 shared connections)
+- [test_deck.py](test_deck.py.md) (1 shared connections)
 - [StudioViewTests](StudioViewTests.md) (1 shared connections)
 
 ## Source Files
@@ -53,7 +53,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 71 (100%)
+- EXTRACTED: 72 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

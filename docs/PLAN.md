@@ -8,7 +8,7 @@
 > projekt z zewnątrz (rekruterzy). Scenariusz referencyjny: **budowa nowego centrum
 > dystrybucyjnego** — dane demonstracyjne, bez nazw firm i danych klientów.
 
-Status: F0 ✅, F1 ✅ (przeszczep rdzenia), F2 ✅ (Dane), F3 ✅ (Render), F4 ✅ (ML v1) — 2026-10-05. Następna: F5 (Studio).
+Status: F0 ✅, F1 ✅ (przeszczep rdzenia), F2 ✅ (Dane), F3 ✅ (Render), F4 ✅ (ML v1), F5 ✅ (Studio: film + deck, PR #8–#11) — 2026-10-05. Następna: F6 (Szlif).
 
 ---
 
@@ -100,7 +100,8 @@ KPI wariantu → Scenariusz (Claude + edycja) → Lektor (ElevenLabs, timestamps
 - Presety kamery: przelot nad halą, orbita strefy, przejazd korytarzem, zbliżenie regału, porównanie.
 - Napisy SRT z znaczników czasu lektora.
 - Cache po hashu wejścia (tekst+głos / scena+ujęcie): poprawka zdania nie renderuje całego filmu.
-- Statusy: szkic → tekst zatwierdzony → audio → render → gotowe (nie renderujemy przed akceptacją tekstu).
+- Statusy: szkic → tekst zatwierdzony → audio → render → montaż → gotowe (nie renderujemy przed akceptacją tekstu).
+- Deck PDF 16:9 z serwera (fpdf2 + DejaVu): tytuł, liczby z KPI, ujęcie na slajd (kadr PNG z kolejki F3 + kwestia).
 - Na zewnątrz (ElevenLabs/Claude) idzie wyłącznie tekst narracji.
 
 ---
@@ -114,7 +115,7 @@ KPI wariantu → Scenariusz (Claude + edycja) → Lektor (ElevenLabs, timestamps
 | **F2 Dane** | modele + importy plików | import demonstracyjnych zadań i materiałów → symulacja dnia liczy się |
 | **F3 Render** | worker Blendera + presety kamery | klik „Renderuj” → MP4/PNG w aplikacji |
 | **F4 ML v1** | ML1 + ML2 | backtest z MAPE; segmentacja skraca drogę vs ABC |
-| **F5 Studio MVP** | pierwszy film | 2–3 min film PL z lektorem i napisami, z aplikacji |
+| **F5 Studio MVP** ✅ | pierwszy film | 2–3 min film PL z lektorem i napisami + deck PDF, z aplikacji (kod gotowy; pierwszy prawdziwy film po podpięciu kluczy i ffmpeg) |
 | **F6 Szlif** | ML3, porównania, katalog rynku | wg burzy mózgów |
 
 Ścieżka krytyczna: F0 → F1 → F2 → F3 → F5; F4 równolegle z F3.

@@ -89,6 +89,8 @@ class Shot(models.Model):
     voice = models.ForeignKey(VoiceTrack, on_delete=models.SET_NULL, null=True, blank=True, related_name="shots")
     render = models.ForeignKey(RenderJob, on_delete=models.SET_NULL, null=True, blank=True, related_name="studio_shots")
     render_key = models.CharField(max_length=64, blank=True, default="", db_index=True)
+    still = models.ForeignKey(RenderJob, on_delete=models.SET_NULL, null=True, blank=True, related_name="studio_stills")
+    still_key = models.CharField(max_length=64, blank=True, default="", db_index=True)
 
     class Meta:
         ordering = ["order", "pk"]

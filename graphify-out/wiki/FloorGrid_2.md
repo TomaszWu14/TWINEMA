@@ -16,7 +16,7 @@
 
 ### imports
 - [blender_scene.py](blender_scene.py.md) `EXTRACTED`
-- test_blender_export.py `EXTRACTED`
+- [test_blender_export.py](test_blender_export.py.md) `EXTRACTED`
 
 ### method
 - .route() `EXTRACTED`

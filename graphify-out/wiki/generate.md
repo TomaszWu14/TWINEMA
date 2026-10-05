@@ -36,10 +36,10 @@
 - [test_model_edit.py](test_model_edit.py.md) (7 shared connections)
 - [_save](_save.md) (5 shared connections)
 - [twin/models.py](twin-models.py.md) (4 shared connections)
-- [warehouse_compare.py](warehouse_compare.py.md) (3 shared connections)
+- [test_design_compare.py](test_design_compare.py.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
 - [segmentation.py](segmentation.py.md) (2 shared connections)
-- [params_for](params_for.md) (1 shared connections)
+- [design_catalog.py](design_catalog.py.md) (1 shared connections)
 - [ValueError](ValueError.md) (1 shared connections)
 - [GeneratorViewTests](GeneratorViewTests.md) (1 shared connections)
 

@@ -1,4 +1,4 @@
-# warehouse_model.py
+# rack_corners
 
 > 49 nodes · cohesion 0.07
 
@@ -34,10 +34,10 @@
 ## Relationships
 
 - [twin/models.py](twin-models.py.md) (12 shared connections)
-- [shared.py](shared.py.md) (11 shared connections)
-- [script.py](script.py.md) (3 shared connections)
+- [warehouse_blender.py](warehouse_blender.py.md) (11 shared connections)
+- [kpi_facts](kpi_facts.md) (3 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
-- [ewm_service.py](ewm_service.py.md) (3 shared connections)
+- [warehouse_model_ewm.py](warehouse_model_ewm.py.md) (3 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (3 shared connections)
 - [test_model_edit.py](test_model_edit.py.md) (2 shared connections)
 - [ParseTests](ParseTests.md) (2 shared connections)

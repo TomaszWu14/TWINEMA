@@ -32,14 +32,14 @@
 - [test_dane.py](test_dane.py.md) (7 shared connections)
 - [ValueError](ValueError.md) (6 shared connections)
 - [masterdata/views.py](masterdata-views.py.md) (5 shared connections)
-- [detect](detect.md) (4 shared connections)
-- [test_ewm_service.py](test_ewm_service.py.md) (4 shared connections)
-- [shared.py](shared.py.md) (3 shared connections)
+- [render/views.py](render-views.py.md) (4 shared connections)
+- [EwmViewsTests](EwmViewsTests.md) (4 shared connections)
+- [warehouse_blender.py](warehouse_blender.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [safe_json](safe_json.md) (1 shared connections)
+- [shared.py](shared.py.md) (1 shared connections)
 - [blender_route.py](blender_route.py.md) (1 shared connections)
 - [ewm_levels.py](ewm_levels.py.md) (1 shared connections)
-- [.slot](slot.md) (1 shared connections)
+- [blender_stock.py](blender_stock.py.md) (1 shared connections)
 
 ## Source Files
 

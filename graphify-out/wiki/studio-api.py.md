@@ -4,13 +4,13 @@
 
 ## Key Concepts
 
+- **RenderJob** (15 connections) — `web/render/models.py`
 - **render/api.py** (14 connections) — `web/render/api.py`
-- **RenderJob** (14 connections) — `web/render/models.py`
 - **render/views.py** (12 connections) — `web/render/views.py`
 - **_scene_from_request()** (12 connections) — `web/twin/views/warehouse_blender.py`
 - **worker_required()** (11 connections) — `web/render/api.py`
+- **render/models.py** (9 connections) — `web/render/models.py`
 - **_forbidden()** (8 connections) — `web/render/api.py`
-- **render/models.py** (8 connections) — `web/render/models.py`
 - **RenderJobForm** (8 connections) — `web/render/views.py`
 - **scene()** (6 connections) — `web/render/api.py`
 - **fail()** (5 connections) — `web/render/api.py`
@@ -33,8 +33,8 @@
 
 ## Relationships
 
-- [shared.py](shared.py.md) (6 shared connections)
-- [roles.py](roles.py.md) (3 shared connections)
+- [warehouse_blender.py](warehouse_blender.py.md) (6 shared connections)
+- [context_processors.py](context_processors.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [blender_route.py](blender_route.py.md) (1 shared connections)
 
@@ -49,7 +49,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 170 (98%)
+- EXTRACTED: 172 (98%)
 - INFERRED: 4 (2%)
 - AMBIGUOUS: 0 (0%)
 
