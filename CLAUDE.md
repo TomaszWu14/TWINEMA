@@ -1,7 +1,8 @@
 # CLAUDE.md — TWINEMA
 
 Aplikacja do projektowania magazynów 3D, symulacji przepływów i prezentacji (Blender +
-ElevenLabs). Plan i decyzje: `docs/PLAN.md`. Pochodzenie kodu: `PROVENANCE.md`.
+ElevenLabs). Plan i decyzje: `docs/PLAN.md`. **Stan i następny krok: `docs/HANDOFF.md` — przeczytaj na starcie.**
+Pochodzenie kodu: `PROVENANCE.md`.
 
 ## Zasady
 - **UI i teksty po polsku.** Marka przez `{{ app_name }}` (env `APP_NAME`).
