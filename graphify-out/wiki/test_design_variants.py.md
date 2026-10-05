@@ -1,4 +1,4 @@
-# design_kpi.py
+# test_design_variants.py
 
 > 29 nodes · cohesion 0.12
 
@@ -33,7 +33,7 @@
 
 ## Relationships
 
-- [design_catalog.py](design_catalog.py.md) (11 shared connections)
+- [twinema_design_kit.py](twinema_design_kit.py.md) (11 shared connections)
 - [shared.py](shared.py.md) (7 shared connections)
 - [layout-hall.js](layout-hall.js.md) (4 shared connections)
 - [blender_scene.py](blender_scene.py.md) (3 shared connections)
@@ -42,7 +42,7 @@
 - [scene-builder.js](scene-builder.js.md) (1 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [roles.py](roles.py.md) (1 shared connections)
+- [test_s3b_views.py](test_s3b_views.py.md) (1 shared connections)
 - [packaging.py](packaging.py.md) (1 shared connections)
 - [views_compare.py](views_compare.py.md) (1 shared connections)
 

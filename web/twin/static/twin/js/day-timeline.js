@@ -158,3 +158,84 @@ export function lPath([ax, ay], [bx, by], p) {
   const dx = Math.abs(bx - ax), dy = Math.abs(by - ay), d = dx + dy || 1, s = Math.max(0, Math.min(1, p)) * d;
   return s <= dx ? [ax + Math.sign(bx - ax) * s, ay] : [bx, ay + Math.sign(by - ay) * (s - dx)];
 }
+
+/** Kierunek jazdy na `lPath` w chwili p → yaw sceny (lokalne +x pojazdu = kierunek jazdy). */
+export function lPathYaw([ax, ay], [bx, by], p) {
+  const dx = Math.abs(bx - ax), dy = Math.abs(by - ay), s = Math.max(0, Math.min(1, p)) * (dx + dy || 1);
+  return s <= dx && dx > 0 ? (bx >= ax ? 0 : Math.PI) : (by >= ay ? -Math.PI / 2 : Math.PI / 2);
+}
+
+// ── Auta przy dokach (hala: x w prawo, y w głąb; dok = {wall: [x, y] na ścianie, out: [nx, ny]}) ─────
+/** Połowa długości pojazdu + 0,3 m od ściany: tył naczepy przy bramie, nie w ścianie (G1b). */
+export const STAND_M = { truck: 7.1, container: 6.4, courier: 3.1 };
+export const QUEUE_M = 34;           // rząd czekających aut na placu (środek naczepy od ściany)
+export const QUEUE_PITCH_M = 4.5;    // odstęp czekających aut (szerokość 2,55 m + przejście)
+
+export const yawOut = (out) => Math.atan2(-out[1], out[0]);
+const sideKey = (d) => `${d.out[0]},${d.out[1]}`;
+const along = (d) => (d.out[0] ? d.wall[1] : d.wall[0]);            // współrzędna wzdłuż ściany
+
+/** Pozycja na placu przed dokiem w odległości k od ściany (tyłem do bramy). */
+export function dockPose(d, k) {
+  return { x: d.wall[0] + d.out[0] * k, y: d.wall[1] + d.out[1] * k, yaw: yawOut(d.out) };
+}
+
+/** Strony z dokami: {klucz strony: {out, wall: wspólna współrzędna ściany, s0: początek rzędu kolejki}}. */
+export function queueSides(docks) {
+  const sides = {};
+  for (const d of Object.values(docks)) {
+    const k = sideKey(d), s = along(d);
+    if (!sides[k]) sides[k] = { out: d.out, ref: d, s0: s };
+    else sides[k].s0 = Math.min(sides[k].s0, s);
+  }
+  return sides;
+}
+
+/** i-te miejsce w rzędzie kolejki strony doku `d` (rząd równoległy do ściany, auta prostopadle). */
+export function queuePose(sides, d, i) {
+  const side = sides[sideKey(d)], s = side.s0 + i * QUEUE_PITCH_M;
+  const base = side.out[0] ? { wall: [side.ref.wall[0], s], out: side.out } : { wall: [s, side.ref.wall[1]], out: side.out };
+  return dockPose(base, QUEUE_M);
+}
+
+/** Pojazd z `vehicleAt` → {x, y, yaw}: kolejka = miejsce `slot` w rzędzie, dojazd/odjazd = pas przed dokiem. */
+export function vehiclePose(v, d, kind, sides, slot = 0) {
+  const stand = dockPose(d, STAND_M[kind] ?? STAND_M.truck);
+  if (v.phase === 'queue') return queuePose(sides, d, slot);
+  if (v.phase === 'dock') return stand;
+  const lane = dockPose(d, QUEUE_M), p = v.phase === 'in' ? v.p : 1 - v.p;
+  return { x: lane.x + (stand.x - lane.x) * p, y: lane.y + (stand.y - lane.y) * p, yaw: stand.yaw };
+}
+
+/** Miejsca pola odkładczego od najbliższego punktu `near` (np. środek doków) — palety rosną od doków. */
+export function slotOrder(rect, near) {
+  const cols = Math.max(1, Math.floor(rect.w / SLOT_M)), rows = Math.max(1, Math.floor(rect.d / SLOT_M));
+  const pts = [];
+  for (let r = 0; r < cols * rows; r++) {
+    const [x, y] = rectSlot(rect, r);
+    pts.push([r, (x - near[0]) ** 2 + (y - near[1]) ** 2]);
+  }
+  return pts.sort((a, b) => a[1] - b[1]).map(([r]) => r);
+}
+
+/** k-ta paleta na polu wg `order` (z warstwami po zapełnieniu) → [x, y, warstwa]. */
+export function orderedSlot(rect, order, k) {
+  const [x, y] = rectSlot(rect, order[k % order.length]);
+  return [x, y, Math.floor(k / order.length)];
+}
+
+/** Obsada zajęta w chwili t per proces (oś czasu S3a co `stepS`): {unload, palletize, …}. */
+export function crewAt(people, stepS, t) {
+  return Object.fromEntries(Object.entries(people || {}).map(([p, s]) => [p, seriesAt(s, stepS, t)]));
+}
+
+/** n stanowisk pracy rozdzielonych po kolei na prostokątach (stoły) — po 4 miejsca wokół stołu. */
+export function stationSpots(rects, n) {
+  const out = [];
+  for (let i = 0; i < n && rects.length; i++) {
+    const r = rects[i % rects.length];
+    const around = [[r.w / 2, -0.5], [-0.5, r.d / 2], [r.w / 2, r.d + 0.5], [r.w + 0.5, r.d / 2]];
+    out.push(localToWorld(r, around[Math.floor(i / rects.length) % 4]));
+  }
+  return out;
+}

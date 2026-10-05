@@ -2,8 +2,10 @@
 // Pojazdy, palety i paczki = InstancedMesh (po jednej siatce na rodzaj, aktualizowane tylko aktywne).
 // Render: pętla tylko w trakcie odtwarzania; po przewinięciu jedna klatka (renderNow).
 import * as THREE from 'three';
-import { TRAVEL_S, VEHICLES, buildTracks, countersAt, dayRange, hhmm, lPath, palletAt, rackFront, rectCenter,
-  rectSlot, seriesAt, vehicleAt } from './day-timeline.js';
+import { QUEUE_M, QUEUE_PITCH_M, TRAVEL_S, VEHICLES, buildTracks, countersAt, crewAt, dayRange, dockPose, hashId,
+  hhmm, lPath, lPathYaw, orderedSlot, palletAt, queueSides, rackFront, rectCenter, seriesAt, slotOrder,
+  stationSpots, vehicleAt, vehiclePose, yawOut } from './day-timeline.js';
+import { localToWorld } from './scene-data.js';
 
 const MAX_PARCEL_STACK = 120;
 
@@ -20,7 +22,17 @@ const PARTS = {
     [0.8, 0.75, 2.1, -1.9, 0, WHEEL], [0.8, 0.75, 2.1, 1.9, 0, WHEEL]],
   pallet: [[1.2, 0.144, 0.8, 0, 0, 0xa87d4a], [1.16, 1.1, 0.76, 0, 0.144, 0xb4874f]],
   parcel: [[0.6, 0.4, 0.4, 0, 0, 0x92400e]],
+  // Ludzie (kamizelka odblaskowa) i sprzęt — low-poly z brył, przód = +x.
+  person: [[0.28, 0.85, 0.4, 0, 0, 0x1f2937], [0.32, 0.62, 0.5, 0, 0.85, 0xf97316], [0.24, 0.24, 0.24, 0, 1.5, 0xe0b48a],
+    [0.27, 0.1, 0.27, 0, 1.74, 0xfacc15]],
+  ptruck: [[0.55, 1.2, 0.72, -0.6, 0.08, 0xeab308], [1.15, 0.07, 0.56, 0.3, 0.06, CHASSIS], [0.08, 0.35, 0.45, -0.95, 1.05, CHASSIS]],
+  reach: [[1.6, 1.15, 1.2, -0.75, 0.15, 0xeab308], [0.18, 4.6, 1.0, 0.1, 0.1, CHASSIS], [1.1, 0.08, 1.15, -0.75, 2.2, CHASSIS],
+    [0.08, 2.05, 0.08, -1.25, 0.15, CHASSIS], [1.1, 0.07, 0.6, 0.75, 0.18, CHASSIS], [0.5, 0.3, 1.15, -0.2, 0, WHEEL]],
+  vna: [[2.4, 1.2, 1.25, -1.0, 0.12, 0x64748b], [0.2, 8.5, 1.1, 0.25, 0.1, CHASSIS], [1.0, 1.9, 1.05, -0.45, 1.3, 0x94a3b8],
+    [1.1, 0.07, 0.6, 0.85, 0.18, CHASSIS]],
+  conveyor: [[8.0, 0.18, 0.75, 1.0, 0.95, 0x9ca3af], [3.0, 0.95, 0.85, -1.6, 0, 0x6b7280]],
 };
+const NO_SHADOW = new Set(['parcel', 'conveyor']);
 
 /** Jeden rodzaj obiektu = po jednej siatce instancyjnej na część; wspólny licznik `count`. */
 function fleet(scene, kind, n) {
@@ -29,7 +41,7 @@ function fleet(scene, kind, n) {
       new THREE.MeshStandardMaterial({ color, roughness: color === 0x0f172a ? 0.15 : 0.6, metalness: color === 0x0f172a ? 0.6 : 0.15 }),
       Math.max(1, n));
     mesh.count = 0;
-    mesh.castShadow = kind !== 'parcel';
+    mesh.castShadow = !NO_SHADOW.has(kind);
     mesh.frustumCulled = false;
     scene.add(mesh);
     return mesh;
@@ -53,12 +65,20 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
   const all = [...tracks.values()];
   const byKind = (k) => all.filter((tr) => tr.kind === k);
   const vehicles = all.filter((tr) => VEHICLES.has(tr.kind)), pallets = byKind('pallet');
+  const step = data.timeline.step_s || 900, people = data.timeline.people || {};
+  const crewMax = Object.values(people).reduce((a, s) => a + Math.max(0, ...s), 0);
+  const nDocks = Object.keys(places.docks).length;
   const mesh = {
     container: fleet(viewer.scene, 'container', byKind('container').length),
     truck: fleet(viewer.scene, 'truck', byKind('truck').length),
     courier: fleet(viewer.scene, 'courier', byKind('courier').length),
     pallet: fleet(viewer.scene, 'pallet', pallets.length),
     parcel: fleet(viewer.scene, 'parcel', MAX_PARCEL_STACK),
+    person: fleet(viewer.scene, 'person', crewMax + 8),
+    ptruck: fleet(viewer.scene, 'ptruck', nDocks * 2),
+    reach: fleet(viewer.scene, 'reach', pallets.length),
+    vna: fleet(viewer.scene, 'vna', pallets.length),
+    conveyor: fleet(viewer.scene, 'conveyor', nDocks),
   };
   const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), P = new THREE.Vector3(), S1 = new THREE.Vector3(1, 1, 1);
   const UP = new THREE.Vector3(0, 1, 0);
@@ -68,24 +88,63 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
   };
 
   // ── Miejsca → punkty w hali ────────────────────────────────────────────────────────────────
-  const dockPt = (id, k = 0) => {
-    const d = places.docks[id];
-    if (!d) return null;
-    const len = 7 + k;                                           // auto stoi przed doku, przodem do hali
-    return { x: d.x + d.out[0] * len, y: d.y + d.out[1] * len, yaw: Math.atan2(-d.out[1], d.out[0]) };
+  const sides = queueSides(places.docks);
+  const inside = (d, k, side = 0) => {             // punkt w hali za dokiem (k m od ściany, przesunięcie wzdłuż)
+    const p = dockPose(d, -k);
+    return [p.x + Math.abs(d.out[1]) * side, p.y + Math.abs(d.out[0]) * side];
   };
   const gate = places.gate;
   const rectList = (key) => places[key] || [];
+  const near = (role) => {                         // środek doków danej strony (palety na polu rosną od doków)
+    const ds = Object.values(places.docks).filter((d) => role.includes(d.role));
+    return ds.length ? [ds.reduce((a, d) => a + d.x, 0) / ds.length, ds.reduce((a, d) => a + d.y, 0) / ds.length] : null;
+  };
+  const NEAR = { staging_in: near(['in_container', 'in_pallet', 'shared']), staging_out: near(['out', 'shared', 'courier']) };
+  const orders = {};
+  const slotFor = (key, rect, ri, k) => {
+    const id = `${key}:${ri}`;
+    if (!orders[id]) orders[id] = slotOrder(rect, NEAR[key] || rectCenter(rect));
+    return orderedSlot(rect, orders[id], k);
+  };
   const anchor = (key, id) => {
     if (key === 'rack' || key === 'pick') return rackFront(racks, id) || gate;
-    if (key.startsWith('dock:')) { const p = dockPt(key.slice(5), -6); return p ? [p.x, p.y] : gate; }
+    if (key.startsWith('dock:')) { const d = places.docks[key.slice(5)]; return d ? inside(d, 4) : gate; }
     const rs = rectList(key);
-    if (rs.length) return rectCenter(rs[0]);
+    if (rs.length) return key.startsWith('staging') ? slotFor(key, rs[0], 0, 0).slice(0, 2) : rectCenter(rs[0]);
     // brak pola/stanowiska w layoucie → przy dokach odpowiedniej strony
     const side = key.endsWith('_out') || key === 'pack' ? 'out' : 'in_container';
-    const d = Object.entries(places.docks).find(([, v]) => v.role === side || v.role === 'shared');
-    return d ? [d[1].x - d[1].out[0] * 8, d[1].y - d[1].out[1] * 8] : gate;
+    const d = Object.values(places.docks).find((v) => v.role === side || v.role === 'shared');
+    return d ? inside(d, 8) : gate;
   };
+  const rackOf = (id) => (racks.length ? racks[hashId(id) % racks.length] : null);
+
+  // ── Plac przed dokami: asfalt do rzędu kolejki + malowane linie pasów i miejsc oczekiwania ──────
+  const yard = new THREE.Group();
+  viewer.scene.add(yard);
+  const lineMat = new THREE.MeshBasicMaterial({ color: 0xf1f5f9 }), apronMat = new THREE.MeshStandardMaterial({ color: 0x4b4f54, roughness: 0.95 });
+  const flat = (mat, x, y, w, d, yaw, h = 0.01) => {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d), mat);
+    m.rotation.set(-Math.PI / 2, 0, yaw); m.position.set(x, h, y); m.receiveShadow = true;
+    yard.add(m);
+  };
+  for (const side of Object.values(sides)) {
+    const ds = Object.values(places.docks).filter((d) => d.out[0] === side.out[0] && d.out[1] === side.out[1]);
+    const ss = ds.map((d) => (side.out[0] ? d.wall[1] : d.wall[0])), s1 = Math.max(...ss, side.s0 + 12 * QUEUE_PITCH_M);
+    const depth = QUEUE_M + 12, len = s1 - side.s0 + 16, mid = (side.s0 + s1) / 2, yaw = side.out[0] ? Math.PI / 2 : 0;
+    const at = (s, k) => dockPose(side.out[0] ? { wall: [side.ref.wall[0], s], out: side.out } : { wall: [s, side.ref.wall[1]], out: side.out }, k);
+    const c = at(mid, depth / 2);
+    flat(apronMat, c.x, c.y, len, depth, yaw, -0.005);
+    for (const d of ds) {                          // pas dojazdu do doku: dwie linie co 4 m
+      for (const sg of [-1.9, 1.9]) {
+        const p = at((side.out[0] ? d.wall[1] : d.wall[0]) + sg, 9);
+        flat(lineMat, p.x, p.y, 0.12, 16, yaw);
+      }
+    }
+    for (let i = 0; i <= 12; i++) {                // miejsca oczekiwania w rzędzie kolejki
+      const p = at(side.s0 - QUEUE_PITCH_M / 2 + i * QUEUE_PITCH_M, QUEUE_M);
+      flat(lineMat, p.x, p.y, 0.12, 15, yaw);
+    }
+  }
 
   // ── Klatka ─────────────────────────────────────────────────────────────────────────────────
   const hi = new THREE.Group();
@@ -114,8 +173,9 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
         for (const k of b.keys) {
           const box = placeBox(k);
           if (!box) continue;
-          const m = new THREE.Mesh(new THREE.BoxGeometry(box[2] + 1, 3, box[3] + 1), hiMat);
-          m.position.set(box[0], 1.5, box[1]);
+          // Płaska plama na posadzce/placu (wysoki prostopadłościan zasłaniał ludzi i auta w doku).
+          const m = new THREE.Mesh(new THREE.BoxGeometry(box[2] + 1, 0.12, box[3] + 1), hiMat);
+          m.position.set(box[0], 0.07, box[1]);
           hi.add(m);
         }
       }
@@ -127,19 +187,18 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
   function update(t) {
     const t0 = performance.now();
     Object.values(mesh).forEach((m) => m.reset());
-    // pojazdy: kolejka przy bramie (kolejne miejsca co 4 m), dojazd, postój w doku, odjazd
-    const queue = [];
+    // pojazdy: rząd kolejki na placu swojej strony, pas dojazdu, postój tyłem do bramy, odjazd
+    const queued = {}, docked = [];
     for (const tr of vehicles) {
       if (t < tr.t0 - TRAVEL_S || t > tr.t1 + TRAVEL_S) continue;
-      const v = vehicleAt(tr, t);
-      if (!v) continue;
-      const d = dockPt(v.dock) || { x: gate[0], y: gate[1], yaw: 0 };
-      if (v.phase === 'queue') { queue.push([tr, d]); continue; }
-      const p = v.phase === 'in' ? v.p : v.phase === 'out' ? 1 - v.p : 1;
-      put(mesh[tr.kind], gate[0] + (d.x - gate[0]) * p, gate[1] + (d.y - gate[1]) * p, 0, d.yaw);
+      const v = vehicleAt(tr, t), d = v && places.docks[v.dock];
+      if (!d) continue;
+      const key = `${d.out}`, slot = v.phase === 'queue' ? (queued[key] = (queued[key] ?? -1) + 1) : 0;
+      const pose = vehiclePose(v, d, tr.kind, sides, slot);
+      put(mesh[tr.kind], pose.x, pose.y, 0, pose.yaw);
+      if (v.phase === 'dock') docked.push({ d, kind: tr.kind });
     }
-    queue.forEach(([tr, d], i) => put(mesh[tr.kind], gate[0] + (i % 6) * 4, gate[1] + Math.floor(i / 6) * 16, 0, d.yaw));
-    // palety: na stanowisku / polu (kolejne sloty), w przejeździe (L po alejkach)
+    // palety: na stanowisku / polu (od strony doków), w przejeździe (L po alejkach) na wózku
     const slots = {};
     for (const tr of pallets) {
       if (t < tr.t0 || t > tr.t1 + 1) continue;
@@ -149,16 +208,39 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
         const rs = rectList(s.at);
         if (rs.length && (s.at.startsWith('staging') || s.at === 'palletize')) {
           const k = (slots[s.at] = (slots[s.at] || 0) + 1) - 1;
-          const [x, y, layer] = rectSlot(rs[k % rs.length], Math.floor(k / rs.length));
+          const ri = k % rs.length, [x, y, layer] = s.at === 'palletize'
+            ? [...rectCenter(rs[ri]), Math.floor(k / rs.length)] : slotFor(s.at, rs[ri], ri, Math.floor(k / rs.length));
           put(mesh.pallet, x, y, layer * 1.35);
         } else {
           const [x, y] = anchor(s.at, tr.obj);
           put(mesh.pallet, x, y, 0);
         }
       } else {
-        const [x, y] = lPath(anchor(s.from, tr.obj), anchor(s.to, tr.obj), s.p);
-        put(mesh.pallet, x, y, 0.2);
+        const a = anchor(s.from, tr.obj), b = anchor(s.to, tr.obj), [x, y] = lPath(a, b, s.p), yaw = lPathYaw(a, b, s.p);
+        put(mesh.pallet, x, y, 0.25, yaw);
+        const r = rackOf(tr.obj), dx = Math.cos(yaw) * 1.25, dy = -Math.sin(yaw) * 1.25;
+        put(r?.equipment === 'vna' ? mesh.vna : mesh.reach, x - dx, y - dy, 0, yaw);
       }
+    }
+    // ludzie i wózki paletowe: zajęci w tej chwili wg osi czasu obsady S3a (co 15 min)
+    const crew = crewAt(people, step, t);
+    const man = ([x, y], yaw = 0) => put(mesh.person, x, y, 0, yaw);
+    const atDocks = (n, list) => list.forEach((it, i) => {
+      for (let j = i; j < n; j += list.length) man(inside(it.d, 2.2 + Math.floor(j / list.length) * 1.3, j % 2 ? 0.9 : -0.9), yawOut(it.d.out));
+      if (it.kind === 'container') put(mesh.conveyor, it.d.wall[0], it.d.wall[1], 0, yawOut(it.d.out));
+      else if (i < n) { const [x, y] = inside(it.d, 4.5, 1.6); put(mesh.ptruck, x, y, 0, yawOut(it.d.out)); }
+    });
+    const isIn = (it) => it.d.role.startsWith('in_') || (it.d.role === 'shared' && it.kind !== 'truck');
+    atDocks(crew.unload || 0, docked.filter(isIn));
+    atDocks(crew.load || 0, docked.filter((it) => !isIn(it)));
+    stationSpots(rectList('palletize'), crew.palletize || 0).forEach((p) => man(p));
+    stationSpots(rectList('pack'), crew.pack || 0).forEach((p) => man(p));
+    stationSpots(rectList('returns'), crew.returns || 0).forEach((p) => man(p));
+    const si = rectList('staging_in');
+    for (let i = 0; i < (crew.inspect || 0) && si.length; i++) { const [x, y] = slotFor('staging_in', si[0], 0, i * 3); man([x + 0.8, y]); }
+    for (let i = 0; i < (crew.pick || 0) && racks.length; i++) {   // kompletujący idą wzdłuż frontu regału
+      const r = racks[hashId(`picker${i}`) % racks.length], k = 0.5 + 0.42 * Math.sin(t / 150 + i * 1.7);
+      man(localToWorld(r, [r.width * k, -1.1]), ((r.angle || 0) * Math.PI) / 180);
     }
     // paczki czekające na kuriera: stos przy stanowisku pakowania (1 kostka ≈ 20 paczek)
     const c = countersAt(tracks, t);
@@ -199,16 +281,38 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
     get t() { return t; }, get playing() { return playing; }, get speed() { return speed; },
     get frameMs() { return frameMs; },
     focus(keys) {
+      const ds = keys.filter((k) => k.startsWith('dock:')).map((k) => places.docks[k.slice(5)]).filter(Boolean);
+      if (ds.length) { frameDocks(ds); return; }
       const pts = keys.map((k) => placeBox(k)).filter(Boolean);
       if (!pts.length) return;
       const cx = pts.reduce((a, p) => a + p[0], 0) / pts.length, cy = pts.reduce((a, p) => a + p[1], 0) / pts.length;
-      viewer.camera.position.set(cx + 28, 30, cy + 34);
-      viewer.controls.target.set(cx, 0, cy);
-      viewer.controls.update();
-      viewer.renderNow();
+      look(cx + 28, 30, cy + 34, cx, 0, cy);
     },
+    home,
     hhmm,
   };
+  function look(px, py, pz, tx, ty, tz) {
+    viewer.camera.position.set(px, py, pz);
+    viewer.controls.target.set(tx, ty, tz);
+    viewer.controls.update();
+    viewer.renderNow();
+  }
+  // Doki z placu: kamera na zewnątrz i z boku, cel w hali za dokami — auta, ludzie i wnętrze w jednym kadrze.
+  function frameDocks(ds) {
+    const o = ds[0].out, cx = ds.reduce((a, d) => a + d.wall[0], 0) / ds.length, cy = ds.reduce((a, d) => a + d.wall[1], 0) / ds.length;
+    const span = Math.max(20, ...ds.map((d) => Math.hypot(d.wall[0] - cx, d.wall[1] - cy) * 2)), k = span * 0.6 + 30;
+    const tg = [Math.abs(o[1]), Math.abs(o[0])];
+    look(cx + o[0] * k + tg[0] * k * 0.55, k * 0.55, cy + o[1] * k + tg[1] * k * 0.55, cx - o[0] * 18, 0, cy - o[1] * 18);
+  }
+  /** Kadr startowy: doki przyjęć (kontenery i auta) — nie cały plac z daleka. */
+  function home() {
+    const ins = Object.values(places.docks).filter((d) => d.role.startsWith('in_'));
+    const ds = ins.length ? ins : Object.values(places.docks);
+    if (!ds.length) return;
+    const side = ds.filter((d) => d.out[0] === ds[0].out[0] && d.out[1] === ds[0].out[1]);
+    frameDocks(side);
+  }
   update(t);
+  home();
   return api;
 }

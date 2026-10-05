@@ -30,7 +30,8 @@ def _station(features, words):
 
 def layout_places(features, floor):
     """features: dicty `hall_feature_dict` (+ słupy), floor {width, depth} → miejsca dla odtwarzacza:
-    docks {id: {x, y, out, role}} (środek doku + kierunek „na zewnątrz” hali), gate [x, y],
+    docks {id: {x, y, out, wall, role}} (środek doku, kierunek „na zewnątrz” hali, punkt doku na ścianie),
+    gate [x, y] (przed ścianą z największą liczbą doków),
     staging_in / staging_out / palletize / pack / returns / charging: listy prostokątów."""
     pl = places_from_features([f for f in features if f["kind"] != "column"])
     role = {str(d["id"]): d["role"] for d in pl["docks"]}
@@ -39,13 +40,19 @@ def layout_places(features, floor):
         if f["kind"] not in ("dock", "gate") or f.get("id") is None:
             continue
         c = _center(f["x"], f["y"], f.get("angle") or 0, f["width"] or 0, f["depth"] or 0)
-        docks[str(f["id"])] = {"x": round(c[0], 2), "y": round(c[1], 2), "out": outward(c, floor),
-                               "role": role.get(str(f["id"]), "out")}
+        o = outward(c, floor)
+        wall = [floor["width"] if o[0] > 0 else 0 if o[0] < 0 else c[0],
+                floor["depth"] if o[1] > 0 else 0 if o[1] < 0 else c[1]]
+        docks[str(f["id"])] = {"x": round(c[0], 2), "y": round(c[1], 2), "out": o,
+                               "wall": [round(v, 2) for v in wall], "role": role.get(str(f["id"]), "out")}
     if docks:
-        xs, ys = [d["x"] for d in docks.values()], [d["y"] for d in docks.values()]
-        mid = (sum(xs) / len(xs), sum(ys) / len(ys))
-        o = outward(mid, floor)
-        gate = [round(mid[0] + o[0] * 30, 2), round(mid[1] + o[1] * 30, 2)]
+        # Średnia doków z dwóch ścian wypada w środku hali — brama przed ścianą z większością doków.
+        sides = {}
+        for d in docks.values():
+            sides.setdefault(d["out"], []).append(d)
+        o, side = max(sides.items(), key=lambda kv: len(kv[1]))
+        mid = (sum(d["wall"][0] for d in side) / len(side), sum(d["wall"][1] for d in side) / len(side))
+        gate = [round(mid[0] + o[0] * 35, 2), round(mid[1] + o[1] * 35, 2)]
     else:
         gate = [floor["width"] / 2, floor["depth"] + 30]
     staging = {"in": [], "out": []}

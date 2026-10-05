@@ -19,7 +19,7 @@
 
 ## Relationships
 
-- [design_catalog.py](design_catalog.py.md) (13 shared connections)
+- [twinema_design_kit.py](twinema_design_kit.py.md) (13 shared connections)
 - [scenario/models.py](scenario-models.py.md) (1 shared connections)
 
 ## Source Files

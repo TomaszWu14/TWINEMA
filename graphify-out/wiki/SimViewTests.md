@@ -14,11 +14,11 @@
 
 ## Relationships
 
-- [test_ewm_service.py](test_ewm_service.py.md) (3 shared connections)
-- [scenario/views.py](scenario-views.py.md) (2 shared connections)
+- [make_model_and_master](make_model_and_master.md) (3 shared connections)
+- [designer](designer.md) (2 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
 - [layout-panels.js](layout-panels.js.md) (1 shared connections)
-- [warehouse_model_ewm.py](warehouse_model_ewm.py.md) (1 shared connections)
+- [ewm_service.py](ewm_service.py.md) (1 shared connections)
 
 ## Source Files
 

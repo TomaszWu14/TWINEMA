@@ -16,7 +16,10 @@ from twin.models import WarehouseModel
 TOKEN = "t" * 40
 PNG = b"\x89PNG\r\n\x1a\n" + b"\x00" * 64
 MP4 = b"\x00\x00\x00\x18ftypmp42" + b"\x00" * 64
+# Osobny katalog na klasę: workery `--parallel` w CI (fork) dzielą ścieżki z importu modułu, więc
+# rmtree jednej klasy kasował pliki drugiej uruchomionej równolegle w innym procesie.
 MEDIA = tempfile.mkdtemp(prefix="twinema_test_media_")
+MEDIA_SCREEN = tempfile.mkdtemp(prefix="twinema_test_media_screen_")
 
 
 @override_settings(RENDER_WORKER_TOKEN=TOKEN, MEDIA_ROOT=MEDIA)
@@ -96,8 +99,13 @@ class WorkerApiTests(TestCase):
         self.assertEqual(r.status_code, 200)
 
 
-@override_settings(MEDIA_ROOT=MEDIA, RENDER_WORKER_TOKEN="")
+@override_settings(MEDIA_ROOT=MEDIA_SCREEN, RENDER_WORKER_TOKEN="")
 class RenderScreenTests(TestCase):
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        shutil.rmtree(MEDIA_SCREEN, ignore_errors=True)
+
     @classmethod
     def setUpTestData(cls):
         cls.designer = User.objects.create_user("proj", password="x")

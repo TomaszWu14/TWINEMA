@@ -27,6 +27,16 @@ class PlacesTests(SimpleTestCase):
         self.assertEqual({k: d["role"] for k, d in p["docks"].items()},
                          {"1": "in_container", "2": "out", "3": "shared"})
         self.assertLess(p["gate"][0], 0)                                # brama przed ścianą doków
+        self.assertEqual(p["docks"]["1"]["wall"], [0, 7.0])              # punkt doku na ścianie (auto stoi za nim)
+
+    def test_gate_on_side_with_most_docks_not_inside_hall(self):
+        # Doki na dwóch przeciwległych ścianach: średnia wypadała w środku hali → auta jechały przez halę.
+        feats = FEATS + [{"id": 9, "kind": "dock", "label": "Dok wydań", "x": 76, "y": 20, "width": 3.5,
+                          "depth": 4, "angle": 0}]
+        p = layout_places(feats, FLOOR)
+        self.assertEqual(p["docks"]["9"]["out"], (1, 0))
+        self.assertEqual(p["docks"]["9"]["wall"], [80, 22.0])
+        self.assertLess(p["gate"][0], 0)                                # 3 doki na ścianie x = 0 wygrywają
         self.assertEqual(len(p["staging_in"]), 1)
         self.assertEqual(p["staging_out"], [])
         self.assertEqual(len(p["pack"]), 1)

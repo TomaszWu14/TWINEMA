@@ -38,7 +38,7 @@
 - [kpi_facts](kpi_facts.md) (3 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (3 shared connections)
 - [scenario/models.py](scenario-models.py.md) (1 shared connections)
-- [design_kpi.py](design_kpi.py.md) (1 shared connections)
+- [test_design_variants.py](test_design_variants.py.md) (1 shared connections)
 
 ## Source Files
 

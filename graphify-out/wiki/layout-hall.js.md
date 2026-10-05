@@ -18,7 +18,7 @@
 
 ## Relationships
 
-- [design_kpi.py](design_kpi.py.md) (4 shared connections)
+- [test_design_variants.py](test_design_variants.py.md) (4 shared connections)
 
 ## Source Files
 

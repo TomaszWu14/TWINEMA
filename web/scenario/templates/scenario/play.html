@@ -15,6 +15,9 @@
   #dp-canvas { display:block; width:100% !important; height:100% !important; }
   .dp-callout { position:absolute; left:10px; top:10px; max-width:min(420px, 70%); display:grid; gap:6px; z-index:5; pointer-events:none; }
   .dp-callout div { background:rgba(127,29,29,.92); color:#fff; border-radius:8px; padding:8px 10px; font-size:var(--fs-sm); line-height:1.35; }
+  .dp-callout button { pointer-events:auto; justify-self:start; background:rgba(127,29,29,.92); color:#fff; border:1px solid #fca5a5;
+                       border-radius:8px; padding:6px 10px; font:600 var(--fs-sm) inherit; cursor:pointer; }
+  .dp-callout button:focus-visible { outline:2px solid #fff; outline-offset:2px; }
   .dp-hud { position:absolute; right:10px; top:10px; z-index:5; background:rgba(15,23,42,.82); color:#e2e8f0; border-radius:8px;
             padding:8px 10px; font:var(--fs-xs) var(--font-mono); display:none; }
   #dp-stage:fullscreen, #dp-stage.is-pseudo-fs { padding:10px; }
@@ -64,7 +67,7 @@
     <div id="dp-wrap">
       <canvas id="dp-canvas" aria-label="Scena 3D hali z animacją dnia" role="img"></canvas>
       {% include "twin/_3d_boot.html" with status_id="dp-status" %}
-      <div class="dp-callout" id="dp-callout" aria-hidden="true"></div>
+      <div class="dp-callout" id="dp-callout"></div>
       <div class="dp-hud" id="dp-hud" aria-hidden="true"></div>
     </div>
     <p class="dp-keys">Spacja — odtwarzaj/pauza · ← → — ±1 min · ↑ ↓ — ±15 min · 1–5 — prędkość · F — pełny ekran · obracanie: myszą</p>
@@ -138,7 +141,24 @@ const res = await fetch('{% url "scenario:run_events" run.pk %}', { credentials:
 const EVENTS = (await res.json()).events;
 const range = $('dp-range'), clock = $('dp-clock'), live = $('dp-live'), hud = $('dp-hud');
 const btns = [...document.querySelectorAll('#dp-bn button')];
-let lastSpoken = 0, counters = {};
+let lastSpoken = 0, counters = {}, bnNow = [], bnOpen = false;
+function renderCallout() {
+  const box = $('dp-callout');
+  box.innerHTML = '';
+  if (!bnNow.length) return;
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.setAttribute('aria-expanded', String(bnOpen));
+  b.textContent = `${bnOpen ? '▾' : '▸'} Wąskie gardła teraz: ${bnNow.length}`;
+  b.addEventListener('click', () => { bnOpen = !bnOpen; renderCallout(); });
+  box.appendChild(b);
+  if (!bnOpen) return;
+  for (const x of bnNow) {
+    const d = document.createElement('div');
+    d.textContent = `${x.area}: ${x.suggestion}`;
+    box.appendChild(d);
+  }
+}
 
 function say(t, c) {
   live.textContent = `Godzina ${hhmm(t)}. Palet przyjętych ${c.palletsIn}, wydanych ${c.palletsOut}, paczek ${c.parcels}, `
@@ -161,12 +181,9 @@ const player = createDayPlayer({ viewer, data: DATA, events: EVENTS, ui: {
   },
   onSpeed(x) { document.querySelectorAll('[data-speed]').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.speed === x))); },
   onBottlenecks(act) {
-    $('dp-callout').innerHTML = '';
-    for (const b of act) {
-      const d = document.createElement('div');
-      d.textContent = `${b.area}: ${b.suggestion}`;
-      $('dp-callout').appendChild(d);
-    }
+    // Zwinięte do licznika (nie zasłania sceny); klik rozwija dymki z podpowiedziami.
+    bnNow = act;
+    renderCallout();
     btns.forEach((el) => el.classList.toggle('is-active', act.includes(DATA.bottlenecks[+el.dataset.i])));
   },
 } });

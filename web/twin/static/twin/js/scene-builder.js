@@ -12,6 +12,7 @@ import { EDGE_KINDS, FLAT_KINDS, decorParts, effectiveQuality, extents, hallWall
 const YARD = 25;                                  // plac wokół hali [m]
 const QKEY = 'tw3d.quality';
 const _unitBox = new THREE.BoxGeometry(1, 1, 1);
+const _lw = new THREE.Vector3();
 const HATCH = new Set(['fire_route', 'walkway', 'truckway']);
 
 // ── Tekstury proceduralne (współdzielone, cache) ─────────────────────────────────────────────
@@ -72,6 +73,11 @@ const panelTex = () => mkTex('panel', 256, (x, s) => {   // płyta warstwowa śc
 const doorTex = () => mkTex('door', 128, (x, s) => {     // brama segmentowa: poziome panele
   x.fillStyle = '#9aa3ab'; x.fillRect(0, 0, s, s); lines(x, s, 6, true, 'rgba(50,55,60,0.7)', 3);
 });
+// Pole odkładcze: posadzka z malowaną siatką miejsc paletowych (tekstura = 1 miejsce 1,4 × 1,4 m).
+const slotTex = () => mkTex('slot', 128, (x, s) => {
+  x.fillStyle = '#b9bdbd'; x.fillRect(0, 0, s, s); noise(x, s, 0.12, '#9ea2a2', '#cfd2d2');
+  x.strokeStyle = '#e2b007'; x.lineWidth = 6; x.strokeRect(3, 3, s - 6, s - 6);
+});
 const hatchTex = (color) => mkTex(`hatch:${color}`, 128, (x, s) => {
   x.clearRect(0, 0, s, s); x.fillStyle = color;
   for (let i = -s; i < s * 2; i += 32) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i + 16, 0); x.lineTo(i + 16 - s, s); x.lineTo(i - s, s); x.fill(); }
@@ -87,21 +93,30 @@ function signTex(text) {
     x.fillText(String(text), 128, 140);
   });
 }
-// Etykieta 3D (sprite) — tekstura z cache po tekście i kolorze.
+// Etykieta 3D (sprite) — tekstura z cache po tekście i kolorze. `screen`: stały rozmiar na ekranie
+// (etykiety elementów hali — czytelny tekst; widoczne tylko z bliska, LABEL_NEAR_M).
 const _lblCache = {};
-function makeLabel(text, color) {
-  const k = `${color}:${text}`;
+const LABEL_SCREEN_H = 0.024;                    // ułamek wysokości ekranu
+const LABEL_NEAR_M = 55;                         // etykiety elementów tylko z bliska (z daleka nachodzą na siebie)
+function makeLabel(text, color, screen = false) {
+  const t = String(text).slice(0, screen ? 28 : 18), k = `${color}:${screen}:${t}`;
   if (!_lblCache[k]) {
-    const cv = document.createElement('canvas'); cv.width = 256; cv.height = 64;
-    const ctx = cv.getContext('2d');
-    ctx.fillStyle = 'rgba(15,23,42,0.75)'; ctx.fillRect(0, 0, 256, 64);
-    ctx.fillStyle = color || '#fff'; ctx.font = 'bold 30px sans-serif';
+    const cv = document.createElement('canvas'), ctx = cv.getContext('2d');
+    const font = screen ? 'bold 40px sans-serif' : 'bold 30px sans-serif';
+    ctx.font = font;
+    cv.width = screen ? Math.ceil(ctx.measureText(t).width) + 40 : 256; cv.height = screen ? 64 : 64;
+    ctx.fillStyle = 'rgba(15,23,42,0.82)'; ctx.fillRect(0, 0, cv.width, cv.height);
+    ctx.fillStyle = color || '#fff'; ctx.font = font;
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(String(text).slice(0, 18), 128, 32);
+    ctx.fillText(t, cv.width / 2, 33);
     _lblCache[k] = new THREE.CanvasTexture(cv);
+    _lblCache[k].colorSpace = THREE.SRGBColorSpace;
   }
-  const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: _lblCache[k], transparent: true }));
-  spr.scale.set(4, 1, 1);
+  const img = _lblCache[k].image;
+  const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: _lblCache[k], transparent: true, toneMapped: false,
+    sizeAttenuation: !screen }));
+  if (screen) spr.scale.set(LABEL_SCREEN_H * img.width / img.height, LABEL_SCREEN_H, 1);
+  else spr.scale.set(4, 1, 1);
   return spr;
 }
 
@@ -162,7 +177,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
   const hiMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee, transparent: true, opacity: 0.32, depthWrite: false });
   const hiLine = new THREE.LineBasicMaterial({ color: 0x22d3ee });
 
-  let content = new THREE.Group(), hiGroup = new THREE.Group(), decorGroup = new THREE.Group(), disposables = [];
+  let content = new THREE.Group(), hiGroup = new THREE.Group(), decorGroup = new THREE.Group(), disposables = [], nearLabels = [];
   let ext = extents([], { width: 50, depth: 30 }), boxes = new Map(), walls = [], last = null;
   let quality = 'high', decorOn = decor;
   scene.add(content, hiGroup);
@@ -269,8 +284,13 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
     if (FLAT_KINDS.has(f.kind)) {
       const mat = HATCH.has(f.kind)
         ? track(new THREE.MeshStandardMaterial({ map: hatchTex(`#${col.getHexString()}`), transparent: true, roughness: 0.6 }))
-        : track(new THREE.MeshStandardMaterial({ color: col, transparent: true, opacity: 0.5, roughness: 0.6, depthWrite: false }));
-      if (mat.map) { mat.map = mat.map.clone(); mat.map.needsUpdate = true; mat.map.repeat.set(w / 1.2, d / 1.2); track(mat.map); }
+        : f.kind === 'staging'
+          ? track(new THREE.MeshStandardMaterial({ map: slotTex(), roughness: 0.8 }))
+          : track(new THREE.MeshStandardMaterial({ color: col, transparent: true, opacity: 0.5, roughness: 0.6, depthWrite: false }));
+      if (mat.map) {
+        const tile = f.kind === 'staging' ? 1.4 : 1.2;
+        mat.map = mat.map.clone(); mat.map.needsUpdate = true; mat.map.repeat.set(w / tile, d / tile); track(mat.map);
+      }
       const m = new THREE.Mesh(track(new THREE.PlaneGeometry(w, d)), mat);
       m.rotation.x = -Math.PI / 2; m.position.set(w / 2, 0.02, d / 2); m.receiveShadow = true;
       // Obwódka jak malowana linia na posadzce (pełny kolor).
@@ -312,11 +332,28 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
       group.updateMatrixWorld(true);
       boxes.set(f._k, { m: group.matrixWorld.clone(), w, h: f.height || 1, d });
     }
-    if (labels && f.kind !== 'column') {
-      const lbl = makeLabel(f.label || f.kind_label || f.kind, '#e2e8f0');
+    if (labels && EDGE_KINDS.has(f.kind)) {
+      // Dok/brama: tablica z numerem nad bramą (z obu stron ściany) zamiast pływającej etykiety —
+      // doki co 4–5 m mają czytelne, nienachodzące na siebie oznaczenia jak w realnej hali.
+      const [cxw, czw] = localToWorld(f, [w / 2, d / 2]), [nx, nz] = outward(cxw, czw, floor);
+      const wx = nx ? (nx > 0 ? floor.width : 0) : cxw, wz = nz ? (nz > 0 ? floor.depth : 0) : czw;
+      const text = String(f.label || f.kind_label || f.kind).replace(/\s*\([^)]*\)/g, '');
+      const spr = makeLabel(text, '#ffffff', true), tex = spr.material.map, ratio = tex.image.width / tex.image.height;
+      spr.material.dispose();
+      const signMat = track(new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
+      const ph = 0.55, pw = Math.min(4.2, ph * ratio), plane = track(new THREE.PlaneGeometry(pw, ph));
+      const top = (f.kind === 'gate' ? 4.5 : 3.2) + 0.55;
+      for (const s of [1, -1]) {                      // na zewnątrz i do wewnątrz hali
+        const m = new THREE.Mesh(plane, signMat);
+        m.position.set(wx + nx * 0.16 * s, top, wz + nz * 0.16 * s);
+        m.rotation.y = Math.atan2(nx * s, nz * s);
+        content.add(m);
+      }
+    } else if (labels && f.kind !== 'column') {
+      const lbl = makeLabel(f.label || f.kind_label || f.kind, '#e2e8f0', true);
       track(lbl.material);
-      lbl.position.set(w / 2, FLAT_KINDS.has(f.kind) ? 1.2 : 1.8, d / 2);
-      group.add(lbl);
+      lbl.position.set(w / 2, FLAT_KINDS.has(f.kind) ? 1.2 : EDGE_KINDS.has(f.kind) ? 4.2 : 2.6, d / 2);
+      group.add(lbl); nearLabels.push(lbl);
     }
   }
 
@@ -329,7 +366,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
     scene.remove(content);
     disposables.forEach((x) => x.dispose());
     content.traverse((c) => { if (c.isInstancedMesh) c.dispose(); });
-    disposables = []; boxes = new Map();
+    disposables = []; boxes = new Map(); nearLabels = [];
     content = new THREE.Group();
     scene.add(content);
     ext = extents(racks, floor);
@@ -402,6 +439,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
     const d = camera.position.distanceTo(controls.target);
     scene.fog.near = d * 1.4 + 20; scene.fog.far = d * 4.5 + 200;
     for (const { w, m } of walls) m.visible = !wallHidden(w, camera.position.x, camera.position.z);
+    for (const l of nearLabels) l.visible = camera.position.distanceTo(l.getWorldPosition(_lw)) < LABEL_NEAR_M;
   }
 
   // Render na żądanie (pętla 60 fps z cieniami trzymała GPU na 100 %). Damping dogrywa ruch.
