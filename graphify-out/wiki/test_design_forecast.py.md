@@ -27,9 +27,9 @@
 
 ## Relationships
 
-- [load_groups](load_groups.md) (5 shared connections)
+- [places.py](places.py.md) (5 shared connections)
 - [day-timeline.js](day-timeline.js.md) (4 shared connections)
-- [ml/services.py](ml-services.py.md) (4 shared connections)
+- [ml/views.py](ml-views.py.md) (4 shared connections)
 - [StudioViewTests](StudioViewTests.md) (4 shared connections)
 
 ## Source Files

@@ -31,7 +31,7 @@
 ## Relationships
 
 - [test_master_data.py](test_master_data.py.md) (7 shared connections)
-- [load_groups](load_groups.md) (4 shared connections)
+- [places.py](places.py.md) (4 shared connections)
 - [day_demand](day_demand.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)

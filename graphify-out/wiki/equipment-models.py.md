@@ -33,10 +33,10 @@
 
 ## Relationships
 
-- [load_groups](load_groups.md) (6 shared connections)
+- [places.py](places.py.md) (6 shared connections)
 - [scene-data.js](scene-data.js.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [views_sim.py](views_sim.py.md) (1 shared connections)
+- [test_s3b_views.py](test_s3b_views.py.md) (1 shared connections)
 
 ## Source Files
 

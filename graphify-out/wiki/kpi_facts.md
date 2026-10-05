@@ -29,10 +29,10 @@
 - [simulate](simulate.md) (4 shared connections)
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) (4 shared connections)
 - [ParseTests](ParseTests.md) (4 shared connections)
-- [views_compare.py](views_compare.py.md) (3 shared connections)
+- [export.py](export.py.md) (3 shared connections)
 - [day_demand](day_demand.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [check_site](check_site.md) (2 shared connections)
+- [site.py](site.py.md) (2 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)
 - [scene-builder.js](scene-builder.js.md) (1 shared connections)
 

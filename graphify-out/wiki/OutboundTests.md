@@ -1,4 +1,4 @@
-# staffing
+# OutboundTests
 
 > 11 nodes · cohesion 0.27
 
@@ -18,8 +18,8 @@
 
 ## Relationships
 
-- [scenario/views.py](scenario-views.py.md) (4 shared connections)
-- [scenario/services.py](scenario-services.py.md) (2 shared connections)
+- [designer](designer.md) (4 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
 - [layout-panels.js](layout-panels.js.md) (1 shared connections)
 
 ## Source Files

@@ -22,7 +22,7 @@
 
 - [test_master_data.py](test_master_data.py.md) (5 shared connections)
 - [detect](detect.md) (2 shared connections)
-- [load_groups](load_groups.md) (2 shared connections)
+- [places.py](places.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [ForecastTests](ForecastTests.md) (1 shared connections)
 - [simulate](simulate.md) (1 shared connections)

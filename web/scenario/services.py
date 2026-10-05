@@ -96,7 +96,7 @@ def run_costs(run, rates=None):
     """Koszty wyniku symulacji (C1) — liczone przy wyświetleniu, więc zmiana stawek działa od razu.
     Layout = aktualny stan modelu hali (jak pojemność w `placement_for`)."""
     rates = rates or CostRate.as_dict()
-    sc, wm, agg = run.scenario, run.model, run.result["agg"]
+    sc, wm = run.scenario, run.model
     positions = {"reach": 0, "vna": 0, "shelf": 0}
     for r in model_racks(wm):
         p = rack_to_element(r)["params"]
@@ -106,11 +106,18 @@ def run_costs(run, rates=None):
     fleet = {"name": eq.name if eq else "wózki", "units": sc.fleet_units,
              "purchase": eq.cost_range("cost_purchase", "cost_purchase_max") if eq else None,
              "hour": eq.cost_range("cost_per_hour", "cost_per_hour_max") if eq else None}
-    day = sc.days.filter(kind=run.day_kind).first()
+    # miks dni w roku: ta symulacja + najnowsza symulacja drugiego typu dnia na tym samym modelu
+    by_kind = {run.day_kind: run}
+    other = "peak" if run.day_kind == "typical" else "typical"
+    if (o := ScenarioRun.objects.filter(scenario=sc, model=wm, day_kind=other).order_by("-created_at").first()):
+        by_kind[other] = o
+    days = []
+    for kind, n in costs.mix_days(sc.work_days, sc.peak_days_year, "peak" in by_kind, "typical" in by_kind):
+        a, day = by_kind[kind].result["agg"], sc.days.filter(kind=kind).first()
+        days.append({"kind": kind, "days": n, "fleet_busy_h": a["fleet_util_pct"]["mean"] / 100 * sc.fleet_units * 24,
+                     "volumes": {"pallets": a["pallets_in"]["mean"] + a["pallets_out"]["mean"],
+                                 "parcels": a["parcels"]["mean"], "orders": (day.orders_avg * sc.growth) if day else 0}})
     return costs.compute(
         rates, {"positions": positions, "docks": kinds.count("dock"), "stations": kinds.count("station"),
                 "area_m2": wm.floor_width_m * wm.floor_depth_m},
-        fleet, sum(_shift_hours(s) for s in sc.shift_dicts()),
-        agg["fleet_util_pct"]["mean"] / 100 * sc.fleet_units * 24, sc.work_days,
-        {"pallets": agg["pallets_in"]["mean"] + agg["pallets_out"]["mean"], "parcels": agg["parcels"]["mean"],
-         "orders": (day.orders_avg * sc.growth) if day else 0})
+        fleet, sum(_shift_hours(s) for s in sc.shift_dicts()), days)

@@ -21,7 +21,7 @@
 
 - [simulate](simulate.md) (3 shared connections)
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) (2 shared connections)
-- [load_groups](load_groups.md) (2 shared connections)
+- [places.py](places.py.md) (2 shared connections)
 - [StudioViewTests](StudioViewTests.md) (2 shared connections)
 - [detect](detect.md) (2 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (1 shared connections)

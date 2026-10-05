@@ -34,7 +34,7 @@
 - [kpi_facts](kpi_facts.md) (4 shared connections)
 - [Agent](Agent.md) (3 shared connections)
 - [blender_scene.py](blender_scene.py.md) (3 shared connections)
-- [load_groups](load_groups.md) (2 shared connections)
+- [places.py](places.py.md) (2 shared connections)
 - [ForecastTests](ForecastTests.md) (2 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
 

@@ -1,4 +1,4 @@
-# load_groups
+# places.py
 
 > 82 nodes · cohesion 0.05
 
@@ -40,10 +40,10 @@
 - [twin/models.py](twin-models.py.md) (9 shared connections)
 - [simulate](simulate.md) (9 shared connections)
 - [detect](detect.md) (9 shared connections)
-- [views_sim.py](views_sim.py.md) (8 shared connections)
-- [check_site](check_site.md) (7 shared connections)
+- [test_s3b_views.py](test_s3b_views.py.md) (8 shared connections)
+- [site.py](site.py.md) (7 shared connections)
 - [equipment/models.py](equipment-models.py.md) (6 shared connections)
-- [ml/services.py](ml-services.py.md) (5 shared connections)
+- [ml/views.py](ml-views.py.md) (5 shared connections)
 - [test_design_forecast.py](test_design_forecast.py.md) (5 shared connections)
 
 ## Source Files
