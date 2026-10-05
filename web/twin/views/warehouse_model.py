@@ -1,7 +1,7 @@
 # Auto-split from the former monolithic views.py. Feature views live in
 # sibling modules; shared imports/constants/helpers stay in core.py.
 from twin.shared import (
-    _md_role, _parse_location_code, _planner, Count, get_object_or_404,
+    _md_role, _parse_location_code, _planner, cache_digest, Count, get_object_or_404,
     HALL_FEATURE_COLORS, hall_feature_dict, hall_feature_kinds, messages, model_columns,
     redirect, render, safe_json, save_hall_features, transaction,
     WarehouseHallFeature, WarehouseModel, WarehouseModelRack,
@@ -236,6 +236,25 @@ def warehouse_model_coords(request, pk):
         return redirect("twin:warehouse_model_view", pk=wm.pk)
     return render(request, "twin/warehouse_model/coords.html", {"wm": wm, "racks": racks, "templates": templates})
 
+def _rack_fill(wm, racks):
+    """{(strefa, regał): %} ze stanu albo None (brak importu). Cache po (model, wersja, import stanów)."""
+    from django.core.cache import cache
+
+    from masterdata.services import current_stock_log
+    from twin.blender_stock import load_master_levels, load_occupied_codes, rack_fill_pct
+    log = current_stock_log()
+    if log is None:
+        return None
+    key = "fill:" + cache_digest(wm.pk, wm.updated_at.timestamp(), log.pk, len(racks))
+    hit = cache.get(key)
+    if hit is None:
+        dicts = [{"zone": r.zone, "rack_id": r.rack_id, "width": r.width_m, "n_bays": r.n_bays,
+                  "n_levels": r.n_levels} for r in racks]
+        hit = rack_fill_pct(dicts, load_occupied_codes() or (), load_master_levels())
+        cache.set(key, hit, 3600)
+    return hit
+
+
 def model_scene_data(wm, racks=None):
     """Dane sceny 3D (createViewer): regały z kolorem strefy + elementy hali ze słupami. Wspólne dla widoku
     modelu i animacji dnia scenariusza (S4). Zwraca (racks_data, features_data, zone_color)."""
@@ -243,6 +262,7 @@ def model_scene_data(wm, racks=None):
     zones = sorted({r.zone for r in racks})
     zone_palette = ["#3b82f6","#10b981","#f59e0b","#ef4444","#8b5cf6","#f97316","#06b6d4","#ec4899","#14b8a6","#6b7280"]
     zone_color = {z: zone_palette[i % len(zone_palette)] for i, z in enumerate(zones)}
+    fill = _rack_fill(wm, racks)
     racks_data = [
         {
             "id": r.pk, "zone": r.zone, "rack_id": r.rack_id,
@@ -253,10 +273,9 @@ def model_scene_data(wm, racks=None):
             "level_h": r.level_height_cm / 100,
             "rack_class": rack_class({"equipment": r.equipment, "level_h": r.level_height_cm / 100}),
             "color": zone_color.get(r.zone, "#3b82f6"),
-            # Wypełnienie regału [%] dla wskaźnika 3D (kolor + %). None → „brak danych"
-            # (szary). Realne źródło (stan magazynu) podpinane w osobnym kroku — na razie
-            # świadomie None, żeby nie pokazywać zmyślonej liczby jako faktu.
-            "fill_pct": None,
+            # Wypełnienie regału [%] ze stanu (najnowszy import) — wskaźnik i tryb „Wypełnienie” w 3D;
+            # None = brak importu stanów („brak danych”, nie zmyślona liczba).
+            "fill_pct": fill.get((r.zone, r.rack_id)) if fill is not None else None,
         }
         for r in racks
     ]

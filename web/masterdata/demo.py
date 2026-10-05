@@ -57,7 +57,8 @@ def demo_stock(racks, fill=0.7, seed=11, materials=None, today=None):
     out, n = [], 0
     for r in racks:
         # Palety na belce z szerokości gniazda (EU 0,8 m + luz ~0,1 m), cyfra pozycji w kodzie: 0–9.
-        per_bay = min(9, max(1, int(r["width"] / max(1, r["n_bays"]) // PALLET_SLOT_M)))
+        # round, nie // — 2,7 // 0,9 = 2,0 w liczbach zmiennoprzecinkowych; ta sama reguła co design_kpi.rack_to_element
+        per_bay = min(9, max(1, round(r["width"] / max(1, r["n_bays"]) / PALLET_SLOT_M)))
         for bay in range(r["n_bays"]):
             for pos in range(per_bay):
                 for level in range(1, min(r["n_levels"], len(LEVEL_LETTERS)) + 1):
