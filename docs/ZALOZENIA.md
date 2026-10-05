@@ -1,6 +1,6 @@
 # TWINEMA — założenia master daty i scenariuszy
 
-Wynik burzy mózgów z właścicielem (2026-10-05, 25 + 10 pytań). Dokument jest źródłem prawdy dla etapów
+Wynik burzy mózgów z właścicielem (2026-10-05, 25 + 10 + 9 pytań). Dokument jest źródłem prawdy dla etapów
 po F5: edytor layoutu, scenariusze (plan przyjęć/wydań), symulacja dnia i animacja „jak może wyglądać przyszły
 layout”. Liczby mają odpowiadać realnej pracy magazynu — zawsze edytowalne, zwykle jako **min / średnio / max**.
 
@@ -76,6 +76,19 @@ prezentacji 3D → katalog sprzętu (z kosztami)**. Porównanie „obecny vs prz
 | 21 | Karta KPI layoutu | pojemność vs potrzeba; doki i pole odkładcze (kolejka aut, m²); obsada i flota (wykorzystanie %); przepustowość dnia (palet IN/OUT, paczek, zamówień; opóźnienia po cut-off) |
 | 22 | Wąskie gardła | **wskazać i podpowiedzieć**: czerwone miejsce w 3D + opis („brakuje 2 doków 10:00–12:00”) + podpowiedź; decyzja u użytkownika |
 | 23 | Animacja dnia | **dokładna**: każdy kontener, auto, paleta i paczka ze scenariusza w prawdziwym czasie dnia; odtwarzanie ×10–×300 z zegarem, licznikami i skokiem do szczytu |
+
+## Dodatkowe (runda 3, 9 pytań)
+| # | Temat | Decyzja |
+|---|---|---|
+| E1 | Zwroty | prosty model: zwrotów/dzień (min/śr/max), stanowisko zwrotów (czas na zwrot), % powrotu na skład vs utylizacja |
+| E2 | Cross-docking | **osobny strumień**: dedykowane auta cross-dock z własnymi oknami, palety z przyjęcia prosto na pole odkładcze wydań |
+| E3 | Strefy specjalne | temperatura kontrolowana, gabaryty/dłużyca, ADR/niebezpieczne, towary wysokiej wartości — wpływają na rozmieszczenie i layout |
+| E4 | Konstrukcja hali | **słupy** (siatka rozstawu), **wysokość w świetle** (limit poziomów regałów), drogi pożarowe/ewakuacyjne jako strefy zakazane — kolizje w walidacji |
+| E5 | Podkład | rzut hali PNG/PDF jako tło edytora, skala kalibrowana dwoma punktami; bez importu DWG/DXF |
+| E6 | Infrastruktura floty | strefa ładowania (czas pracy na baterii, czas ładowania → więcej sprzętu w KPI) + drogi ruchu pieszy/wózek w edytorze |
+| E7 | Porównanie | **tabela KPI** layout × scenariusz (najlepsza wartość wyróżniona); bez 3D obok siebie |
+| E8 | Eksport | **xlsx**: parametry scenariusza, KPI (średnia/P95), wąskie gardła, obsada per proces i zmiana |
+| E9 | Granulacja edycji | **bloki + pojedyncze**: głównie całe bloki (przesuń, wydłuż, podnieś, „dodaj blok N rzędów × M gniazd”), w razie potrzeby pojedynczy regał/dok |
 
 ## Wynikające etapy (propozycja do potwierdzenia przed kodem)
 1. **S1 Master data materiału** — opakowania szt→karton→paleta, katalog nośników, klasy wysokości i wagi, ręczna klasa ABC; import xlsx z wzorem.
