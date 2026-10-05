@@ -1,0 +1,218 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block title %}Animacja dnia — {{ run.scenario.name }} — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .dp-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:0 0 10px; }
+  .dp-grid { display:grid; grid-template-columns:minmax(0,1fr) 320px; gap:16px; align-items:start; }
+  @media (max-width: 1100px) { .dp-grid { grid-template-columns:1fr; } }
+  #dp-stage { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:10px; }
+  .dp-bar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:8px; }
+  .dp-bar .btn[aria-pressed="true"] { background:var(--primary); color:var(--primary-fg, #111); border-color:var(--primary); }
+  .dp-clock { font:700 1.6rem var(--font-mono); min-width:5.2ch; letter-spacing:.04em; }
+  .dp-range { flex:1 1 260px; accent-color:var(--primary); }
+  #dp-wrap { position:relative; height:62vh; min-height:360px; border-radius:var(--radius); overflow:hidden; background:#0f172a; }
+  #dp-canvas { display:block; width:100% !important; height:100% !important; }
+  .dp-callout { position:absolute; left:10px; top:10px; max-width:min(420px, 70%); display:grid; gap:6px; z-index:5; pointer-events:none; }
+  .dp-callout div { background:rgba(127,29,29,.92); color:#fff; border-radius:8px; padding:8px 10px; font-size:var(--fs-sm); line-height:1.35; }
+  .dp-hud { position:absolute; right:10px; top:10px; z-index:5; background:rgba(15,23,42,.82); color:#e2e8f0; border-radius:8px;
+            padding:8px 10px; font:var(--fs-xs) var(--font-mono); display:none; }
+  #dp-stage:fullscreen, #dp-stage.is-pseudo-fs { padding:10px; }
+  #dp-stage:fullscreen #dp-wrap, #dp-stage.is-pseudo-fs #dp-wrap { height:calc(100vh - 150px); }
+  #dp-stage:fullscreen .dp-hud, #dp-stage.is-pseudo-fs .dp-hud { display:block; }
+  .dp-counters { display:grid; grid-template-columns:1fr auto; gap:4px 12px; margin:0; font-size:var(--fs-sm); }
+  .dp-counters dd { margin:0; text-align:right; font-family:var(--font-mono); font-weight:600; }
+  .dp-bn { list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+  .dp-bn button { width:100%; text-align:left; display:grid; gap:2px; padding:8px 10px; background:var(--surface-2);
+                  border:1px solid var(--border); border-radius:var(--radius); color:inherit; cursor:pointer; font:inherit; }
+  .dp-bn button:hover, .dp-bn button:focus-visible { border-color:var(--primary); }
+  .dp-bn .is-active { border-color:#ef4444; box-shadow:0 0 0 1px #ef4444 inset; }
+  .dp-bn small { color:var(--fg-subtle); }
+  .dp-keys { font-size:var(--fs-xs); color:var(--fg-subtle); margin:8px 0 0; }
+  .dp-table { width:100%; border-collapse:collapse; font-size:var(--fs-sm); }
+  .dp-table th, .dp-table td { padding:4px 8px; border-bottom:1px solid var(--border); text-align:right; }
+  .dp-table th:first-child, .dp-table td:first-child { text-align:left; }
+</style>
+{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Ścieżka"><a href="{% url 'scenario:list' %}">Scenariusze</a> /
+  <a href="{% url 'scenario:detail' run.scenario.pk %}#sc-sim-h">{{ run.scenario.name }}</a> / Animacja dnia</nav>
+<div class="page-header">
+  <div>
+    <div class="page-header__title">Animacja dnia — {{ run.get_day_kind_display|lower }}</div>
+    <div class="page-header__sub">„{{ wm.name }}” · przebieg reprezentatywny (mediana z {{ run.runs }}) · każdy kontener, auto, paleta i paczka z symulacji w czasie dnia.</div>
+  </div>
+</div>
+
+{% if not has_events %}
+<div class="card"><div class="empty-state">Ta symulacja nie ma zapisanych zdarzeń — uruchom ją ponownie na ekranie scenariusza.</div></div>
+{% else %}
+<div class="dp-grid">
+  <section id="dp-stage" aria-label="Animacja dnia">
+    <div class="dp-bar" role="group" aria-label="Sterowanie odtwarzaniem">
+      <button type="button" class="btn btn-primary btn-sm" id="dp-play" aria-pressed="false">Odtwórz</button>
+      <span class="dp-clock" id="dp-clock" aria-hidden="true">--:--</span>
+      <label class="sr-only" for="dp-range">Czas dnia</label>
+      <input type="range" class="dp-range" id="dp-range" min="0" max="86400" step="60" value="0">
+      <span role="group" aria-label="Prędkość odtwarzania">
+        {% for s in speeds %}<button type="button" class="btn btn-ghost btn-sm" data-speed="{{ s }}" aria-pressed="{% if s == 60 %}true{% else %}false{% endif %}" title="Klawisz {{ forloop.counter }}">×{{ s }}</button>{% endfor %}
+      </span>
+      <button type="button" class="btn btn-ghost btn-sm" id="dp-peak">Skok do szczytu</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="dp-read">Odczytaj liczniki</button>
+      <button type="button" class="btn btn-secondary btn-sm" id="dp-fs" aria-pressed="false" title="Pełny ekran (F, wyjście Esc)">Pełny ekran</button>
+    </div>
+    <div id="dp-wrap">
+      <canvas id="dp-canvas" aria-label="Scena 3D hali z animacją dnia" role="img"></canvas>
+      {% include "twin/_3d_boot.html" with status_id="dp-status" %}
+      <div class="dp-callout" id="dp-callout" aria-hidden="true"></div>
+      <div class="dp-hud" id="dp-hud" aria-hidden="true"></div>
+    </div>
+    <p class="dp-keys">Spacja — odtwarzaj/pauza · ← → — ±1 min · ↑ ↓ — ±15 min · 1–5 — prędkość · F — pełny ekran · obracanie: myszą</p>
+  </section>
+
+  <aside style="display:grid;gap:16px">
+    <div class="card"><div class="card-body">
+      <h2 class="dp-sec">Teraz</h2>
+      <dl class="dp-counters" id="dp-counters">
+        <dt>Palet przyjętych</dt><dd data-c="palletsIn">0</dd>
+        <dt>Palet wydanych</dt><dd data-c="palletsOut">0</dd>
+        <dt>Paczek spakowanych</dt><dd data-c="parcels">0</dd>
+        <dt>Paczek czeka na kuriera</dt><dd data-c="pending">0</dd>
+        <dt>Auta w kolejce</dt><dd data-c="queue">0</dd>
+        <dt>Auta w dokach</dt><dd data-c="atDock">0</dd>
+        <dt>Palety na polu przyjęć</dt><dd data-c="stagingIn">0</dd>
+        <dt>Palety na polu wydań</dt><dd data-c="stagingOut">0</dd>
+        <dt>Wózki w pracy</dt><dd data-c="fleet">0</dd>
+      </dl>
+    </div></div>
+    <div class="card"><div class="card-body">
+      <h2 class="dp-sec">Wąskie gardła</h2>
+      {% if bottlenecks %}
+      <ul class="dp-bn" id="dp-bn">
+        {% for b in bottlenecks %}
+        <li><button type="button" data-i="{{ forloop.counter0 }}"{% if b.t0 is None %} disabled{% endif %}>
+          <b>{% if b.severity == "error" %}▲ {% endif %}{{ b.area }}</b>
+          <small>{{ b.window|default:"cały dzień" }} · {{ b.problem }}</small>
+          <span>{{ b.suggestion }}</span>
+        </button></li>
+        {% endfor %}
+      </ul>
+      {% else %}<p class="text-sm" style="margin:0">Brak wąskich gardeł w tym dniu.</p>{% endif %}
+    </div></div>
+  </aside>
+</div>
+
+<details class="card" style="margin-top:16px"><summary class="card-body" style="cursor:pointer">Tabela godzinowa (tekstowa alternatywa animacji)</summary>
+  <div class="card-body" style="overflow-x:auto">
+    <table class="dp-table" id="dp-hours"><caption class="sr-only">Stan magazynu o pełnych godzinach dnia</caption>
+      <thead><tr><th scope="col">Godzina</th><th scope="col">Palet IN</th><th scope="col">Palet OUT</th><th scope="col">Paczek</th>
+        <th scope="col">Auta w kolejce</th><th scope="col">Pole przyjęć</th><th scope="col">Pole wydań</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</details>
+{% endif %}
+<p class="sr-only" id="dp-live" aria-live="polite"></p>
+<p class="sr-only" id="dp-fs-live" aria-live="polite"></p>
+{% endblock %}
+
+{% block extra_scripts %}
+{% if has_events %}
+<script type="importmap">{"imports":{"three":"/static/twin/vendor/three.module.js","three/addons/":"/static/twin/vendor/addons/"}}</script>
+<script type="module">
+import { createViewer } from '{% static "twin/js/scene-builder.js" %}';
+import { bindFullscreenButton } from '{% static "twin/js/fullscreen.js" %}';
+import { createDayPlayer } from '{% static "twin/js/day-player.js" %}';
+import { countersAt, hhmm } from '{% static "twin/js/day-timeline.js" %}';
+
+const DATA = {{ data_json|safe }};
+const $ = (id) => document.getElementById(id);
+if (window.__tw3dNoWebGL) {
+  window.tw3dFail('Twoja przeglądarka nie obsługuje grafiki 3D (WebGL) — zobacz tabelę godzinową poniżej.');
+  throw new Error('WebGL unavailable');
+}
+const viewer = createViewer({ canvas: $('dp-canvas'), wrap: $('dp-wrap'), labels: DATA.racks.length <= 400, fill: false });
+viewer.setData({ floor: DATA.floor, racks: DATA.racks, features: DATA.features }, { frame: true });
+
+const res = await fetch('{% url "scenario:run_events" run.pk %}', { credentials: 'same-origin' });
+const EVENTS = (await res.json()).events;
+const range = $('dp-range'), clock = $('dp-clock'), live = $('dp-live'), hud = $('dp-hud');
+const btns = [...document.querySelectorAll('#dp-bn button')];
+let lastSpoken = 0, counters = {};
+
+function say(t, c) {
+  live.textContent = `Godzina ${hhmm(t)}. Palet przyjętych ${c.palletsIn}, wydanych ${c.palletsOut}, paczek ${c.parcels}, `
+    + `aut w kolejce ${c.queue}, palet na polu przyjęć ${c.stagingIn}, na polu wydań ${c.stagingOut}.`;
+}
+const player = createDayPlayer({ viewer, data: DATA, events: EVENTS, ui: {
+  onTime(t, playing) {
+    clock.textContent = hhmm(t);
+    range.value = t;
+    range.setAttribute('aria-valuetext', hhmm(t));
+    $('dp-play').textContent = playing ? 'Pauza' : 'Odtwórz';
+    $('dp-play').setAttribute('aria-pressed', String(playing));
+    // aria-live: co minutę realnego czasu w trakcie odtwarzania, od razu po pauzie/przewinięciu
+    if (!playing || performance.now() - lastSpoken > 60000) { lastSpoken = performance.now(); say(t, counters); }
+  },
+  onCounters(c, t) {
+    counters = c;
+    document.querySelectorAll('#dp-counters [data-c]').forEach((el) => { el.textContent = c[el.dataset.c] ?? 0; });
+    hud.textContent = `${hhmm(t)} · IN ${c.palletsIn} · OUT ${c.palletsOut} · paczki ${c.parcels} · kolejka ${c.queue}`;
+  },
+  onSpeed(x) { document.querySelectorAll('[data-speed]').forEach((b) => b.setAttribute('aria-pressed', String(+b.dataset.speed === x))); },
+  onBottlenecks(act) {
+    $('dp-callout').innerHTML = '';
+    for (const b of act) {
+      const d = document.createElement('div');
+      d.textContent = `${b.area}: ${b.suggestion}`;
+      $('dp-callout').appendChild(d);
+    }
+    btns.forEach((el) => el.classList.toggle('is-active', act.includes(DATA.bottlenecks[+el.dataset.i])));
+  },
+} });
+range.min = player.tMin; range.max = player.tMax;
+player.seek(player.tMin);
+window.tw3dReady();
+
+$('dp-play').addEventListener('click', () => player.toggle());
+range.addEventListener('input', () => player.seek(+range.value));
+document.querySelectorAll('[data-speed]').forEach((b) => b.addEventListener('click', () => player.setSpeed(+b.dataset.speed)));
+$('dp-peak').addEventListener('click', () => player.seek(DATA.peak_t));
+$('dp-read').addEventListener('click', () => say(player.t, counters));
+btns.forEach((el) => el.addEventListener('click', () => {
+  const b = DATA.bottlenecks[+el.dataset.i];
+  player.pause();
+  player.seek(b.t0 + Math.min(1800, (b.t1 - b.t0) / 2));
+  player.focus(b.keys);
+}));
+const fs = bindFullscreenButton($('dp-fs'), $('dp-stage'), { live: $('dp-fs-live'), onChange: () => { viewer.resize(); viewer.renderNow(); } });
+const SPEEDS = [...document.querySelectorAll('[data-speed]')].map((b) => +b.dataset.speed);
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.metaKey || e.altKey || e.target.closest('input[type=text], select, textarea')) return;
+  const k = e.key;
+  if (k === ' ' && !e.target.closest('button')) { e.preventDefault(); player.toggle(); }
+  else if (k === 'ArrowLeft' || k === 'ArrowRight') { e.preventDefault(); player.seek(player.t + (k === 'ArrowRight' ? 60 : -60)); }
+  else if (k === 'ArrowUp' || k === 'ArrowDown') { e.preventDefault(); player.seek(player.t + (k === 'ArrowUp' ? 900 : -900)); }
+  else if (k >= '1' && k <= String(SPEEDS.length)) player.setSpeed(SPEEDS[+k - 1]);
+  else if (k.toLowerCase() === 'f') fs.toggle();
+});
+if (new URLSearchParams(location.search).has('debug3d')) {
+  hud.style.display = 'block';
+  window.__twDay = player;                        // diagnostyka: seek(t) + __tw3d.renderNow() + readPixels
+}
+
+// Tabela godzinowa — tekstowa alternatywa 3D (liczniki o pełnych godzinach).
+const tracks = player.tracks, body = $('dp-hours').querySelector('tbody');
+for (let s = Math.ceil(player.tMin / 3600) * 3600; s <= player.tMax; s += 3600) {
+  const c = countersAt(tracks, s), tr = document.createElement('tr');
+  [hhmm(s), c.palletsIn, c.palletsOut, c.parcels, c.queue, c.stagingIn, c.stagingOut].forEach((v, i) => {
+    const cell = document.createElement(i ? 'td' : 'th');
+    if (!i) cell.scope = 'row';
+    cell.textContent = v;
+    tr.appendChild(cell);
+  });
+  body.appendChild(tr);
+}
+</script>
+{% endif %}
+{% endblock %}

@@ -99,8 +99,8 @@ def simulate_plan(plan, params, shifts, places):
         seq[0] += 1
         heapq.heappush(heap, (t, seq[0], kind, data))
 
-    def ev(t, obj, kind, what, place):
-        rec["events"].append((round(t * 3600), obj, kind, what, place))
+    def ev(t, obj, kind, what, place, n=None):
+        rec["events"].append((round(t * 3600), obj, kind, what, place) + ((n,) if n is not None else ()))
 
     def lost(proc):
         """Zadanie bez obsady do końca dnia (po ostatniej zmianie procesu)."""
@@ -224,6 +224,7 @@ def simulate_plan(plan, params, shifts, places):
             for row in rec["staging_out"]:
                 if row[3] == v["id"] and row[1] is None:
                     row[1] = start
+                    ev(start, row[2], "pallet", "loaded", f"dock:{did}")
             rec["trucks"].append({"id": v["id"], "side": "out", "kind": v["kind"], "arrive": v["arrive"],
                                   "start": start, "end": end, "dock": did, "pallets": v["pallets"],
                                   "cutoff": v["cutoff"], "late_h": max(0.0, end - v["cutoff"])})
@@ -234,7 +235,9 @@ def simulate_plan(plan, params, shifts, places):
             v = d
             did, start = docks.take(role["courier"], t, n["courier_dock_min"] / 60)
             v["pickup"] = start
+            ev(t, v["id"], "courier", "arrive", "gate")
             ev(start, v["id"], "courier", "dock", f"dock:{did}")
+            ev(start + n["courier_dock_min"] / 60, v["id"], "courier", "depart", f"dock:{did}")
         elif kind == "pick":
             o = d
             got = pools["pick"].take(t, o["lines"] / n["pick_lines_per_h"])
@@ -252,7 +255,7 @@ def simulate_plan(plan, params, shifts, places):
                 lost("pack")
                 continue
             rec["parcels"].append({"order": o["id"], "n": o["parcels"], "ready": got[1], "courier": o["courier"]})
-            ev(got[1], o["id"], "parcel", "packed", "pack")
+            ev(got[1], o["id"], "parcel", "packed", "pack", o["parcels"])
         elif kind == "return":
             r = d
             got = pools["returns"].take(t, n["return_min"] / 60)
