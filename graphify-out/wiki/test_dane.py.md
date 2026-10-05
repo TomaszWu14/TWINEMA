@@ -34,17 +34,17 @@
 ## Relationships
 
 - [test_voice.py](test_voice.py.md) (7 shared connections)
-- [detect](detect.md) (6 shared connections)
+- [render/views.py](render-views.py.md) (6 shared connections)
 - [masterdata/views.py](masterdata-views.py.md) (4 shared connections)
 - [blender_route.py](blender_route.py.md) (2 shared connections)
-- [safe_json](safe_json.md) (2 shared connections)
+- [shared.py](shared.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [blender_stock.py](blender_stock.py.md) (1 shared connections)
-- [roles.py](roles.py.md) (1 shared connections)
+- [ml/views.py](ml-views.py.md) (1 shared connections)
+- [context_processors.py](context_processors.py.md) (1 shared connections)
 - [ValueError](ValueError.md) (1 shared connections)
 - [blender_scene.py](blender_scene.py.md) (1 shared connections)
-- [_feature_center](_feature_center.md) (1 shared connections)
-- [test_ewm_service.py](test_ewm_service.py.md) (1 shared connections)
+- [build_scene](build_scene.md) (1 shared connections)
+- [EwmViewsTests](EwmViewsTests.md) (1 shared connections)
 
 ## Source Files
 

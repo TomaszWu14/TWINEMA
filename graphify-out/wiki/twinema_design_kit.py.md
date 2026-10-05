@@ -29,8 +29,8 @@
 
 ## Relationships
 
-- [params_for](params_for.md) (9 shared connections)
-- [script.py](script.py.md) (1 shared connections)
+- [design_catalog.py](design_catalog.py.md) (9 shared connections)
+- [kpi_facts](kpi_facts.md) (1 shared connections)
 - [design_kpi.py](design_kpi.py.md) (1 shared connections)
 - [ValueError](ValueError.md) (1 shared connections)
 

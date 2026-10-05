@@ -1,4 +1,4 @@
-# script.py
+# kpi_facts
 
 > 18 nodes · cohesion 0.17
 
@@ -32,10 +32,10 @@
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) (4 shared connections)
 - [ParseTests](ParseTests.md) (4 shared connections)
 - [FloorGrid](FloorGrid.md) (3 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (3 shared connections)
+- [rack_corners](rack_corners.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [design_kpi.py](design_kpi.py.md) (2 shared connections)
-- [params_for](params_for.md) (1 shared connections)
+- [design_catalog.py](design_catalog.py.md) (1 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)
 
 ## Source Files

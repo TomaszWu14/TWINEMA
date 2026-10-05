@@ -24,10 +24,10 @@
 ## Relationships
 
 - [masterdata/services.py](masterdata-services.py.md) (6 shared connections)
-- [addressing.py](addressing.py.md) (4 shared connections)
+- [test_container_inbound.py](test_container_inbound.py.md) (4 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
 - [ewm_tasks.py](ewm_tasks.py.md) (2 shared connections)
-- [test_addressing.py](test_addressing.py.md) (1 shared connections)
+- [addressing.py](addressing.py.md) (1 shared connections)
 
 ## Source Files
 

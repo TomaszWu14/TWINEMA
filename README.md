@@ -6,18 +6,28 @@ TWINEMA łączy projektowanie centrum dystrybucyjnego w 3D z symulacją pracy i 
 prezentacji: układ hali i regałów → symulacja dnia projektowego → animacja przepływów
 w Blenderze → film z lektorem (ElevenLabs) i deck PDF.
 
-> Status: **F3 — render w Blenderze przez kolejkę i workera (przelot, orbita, przejazd, plan); F2 — dane z plików (materiały, master lokalizacji, stany) zasilają scenę 3D i dzień projektowy; F1 — rdzeń modelowania i symulacji działa** (generator hali, widok 3D, import zadań, dzień projektowy, kalibracja, prognoza, symulacja, porównanie, eksport do Blendera). Mapa drogi i decyzje: [`docs/PLAN.md`](docs/PLAN.md).
+> Status: **F5 — Studio prezentacji: z modelu hali powstaje film PL z lektorem i napisami + deck PDF, w całości z aplikacji.** Wcześniej: F4 ML (prognoza, segmentacja), F3 render w Blenderze przez kolejkę i workera, F2 dane z plików, F1 rdzeń modelowania i symulacji. Mapa drogi i decyzje: [`docs/PLAN.md`](docs/PLAN.md), stan: [`docs/HANDOFF.md`](docs/HANDOFF.md).
 
-## Moduły (plan)
+## Moduły
 
 | Moduł | Co robi | Faza |
 |---|---|---|
 | Dane | importy materiałów, mastera lokalizacji i stanów z raportem odrzuceń; dane demo | F2 ✅ |
-| Model hali | generator hali, regały, strefy, pola odkładcze, warianty, widok 3D | F1 |
-| Symulacja | dzień projektowy, flota, kalibracja, porównanie wariantów | F1 |
+| Model hali | generator hali, regały, strefy, pola odkładcze, warianty, widok 3D | F1 ✅ |
+| Symulacja | dzień projektowy, flota, kalibracja, porównanie wariantów | F1 ✅ |
 | Prognozy i ML | Holt-Winters i spółka kontra baseline (MAPE), segmentacja materiałów k-means | F4 ✅ |
 | Render 3D | kolejka ujęć, worker Blendera na PC (HTTPS + token), presety kamery, PNG/MP4 w aplikacji | F3 ✅ |
-| Studio prezentacji | scenariusz (szablon albo Claude), lektor ElevenLabs z napisami, render ujęć, montaż MP4; deck PDF w F5d | F5 |
+| Studio prezentacji | scenariusz (szablon albo Claude), lektor ElevenLabs z napisami, klipy i kadry z Blendera, montaż MP4, deck PDF | F5 ✅ |
+
+### Jak powstaje film i deck
+
+1. **Kwestie** — szkic z KPI modelu (szablon) albo z Claude; do AI idą tylko zagregowane liczby. Projektant poprawia i zatwierdza tekst.
+2. **Lektor** — ElevenLabs nagrywa kwestię po kwestii ze znacznikami czasu; długość ujęcia = długość nagrania, napisy SRT z czasów słów.
+3. **Render** — jeden klik kolejkuje dla każdego ujęcia klip MP4 (film) i kadr PNG (deck); worker z Blenderem renderuje na PC.
+4. **Montaż** — worker z ffmpeg skleja planszę tytułową, ujęcia z lektorem, planszę końcową i napisy → MP4.
+5. **Deck PDF** — slajdy 16:9 z serwera: tytuł, liczby z modelu, ujęcie na slajd (kadr + kwestia), zakończenie.
+
+Każdy krok ma cache po hashu wejścia — poprawka jednego zdania nagrywa i renderuje tylko tę kwestię.
 
 ## Uruchomienie lokalne
 

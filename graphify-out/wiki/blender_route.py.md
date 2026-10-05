@@ -19,18 +19,18 @@
 
 ## Relationships
 
-- [shared.py](shared.py.md) (8 shared connections)
+- [warehouse_blender.py](warehouse_blender.py.md) (8 shared connections)
 - [blender_scene.py](blender_scene.py.md) (6 shared connections)
 - [SlotLocator](SlotLocator.md) (4 shared connections)
-- [.slot](slot.md) (3 shared connections)
+- [blender_stock.py](blender_stock.py.md) (3 shared connections)
 - [ewm_levels.py](ewm_levels.py.md) (3 shared connections)
 - [test_dane.py](test_dane.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [test_voice.py](test_voice.py.md) (1 shared connections)
 - [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
-- [resolve_moves](resolve_moves.md) (1 shared connections)
+- [._scene](_scene.md) (1 shared connections)
 - [studio/api.py](studio-api.py.md) (1 shared connections)
-- [blender_stock.py](blender_stock.py.md) (1 shared connections)
+- [ml/views.py](ml-views.py.md) (1 shared connections)
 
 ## Source Files
 

@@ -1,6 +1,6 @@
-# Przekazanie — stan projektu i następny krok (F5)
+# Przekazanie — stan projektu i następny krok (F6)
 
-Plik dla kolejnej sesji (człowieka albo AI). Aktualny na 2026-10-05, po scaleniu PR #1–#5.
+Plik dla kolejnej sesji (człowieka albo AI). Aktualny na 2026-10-05, po scaleniu F5 (PR #8–#11).
 
 ## Stan
 
@@ -13,43 +13,34 @@ Plik dla kolejnej sesji (człowieka albo AI). Aktualny na 2026-10-05, po scaleni
 | F4 | `ml` | #5 | prognoza (SES/Holt/Holt tłumiony/Holt-Winters vs trend log, wybór po MAPE), segmentacja k-means, `ModelRun` |
 | F5a | `studio` | #8 | `Presentation` + `Shot`, szkic kwestii z szablonu (KPI modelu) albo z Claude (`ANTHROPIC_API_KEY`, `CLAUDE_MODEL`, domyślnie `claude-opus-5`), edycja tylko w szkicu, akceptacja tekstu |
 | F5b | `studio` | #9 | lektor ElevenLabs (`ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`, `ELEVENLABS_MODEL`), nagrywanie kwestia po kwestii, cache `VoiceTrack` po hashu (tekst+głos+model), napisy SRT z wyrównania znaków |
-| F5c | `studio` | — | ujęcia jako `RenderJob` z kolejki F3 (Full HD, długość = nagranie + 0,5 s, cache po hashu scena+preset+długość), `MontageJob` + API workera (`/api/studio/montage/…`, ten sam token), `tools/twinema_montage.py` (plansze, tpad/apad, concat, napisy mov_text) — montuje `render_worker.py`, gdy ma ffmpeg |
+| F5c | `studio` | #10 | ujęcia jako `RenderJob` z kolejki F3 (Full HD, długość = nagranie + 0,5 s, cache po hashu scena+preset+długość), `MontageJob` + API workera (`/api/studio/montage/…`, ten sam token), `tools/twinema_montage.py` (plansze, tpad/apad, concat, napisy mov_text) — montuje `render_worker.py`, gdy ma ffmpeg |
+| F5d | `studio` | #11 | kadr PNG na ujęcie (ten sam klik co klipy, cache po hashu), deck PDF 16:9 (`studio/deck.py`, fpdf2 + DejaVu w repo): tytuł → liczby z KPI → ujęcie na slajd → koniec; film i deck na górze gotowej prezentacji i na liście |
 | E1 | `twin` | — | silnik edytora layoutu: `twin/layout.py` + API `uklad.json` / `uklad/sprawdz/` / `uklad/zapisz/`, nowy rodzaj cechy „Pole odkładcze” (`staging`) |
 
-F5 dalej: (d) deck PDF i szlif. Do Claude idą wyłącznie zdania z `studio/script.kpi_facts` (zagregowane liczby, bez nazw).
+Przepływ filmu: kwestie (szablon/Claude) → zatwierdź → „Nagraj lektora” → „Renderuj ujęcia i kadry” (worker
+z Blenderem) → „Zmontuj film” (worker z ffmpeg) → MP4 + deck PDF + SRT. Do Claude i ElevenLabs idzie wyłącznie
+tekst narracji (Claude: zdania z `studio/script.kpi_facts` — zagregowane liczby, bez nazw).
 
-Testy: 332 zielone (`cd web && python manage.py test`, env: `DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*'`).
+Testy: `cd web && python manage.py test --parallel 4` (env: `DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*'`).
 
-## Otwarte przy wdrożeniu (po stronie właściciela)
+## Po stronie właściciela (zanim pierwszy prawdziwy film)
+- Klucze w env serwera (Coolify) i wpisy w `.env.example`: `ANTHROPIC_API_KEY`, `CLAUDE_MODEL`,
+  `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`, `ELEVENLABS_MODEL`.
+- ffmpeg na PC z workerem (`winget install Gyan.FFmpeg`), potem `python tools/render_worker.py`
+  z `TWINEMA_URL` + `TWINEMA_WORKER_TOKEN` (worker przy starcie mówi, czy montaż włączony).
 - Coolify: aplikacja z Dockerfile, Postgres, domena (np. `twinema.twapp.pl`), trwały wolumen `/app/web/media`.
 - Sekrety repo: `COOLIFY_WEBHOOK_URL`, `SMOKE_URL`, `AUTOMERGE_PAT` (bez nich deploy się pomija).
-- Env serwera: `RENDER_WORKER_TOKEN` (≥ 32 znaki); na PC worker z `TWINEMA_URL` + tym samym tokenem.
+- Env serwera: `RENDER_WORKER_TOKEN` (≥ 32 znaki).
+- **Obejrzeć pierwszy prawdziwy film i deck**: prawdziwe ElevenLabs, Blender i ffmpeg nie były jeszcze
+  uruchomione razem (testy mockują API i komendy) — sprawdzić synchronizację głosu, plansze, napisy, kadry.
 
-## Następny krok: F5 — Studio prezentacji
-
-Cel: z wariantu hali i jego KPI powstaje 2–3 min film PL z lektorem i napisami + deck PDF, z aplikacji.
-
-```
-Presentation (model hali, tytuł, głos) → Shot × N (preset kamery, kwestia, kolejność)
- → scenariusz: szkic z Claude API na podstawie KPI (do edycji) → akceptacja tekstu
- → lektor: ElevenLabs TTS z timestamps per kwestia (długość ujęcia = długość audio)
- → render: RenderJob per ujęcie (seconds = długość kwestii) — istniejąca kolejka F3
- → montaż: ffmpeg (ujęcia + audio + napisy SRT + plansza tytułowa/końcowa) → MP4
- → deck: kadry PNG + KPI → PDF
-```
-
-Zasady:
-- Statusy: szkic → tekst zatwierdzony → audio → render → montaż → gotowe. Nie renderować przed akceptacją tekstu.
-- Cache po hashu wejścia (tekst+głos → audio; scena+preset+długość → render), żeby poprawka zdania nie
-  renderowała całego filmu.
-- Na zewnątrz (Claude API, ElevenLabs) idzie wyłącznie tekst narracji — żadnych surowych danych.
-- Sekrety tylko w env (`config.py`): `ANTHROPIC_API_KEY`, `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_ID`.
-  Brak klucza = funkcja wyłączona z czytelnym komunikatem, nie błąd 500. Testy mockują HTTP.
-- Model Claude do szkicu: najnowszy dostępny (np. `claude-sonnet-5`) — sprawdź skillem/dokumentacją `claude-api`.
-
-Decyzje do potwierdzenia z właścicielem na starcie F5:
-1. Czy jest już plan ElevenLabs (Creator) i klucz API + zaprojektowany głos (voice_id)?
-2. Gdzie montaż: worker na PC (ma Blendera, ffmpeg do doinstalowania; rekomendacja) czy serwer (ffmpeg w obrazie)?
+## Następny krok: F6 — szlif (wg burzy mózgów, `docs/PLAN.md` §2.2 i §6)
+- **Priorytet od 2026-10-05:** edytor layoutu E1 → E2 (plan 2D) → E3 (podgląd 3D) → tryb prezentacji 3D →
+  katalog sprzętu — szczegóły w `docs/PLAN.md` („Po F5: budowanie przyszłego layoutu”).
+- ML3: model czasu cyklu (gradient boosting vs mediana real÷sym, MAE na odłożonych dniach).
+- Porównania wariantów w filmie (split-screen „obecny vs wariant”), katalog rynku → CAPEX/OPEX.
+- Unieważnianie renderów po zmianie samego modelu hali (dziś dopiero przy ponownym „Renderuj ujęcia”).
+- Muzyka pod lektorem, wersja EN.
 
 ## Zasady repo (skrót — pełne w `CLAUDE.md`)
 - Bez nazw firm, klientów i lokalizacji w kodzie i danych demo (dane syntetyczne).

@@ -20,7 +20,7 @@
 
 ## Relationships
 
-- [params_for](params_for.md) (12 shared connections)
+- [design_catalog.py](design_catalog.py.md) (12 shared connections)
 
 ## Source Files
 

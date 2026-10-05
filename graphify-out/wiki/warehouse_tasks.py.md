@@ -33,13 +33,13 @@
 
 ## Relationships
 
-- [shared.py](shared.py.md) (10 shared connections)
-- [WarehouseTask](WarehouseTask.md) (4 shared connections)
+- [warehouse_blender.py](warehouse_blender.py.md) (10 shared connections)
+- [SimulationViewTests](SimulationViewTests.md) (4 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (2 shared connections)
 - [Scan](Scan.md) (2 shared connections)
 - [StudioViewTests](StudioViewTests.md) (2 shared connections)
 - [ValueError](ValueError.md) (2 shared connections)
-- [PROVENANCE.md](PROVENANCE.md.md) (2 shared connections)
+- [Pochodzenie kodu](Pochodzenie_kodu.md) (2 shared connections)
 
 ## Source Files
 

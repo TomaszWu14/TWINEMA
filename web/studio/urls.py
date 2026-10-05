@@ -9,6 +9,7 @@ urlpatterns = [
     path("studio/<int:pk>/montaz/", views.montage_create, name="montage_create"),
     path("studio/<int:pk>/status.json", views.status_json, name="status_json"),
     path("studio/film/<int:pk>.mp4", views.film_file, name="film_file"),
+    path("studio/<int:pk>/deck.pdf", views.deck_pdf, name="deck_pdf"),
     path("api/studio/montage/claim/", api.claim, name="api_claim"),
     path("api/studio/montage/<int:pk>/clip/<int:n>/", api.clip, name="api_clip"),
     path("api/studio/montage/<int:pk>/audio/<int:n>/", api.audio, name="api_audio"),

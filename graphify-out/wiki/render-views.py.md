@@ -1,4 +1,4 @@
-# detect
+# render/views.py
 
 > 11 nodes · cohesion 0.24
 

@@ -1,4 +1,4 @@
-# Przekazanie — stan projektu i następny krok (F5)
+# test_deck.py
 
 > 13 nodes · cohesion 0.23
 
@@ -20,8 +20,8 @@
 
 ## Relationships
 
-- [blender_stock.py](blender_stock.py.md) (2 shared connections)
-- [roles.py](roles.py.md) (1 shared connections)
+- [ml/views.py](ml-views.py.md) (2 shared connections)
+- [context_processors.py](context_processors.py.md) (1 shared connections)
 
 ## Source Files
 

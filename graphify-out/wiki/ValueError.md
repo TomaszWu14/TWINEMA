@@ -30,9 +30,9 @@
 ## Relationships
 
 - [test_voice.py](test_voice.py.md) (6 shared connections)
-- [check_aisles](check_aisles.md) (2 shared connections)
-- [twinema_warehouse_anim.py](twinema_warehouse_anim.py.md) (2 shared connections)
 - [params_for](params_for.md) (2 shared connections)
+- [twinema_warehouse_anim.py](twinema_warehouse_anim.py.md) (2 shared connections)
+- [design_catalog.py](design_catalog.py.md) (2 shared connections)
 - [warehouse_tasks.py](warehouse_tasks.py.md) (2 shared connections)
 - [Scan](Scan.md) (2 shared connections)
 - [masterdata/views.py](masterdata-views.py.md) (2 shared connections)
