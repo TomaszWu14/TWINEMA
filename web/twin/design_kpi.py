@@ -9,7 +9,7 @@ Poza pojemnością i alejkami z `design_catalog` liczymy:
 Droga to miara porównawcza wariantów (ten sam wzór dla każdego), nie symulacja trasy.
 """
 from .blender_route import rack_axes
-from .design_catalog import ELEMENTS, RACK_KINDS, footprint, params_for, variant_summary
+from .design_catalog import ELEMENTS, RACK_KINDS, SHELF_AISLE_M, footprint, params_for, variant_summary
 
 ANCHOR_FEATURES = ("dock", "gate", "station", "leader")
 A_SHARE = 0.20
@@ -99,15 +99,21 @@ def compute_kpi(elements, features, floor_w, floor_d):
 
 
 def rack_to_element(r):
-    """Regał modelu magazynu (dict jak w scenie: width/depth/level_h/n_bays/n_levels) →
-    element `rack_std` katalogu (miejsca w boku ≈ szerokość boku / 0,9 m)."""
+    """Regał modelu magazynu (dict jak w scenie: width/depth/level_h/n_bays/n_levels, opcjonalnie
+    `equipment`) → element katalogu (miejsca w boku ≈ szerokość boku / 0,9 m). Sprzęt wyznacza
+    wymaganą alejkę: VNA → `rack_vna`, półki → `rack_std` z alejką `SHELF_AISLE_M`, reszta → reach."""
     n_bays = max(1, r["n_bays"])
     bay_w = r["width"] / n_bays
-    return {"kind": "rack_std", "label": f"{r['zone']}-{r['rack_id']}", "x": r["x"], "y": r["y"],
-            "angle": r.get("angle") or 0.0,
-            "params": params_for("rack_std", bays=n_bays, levels=max(1, r["n_levels"]),
-                                 bay_width=round(bay_w, 3), depth=r["depth"], level_h=r["level_h"],
-                                 pallets_per_bay=max(1, round(bay_w / 0.9)))}
+    equipment = r.get("equipment") or "reach"
+    kind = "rack_vna" if equipment == "vna" else "rack_std"
+    el = {"kind": kind, "label": f"{r['zone']}-{r['rack_id']}", "x": r["x"], "y": r["y"],
+          "angle": r.get("angle") or 0.0,
+          "params": params_for(kind, bays=n_bays, levels=max(1, r["n_levels"]),
+                               bay_width=round(bay_w, 3), depth=r["depth"], level_h=r["level_h"],
+                               pallets_per_bay=max(1, round(bay_w / 0.9)))}
+    if equipment == "shelf":
+        el["aisle_m"] = SHELF_AISLE_M
+    return el
 
 
 def clean_elements(raw):

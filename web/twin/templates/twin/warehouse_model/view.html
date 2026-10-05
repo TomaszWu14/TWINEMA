@@ -263,7 +263,8 @@ const FEATURES_JSON = {{ features_json|safe }};
 {% localize off %}const FLOOR_W = {{ floor_w }};
 const FLOOR_D = {{ floor_d }};{% endlocalize %}
 // Typy elementów renderowane jako płaskie pola na posadzce (reszta = bryły/rampy).
-const FLAT_KINDS = new Set(['corridor', 'block_zone', 'staging', 'returns']);
+const FLAT_KINDS = new Set(['corridor', 'block_zone', 'staging', 'returns', 'fire_route', 'charging',
+  'walkway', 'truckway', 'zone_temp', 'zone_adr', 'zone_oversize', 'zone_value']);
 const EDGE_KINDS = new Set(['dock', 'gate']);
 
 // ── Tab switching ───────────────────────────────────────────────────────────
@@ -582,7 +583,7 @@ FEATURES_JSON.forEach(f => {
     group.add(m);
   } else {
     // Doki/bramy = niska rampa; stanowiska/inne = mały box
-    const h = EDGE_KINDS.has(f.kind) ? 0.4 : 1.0;
+    const h = f.height || (EDGE_KINDS.has(f.kind) ? 0.4 : 1.0);   // słup: wysokość hali
     const geo = new THREE.BoxGeometry(w, h, d);
     const mat = new THREE.MeshLambertMaterial({ color: col, transparent: true, opacity: 0.85 });
     const m = new THREE.Mesh(geo, mat);
@@ -590,7 +591,8 @@ FEATURES_JSON.forEach(f => {
     m.castShadow = true; m.receiveShadow = true;
     group.add(m);
   }
-  // Etykieta nad elementem
+  // Etykieta nad elementem (słupy bez etykiet — jest ich dziesiątki)
+  if (f.kind === 'column') return;
   const lbl = makeLabel(f.label || f.kind_label, '#e2e8f0');
   lbl.position.set(w * 0.5, (FLAT_KINDS.has(f.kind) ? 1.2 : 1.8), d * 0.5);
   group.add(lbl);
@@ -755,7 +757,7 @@ function buildSVG() {
       'font-weight': 600, 'text-anchor': 'middle',
       'dominant-baseline': 'middle', 'pointer-events': 'none',
     });
-    t.textContent = f.label || f.kind_label;
+    t.textContent = f.kind === 'column' ? '' : (f.label || f.kind_label);
     fg.appendChild(t);
     g.appendChild(fg);
   });

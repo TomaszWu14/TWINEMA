@@ -1,4 +1,4 @@
-# blender_stock.py
+# ml/services.py
 
 > 23 nodes · cohesion 0.14
 
@@ -30,15 +30,15 @@
 
 ## Relationships
 
-- [model_edit.py](model_edit.py.md) (7 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (5 shared connections)
+- [rack_corners](rack_corners.md) (7 shared connections)
+- [shared.py](shared.py.md) (5 shared connections)
 - [roles.py](roles.py.md) (4 shared connections)
-- [test_design_forecast.py](test_design_forecast.py.md) (4 shared connections)
+- [WarehouseTask](WarehouseTask.md) (4 shared connections)
 - [forecast.py](forecast.py.md) (2 shared connections)
-- [build_deck](build_deck.md) (2 shared connections)
+- [test_deck.py](test_deck.py.md) (2 shared connections)
 - [Scenario](Scenario.md) (2 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
-- [layout.py](layout.py.md) (1 shared connections)
+- [analyze](analyze.md) (1 shared connections)
 
 ## Source Files
 

@@ -2,7 +2,7 @@
 
 > God node · 23 connections · `web/twin/ewm_tasks.py`
 
-**Community:** [SimulationViewTests](SimulationViewTests.md)
+**Community:** [blender_route.py](blender_route.py.md)
 
 ## Connections by Relation
 
@@ -15,7 +15,7 @@
 - .test_xlsx_with_excel_date_and_time_cells() `EXTRACTED`
 
 ### contains
-- [ewm_tasks.py](ewm_tasks.py.md) `EXTRACTED`
+- ewm_tasks.py `EXTRACTED`
 
 ### imports
 - [warehouse_tasks.py](warehouse_tasks.py.md) `EXTRACTED`

@@ -68,7 +68,7 @@ def _save(name, g):
              f"({p['pallet_height_m']:g} m) + {p['carton_locations']} lok. K1, hala {p['clear_height_m']:g} m, "
              f"VNA {s['vna_levels']} poziomów, doki: {s['docks_in']} przyjęć / {s['docks_out']} wydań.")
     with transaction.atomic():
-        wm = WarehouseModel.objects.create(name=name[:200], notes=notes,
+        wm = WarehouseModel.objects.create(name=name[:200], notes=notes, clear_height_m=p["clear_height_m"],
                                            floor_width_m=g["floor"]["width"], floor_depth_m=g["floor"]["depth"])
         WarehouseModelRack.objects.bulk_create([WarehouseModelRack(model=wm, **r) for r in g["racks"]])
         WarehouseHallFeature.objects.bulk_create([WarehouseHallFeature(model=wm, **f) for f in g["features"]])

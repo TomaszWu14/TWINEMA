@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **roles.py** (22 connections) — `web/core/roles.py`
+- **roles.py** (23 connections) — `web/core/roles.py`
 - **test_ml.py** (11 connections) — `web/ml/tests/test_ml.py`
 - **test_render.py** (8 connections) — `web/render/tests/test_render.py`
 - **test_ewm_tasks_refresh.py** (6 connections) — `web/twin/tests/test_ewm_tasks_refresh.py`
@@ -30,17 +30,17 @@
 ## Relationships
 
 - [twin/models.py](twin-models.py.md) (6 shared connections)
-- [blender_stock.py](blender_stock.py.md) (4 shared connections)
+- [ml/services.py](ml-services.py.md) (4 shared connections)
 - [studio/api.py](studio-api.py.md) (3 shared connections)
 - [pre-push](pre-push.md) (2 shared connections)
 - [WorkerApiTests](WorkerApiTests.md) (2 shared connections)
 - [test_foundation.py](test_foundation.py.md) (1 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
 - [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (1 shared connections)
+- [shared.py](shared.py.md) (1 shared connections)
 - [forecast.py](forecast.py.md) (1 shared connections)
-- [build_deck](build_deck.md) (1 shared connections)
-- [draft_script](draft_script.md) (1 shared connections)
+- [test_deck.py](test_deck.py.md) (1 shared connections)
+- [StudioViewTests](StudioViewTests.md) (1 shared connections)
 
 ## Source Files
 
@@ -53,7 +53,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 77 (100%)
+- EXTRACTED: 78 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

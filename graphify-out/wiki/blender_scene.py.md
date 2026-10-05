@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **blender_scene.py** (61 connections) — `web/twin/blender_scene.py`
+- **blender_scene.py** (62 connections) — `web/twin/blender_scene.py`
 - **build_scene()** (24 connections) — `web/twin/blender_scene.py`
 - **_feature_center()** (10 connections) — `web/twin/blender_scene.py`
 - **.free_point()** (8 connections) — `web/twin/blender_scene.py`
@@ -35,12 +35,12 @@
 
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (17 shared connections)
 - [kpi_facts](kpi_facts.md) (10 shared connections)
-- [WarehouseTaskBatch](WarehouseTaskBatch.md) (10 shared connections)
-- [layout.py](layout.py.md) (6 shared connections)
+- [shared.py](shared.py.md) (10 shared connections)
+- [analyze](analyze.md) (6 shared connections)
 - [test_outbound.py](test_outbound.py.md) (5 shared connections)
 - [twin/models.py](twin-models.py.md) (5 shared connections)
-- [EquipmentAgentsTests](EquipmentAgentsTests.md) (5 shared connections)
-- [blender_route.py](blender_route.py.md) (4 shared connections)
+- [_inside](_inside.md) (5 shared connections)
+- [Agent](Agent.md) (4 shared connections)
 - [design_kpi.py](design_kpi.py.md) (3 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
@@ -53,7 +53,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 170 (98%)
+- EXTRACTED: 171 (98%)
 - INFERRED: 3 (2%)
 - AMBIGUOUS: 0 (0%)
 

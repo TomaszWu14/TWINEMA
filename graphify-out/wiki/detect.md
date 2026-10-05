@@ -1,4 +1,4 @@
-# ScenarioDay
+# detect
 
 > 8 nodes · cohesion 0.36
 
@@ -15,7 +15,7 @@
 
 ## Relationships
 
-- [GeneratorTests](GeneratorTests.md) (1 shared connections)
+- [build_scene](build_scene.md) (1 shared connections)
 
 ## Source Files
 

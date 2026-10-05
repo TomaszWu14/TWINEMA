@@ -188,14 +188,15 @@ def _build_rack(r, coll, colors=(RACK_UPRIGHT, RACK_BEAM)):
 
 
 def _build_feature(f, coll):
-    flat = f["kind"] in ("corridor", "block_zone", "staging", "returns", "other")
-    h = 0.02 if flat else (0.4 if f["kind"] in ("dock", "gate") else 1.0)
+    flat = f["kind"] in ("corridor", "block_zone", "staging", "returns", "other", "fire_route", "charging",
+                         "walkway", "truckway", "zone_temp", "zone_adr", "zone_oversize", "zone_value")
+    h = 0.02 if flat else (f.get("height") or (0.4 if f["kind"] in ("dock", "gate") else 1.0))
     w, d = f.get("width") or 1, f.get("depth") or 1
     me = _box_mesh(f"element {f.get('label')}", [(w / 2, -d / 2, h / 2, w, d, h, 0)])
     ob = _obj(f"{f.get('kind_label') or f['kind']}: {f.get('label') or ''}".strip(), me, coll,
               loc=_bl(f["x"], f["y"]), rot_z=math.radians(f.get("angle") or 0),
               mats=[_mat(f.get("color") or "#6b7280", 0.45 if flat else 0.9)])
-    if not flat:
+    if not flat and f["kind"] != "column":
         txt = bpy.data.curves.new(f"etykieta {f.get('label')}", "FONT")
         txt.body = f.get("label") or f["kind"]
         txt.size = 0.5

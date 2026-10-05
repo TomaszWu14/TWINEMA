@@ -3,6 +3,7 @@
 // Problemy wskazują elementy po INDEKSIE list — kolejność list się nie zmienia poza dodaniem/usunięciem.
 import { History, bbox, corners, rotateGroup, snap, svgTransform, zoneColors } from './layout-core.js';
 import { renderPanels } from './layout-panels.js';
+import { deleteSelectedColumn, drawColumns, drawUnderlay, hallPointer } from './layout-hall.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 const CFG = JSON.parse(document.getElementById('le-config').textContent);
@@ -11,6 +12,7 @@ const $ = (id) => document.getElementById(id);
 const svg = $('le-svg');
 
 export const S = { floor: { width: 50, depth: 30 }, racks: [], features: [], version: '', kinds: {},
+  columns: {}, colList: [], underlay: null, selCol: null, calib: null,
   sel: new Set(), errK: new Set(), warnK: new Set(), issues: [], kpi: {}, dirty: false };
 const history = new History();
 let seq = 0, checkSeq = 0, checkTimer = null, checkAbort = null;
@@ -19,10 +21,11 @@ let vb = { x: 0, y: 0, w: 50, h: 30 };
 const keyOf = (it) => (it._k ||= ++seq);
 const all = () => [...S.features, ...S.racks];
 export const selected = () => all().filter((it) => S.sel.has(keyOf(it)));
-const snapshot = () => JSON.stringify({ floor: S.floor, racks: S.racks, features: S.features });
+const snapshot = () => JSON.stringify({ floor: S.floor, racks: S.racks, features: S.features, columns: S.columns,
+  underlay: S.underlay });
 const strip = ({ _k, ...rest }) => rest;           // eslint-disable-line no-unused-vars
 
-function status(text, kind = '') {
+export function status(text, kind = '') {
   const el = $('le-status');
   el.textContent = text;
   el.className = `le-status${kind ? ` is-${kind}` : ''}`;
@@ -45,7 +48,7 @@ function touched() {
 
 function restore(snap) {
   const s = JSON.parse(snap);
-  Object.assign(S, { floor: s.floor, racks: s.racks, features: s.features });
+  Object.assign(S, { floor: s.floor, racks: s.racks, features: s.features, columns: s.columns, underlay: s.underlay });
   const keys = new Set(all().map(keyOf));
   S.sel = new Set([...S.sel].filter((k) => keys.has(k)));
   touched();
@@ -127,7 +130,8 @@ function redo() { const s = history.redo(snapshot()); if (s) restore(s); }
 
 // ── API ────────────────────────────────────────────────────────────────────────────────────
 const payload = () => JSON.stringify({ floor: S.floor, racks: S.racks.map(strip), features: S.features.map(strip),
-  version: S.version });
+  columns: S.columns, version: S.version,
+  underlay: S.underlay && { scale: S.underlay.scale, x: S.underlay.x, y: S.underlay.y, opacity: S.underlay.opacity } });
 
 async function post(url, body, signal) {
   const r = await fetch(url, { method: 'POST', body, signal, credentials: 'same-origin',
@@ -159,6 +163,7 @@ async function check() {
     if (mine !== checkSeq) return;                        // w międzyczasie kolejna zmiana
     if (code !== 200) { status(data.error || `Błąd sprawdzania (${code}).`, 'error'); return; }
     S.kpi = data.kpi || {};
+    S.colList = data.column_list || [];
     applyIssues(data.issues);
     const e = S.issues.filter((i) => i.severity === 'error').length, w = S.issues.length - e;
     const head = S.dirty ? 'Niezapisane zmiany' : 'Plan zapisany';
@@ -172,7 +177,8 @@ async function check() {
 
 function load(data) {
   Object.assign(S, { floor: data.floor, racks: data.racks, features: data.features, version: data.version,
-    kinds: data.feature_kinds || S.kinds, dirty: false });
+    kinds: data.feature_kinds || S.kinds, columns: data.columns || {}, colList: data.column_list || [],
+    underlay: data.underlay || null, selCol: null, calib: null, dirty: false });
   S.sel.clear();
   history.past = []; history.future = [];
 }
@@ -246,6 +252,7 @@ export function render() {
   const g = el('g', {}, svg);
   const { width: W, depth: D } = S.floor;
   el('rect', { class: 'le-floor', x: 0, y: 0, width: W, height: D }, g);
+  drawUnderlay(g);
   if (vb.w < 160) {                                    // siatka 1 m tylko przy zbliżeniu
     for (let x = 1; x < W; x++) if (x % 5) el('line', { class: 'le-grid-1', x1: x, y1: 0, x2: x, y2: D }, g);
     for (let y = 1; y < D; y++) if (y % 5) el('line', { class: 'le-grid-1', x1: 0, y1: y, x2: W, y2: y }, g);
@@ -270,6 +277,7 @@ export function render() {
   for (const f of S.features) drawItem(g, f, CFG.featureColors[f.kind] || '#6b7280', f.label || S.kinds[f.kind] || f.kind);
   const colors = zoneColors(S.racks);
   for (const r of S.racks) drawItem(g, r, colors[r.zone], `${r.zone}-${r.rack_id}`);
+  drawColumns(g);
   if (drag?.marquee) {
     const [x0, y0, x1, y1] = drag.marquee;
     el('rect', { class: 'le-marquee', x: Math.min(x0, x1), y: Math.min(y0, y1), width: Math.abs(x1 - x0),
@@ -293,6 +301,7 @@ svg.addEventListener('pointerdown', (e) => {
   svg.focus();
   const [wx, wy] = world(e);
   const hit = e.target.closest('.le-item');
+  if (e.button === 0 && !spaceDown && hallPointer(e, [wx, wy])) return;   // słup albo punkt kalibracji
   svg.setPointerCapture(e.pointerId);
   if (e.button === 1 || spaceDown) {
     drag = { pan: [e.clientX, e.clientY, vb.x, vb.y] };
@@ -375,8 +384,8 @@ document.addEventListener('keydown', (e) => {
   else if (ctrl && k === 'd') duplicateSelected();
   else if (ctrl && k === 'a' && e.target === svg) selectKeys(all().map(keyOf));
   else if (!ctrl && k === 'r' && e.target === svg) rotateSelected(90);
-  else if ((k === 'delete' || k === 'backspace') && e.target === svg) deleteSelected();
-  else if (k === 'escape') selectKeys([]);
+  else if ((k === 'delete' || k === 'backspace') && e.target === svg) deleteSelectedColumn() || deleteSelected();
+  else if (k === 'escape') { S.selCol = null; S.calib = null; selectKeys([]); }
   else handled = false;
   if (handled) e.preventDefault();
 });

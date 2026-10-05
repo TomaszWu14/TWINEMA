@@ -2,7 +2,7 @@
 # sibling modules; shared imports/constants/helpers stay in core.py.
 from twin.shared import (
     _md_role, _parse_location_code, _planner, Count, get_object_or_404,
-    HALL_FEATURE_COLORS, hall_feature_dict, hall_feature_kinds, messages,
+    HALL_FEATURE_COLORS, hall_feature_dict, hall_feature_kinds, messages, model_columns,
     redirect, render, safe_json, save_hall_features, transaction,
     WarehouseHallFeature, WarehouseModel, WarehouseModelRack,
 )
@@ -310,8 +310,8 @@ def warehouse_model_features(request, pk):
 
 
 def _features_data(wm):
-    """Elementy hali → lista dictów do renderu (współdzielony hall_feature_dict)."""
-    return [hall_feature_dict(f) for f in wm.features.all()]
+    """Elementy hali → lista dictów do renderu (współdzielony hall_feature_dict) + słupy z siatki."""
+    return [hall_feature_dict(f) for f in wm.features.all()] + model_columns(wm)
 
 
 @_md_role

@@ -15,7 +15,7 @@ w Blenderze → film z lektorem (ElevenLabs) i deck PDF.
 | Scenariusze | wolumeny dnia typowego i szczytowego: plan przyjęć (kontenery, auta 33-pal., solówki; min/śr/max), doki w szczycie, osobogodziny | S2a ✅ |
 | Dane | importy materiałów, mastera lokalizacji i stanów z raportem odrzuceń; dane demo | F2 ✅ |
 | Model hali | generator hali, regały, strefy, pola odkładcze, warianty, widok 3D | F1 ✅ |
-| Edytor layoutu | plan z góry w przeglądarce: przeciąganie regałów i całych bloków, doki i pola odkładcze, kolizje i KPI na żywo, cofnij/ponów, zapis | E2 ✅ |
+| Edytor layoutu | plan z góry w przeglądarce: przeciąganie regałów i całych bloków, doki i pola odkładcze, kolizje i KPI na żywo, cofnij/ponów, zapis; konstrukcja hali — słupy, wysokość w świetle, drogi pożarowe i ruchu, strefy ładowania i specjalne, podkład z rzutu z kalibracją skali | E2 ✅ · E2b ✅ |
 | Symulacja | dzień projektowy, flota, kalibracja, porównanie wariantów | F1 ✅ |
 | Prognozy i ML | Holt-Winters i spółka kontra baseline (MAPE), segmentacja materiałów k-means | F4 ✅ |
 | Render 3D | kolejka ujęć, worker Blendera na PC (HTTPS + token), presety kamery, PNG/MP4 w aplikacji | F3 ✅ |

@@ -1,39 +1,46 @@
 # rack_corners
 
-> 10 nodes · cohesion 0.24
+> 16 nodes · cohesion 0.22
 
 ## Key Concepts
 
-- **.slot()** (11 connections) — `web/twin/blender_stock.py`
-- **parse_code()** (6 connections) — `web/twin/locations.py`
-- **._parse()** (5 connections) — `web/twin/blender_stock.py`
-- **_half()** (3 connections) — `web/twin/blender_stock.py`
-- **.__init__()** (3 connections) — `web/twin/blender_stock.py`
-- **.rack_and_bay()** (3 connections) — `web/twin/blender_stock.py`
-- **_deg()** (2 connections) — `web/twin/blender_stock.py`
-- **1/2 dla połówki miejsca (kod z końcówką -1/-2, np. B0-07-300C-1), inaczej 0.…** (1 connections) — `web/twin/blender_stock.py`
-- **dict gniazda: x, y, z (dół palety), heading, rozmiar [w, d] (+ half 1/2) albo…** (1 connections) — `web/twin/blender_stock.py`
-- **Kod → (zone, rack_id, bay, col_idx, level) albo None.** (1 connections) — `web/twin/locations.py`
+- **design_day.py** (23 connections) — `web/twin/design_day.py`
+- **build_profile()** (18 connections) — `web/twin/design_day.py`
+- **working_days()** (11 connections) — `web/twin/design_day.py`
+- **design_forecast.py** (11 connections) — `web/twin/design_forecast.py`
+- **_stream_value()** (5 connections) — `web/twin/design_day.py`
+- **_abc_xyz()** (4 connections) — `web/twin/design_day.py`
+- **_total()** (4 connections) — `web/twin/design_day.py`
+- **_groups()** (3 connections) — `web/twin/design_day.py`
+- **_order_profile()** (3 connections) — `web/twin/design_day.py`
+- **.test_empty()** (3 connections) — `web/twin/tests/test_design_day.py`
+- **Profil ruchów i dzień projektowy z zadań EWM (spec projektowania magazynu, krok…** (1 connections) — `web/twin/design_day.py`
+- **daily: {data: {rodzaj: n, "orders": n}}; hourly: {(data, godzina): {rodzaj:…** (1 connections) — `web/twin/design_day.py`
+- **Dni z ruchem ≥ WORKDAY_SHARE mediany dni z jakimkolwiek ruchem (rosnąco).** (1 connections) — `web/twin/design_day.py`
+- **ABC wg liczby pobrań (linie kompletacji + wydania), XYZ wg zmienności dziennej.** (1 connections) — `web/twin/design_day.py`
+- **Pobrania (linie kompletacji + wydania) w dni robocze per grupa asortymentowa H1.** (1 connections) — `web/twin/design_day.py`
+- **Prognoza wzrostu wolumenów z historii zadań EWM (plan 2026-10-02, etap 5) —…** (1 connections) — `web/twin/design_forecast.py`
 
 ## Relationships
 
-- [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (4 shared connections)
-- [layout.py](layout.py.md) (3 shared connections)
-- [ewm_levels.py](ewm_levels.py.md) (2 shared connections)
-- [design_kpi.py](design_kpi.py.md) (1 shared connections)
-- [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [Scenario](Scenario.md) (1 shared connections)
-- [shared.py](shared.py.md) (1 shared connections)
-- [test_voice.py](test_voice.py.md) (1 shared connections)
+- [shared.py](shared.py.md) (11 shared connections)
+- [design_day.py](design_day.py.md) (11 shared connections)
+- [ml/services.py](ml-services.py.md) (7 shared connections)
+- [WarehouseTask](WarehouseTask.md) (4 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (2 shared connections)
+- [Scenario](Scenario.md) (2 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
+- [analyze](analyze.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/blender_stock.py`
-- `web/twin/locations.py`
+- `web/twin/design_day.py`
+- `web/twin/design_forecast.py`
+- `web/twin/tests/test_design_day.py`
 
 ## Audit Trail
 
-- EXTRACTED: 36 (100%)
+- EXTRACTED: 91 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
