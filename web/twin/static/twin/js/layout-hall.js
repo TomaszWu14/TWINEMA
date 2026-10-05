@@ -106,7 +106,8 @@ const ensureCols = () => {
 export function renderHall() {
   const box = $('le-hall');
   const sig = JSON.stringify([S.floor.clear_height, S.columns, S.underlay, S.selCol, S.calib, S.colList.length]);
-  if (sig === last || box.contains(document.activeElement)) return;
+  const typing = box.contains(document.activeElement) && document.activeElement.matches('input, select, textarea');
+  if (sig === last || typing) return;               // nie przebudowuj pod kursorem; kliknięty przycisk — tak
   last = sig;
   const c = S.columns || {}, u = S.underlay;
   const cols = h('div', { class: 'le-form' },

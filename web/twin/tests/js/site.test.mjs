@@ -55,3 +55,36 @@ test('vehiclePose: dojazd od wjazdu działki do pasa przed dokiem i powrót', ()
   const back = vehiclePose({ phase: 'leave', p: 1 }, d, 'truck', {}, 0, entry);
   assert.deepEqual([back.x, back.y], entry);
 });
+
+// ── D2: granica-wielokąt (lustro testów twin/tests/test_site.py PolygonPlotTests) ──
+import { edgeSetbacks, entryOnBoundary, insertIndex, insetPolygon, plotPolygon, polygonArea }
+  from '../../static/twin/js/site-geom.js';
+
+const L = [[0, 0], [120, 0], [120, 60], [200, 60], [200, 160], [0, 160]];
+const POLY = { ...SITE, width: 200, depth: 160, boundary: L };
+
+test('wielokąt: pole, odstęp od drogi tylko na krawędzi zwróconej ku dojazdowi', () => {
+  assert.equal(Math.abs(polygonArea(plotPolygon(POLY))), 200 * 160 - 80 * 60);
+  assert.deepEqual(edgeSetbacks(POLY), [6, 6, 6, 6, 12, 6]);
+  assert.equal(plotPolygon(SITE).length, 4);                           // bez boundary — prostokąt
+});
+
+test('linia zabudowy wielokąta: krawędzie przesunięte do środka o swój odstęp', () => {
+  const b = insetPolygon(L, edgeSetbacks(POLY));
+  assert.deepEqual(b.map(([x, y]) => [Math.round(x), Math.round(y)]),
+    [[6, 6], [114, 6], [114, 66], [194, 66], [194, 148], [6, 148]]);
+  assert.equal(insetPolygon([[0, 0], [10, 0], [10, 10], [0, 10]], [8, 8, 8, 8]), null);   // odstępy zjadają działkę
+});
+
+test('wjazd od północy na x = 160 trafia w krawędź wcięcia (y = 60), kierunek w głąb', () => {
+  const { at, dir } = entryOnBoundary(POLY, { side: 'N', pos: 160 });
+  assert.deepEqual(at, [160, 60]);
+  close(dir[0], 0); close(dir[1], 1);
+  assert.deepEqual(entryOnBoundary(SITE, { side: 'S', pos: 20 }).at, [20, 150]);   // prostokąt jak D1
+});
+
+test('wstawianie wierzchołka kliknięciem: za początkiem najbliższej krawędzi', () => {
+  assert.equal(insertIndex(L, [60, 1]), 1);                             // krawędź (0,0)→(120,0)
+  assert.equal(insertIndex(L, [199, 100]), 4);                          // krawędź (200,60)→(200,160)
+  assert.equal(insertIndex(L, [1, 80]), 6);                             // krawędź zamykająca (0,160)→(0,0)
+});
