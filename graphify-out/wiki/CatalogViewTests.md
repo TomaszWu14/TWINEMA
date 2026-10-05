@@ -1,4 +1,4 @@
-# equipment/models.py
+# CatalogViewTests
 
 > 42 nodes · cohesion 0.07
 
@@ -33,7 +33,7 @@
 
 ## Relationships
 
-- [places.py](places.py.md) (6 shared connections)
+- [test_sim.py](test_sim.py.md) (6 shared connections)
 - [scene-data.js](scene-data.js.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [scenario/services.py](scenario-services.py.md) (1 shared connections)

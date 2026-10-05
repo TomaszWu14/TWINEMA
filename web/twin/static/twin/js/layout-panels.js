@@ -16,8 +16,6 @@ const FEATURE_SIZE = { dock: [3.5, 2], gate: [4, 0.5], staging: [10, 6], station
   walkway: [30, 1.2], truckway: [30, 3.5], zone_temp: [15, 10], zone_adr: [10, 8], zone_oversize: [15, 8],
   zone_value: [8, 6] };
 
-// Sprzęt z katalogu (K1) obsługuje kategorię regału: reach/czołowy → reach, VNA → vna.
-const RACK_CATEGORY = { reach: 'reach', counterbalance: 'reach', vna: 'vna' };
 const eqValue = (r) => (r.equipment_id ? `eq:${r.equipment_id}` : `cat:${r.equipment}`);
 
 /** Lista wyboru sprzętu regału(ów): kategoria ogólna albo klasa/model z katalogu (alejka, wysokość, udźwig
@@ -29,7 +27,7 @@ function equipmentSelect(racks) {
     if (kind === 'cat') { r.equipment = key; r.equipment_id = null; return; }
     const eq = (CFG.catalog || []).find((e) => String(e.id) === key);
     r.equipment_id = eq.id;
-    r.equipment = RACK_CATEGORY[eq.kind] || r.equipment;
+    r.equipment = eq.category;   // kategoria regału z typu sprzętu (equipment.catalog.RACK_CATEGORY)
   }));
   const opt = (value, label) => h('option', { value, selected: value === same }, label);
   return h('label', { class: 'le-wide' }, racks.length > 1 ? `Sprzęt (${racks.length} regałów)` : 'Sprzęt obsługi',

@@ -34,16 +34,16 @@
 ## Relationships
 
 - [twin/models.py](twin-models.py.md) (12 shared connections)
-- [places.py](places.py.md) (11 shared connections)
+- [test_sim.py](test_sim.py.md) (11 shared connections)
 - [kpi_facts](kpi_facts.md) (3 shared connections)
 - [analyze](analyze.md) (3 shared connections)
-- [_comparison](_comparison.md) (3 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
 - [ewm_service.py](ewm_service.py.md) (3 shared connections)
 - [layout-panels.js](layout-panels.js.md) (3 shared connections)
 - [blender_scene.py](blender_scene.py.md) (2 shared connections)
 - [ParseTests](ParseTests.md) (2 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [build_scene](build_scene.md) (1 shared connections)
+- [render/views.py](render-views.py.md) (1 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)
 
 ## Source Files

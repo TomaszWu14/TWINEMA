@@ -4,7 +4,7 @@
 
 ## Key Concepts
 
-- **roles.py** (42 connections) — `web/core/roles.py`
+- **roles.py** (43 connections) — `web/core/roles.py`
 - **test_ml.py** (11 connections) — `web/ml/tests/test_ml.py`
 - **has_role()** (10 connections) — `web/core/roles.py`
 - **test_render.py** (8 connections) — `web/render/tests/test_render.py`
@@ -29,17 +29,17 @@
 
 ## Relationships
 
-- [places.py](places.py.md) (6 shared connections)
+- [test_sim.py](test_sim.py.md) (6 shared connections)
 - [twin/models.py](twin-models.py.md) (6 shared connections)
 - [ml/services.py](ml-services.py.md) (4 shared connections)
-- [equipment/models.py](equipment-models.py.md) (3 shared connections)
+- [CatalogViewTests](CatalogViewTests.md) (3 shared connections)
 - [pre-push](pre-push.md) (2 shared connections)
 - [WorkerApiTests](WorkerApiTests.md) (2 shared connections)
 - [test_foundation.py](test_foundation.py.md) (1 shared connections)
 - [showcase.py](showcase.py.md) (1 shared connections)
-- [ewm_levels.py](ewm_levels.py.md) (1 shared connections)
+- [test_fleet_catalog.py](test_fleet_catalog.py.md) (1 shared connections)
 - [forecast.py](forecast.py.md) (1 shared connections)
-- [test_deck.py](test_deck.py.md) (1 shared connections)
+- [build_deck](build_deck.md) (1 shared connections)
 - [draft_script](draft_script.md) (1 shared connections)
 
 ## Source Files
@@ -53,7 +53,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 103 (100%)
+- EXTRACTED: 104 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

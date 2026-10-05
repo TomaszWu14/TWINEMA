@@ -1,4 +1,4 @@
-# load_inputs
+# LoadAndViewTests
 
 > 8 nodes · cohesion 0.25
 
@@ -16,7 +16,7 @@
 ## Relationships
 
 - [design_day.py](design_day.py.md) (1 shared connections)
-- [places.py](places.py.md) (1 shared connections)
+- [test_sim.py](test_sim.py.md) (1 shared connections)
 
 ## Source Files
 

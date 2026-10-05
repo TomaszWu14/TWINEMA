@@ -26,7 +26,8 @@
 <div class="eq-grid">
   <div class="card"><div class="card-body">
     <h2 class="eq-sec">Parametry</h2>
-    <dl class="eq-dl">{% for label, v in rows %}<dt>{{ label }}</dt><dd>{{ v|default_if_none:"—" }}</dd>{% endfor %}</dl>
+    <dl class="eq-dl">{% if eq.manufacturer %}<dt>Producent</dt><dd>{{ eq.manufacturer }}</dd>{% endif %}
+      <dt>Osprzęt</dt><dd>{{ eq.attachment_labels|join:", "|default:"widły standardowe" }}</dd>{% for label, v in rows %}<dt>{{ label }}</dt><dd>{{ v|default_if_none:"—" }}</dd>{% endfor %}</dl>
     {% if eq.notes %}<p class="text-sm" style="margin:12px 0 0">{{ eq.notes }}</p>{% endif %}
     {% if is_designer %}
     <div class="eq-actions">

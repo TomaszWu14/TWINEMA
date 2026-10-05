@@ -800,8 +800,8 @@
     "semantic_hash": ""
   },
   "docs/HANDOFF.md": {
-    "mtime": 1791224056.3866136,
-    "ast_hash": "d600ac43fe5e39693f079faa6673d877",
+    "mtime": 1791224781.6285875,
+    "ast_hash": "d1fdaa33c68c1dfe3b955ba42a08985a",
     "semantic_hash": ""
   },
   "docs/PLAN.md": {
@@ -1190,8 +1190,8 @@
     "semantic_hash": ""
   },
   "web/twin/views/warehouse_layout.py": {
-    "mtime": 1791222418.4281416,
-    "ast_hash": "692bd9ac01f915b3a35aca921feedfda",
+    "mtime": 1791224843.7725549,
+    "ast_hash": "9379c36dfd9c691839bf836f3e1c628a",
     "semantic_hash": ""
   },
   "web/scenario/__init__.py": {
@@ -1265,8 +1265,8 @@
     "semantic_hash": ""
   },
   "docs/ZALOZENIA.md": {
-    "mtime": 1791222223.793395,
-    "ast_hash": "2e9bdb79fd7526472ca41e7ccb47a23f",
+    "mtime": 1791224781.6285875,
+    "ast_hash": "4134306d805d1e639309c66c297d1c4a",
     "semantic_hash": ""
   },
   "web/scenario/templates/scenario/detail.html": {
@@ -1290,8 +1290,8 @@
     "semantic_hash": ""
   },
   "web/twin/static/twin/js/layout-panels.js": {
-    "mtime": 1791222309.2362144,
-    "ast_hash": "ac96c2c10230f5b5eebc67202142866b",
+    "mtime": 1791224838.963473,
+    "ast_hash": "627aafd4c62dea9086d65e6258748f50",
     "semantic_hash": ""
   },
   "web/twin/tests/js/layout_core.test.mjs": {
@@ -1580,8 +1580,8 @@
     "semantic_hash": ""
   },
   "web/equipment/catalog.py": {
-    "mtime": 1791222223.820767,
-    "ast_hash": "68ec039227472e0a02a9bd940cbd4ae4",
+    "mtime": 1791224824.499364,
+    "ast_hash": "87dd59a3fbc6bf25767d6ec6167cd7de",
     "semantic_hash": ""
   },
   "web/equipment/migrations/0001_initial.py": {
@@ -1600,13 +1600,13 @@
     "semantic_hash": ""
   },
   "web/equipment/models.py": {
-    "mtime": 1791222223.9224727,
-    "ast_hash": "f594387463b68bb734259dea61beef31",
+    "mtime": 1791224781.6932478,
+    "ast_hash": "409c8f2d64941c7549131a4b38183222",
     "semantic_hash": ""
   },
   "web/equipment/services.py": {
-    "mtime": 1791222223.9259405,
-    "ast_hash": "6595d7d06f846aaa20372bdbc0242baa",
+    "mtime": 1791224824.499364,
+    "ast_hash": "9d8829bf99d548dc09270235828587b3",
     "semantic_hash": ""
   },
   "web/equipment/tests/__init__.py": {
@@ -1615,18 +1615,18 @@
     "semantic_hash": ""
   },
   "web/equipment/tests/test_equipment.py": {
-    "mtime": 1791222223.9467063,
-    "ast_hash": "b25c36943d2bef42b50a1460693243ab",
+    "mtime": 1791224781.695248,
+    "ast_hash": "5b4aea9d2239f5d2f323452e2da46816",
     "semantic_hash": ""
   },
   "web/equipment/urls.py": {
-    "mtime": 1791222223.9506545,
-    "ast_hash": "9780c1f682f9623a864aabbd272109ee",
+    "mtime": 1791224781.6962507,
+    "ast_hash": "c460df772f36435dab763e17e3886c79",
     "semantic_hash": ""
   },
   "web/equipment/views.py": {
-    "mtime": 1791222223.9540522,
-    "ast_hash": "d091170a6c3f9046d7346f86af830c4f",
+    "mtime": 1791224781.6962507,
+    "ast_hash": "a8555fd398f88a31546bdba1eeb69fa3",
     "semantic_hash": ""
   },
   "web/scenario/migrations/0004_flota_z_katalogu.py": {
@@ -1645,13 +1645,13 @@
     "semantic_hash": ""
   },
   "web/twin/tests/test_layout_equipment.py": {
-    "mtime": 1791222223.7910745,
-    "ast_hash": "cf5ad97a8c05e03edb5d956e8126f32f",
+    "mtime": 1791224861.1302698,
+    "ast_hash": "d6b6e6c0a9f86eb95ea2813a3cb5bf75",
     "semantic_hash": ""
   },
   "web/equipment/templates/equipment/detail.html": {
-    "mtime": 1791222223.9294367,
-    "ast_hash": "909b3e803cd7f84503a6281e97c18478",
+    "mtime": 1791224781.6932478,
+    "ast_hash": "6530fdf2b3dbd60f592caf15c94a5581",
     "semantic_hash": ""
   },
   "web/equipment/templates/equipment/form.html": {
@@ -1660,8 +1660,8 @@
     "semantic_hash": ""
   },
   "web/equipment/templates/equipment/list.html": {
-    "mtime": 1791222223.9393582,
-    "ast_hash": "1f9d98d35bf7266f9b7404a25284f433",
+    "mtime": 1791224781.6942468,
+    "ast_hash": "d9dac0a7eaea48863fddde2b7a430e29",
     "semantic_hash": ""
   },
   "web/equipment/migrations/0003_koszty.py": {
@@ -1747,6 +1747,26 @@
   "web/core/tests/test_role_matrix.py": {
     "mtime": 1791224056.491712,
     "ast_hash": "43cabb5a4e8325b616ac789052e0aeca",
+    "semantic_hash": ""
+  },
+  "web/equipment/importers.py": {
+    "mtime": 1791224781.6912491,
+    "ast_hash": "320985cc4842eb49b3b43f04e07481fe",
+    "semantic_hash": ""
+  },
+  "web/equipment/migrations/0005_osprzet_producent.py": {
+    "mtime": 1791224781.6912491,
+    "ast_hash": "0150ab7a4e4b6e4ee4b2eece8ba54c5d",
+    "semantic_hash": ""
+  },
+  "web/equipment/migrations/0006_klasy_rynkowe.py": {
+    "mtime": 1791224781.6922483,
+    "ast_hash": "7c40f6d9804e1fba7a2064ab150b8de7",
+    "semantic_hash": ""
+  },
+  "web/equipment/tests/test_import.py": {
+    "mtime": 1791224781.695248,
+    "ast_hash": "743861687bc6b4f3458aeea17bf601c6",
     "semantic_hash": ""
   },
   "web/scenario/tests/test_r2.py": {

@@ -1,4 +1,4 @@
-# layout-hall.js
+# layout-site.js
 
 > 13 nodes · cohesion 0.29
 
@@ -25,9 +25,9 @@
 - [blender_scene.py](blender_scene.py.md) (2 shared connections)
 - [ScenarioViewTests](ScenarioViewTests.md) (2 shared connections)
 - [scenario/services.py](scenario-services.py.md) (1 shared connections)
-- [places.py](places.py.md) (1 shared connections)
+- [test_sim.py](test_sim.py.md) (1 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [test_design_calibration.py](test_design_calibration.py.md) (1 shared connections)
+- [resolve_moves](resolve_moves.md) (1 shared connections)
 
 ## Source Files
 

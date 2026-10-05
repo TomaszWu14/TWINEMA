@@ -28,8 +28,8 @@
 ## Relationships
 
 - [layout-panels.js](layout-panels.js.md) (10 shared connections)
-- [_comparison](_comparison.md) (3 shared connections)
-- [scenario/views.py](scenario-views.py.md) (1 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
+- [designer](designer.md) (1 shared connections)
 
 ## Source Files
 

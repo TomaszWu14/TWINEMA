@@ -8,6 +8,7 @@ from django.http import FileResponse, Http404
 from django.urls import reverse
 from django.utils import timezone
 
+from equipment.catalog import RACK_CATEGORY
 from equipment.models import Equipment
 from twin.design_catalog import BACK_GAP_M, ELEMENTS, SHELF_AISLE_M
 from twin.layout import (
@@ -63,8 +64,8 @@ def _parse(request):
 
 
 def equipment_catalog():
-    """{id: parametry} sprzętu obsługującego regały (reach/VNA) — do walidacji layoutu (K1)."""
-    return {e.pk: e.params() for e in Equipment.objects.filter(kind__in=("reach", "counterbalance", "vna"))}
+    """{id: parametry} sprzętu obsługującego regały (`RACK_CATEGORY`) — do walidacji layoutu (K1)."""
+    return {e.pk: e.params() for e in Equipment.objects.filter(kind__in=RACK_CATEGORY)}
 
 
 def _analyze(layout):
@@ -95,8 +96,8 @@ def warehouse_layout_editor(request, pk):
         "aisles": {"reach": ELEMENTS["rack_std"]["aisle_m"], "vna": ELEMENTS["rack_vna"]["aisle_m"],
                    "shelf": SHELF_AISLE_M},
         "areaKinds": AREA_KINDS,
-        "catalog": [{"id": e["id"], "name": e["name"], "kind": e["kind"], "aisle_m": e["aisle_m"],
-                     "max_lift_m": e["max_lift_m"]} for e in equipment_catalog().values()],
+        "catalog": [{"id": e["id"], "name": e["name"], "category": RACK_CATEGORY[e["kind"]],
+                     "aisle_m": e["aisle_m"], "max_lift_m": e["max_lift_m"]} for e in equipment_catalog().values()],
         "defaultSite": default_site({"width": wm.floor_width_m, "depth": wm.floor_depth_m,
                                      "clear_height": wm.clear_height_m}),
     }

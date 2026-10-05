@@ -1,32 +1,35 @@
 # blender_route.py
 
-> 11 nodes · cohesion 0.18
+> 8 nodes · cohesion 0.20
 
 ## Key Concepts
 
-- **EwmViewsTests** (12 connections) — `web/twin/tests/test_ewm_views.py`
-- **.setUp()** (2 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_compliance_xlsx()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_compliance_xlsx_escapes_formula_injection()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_detect_preview_lists_templates_and_rows_without_saving()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_model_view_detect_button_disabled_without_master()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_model_view_links()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_no_active_master_disables_detect()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_save_then_compliance_shows_ok_and_no_row()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **.test_viewer_cannot_save()** (1 connections) — `web/twin/tests/test_ewm_views.py`
-- **TestCase** (1 connections)
+- **LocationOverride** (10 connections) — `web/twin/models.py`
+- **Meta** (9 connections) — `web/twin/models.py`
+- **WarehouseDesignVariant** (7 connections) — `web/twin/models.py`
+- **WarehouseRackType** (6 connections) — `web/twin/models.py`
+- **.__str__()** (1 connections) — `web/twin/models.py`
+- **Named location type template — dimensions apply to all locations with matching…** (1 connections) — `web/twin/models.py`
+- **.__str__()** (1 connections) — `web/twin/models.py`
+- **.__str__()** (1 connections) — `web/twin/models.py`
 
 ## Relationships
 
-- [test_ewm_service.py](test_ewm_service.py.md) (2 shared connections)
+- [twin/models.py](twin-models.py.md) (7 shared connections)
+- [test_ewm_service.py](test_ewm_service.py.md) (4 shared connections)
+- [test_sim.py](test_sim.py.md) (3 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
+- [BayTemplate](BayTemplate.md) (2 shared connections)
+- [site.py](site.py.md) (1 shared connections)
+- [SiteApiTests](SiteApiTests.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/tests/test_ewm_views.py`
+- `web/twin/models.py`
 
 ## Audit Trail
 
-- EXTRACTED: 23 (100%)
+- EXTRACTED: 36 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

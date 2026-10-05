@@ -13,7 +13,7 @@
 
 - [day-timeline.js](day-timeline.js.md) (2 shared connections)
 - [showcase.py](showcase.py.md) (2 shared connections)
-- [places.py](places.py.md) (2 shared connections)
+- [test_sim.py](test_sim.py.md) (2 shared connections)
 - [test_voice.py](test_voice.py.md) (1 shared connections)
 
 ## Source Files

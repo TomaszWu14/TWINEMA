@@ -22,10 +22,10 @@
 
 ## Relationships
 
-- [_comparison](_comparison.md) (10 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (10 shared connections)
 - [day_demand](day_demand.md) (3 shared connections)
-- [places.py](places.py.md) (2 shared connections)
-- [SimViewTests](SimViewTests.md) (1 shared connections)
+- [test_sim.py](test_sim.py.md) (2 shared connections)
+- [simulate](simulate.md) (1 shared connections)
 
 ## Source Files
 
