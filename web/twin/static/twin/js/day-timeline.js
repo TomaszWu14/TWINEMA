@@ -2,6 +2,7 @@
 // (twin/tests/js/day_timeline.test.mjs). Wejście: zdarzenia `twinema.scenario-events` v1
 // [t_s, obj, kind, what, place, n?] posortowane po czasie (opis: scenario/sim/__init__.py).
 import { localToWorld } from './scene-data.js';
+import { alongPath } from './site-route.js';
 
 export const VEHICLES = new Set(['container', 'truck', 'courier']);
 export const TRAVEL_S = 90;          // dojazd brama → dok / odjazd dok → brama
@@ -206,8 +207,12 @@ export function queuePose(sides, d, i) {
 /** Pojazd z `vehicleAt` → {x, y, yaw}: kolejka = miejsce `slot` w rzędzie, dojazd/odjazd = pas przed dokiem,
  *  enter/leave = prosto między wjazdem działki `entry` ([x, y] w układzie hali) a początkiem pasa doku. */
 export function vehiclePose(v, d, kind, sides, slot = 0, entry = null) {
+  if ((v.phase === 'enter' || v.phase === 'leave') && Array.isArray(entry?.[0])) {
+    // D3: trasa po drogach działki (site-route.routePath: wjazd → pas przed dokiem); wyjazd = ta sama wstecz
+    return alongPath(v.phase === 'enter' ? entry : [...entry].reverse(), v.p);
+  }
   if ((v.phase === 'enter' || v.phase === 'leave') && entry) {
-    // ponytail: odcinek prosty (może ściąć róg zieleni) — trasa po drogach działki, gdy będzie graf dróg
+    // bez trasy (brak przejazdu po terenie albo działka bez dróg) — odcinek prosty jak w D1
     const lane = dockPose(d, QUEUE_M), [a, b] = v.phase === 'enter' ? [entry, [lane.x, lane.y]] : [[lane.x, lane.y], entry];
     const p = Math.max(0, Math.min(1, v.p));
     return { x: a[0] + (b[0] - a[0]) * p, y: a[1] + (b[1] - a[1]) * p, yaw: Math.atan2(-(b[1] - a[1]), b[0] - a[0]) };
