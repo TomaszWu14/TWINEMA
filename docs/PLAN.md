@@ -8,7 +8,7 @@
 > projekt z zewnątrz (rekruterzy). Scenariusz referencyjny: **budowa nowego centrum
 > dystrybucyjnego** — dane demonstracyjne, bez nazw firm i danych klientów.
 
-Status: F0 (fundament) — 2026-10-05.
+Status: F0 ✅, F1 ✅ (przeszczep rdzenia) — 2026-10-05. Następna: F2 (Dane).
 
 ---
 
@@ -56,8 +56,8 @@ web/
   twinema/     projekt Django: config (pydantic, fail-fast), settings, urls
   core/        role (zamrożony kontrakt), middleware, health, logowanie, hub
   masterdata/  F2: Material, UnitConversion, RackType, LoadCarrier, Location, StockSnapshot, TaskHistory
-  twin/        F1: WarehouseModel, Rack, HallFeature, BayTemplate, DesignVariant, strefy
-  sim/         F1: dzień projektowy, symulacja, kalibracja, KPI, porównanie — czysty Python
+  twin/        F1: model hali, regały, elementy, szablony gniazd, warianty, import zadań, dzień projektowy,
+               symulacja, kalibracja, prognoza, porównanie, eksport sceny — logika w czystym Pythonie
   ml/          F4: forecast, sku_segmentation, cycle_time + ModelRun (wersja, metryka)
   render/      F3: scene.py, RenderJob, API dla workera
   studio/      F5: Presentation, Shot, Script, VoiceTrack; pipeline TTS → render → ffmpeg

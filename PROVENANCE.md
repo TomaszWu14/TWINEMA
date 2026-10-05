@@ -5,5 +5,4 @@ Kod skopiowany z innych repozytoriów autora. Każdy wpis: źródło, commit, ś
 | Data | Źródło | Commit | Ścieżki | Uwagi |
 |---|---|---|---|---|
 | 2026-10-05 | PalViz | `284bcab4` | wzorce fundamentu: `config.py`, `roles.py`, `middleware.py`, `health_urls.py`, workflowy, Dockerfile | odchudzone, przepisane |
-
-F1 dopisze tu moduły modelowania hali, symulacji i eksportu do Blendera.
+| 2026-10-05 | PalViz | `284bcab4` | `web/wh3d/` (modele, generator, symulacja, kalibracja, prognoza, warianty, eksport sceny, import zadań, widoki i szablony), `tools/blender/`, `tools/ewm_demo_tasks.py`, tokeny i komponenty CSS, sprite ikon | moduł `twin`; bez mapy operacyjnej, heatmapy, migawek i stanów HU; nazwy firm/lokalizacji usunięte, próbka mastera i hala demo syntetyczne |

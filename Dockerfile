@@ -11,6 +11,14 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=requirements.txt,target=/tmp/requirements.txt \
     uv pip install -r /tmp/requirements.txt
 
+# Biblioteki JS (three.js, ECharts) — osobny etap zależny tylko od skryptu: CDN nie jest
+# odpytywany przy każdej zmianie kodu.
+FROM ${PYTHON_IMAGE} AS vendor
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates     && rm -rf /var/lib/apt/lists/*
+WORKDIR /vendor/web
+COPY web/scripts/fetch_vendor.sh scripts/fetch_vendor.sh
+RUN sh scripts/fetch_vendor.sh
+
 FROM ${PYTHON_IMAGE} AS runtime
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PATH="/opt/venv/bin:$PATH"
 WORKDIR /app
@@ -20,6 +28,7 @@ RUN useradd --system --uid 10001 --create-home --shell /usr/sbin/nologin app
 COPY --from=builder /opt/venv /opt/venv
 COPY --chmod=755 docker-entrypoint.sh ./
 COPY web/ ./web/
+COPY --from=vendor /vendor/web/twin/static/twin/vendor/ ./web/twin/static/twin/vendor/
 WORKDIR /app/web
 RUN DJANGO_SECRET_KEY=build-only DJANGO_DEBUG=false DJANGO_ALLOWED_HOSTS=* \
     python manage.py collectstatic --noinput

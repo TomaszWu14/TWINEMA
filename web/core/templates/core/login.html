@@ -2,15 +2,15 @@
 {% block title %}Logowanie · {{ app_name }}{% endblock %}
 {% block body %}
 <main class="login">
-  <form class="card" method="post">{% csrf_token %}
+  <form class="login-card" method="post">{% csrf_token %}
     <span class="brand">TWIN<b>EMA</b></span>
-    {% if form.errors %}<p class="error" role="alert">Nieprawidłowy login lub hasło.</p>{% endif %}
+    {% if form.errors %}<p class="login-error" role="alert">Nieprawidłowy login lub hasło.</p>{% endif %}
     <label for="id_username">Login</label>
-    <input type="text" name="username" id="id_username" autocomplete="username" autofocus required>
+    <input class="form-control" type="text" name="username" id="id_username" autocomplete="username" autofocus required>
     <label for="id_password">Hasło</label>
-    <input type="password" name="password" id="id_password" autocomplete="current-password" required>
+    <input class="form-control" type="password" name="password" id="id_password" autocomplete="current-password" required>
     <input type="hidden" name="next" value="{{ next }}">
-    <button class="btn" type="submit">Zaloguj</button>
+    <button class="btn btn-primary" type="submit">Zaloguj</button>
   </form>
 </main>
 {% endblock %}

@@ -6,7 +6,7 @@ TWINEMA łączy projektowanie centrum dystrybucyjnego w 3D z symulacją pracy i 
 prezentacji: układ hali i regałów → symulacja dnia projektowego → animacja przepływów
 w Blenderze → film z lektorem (ElevenLabs) i deck PDF.
 
-> Status: **F0 — fundament**. Mapa drogi i decyzje: [`docs/PLAN.md`](docs/PLAN.md).
+> Status: **F1 — rdzeń modelowania i symulacji działa** (generator hali, widok 3D, import zadań, dzień projektowy, kalibracja, prognoza, symulacja, porównanie, eksport do Blendera). Mapa drogi i decyzje: [`docs/PLAN.md`](docs/PLAN.md).
 
 ## Moduły (plan)
 
@@ -29,7 +29,11 @@ export DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*'
 python manage.py migrate && python manage.py create_roles
 python manage.py createsuperuser
 python manage.py runserver 8090
+sh scripts/fetch_vendor.sh                           # raz: three.js + ECharts do static (bez CDN)
+python ../tools/ewm_demo_tasks.py demo.xlsx --scale 0.05   # syntetyczne zadania do importu
 ```
+
+Blender: eksport sceny z widoku modelu → `blender -b -P tools/blender/twinema_warehouse_anim.py -- scena.json`.
 
 Testy: `python manage.py test` (z katalogu `web/`, z tym samym env).
 

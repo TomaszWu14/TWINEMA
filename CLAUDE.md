@@ -13,7 +13,7 @@ ElevenLabs). Plan i decyzje: `docs/PLAN.md`. Pochodzenie kodu: `PROVENANCE.md`.
   `core/tests/test_foundation.py`.
 - Logika obliczeniowa (symulacja, ML, geometria) = **czysty Python bez Django**, testowalny bez bazy.
 - Wszystko synchroniczne (WSGI). Długie prace (TTS, montaż) → kolejka (F3), rendery → zewnętrzny worker.
-- Front: bez CDN w runtime — biblioteki JS vendorowane.
+- Front: bez CDN w runtime — biblioteki JS pobiera `sh web/scripts/fetch_vendor.sh` (sumy SHA-256) do `twin/static/twin/vendor/`.
 
 ## Testy (przed każdym PR)
 ```bash
