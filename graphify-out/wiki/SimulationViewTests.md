@@ -1,43 +1,43 @@
 # SimulationViewTests
 
-> 13 nodes · cohesion 0.19
+> 15 nodes · cohesion 0.23
 
 ## Key Concepts
 
-- **_save()** (10 connections) — `web/twin/views/warehouse_generator.py`
-- **warehouse_generator.py** (8 connections) — `web/twin/views/warehouse_generator.py`
-- **CompareViewTests** (7 connections) — `web/twin/tests/test_design_compare.py`
-- **warehouse_model_generator()** (6 connections) — `web/twin/views/warehouse_generator.py`
-- **.setUpTestData()** (3 connections) — `web/twin/tests/test_design_compare.py`
-- **HallGeneratorForm** (3 connections) — `web/twin/views/warehouse_generator.py`
-- **_initial()** (2 connections) — `web/twin/views/warehouse_generator.py`
-- **.setUp()** (1 connections) — `web/twin/tests/test_design_compare.py`
-- **.test_links_from_profile()** (1 connections) — `web/twin/tests/test_design_compare.py`
-- **.test_two_variants_side_by_side()** (1 connections) — `web/twin/tests/test_design_compare.py`
-- **TestCase** (1 connections)
-- **.sections()** (1 connections) — `web/twin/views/warehouse_generator.py`
-- **_md_role** (1 connections)
+- **Scan** (23 connections) — `web/twin/ewm_tasks.py`
+- **ScanFileTests** (8 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
+- **.__iter__()** (4 connections) — `web/twin/ewm_tasks.py`
+- **._file()** (4 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
+- **.columns()** (3 connections) — `web/twin/ewm_tasks.py`
+- **.stats()** (3 connections) — `web/twin/ewm_tasks.py`
+- **.test_cp1250_semicolon_csv_with_title_line()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
+- **.test_missing_columns_yield_nothing()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
+- **.test_xls_rejected_with_hint()** (3 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
+- **._count()** (2 connections) — `web/twin/ewm_tasks.py`
+- **.unmapped_headers()** (2 connections) — `web/twin/ewm_tasks.py`
+- **.test_xlsx_with_excel_date_and_time_cells()** (2 connections) — `web/twin/tests/test_ewm_tasks_parser.py`
+- **Przebieg po pliku: nagłówek → mapowanie kolumn → wiersze sparsowane albo błędy,…** (1 connections) — `web/twin/ewm_tasks.py`
+- **Poprawne, nieanulowane zadania (dicty pól modelu).** (1 connections) — `web/twin/ewm_tasks.py`
+- **[(etykieta pola, nagłówek z pliku)] w kolejności pól.** (1 connections) — `web/twin/ewm_tasks.py`
 
 ## Relationships
 
-- [generate](generate.md) (5 shared connections)
-- [test_design_compare.py](test_design_compare.py.md) (2 shared connections)
-- [warehouse_blender.py](warehouse_blender.py.md) (2 shared connections)
-- [twin/models.py](twin-models.py.md) (2 shared connections)
-- [ForecastTests](ForecastTests.md) (1 shared connections)
-- [simulate](simulate.md) (1 shared connections)
-- [StudioViewTests](StudioViewTests.md) (1 shared connections)
-- [segmentation.py](segmentation.py.md) (1 shared connections)
+- [warehouse_tasks.py](warehouse_tasks.py.md) (4 shared connections)
+- [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (3 shared connections)
+- [Scan](Scan.md) (2 shared connections)
+- [studio/views.py](studio-views.py.md) (2 shared connections)
+- [Pochodzenie kodu](Pochodzenie_kodu.md) (2 shared connections)
+- [studio/models.py](studio-models.py.md) (2 shared connections)
 
 ## Source Files
 
-- `web/twin/tests/test_design_compare.py`
-- `web/twin/views/warehouse_generator.py`
+- `web/twin/ewm_tasks.py`
+- `web/twin/tests/test_ewm_tasks_parser.py`
 
 ## Audit Trail
 
-- EXTRACTED: 42 (93%)
-- INFERRED: 3 (7%)
+- EXTRACTED: 57 (90%)
+- INFERRED: 6 (10%)
 - AMBIGUOUS: 0 (0%)
 
 ---

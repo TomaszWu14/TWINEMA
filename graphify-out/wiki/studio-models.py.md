@@ -18,7 +18,7 @@
 - [CLAUDE.md — TWINEMA](CLAUDE.md_%E2%80%94_TWINEMA.md) (4 shared connections)
 - [Scan](Scan.md) (3 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (2 shared connections)
-- [WarehouseTask](WarehouseTask.md) (2 shared connections)
+- [SimulationViewTests](SimulationViewTests.md) (2 shared connections)
 - [studio/views.py](studio-views.py.md) (2 shared connections)
 
 ## Source Files

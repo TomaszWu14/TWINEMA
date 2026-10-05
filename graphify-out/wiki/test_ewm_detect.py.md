@@ -1,4 +1,4 @@
-# GeneratorViewTests
+# test_ewm_detect.py
 
 > 8 nodes · cohesion 0.36
 

@@ -1,6 +1,6 @@
 # warehouse_variants.py
 
-> 16 nodes · cohesion 0.15
+> 15 nodes · cohesion 0.15
 
 ## Key Concepts
 
@@ -11,7 +11,6 @@
 - **warehouse_model_detect_save()** (6 connections) — `web/twin/views/warehouse_model_ewm.py`
 - **master_rows()** (4 connections) — `web/twin/ewm_service.py`
 - **plan_for_model()** (4 connections) — `web/twin/ewm_service.py`
-- **atomic** (1 connections)
 - **[(rząd, szablon, wyjątki), …] → (miejsca z kluczami zone/aisle, {kod: [„B0-07”,…** (1 connections) — `web/twin/addressing.py`
 - **Warstwa ORM nad czystymi modułami adresowania: master EWM, plan modelu, zapis…** (1 connections) — `web/twin/ewm_service.py`
 - **[(kod, typ EWM, wysokość mm, udźwig kg)] z mastera — tylko kody stref modelu.** (1 connections) — `web/twin/ewm_service.py`
@@ -25,15 +24,15 @@
 
 - [ewm_service.py](ewm_service.py.md) (8 shared connections)
 - [test_addressing.py](test_addressing.py.md) (3 shared connections)
-- [load_groups](load_groups.md) (3 shared connections)
-- [test_model_geometry.py](test_model_geometry.py.md) (3 shared connections)
+- [scenario/views.py](scenario-views.py.md) (3 shared connections)
+- [day_demand](day_demand.md) (3 shared connections)
 - [test_ewm_service.py](test_ewm_service.py.md) (3 shared connections)
-- [masterdata/services.py](masterdata-services.py.md) (2 shared connections)
+- [demo_dane.py](demo_dane.py.md) (2 shared connections)
 - [test_container_inbound.py](test_container_inbound.py.md) (2 shared connections)
 - [ewm_tasks.py](ewm_tasks.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [EwmViewsTests](EwmViewsTests.md) (2 shared connections)
-- [BayTemplate](BayTemplate.md) (1 shared connections)
+- [RackRuleAndOverrideTests](RackRuleAndOverrideTests.md) (1 shared connections)
 
 ## Source Files
 
@@ -43,7 +42,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 67 (100%)
+- EXTRACTED: 66 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

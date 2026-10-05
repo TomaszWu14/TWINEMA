@@ -16,7 +16,7 @@
 ## Relationships
 
 - [generate](generate.md) (2 shared connections)
-- [SimulationViewTests](SimulationViewTests.md) (1 shared connections)
+- [detect](detect.md) (1 shared connections)
 
 ## Source Files
 
