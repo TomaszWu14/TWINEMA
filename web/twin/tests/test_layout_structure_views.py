@@ -83,10 +83,6 @@ class StructureApiTests(TestCase):
         u = r.json()["underlay"]
         self.assertEqual((u["w_px"], u["h_px"], u["scale"]), (300, 150, 0.2))   # 60 m / 300 px
         self.assertEqual(self._get()["version"], version)                        # edytor nie dostanie 409
-        img = self.client.get(u["url"])
-        self.assertEqual((img.status_code, img["Content-Type"]), (200, "image/png"))
-        self.assertTrue(b"".join(img.streaming_content).startswith(b"\x89PNG"))
-        img.close()                                                      # Windows: zwolnij plik przed usunięciem
         data = self._get()
         data["underlay"] = {"scale": 0.25, "x": 1.5, "y": -2, "opacity": 0.3}
         self.assertEqual(self._post("save", data).status_code, 200)
@@ -96,6 +92,14 @@ class StructureApiTests(TestCase):
         r = self.client.post(reverse("twin:warehouse_layout_underlay_upload", args=[self.wm.pk]), {"delete": "1"})
         self.assertEqual(r.json(), {"underlay": None})
         self.assertIsNone(self._get()["underlay"])
+
+    def test_underlay_file_is_served(self):
+        # Osobny test bez usuwania pliku: otwarta odpowiedź strumieniowa trzyma plik (Windows), a jej
+        # `close()` wysyła request_finished, który na Postgresie zamyka połączenie testowej bazy.
+        url = self._upload(png()).json()["underlay"]["url"]
+        img = self.client.get(url)
+        self.assertEqual((img.status_code, img["Content-Type"]), (200, "image/png"))
+        self.assertTrue(b"".join(img.streaming_content).startswith(b"\x89PNG"))
 
     def test_underlay_rejects_non_images_and_too_big(self):
         self.assertEqual(self._upload(b"%PDF-1.7 rzut", "rzut.pdf").status_code, 400)
