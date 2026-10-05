@@ -24,9 +24,9 @@
 
 ## Relationships
 
-- [scenario/services.py](scenario-services.py.md) (8 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (8 shared connections)
 - [day_demand](day_demand.md) (3 shared connections)
-- [load_groups](load_groups.md) (2 shared connections)
+- [places.py](places.py.md) (2 shared connections)
 - [SimViewTests](SimViewTests.md) (1 shared connections)
 
 ## Source Files

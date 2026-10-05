@@ -34,7 +34,7 @@
 ## Relationships
 
 - [RenderMontageTests](RenderMontageTests.md) (15 shared connections)
-- [load_groups](load_groups.md) (9 shared connections)
+- [places.py](places.py.md) (9 shared connections)
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) (8 shared connections)
 - [detect](detect.md) (7 shared connections)
 - [kpi_facts](kpi_facts.md) (4 shared connections)

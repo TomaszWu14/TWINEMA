@@ -55,7 +55,7 @@ class HourField(forms.Field):
 class ScenarioForm(forms.ModelForm):
     class Meta:
         model = Scenario
-        fields = ["name", "description", "growth", "seed", "shift_h", "work_days", *Scenario.NORM_FIELDS,
+        fields = ["name", "description", "growth", "seed", "shift_h", "work_days", "peak_days_year", *Scenario.NORM_FIELDS,
                   "return_restock_pct", *Scenario.FLEET_FIELDS, "fleet_equipment"]
         widgets = {"description": forms.Textarea(attrs={"rows": 2})}
 
@@ -64,8 +64,13 @@ class ScenarioForm(forms.ModelForm):
         fe = self.fields["fleet_equipment"]
         fe.queryset = fe.queryset.exclude(kind__in=("conveyor", "sorter"))
         fe.empty_label = "— bez katalogu (norma min/ruch i bateria z pól powyżej) —"
+        self.fields["peak_days_year"].required = False      # stary formularz bez pola → wartość bez zmian
         for f in self.fields.values():
             _fc(f.widget)
+
+    def clean_peak_days_year(self):
+        v = self.cleaned_data.get("peak_days_year")
+        return self.instance.peak_days_year if v is None else v
 
 
 class NewScenarioForm(forms.ModelForm):

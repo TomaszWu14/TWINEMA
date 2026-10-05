@@ -11,7 +11,7 @@ from core.roles import GROUP_DESIGNER, GROUP_VIEWER
 from equipment.models import CostRate, Equipment
 from scenario import services
 from scenario.compare import compare_columns
-from scenario.costs import compute
+from scenario.costs import compute, mix_days
 from scenario.models import Scenario
 from twin.models import WarehouseModel
 
@@ -25,8 +25,8 @@ class ComputeTests(PlainTestCase):
         args = dict(rates=RATES, layout={"positions": {"reach": 10, "vna": 0, "shelf": 2}, "docks": 2, "stations": 1,
                                          "area_m2": 100},
                     fleet={"name": "Reach", "units": 3, "purchase": (1000, 1500), "hour": (2, 4)},
-                    labor_h_day=16, fleet_busy_h_day=10, work_days=5, volumes={"pallets": 100, "parcels": 0,
-                                                                               "orders": 10})
+                    labor_h_day=16, days=[{"kind": "typical", "days": 5 * 52, "fleet_busy_h": 10,
+                                           "volumes": {"pallets": 100, "parcels": 0, "orders": 10}}])
         return compute(**(args | over))
 
     def test_capex_by_hand(self):
@@ -53,6 +53,23 @@ class ComputeTests(PlainTestCase):
         fleet = next(i for i in r["capex"]["items"] if i["label"].startswith("Flota"))
         self.assertEqual((fleet["low"], fleet["high"]), (18, 18))
         self.assertEqual(r["opex"]["items"][1]["low"], 10 * 260 * 1)
+
+    def test_mix_days(self):
+        self.assertEqual(mix_days(5, 30), [("typical", 230), ("peak", 30)])
+        self.assertEqual(mix_days(5, 0), [("typical", 260)])
+        self.assertEqual(mix_days(5, 999), [("peak", 260)])                      # nie więcej niż dni pracy
+        self.assertEqual(mix_days(5, 30, have_peak=False), [("typical", 260)])   # brak symulacji szczytu
+        self.assertEqual(mix_days(5, 30, have_typical=False), [("peak", 260)])
+
+    def test_opex_mixes_typical_and_peak_days(self):
+        days = [{"kind": "typical", "days": 230, "fleet_busy_h": 10, "volumes": {"pallets": 100}},
+                {"kind": "peak", "days": 30, "fleet_busy_h": 20, "volumes": {"pallets": 200}}]
+        r = self._c(days=days)
+        fleet_h = 10 * 230 + 20 * 30
+        self.assertEqual(r["opex"]["items"][1]["qty"], fleet_h)
+        self.assertEqual(r["opex"]["low"], 16 * 260 * 40 + fleet_h * 2)
+        self.assertAlmostEqual(r["per_unit"]["pallets"]["low"], r["opex"]["low"] / (100 * 230 + 200 * 30), places=2)
+        self.assertEqual(r["mix"], [("typical", 230), ("peak", 30)])
 
 
 class CostViewsTests(TestCase):
@@ -108,6 +125,17 @@ class CostViewsTests(TestCase):
         rows = [r[0].value for r in wb["Koszty"].iter_rows(min_row=2)]
         self.assertIn("CAPEX razem", rows)
         self.assertTrue(any(str(v).startswith("OPEX na paletę") for v in rows))
+
+    def test_run_costs_mix_uses_both_day_runs(self):
+        typical = self._run()
+        alone = services.run_costs(typical)
+        self.assertEqual(alone["mix"], [("typical", 260)])                       # brak szczytu → cały rok typowy
+        page = self.client.get(reverse("scenario:detail", args=[self.sc.pk]))
+        self.assertContains(page, "Brak symulacji drugiego typu dnia")
+        self._run("peak")
+        mixed = services.run_costs(typical)
+        self.assertEqual(mixed["mix"], [("typical", 230), ("peak", 30)])
+        self.assertEqual(services.run_costs(self.sc.runs.get(day_kind="peak"))["mix"], mixed["mix"])
 
     def test_compare_has_cost_rows_and_cheapest(self):
         a, b = self._run(), self._run("peak")

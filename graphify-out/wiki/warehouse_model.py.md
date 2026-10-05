@@ -13,7 +13,7 @@
 
 - [day-timeline.js](day-timeline.js.md) (2 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (2 shared connections)
-- [load_groups](load_groups.md) (2 shared connections)
+- [places.py](places.py.md) (2 shared connections)
 - [test_voice.py](test_voice.py.md) (1 shared connections)
 
 ## Source Files

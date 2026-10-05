@@ -54,7 +54,7 @@
 <div class="page-header">
   <div>
     <div class="page-header__title">{{ sc.name }}</div>
-    <div class="page-header__sub">{% if sc.description %}{{ sc.description }} · {% endif %}mnożnik wzrostu ×{{ sc.growth|floatformat:"-2" }} · zmiana {{ sc.shift_h|floatformat:"-1" }} h · {{ sc.work_days }} dni/tydz. · ziarno {{ sc.seed }}</div>
+    <div class="page-header__sub">{% if sc.description %}{{ sc.description }} · {% endif %}mnożnik wzrostu ×{{ sc.growth|floatformat:"-2" }} · zmiana {{ sc.shift_h|floatformat:"-1" }} h · {{ sc.work_days }} dni/tydz. · {{ sc.peak_days_year }} dni szczytu/rok · ziarno {{ sc.seed }}</div>
   </div>
 </div>
 

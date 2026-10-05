@@ -24,7 +24,7 @@
 
 ## Relationships
 
-- [load_groups](load_groups.md) (9 shared connections)
+- [places.py](places.py.md) (9 shared connections)
 - [simulate](simulate.md) (7 shared connections)
 - [test_master_data.py](test_master_data.py.md) (3 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (2 shared connections)

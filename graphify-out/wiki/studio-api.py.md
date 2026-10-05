@@ -12,7 +12,7 @@
 
 ## Relationships
 
-- [load_groups](load_groups.md) (1 shared connections)
+- [places.py](places.py.md) (1 shared connections)
 - [studio/views.py](studio-views.py.md) (1 shared connections)
 
 ## Source Files

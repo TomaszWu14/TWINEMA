@@ -64,6 +64,9 @@ class Scenario(models.Model):
     seed = models.PositiveIntegerField(default=42, verbose_name="Ziarno losowania")
     shift_h = models.FloatField(default=8.0, verbose_name="Długość zmiany [h]")
     work_days = models.PositiveSmallIntegerField(default=5, verbose_name="Dni pracy w tygodniu")
+    peak_days_year = models.PositiveSmallIntegerField(
+        default=30, verbose_name="Dni szczytowe w roku",
+        help_text="Koszty roczne: tyle dni liczonych jak dzień szczytowy, reszta dni pracy jak typowy.")
     # normy wydajności (przyjęcia)
     container_cartons_per_h = models.FloatField(default=500, verbose_name="Rozładunek kontenera: kartonów/h na osobę")
     container_people = models.PositiveSmallIntegerField(default=2, verbose_name="Osób przy kontenerze")
@@ -114,6 +117,8 @@ class Scenario(models.Model):
             raise ValidationError("Normy wydajności i parametry floty muszą być dodatnie.")
         if not 0 <= (self.return_restock_pct or 0) <= 100 or not 1 <= (self.work_days or 0) <= 7:
             raise ValidationError("Zwroty na skład: 0–100 %; dni pracy w tygodniu: 1–7.")
+        if (self.peak_days_year or 0) > self.work_days * 52:
+            raise ValidationError(f"Dni szczytowe w roku: najwyżej {self.work_days * 52} (dni pracy × 52).")
 
     @property
     def norms(self):

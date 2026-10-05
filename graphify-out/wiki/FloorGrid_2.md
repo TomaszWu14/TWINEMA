@@ -2,7 +2,7 @@
 
 > God node · 20 connections · `web/twin/blender_route.py`
 
-**Community:** [views_compare.py](views_compare.py.md)
+**Community:** [export.py](export.py.md)
 
 ## Connections by Relation
 
@@ -33,7 +33,7 @@
 - Siatka zajętości posadzki: komórka zablokowana, jeśli leży w obrysie regału.… `EXTRACTED`
 
 ### uses
-- [BlenderExportViewTests](BlenderExportViewTests.md) `INFERRED`
+- BlenderExportViewTests `INFERRED`
 - BuildSceneTests `INFERRED`
 - _Ctx `INFERRED`
 - RouteGeometryTests `INFERRED`

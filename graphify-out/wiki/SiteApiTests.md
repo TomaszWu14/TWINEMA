@@ -19,9 +19,9 @@
 ## Relationships
 
 - [BayTemplate](BayTemplate.md) (2 shared connections)
-- [load_groups](load_groups.md) (2 shared connections)
+- [places.py](places.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (1 shared connections)
-- [BlenderExportViewTests](BlenderExportViewTests.md) (1 shared connections)
+- [addressing.py](addressing.py.md) (1 shared connections)
 
 ## Source Files
 

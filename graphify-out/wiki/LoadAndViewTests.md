@@ -16,7 +16,7 @@
 ## Relationships
 
 - [design_day.py](design_day.py.md) (1 shared connections)
-- [load_groups](load_groups.md) (1 shared connections)
+- [places.py](places.py.md) (1 shared connections)
 
 ## Source Files
 

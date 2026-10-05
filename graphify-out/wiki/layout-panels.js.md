@@ -26,13 +26,13 @@
 ## Relationships
 
 - [RenderJob](RenderJob.md) (10 shared connections)
-- [scenario/views.py](scenario-views.py.md) (6 shared connections)
+- [designer](designer.md) (6 shared connections)
 - [LayoutApiTests](LayoutApiTests.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (3 shared connections)
 - [day_demand](day_demand.md) (3 shared connections)
-- [scenario/services.py](scenario-services.py.md) (2 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
 - [SimViewTests](SimViewTests.md) (1 shared connections)
-- [staffing](staffing.md) (1 shared connections)
+- [OutboundTests](OutboundTests.md) (1 shared connections)
 
 ## Source Files
 
