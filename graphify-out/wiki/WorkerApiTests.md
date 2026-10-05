@@ -5,7 +5,7 @@
 ## Key Concepts
 
 - **WorkerApiTests** (14 connections) — `web/render/tests/test_render.py`
-- **RenderScreenTests** (9 connections) — `web/render/tests/test_render.py`
+- **RenderScreenTests** (10 connections) — `web/render/tests/test_render.py`
 - **._claim()** (7 connections) — `web/render/tests/test_render.py`
 - **._with_claim()** (4 connections) — `web/render/tests/test_render.py`
 - **override_settings** (3 connections)
@@ -17,13 +17,13 @@
 - **TestCase** (2 connections)
 - **.test_designer_queues_job_with_built_scene_query()** (2 connections) — `web/render/tests/test_render.py`
 - **.test_viewer_cannot_queue_and_seconds_are_bounded()** (2 connections) — `web/render/tests/test_render.py`
+- **.tearDownClass()** (2 connections) — `web/render/tests/test_render.py`
 - **.test_claim_once_then_empty_queue()** (2 connections) — `web/render/tests/test_render.py`
 - **.test_stale_running_job_returns_to_queue()** (2 connections) — `web/render/tests/test_render.py`
 - **.setUpTestData()** (1 connections) — `web/render/tests/test_render.py`
 - **.test_model_view_links_render_and_status_json()** (1 connections) — `web/render/tests/test_render.py`
 - **.test_result_file_served_only_to_logged_users()** (1 connections) — `web/render/tests/test_render.py`
 - **.setUp()** (1 connections) — `web/render/tests/test_render.py`
-- **.tearDownClass()** (1 connections) — `web/render/tests/test_render.py`
 - **.test_csrf_exempt_for_worker_only()** (1 connections) — `web/render/tests/test_render.py`
 
 ## Relationships
@@ -36,7 +36,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 68 (100%)
+- EXTRACTED: 70 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

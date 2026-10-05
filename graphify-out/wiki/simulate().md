@@ -15,12 +15,12 @@
 - scale_tasks() `EXTRACTED`
 - _Agent `EXTRACTED`
 - _pick() `EXTRACTED`
+- .ok() `EXTRACTED`
 - _trace() `EXTRACTED`
 - .test_multiplier_scales_task_count() `EXTRACTED`
 - .go() `EXTRACTED`
 - _work() `EXTRACTED`
 - .shelf() `EXTRACTED`
-- .ok() `EXTRACTED`
 - _tours() `EXTRACTED`
 - _kpi() `EXTRACTED`
 - .test_calibration_slows_down_the_new_hall() `EXTRACTED`

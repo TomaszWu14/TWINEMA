@@ -68,6 +68,12 @@
   .le-acts label { display:flex; flex-direction:column; gap:3px; font-size:var(--fs-xs); color:var(--fg-muted); }
   .le-hr { border:0; border-top:1px solid var(--border); margin:12px 0; }
   #le-hall input[type=range] { width:100%; }
+  .le-plot { fill:#d9e8cf; stroke:var(--fg-muted); stroke-width:2; vector-effect:non-scaling-stroke; }
+  .le-setback { fill:none; stroke:#ca8a04; stroke-width:1.5; stroke-dasharray:8 5; vector-effect:non-scaling-stroke; pointer-events:none; }
+  .le-ghost rect { fill:var(--fg-muted); fill-opacity:.35; stroke:none; pointer-events:none; }
+  .le-entry { stroke:#dc2626; fill:#dc2626; fill-opacity:.25; stroke-width:3; vector-effect:non-scaling-stroke; pointer-events:none; }
+  .le-entry.is-car { stroke:#2563eb; fill:#2563eb; }
+  .le-entry-row { padding:8px 0; border-top:1px dashed var(--border); }
   .le-help kbd { font-family:var(--font-mono); background:var(--surface-2); border:1px solid var(--border); border-radius:4px; padding:0 4px; }
 </style>
 {% endblock %}
@@ -129,12 +135,21 @@
       </form>
     </div></div>
     <div class="card"><div class="card-body">
+      <h2 class="le-sec">Działka</h2>
+      <div id="le-site"></div>
+    </div></div>
+    <div class="card"><div class="card-body">
       <h2 class="le-sec">Hala: wysokość, słupy, podkład</h2>
       <div id="le-hall"></div>
     </div></div>
   </div>
 
   <div class="le-main">
+    <div class="le-modes" role="group" aria-label="Plan">
+      <button type="button" class="btn btn-secondary btn-sm" data-le-view="hall" aria-pressed="true">Hala</button>
+      <button type="button" class="btn btn-secondary btn-sm" data-le-view="site" aria-pressed="false"
+              title="Hala na działce: linie zabudowy, wjazdy, plac manewrowy, parking, zieleń">Działka</button>
+    </div>
     <div class="le-modes" role="group" aria-label="Układ widoku">
       <button type="button" class="btn btn-secondary btn-sm" data-le-mode="2d" aria-pressed="true">Plan 2D</button>
       <button type="button" class="btn btn-secondary btn-sm" data-le-mode="split" aria-pressed="false">2D + 3D</button>
@@ -190,6 +205,7 @@
         <kbd>F</kbd> pełny ekran (<kbd>Esc</kbd> wychodzi).
         Widok: kółko — zoom, <kbd>Spacja</kbd>+przeciągnij albo środkowy przycisk — przesuń.
         Słup: klik zaznacza, <kbd>Delete</kbd> usuwa (np. przy bramie); siatkę i podkład ustawisz w panelu „Hala”.
+        Tryb „Działka”: przeciągnij halę i elementy terenu; linie zabudowy — przerywana żółta, wjazdy — czerwone (tiry) i niebieskie (osobowe).
       </div>
     </div></div>
   </div>

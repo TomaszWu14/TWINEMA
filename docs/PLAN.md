@@ -174,6 +174,9 @@ G1 ✅: grafika 3D w przeglądarce (wspólny `scene-builder.js`) — palety z ł
 z przekrojem, bramy i doki, posadzka z fugami i plac, pasy BHP, kadr dopasowany do hali, cienie i mgła zależne od
 kamery, pojazdy z kabiną i kołami; przełącznik jakości wysoka/szybka. Ocena ~6/10 (cel 6–7/10 jak programy
 symulacyjne); fotorealizm tylko offline w Blenderze (Cycles). Dalej: D1 działka → K1 katalog → tryb prezentacji.
+D1 ✅: działka pod halą (`twin/site.py`) — wymiary, ograniczenia planu miejscowego (wysokość, % zabudowy, linie
+zabudowy, % zieleni), dojazd i wjazdy, plac/parking/zieleń/drogi; walidacja i KPI w edytorze (tryb „Działka”), teren
+w 3D, auta w animacji dnia wjeżdżają od bramy działki. Dalej: K1 katalog sprzętu → tryb prezentacji.
 
 ---
 

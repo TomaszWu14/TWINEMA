@@ -4,8 +4,8 @@
 import * as THREE from 'three';
 import { QUEUE_M, QUEUE_PITCH_M, TRAVEL_S, VEHICLES, buildTracks, countersAt, crewAt, dayRange, dockPose, hashId,
   hhmm, lPath, lPathYaw, orderedSlot, palletAt, queueSides, rackFront, rectCenter, seriesAt, slotOrder,
-  stationSpots, vehicleAt, vehiclePose, yawOut } from './day-timeline.js';
-import { localToWorld } from './scene-data.js';
+  stationSpots, vehicleAt, vehiclePose, yawOut, ENTER_S } from './day-timeline.js';
+import { localToWorld, nearestEntry, sitePlan } from './scene-data.js';
 
 const MAX_PARCEL_STACK = 120;
 
@@ -68,6 +68,9 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
   const step = data.timeline.step_s || 900, people = data.timeline.people || {};
   const crewMax = Object.values(people).reduce((a, s) => a + Math.max(0, ...s), 0);
   const nDocks = Object.keys(places.docks).length;
+  const plan = sitePlan(data.site), enterS = plan?.entries.length ? ENTER_S : 0;      // D1: wjazd z bramy działki
+  const entryOf = {};
+  const entryFor = (d, kind) => (entryOf[`${d.wall}:${kind}`] ??= nearestEntry(plan, d.wall, kind === 'courier' ? 'car' : 'truck')?.at ?? null);
   const mesh = {
     container: fleet(viewer.scene, 'container', byKind('container').length),
     truck: fleet(viewer.scene, 'truck', byKind('truck').length),
@@ -133,7 +136,7 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
     const depth = QUEUE_M + 12, len = s1 - side.s0 + 16, mid = (side.s0 + s1) / 2, yaw = side.out[0] ? Math.PI / 2 : 0;
     const at = (s, k) => dockPose(side.out[0] ? { wall: [side.ref.wall[0], s], out: side.out } : { wall: [s, side.ref.wall[1]], out: side.out }, k);
     const c = at(mid, depth / 2);
-    flat(apronMat, c.x, c.y, len, depth, yaw, -0.005);
+    if (!plan) flat(apronMat, c.x, c.y, len, depth, yaw, -0.005);   // z działką asfalt rysuje teren działki
     for (const d of ds) {                          // pas dojazdu do doku: dwie linie co 4 m
       for (const sg of [-1.9, 1.9]) {
         const p = at((side.out[0] ? d.wall[1] : d.wall[0]) + sg, 9);
@@ -190,11 +193,11 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
     // pojazdy: rząd kolejki na placu swojej strony, pas dojazdu, postój tyłem do bramy, odjazd
     const queued = {}, docked = [];
     for (const tr of vehicles) {
-      if (t < tr.t0 - TRAVEL_S || t > tr.t1 + TRAVEL_S) continue;
-      const v = vehicleAt(tr, t), d = v && places.docks[v.dock];
+      if (t < tr.t0 - TRAVEL_S || t > tr.t1 + TRAVEL_S + enterS) continue;
+      const v = vehicleAt(tr, t, enterS), d = v && places.docks[v.dock];
       if (!d) continue;
       const key = `${d.out}`, slot = v.phase === 'queue' ? (queued[key] = (queued[key] ?? -1) + 1) : 0;
-      const pose = vehiclePose(v, d, tr.kind, sides, slot);
+      const pose = vehiclePose(v, d, tr.kind, sides, slot, entryFor(d, tr.kind));
       put(mesh[tr.kind], pose.x, pose.y, 0, pose.yaw);
       if (v.phase === 'dock') docked.push({ d, kind: tr.kind });
     }

@@ -273,6 +273,7 @@ import { bindFullscreenButton } from '{% static "twin/js/fullscreen.js" %}';
 // ── Data from Django ────────────────────────────────────────────────────────
 const RACKS_JSON    = {{ racks_json|safe }};
 const FEATURES_JSON = {{ features_json|safe }};
+const SITE_JSON = {{ site_json|safe }};
 {% localize off %}const FLOOR_W = {{ floor_w }};
 const FLOOR_D = {{ floor_d }};
 const CLEAR_H = {{ clear_h }};{% endlocalize %}
@@ -311,7 +312,8 @@ if (window.__tw3dNoWebGL) {
 }
 const viewer = createViewer({ canvas: document.getElementById('three-canvas'),
                               wrap: document.getElementById('three-canvas-wrap') });
-viewer.setData({ floor: { width: FLOOR_W, depth: FLOOR_D, clear_height: CLEAR_H || null }, racks: RACKS_JSON, features: FEATURES_JSON },
+viewer.setData({ floor: { width: FLOOR_W, depth: FLOOR_D, clear_height: CLEAR_H || null }, racks: RACKS_JSON, features: FEATURES_JSON,
+                 site: SITE_JSON },
                { frame: true });
 window.tw3dReady();                          // scena zbudowana — zdejmij spinner
 

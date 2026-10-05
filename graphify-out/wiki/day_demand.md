@@ -1,11 +1,11 @@
-# scenario/models.py
+# day_demand
 
 > 46 nodes · cohesion 0.07
 
 ## Key Concepts
 
 - **warehouse_model.py** (33 connections) — `web/twin/views/warehouse_model.py`
-- **rack_corners()** (24 connections) — `web/twin/blender_route.py`
+- **rack_corners()** (26 connections) — `web/twin/blender_route.py`
 - **test_model_geometry.py** (11 connections) — `web/twin/tests/test_model_geometry.py`
 - **parse_geometry_csv()** (9 connections) — `web/twin/model_geometry.py`
 - **active_master()** (8 connections) — `web/twin/ewm_service.py`
@@ -34,9 +34,9 @@
 ## Relationships
 
 - [twin/models.py](twin-models.py.md) (12 shared connections)
-- [shared.py](shared.py.md) (11 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (11 shared connections)
 - [kpi_facts](kpi_facts.md) (3 shared connections)
-- [check_layout](check_layout.md) (3 shared connections)
+- [clean_layout](clean_layout.md) (3 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
 - [ewm_service.py](ewm_service.py.md) (3 shared connections)
 - [layout-panels.js](layout-panels.js.md) (3 shared connections)
@@ -57,7 +57,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 210 (96%)
+- EXTRACTED: 212 (96%)
 - INFERRED: 8 (4%)
 - AMBIGUOUS: 0 (0%)
 

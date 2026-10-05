@@ -135,7 +135,7 @@ if (window.__tw3dNoWebGL) {
   throw new Error('WebGL unavailable');
 }
 const viewer = createViewer({ canvas: $('dp-canvas'), wrap: $('dp-wrap'), labels: DATA.racks.length <= 400, fill: false });
-viewer.setData({ floor: DATA.floor, racks: DATA.racks, features: DATA.features }, { frame: true });
+viewer.setData({ floor: DATA.floor, racks: DATA.racks, features: DATA.features, site: DATA.site }, { frame: true });
 
 const res = await fetch('{% url "scenario:run_events" run.pk %}', { credentials: 'same-origin' });
 const EVENTS = (await res.json()).events;

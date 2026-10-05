@@ -1,5 +1,5 @@
-# API edytora layoutu (E1, E2b): odczyt planu hali, sprawdzenie bez zapisu (KPI + problemy) i zapis całości
-# w jednej transakcji z blokadą optymistyczną po `version` (= updated_at modelu). Logika w twin/layout.py.
+# API edytora layoutu (E1, E2b, D1 — działka w polu `site`): odczyt planu hali, sprawdzenie bez zapisu
+# (KPI + problemy) i zapis całości w jednej transakcji z blokadą optymistyczną po `version` (= updated_at modelu). Logika w twin/layout.py.
 # Podkład (rzut hali PNG/JPG) wgrywany osobno — bez zmiany `version`, żeby nie unieważnić otwartego edytora.
 import json
 
@@ -12,6 +12,7 @@ from twin.design_catalog import ELEMENTS, SHELF_AISLE_M
 from twin.layout import (
     RACK_LIMITS, LayoutError, analyze, clean_layout, column_list, feature_row, rack_row,
 )
+from twin.site import AREA_KINDS, check_site, clean_site, default_site, site_kpi
 from twin.shared import (
     _md_role, _planner, get_object_or_404, HALL_FEATURE_COLORS, hall_feature_kinds, JsonResponse, render,
     require_POST, transaction, WarehouseHallFeature, WarehouseModel, WarehouseModelRack,
@@ -40,7 +41,8 @@ def _layout(wm):
             "racks": [rack_row(r) for r in wm.racks.order_by("zone", "rack_id")],
             "features": [feature_row(f) for f in wm.features.order_by("pk")],
             "columns": wm.columns or {}, "column_list": column_list(wm.columns, floor),
-            "underlay": _underlay(wm), "version": _version(wm), "feature_kinds": hall_feature_kinds()}
+            "underlay": _underlay(wm), "version": _version(wm), "feature_kinds": hall_feature_kinds(),
+            "site": wm.site or {}}
 
 
 def _parse(request):
@@ -48,7 +50,11 @@ def _parse(request):
     if len(request.body) > MAX_BODY:
         return None, JsonResponse({"error": "Za duży plan (maks. 2 MB)."}, status=413)
     try:
-        return clean_layout(json.loads(request.body), hall_feature_kinds()), None
+        data = json.loads(request.body)
+        layout = clean_layout(data, hall_feature_kinds())
+        # brak klucza `site` (stary klient) = działka bez zmian; {} = usuń działkę
+        layout["site"] = clean_site(data["site"]) if isinstance(data, dict) and "site" in data else None
+        return layout, None
     except (UnicodeDecodeError, json.JSONDecodeError):
         return None, JsonResponse({"error": "To nie jest poprawny JSON."}, status=400)
     except LayoutError as exc:
@@ -59,6 +65,9 @@ def _analyze(layout):
     """analyze + lista słupów do rysowania; zła siatka słupów (za gęsta) → (None, odpowiedź 400)."""
     try:
         kpi, issues = analyze(layout)
+        if layout["site"]:
+            kpi["site"] = site_kpi(layout["site"], layout["floor"], layout["racks"])
+            issues += check_site(layout["site"], layout["floor"], layout["racks"], layout["features"])
         return (kpi, issues, column_list(layout["columns"], layout["floor"])), None
     except LayoutError as exc:
         return None, JsonResponse({"error": str(exc)}, status=400)
@@ -79,6 +88,9 @@ def warehouse_layout_editor(request, pk):
         "dockRoles": dict(WarehouseHallFeature.DOCK_ROLE_CHOICES),
         "aisles": {"reach": ELEMENTS["rack_std"]["aisle_m"], "vna": ELEMENTS["rack_vna"]["aisle_m"],
                    "shelf": SHELF_AISLE_M},
+        "areaKinds": AREA_KINDS,
+        "defaultSite": default_site({"width": wm.floor_width_m, "depth": wm.floor_depth_m,
+                                     "clear_height": wm.clear_height_m}),
     }
     return render(request, "twin/warehouse_model/editor.html", {"wm": wm, "config": config})
 
@@ -159,11 +171,13 @@ def warehouse_layout_save(request, pk):
         WarehouseHallFeature.objects.bulk_create(f_created)
         wm.floor_width_m, wm.floor_depth_m = layout["floor"]["width"], layout["floor"]["depth"]
         wm.clear_height_m, wm.columns = layout["floor"]["clear_height"], layout["columns"]
+        if layout["site"] is not None:
+            wm.site = layout["site"]
         if wm.underlay and layout["underlay"]:
             wm.underlay_meta = {**wm.underlay_meta, **layout["underlay"]}
         wm.updated_at = timezone.now()
         wm.save(update_fields=["floor_width_m", "floor_depth_m", "clear_height_m", "columns", "underlay_meta",
-                               "updated_at"])
+                               "site", "updated_at"])
     out = _layout(wm)
     out.update(kpi=kpi, issues=issues)
     return JsonResponse(out, json_dumps_params={"ensure_ascii": False})

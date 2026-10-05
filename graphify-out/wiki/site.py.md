@@ -1,12 +1,12 @@
-# test_design_variants.py
+# site.py
 
 > 29 nodes · cohesion 0.12
 
 ## Key Concepts
 
 - **design_kpi.py** (21 connections) — `web/twin/design_kpi.py`
+- **rack_axes()** (20 connections) — `web/twin/blender_route.py`
 - **test_design_variants.py** (16 connections) — `web/twin/tests/test_design_variants.py`
-- **rack_axes()** (15 connections) — `web/twin/blender_route.py`
 - **compute_kpi()** (12 connections) — `web/twin/design_kpi.py`
 - **rack_to_element()** (11 connections) — `web/twin/design_kpi.py`
 - **_el()** (9 connections) — `web/twin/tests/test_design_variants.py`
@@ -34,7 +34,7 @@
 ## Relationships
 
 - [twinema_design_kit.py](twinema_design_kit.py.md) (11 shared connections)
-- [shared.py](shared.py.md) (7 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (7 shared connections)
 - [layout-hall.js](layout-hall.js.md) (4 shared connections)
 - [blender_scene.py](blender_scene.py.md) (3 shared connections)
 - [kpi_facts](kpi_facts.md) (2 shared connections)
@@ -42,7 +42,7 @@
 - [scene-builder.js](scene-builder.js.md) (1 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [test_s3b_views.py](test_s3b_views.py.md) (1 shared connections)
+- [roles.py](roles.py.md) (1 shared connections)
 - [packaging.py](packaging.py.md) (1 shared connections)
 - [views_compare.py](views_compare.py.md) (1 shared connections)
 
@@ -54,7 +54,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 157 (100%)
+- EXTRACTED: 162 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

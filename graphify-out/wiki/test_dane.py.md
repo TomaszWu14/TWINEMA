@@ -1,4 +1,4 @@
-# DaneViewTests
+# test_dane.py
 
 > 12 nodes · cohesion 0.24
 
@@ -20,7 +20,7 @@
 ## Relationships
 
 - [twinema_design_kit.py](twinema_design_kit.py.md) (13 shared connections)
-- [scenario/models.py](scenario-models.py.md) (1 shared connections)
+- [day_demand](day_demand.md) (1 shared connections)
 
 ## Source Files
 

@@ -170,6 +170,8 @@ class WarehouseModel(models.Model):
     columns = models.JSONField(default=dict, blank=True, verbose_name="Siatka słupów")
     underlay = models.FileField(upload_to="underlays/%Y/%m/", blank=True, verbose_name="Podkład (rzut hali)")
     underlay_meta = models.JSONField(default=dict, blank=True, verbose_name="Podkład: skala i położenie")
+    # D1: działka pod halą (format w `twin.site`); pusty = model bez działki.
+    site = models.JSONField(default=dict, blank=True, verbose_name="Działka")
 
     class Meta:
         ordering = ["-created_at"]

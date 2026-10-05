@@ -5,6 +5,7 @@ import { History, bbox, corners, rotateGroup, snap, svgTransform, zoneColors } f
 import { renderPanels } from './layout-panels.js';
 import { deleteSelectedColumn, drawColumns, drawUnderlay, hallPointer } from './layout-hall.js';
 import { initPreview, preview3d } from './layout-preview.js';
+import { drawSite, hallItem, siteItems, siteOut } from './layout-site.js';
 import { bindFullscreenButton } from './fullscreen.js';
 
 const NS = 'http://www.w3.org/2000/svg';
@@ -14,17 +15,17 @@ const $ = (id) => document.getElementById(id);
 const svg = $('le-svg');
 
 export const S = { floor: { width: 50, depth: 30 }, racks: [], features: [], version: '', kinds: {},
-  columns: {}, colList: [], underlay: null, selCol: null, calib: null,
+  columns: {}, colList: [], underlay: null, selCol: null, calib: null, site: null, view: 'hall',
   sel: new Set(), errK: new Set(), warnK: new Set(), issues: [], kpi: {}, dirty: false };
 const history = new History();
 let seq = 0, checkSeq = 0, checkTimer = null, checkAbort = null;
 let vb = { x: 0, y: 0, w: 50, h: 30 };
 
 const keyOf = (it) => (it._k ||= ++seq);
-const all = () => [...S.features, ...S.racks];
+const all = () => (S.view === 'site' && S.site ? siteItems() : [...S.features, ...S.racks]);
 export const selected = () => all().filter((it) => S.sel.has(keyOf(it)));
 const snapshot = () => JSON.stringify({ floor: S.floor, racks: S.racks, features: S.features, columns: S.columns,
-  underlay: S.underlay });
+  underlay: S.underlay, site: S.site });
 const strip = ({ _k, ...rest }) => rest;           // eslint-disable-line no-unused-vars
 
 export function status(text, kind = '') {
@@ -50,7 +51,9 @@ function touched() {
 
 function restore(snap) {
   const s = JSON.parse(snap);
-  Object.assign(S, { floor: s.floor, racks: s.racks, features: s.features, columns: s.columns, underlay: s.underlay });
+  Object.assign(S, { floor: s.floor, racks: s.racks, features: s.features, columns: s.columns, underlay: s.underlay,
+    site: s.site || null });
+  if (!S.site) S.view = 'hall';
   const keys = new Set(all().map(keyOf));
   S.sel = new Set([...S.sel].filter((k) => keys.has(k)));
   touched();
@@ -79,8 +82,18 @@ export function showKeys(keys) {
   selectKeys(keys);
 }
 
-export const keysAt = (racks, features) => [...racks.map((i) => S.racks[i]), ...features.map((i) => S.features[i])]
+export const keysAt = (racks, features, areas = [], hall = false) => [...racks.map((i) => S.racks[i]),
+  ...features.map((i) => S.features[i]), ...areas.map((i) => S.site?.areas[i]), ...(hall && S.site ? [hallItem()] : [])]
   .filter(Boolean).map(keyOf);
+
+/** Przełącznik planu: hala | działka (D1). */
+export function setView(v) {
+  S.view = v === 'site' && S.site ? 'site' : 'hall';
+  S.sel.clear(); S.selCol = null; S.calib = null;
+  document.querySelectorAll('[data-le-view]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.leView === S.view)));
+  fit();
+  render();
+}
 
 export function viewCenter() {
   return [vb.x + vb.w / 2, vb.y + vb.h / 2];
@@ -103,6 +116,7 @@ export function rotateSelected(angle) {
 export function deleteSelected() {
   if (!S.sel.size) return;
   change(() => {
+    if (S.view === 'site') { S.site.areas = S.site.areas.filter((a) => !S.sel.has(keyOf(a))); return; }  // hali nie usuwamy
     S.racks = S.racks.filter((r) => !S.sel.has(keyOf(r)));
     S.features = S.features.filter((f) => !S.sel.has(keyOf(f)));
   });
@@ -111,8 +125,14 @@ export function deleteSelected() {
 }
 
 export function duplicateSelected() {
-  const items = selected();
+  const items = selected().filter((it) => !it._hall);
   if (!items.length) return;
+  if (S.view === 'site') {
+    const copies = items.map((it) => ({ ...JSON.parse(JSON.stringify(strip(it))), x: it.x + 2, y: it.y + 2 }));
+    change(() => S.site.areas.push(...copies));
+    selectKeys(copies.map(keyOf));
+    return;
+  }
   const used = new Set(S.racks.map((r) => `${r.zone}|${r.rack_id}`));
   const copies = items.map((it) => {
     const c = { ...JSON.parse(JSON.stringify(strip(it))), id: null, x: it.x + 1, y: it.y + 1 };
@@ -132,7 +152,7 @@ function redo() { const s = history.redo(snapshot()); if (s) restore(s); }
 
 // ── API ────────────────────────────────────────────────────────────────────────────────────
 const payload = () => JSON.stringify({ floor: S.floor, racks: S.racks.map(strip), features: S.features.map(strip),
-  columns: S.columns, version: S.version,
+  columns: S.columns, version: S.version, site: siteOut(),
   underlay: S.underlay && { scale: S.underlay.scale, x: S.underlay.x, y: S.underlay.y, opacity: S.underlay.opacity } });
 
 async function post(url, body, signal) {
@@ -148,6 +168,8 @@ function applyIssues(issues) {
     const bag = it.severity === 'error' ? S.errK : S.warnK;
     it.racks.forEach((i) => S.racks[i] && bag.add(keyOf(S.racks[i])));
     it.features.forEach((i) => S.features[i] && bag.add(keyOf(S.features[i])));
+    (it.areas || []).forEach((i) => S.site?.areas[i] && bag.add(keyOf(S.site.areas[i])));
+    if (it.hall && S.site) bag.add(keyOf(hallItem()));
   }
 }
 
@@ -180,7 +202,9 @@ async function check() {
 function load(data) {
   Object.assign(S, { floor: data.floor, racks: data.racks, features: data.features, version: data.version,
     kinds: data.feature_kinds || S.kinds, columns: data.columns || {}, colList: data.column_list || [],
-    underlay: data.underlay || null, selCol: null, calib: null, dirty: false });
+    underlay: data.underlay || null, selCol: null, calib: null, dirty: false,
+    site: data.site?.width ? data.site : null });
+  if (!S.site) S.view = 'hall';
   S.sel.clear();
   history.past = []; history.future = [];
 }
@@ -230,14 +254,15 @@ function setViewBox() {
 }
 
 export function fit() {
-  const pad = 3, W = S.floor.width + 2 * pad, D = S.floor.depth + 2 * pad;
+  const site = S.view === 'site' && S.site, pad = site ? 8 : 3;
+  const W = (site ? S.site.width : S.floor.width) + 2 * pad, D = (site ? S.site.depth : S.floor.depth) + 2 * pad;
   const ratio = (svg.clientWidth || 800) / (svg.clientHeight || 500);
   const w = Math.max(W, D * ratio);
   vb = { x: -pad - (w - W) / 2, y: -pad, w, h: w / ratio };
   setViewBox();
 }
 
-function drawItem(g, it, color, label) {
+export function drawItem(g, it, color, label) {
   const [w, d] = it.n_bays !== undefined ? [it.n_bays * it.bay_width_cm / 100, it.depth_cm / 100] : [it.width, it.depth];
   const k = keyOf(it);
   const cls = ['le-item', S.sel.has(k) && 'is-selected', S.errK.has(k) && 'has-error',
@@ -252,6 +277,21 @@ function drawItem(g, it, color, label) {
 export function render() {
   svg.replaceChildren();
   const g = el('g', {}, svg);
+  if (S.view === 'site' && S.site) drawSite(g, drawItem);
+  else drawHall(g);
+  if (drag?.marquee) {
+    const [x0, y0, x1, y1] = drag.marquee;
+    el('rect', { class: 'le-marquee', x: Math.min(x0, x1), y: Math.min(y0, y1), width: Math.abs(x1 - x0),
+      height: Math.abs(y1 - y0) }, svg);
+  }
+  $('le-save').disabled = !S.dirty || S.errK.size > 0;
+  $('le-undo').disabled = !history.past.length;
+  $('le-redo').disabled = !history.future.length;
+  renderPanels();
+  preview3d();
+}
+
+function drawHall(g) {
   const { width: W, depth: D } = S.floor;
   el('rect', { class: 'le-floor', x: 0, y: 0, width: W, height: D }, g);
   drawUnderlay(g);
@@ -280,16 +320,6 @@ export function render() {
   const colors = zoneColors(S.racks);
   for (const r of S.racks) drawItem(g, r, colors[r.zone], `${r.zone}-${r.rack_id}`);
   drawColumns(g);
-  if (drag?.marquee) {
-    const [x0, y0, x1, y1] = drag.marquee;
-    el('rect', { class: 'le-marquee', x: Math.min(x0, x1), y: Math.min(y0, y1), width: Math.abs(x1 - x0),
-      height: Math.abs(y1 - y0) }, svg);
-  }
-  $('le-save').disabled = !S.dirty || S.errK.size > 0;
-  $('le-undo').disabled = !history.past.length;
-  $('le-redo').disabled = !history.future.length;
-  renderPanels();
-  preview3d();
 }
 
 // ── mysz / dotyk ───────────────────────────────────────────────────────────────────────────
@@ -304,7 +334,7 @@ svg.addEventListener('pointerdown', (e) => {
   svg.focus();
   const [wx, wy] = world(e);
   const hit = e.target.closest('.le-item');
-  if (e.button === 0 && !spaceDown && hallPointer(e, [wx, wy])) return;   // słup albo punkt kalibracji
+  if (e.button === 0 && !spaceDown && S.view === 'hall' && hallPointer(e, [wx, wy])) return;   // słup / kalibracja
   svg.setPointerCapture(e.pointerId);
   if (e.button === 1 || spaceDown) {
     drag = { pan: [e.clientX, e.clientY, vb.x, vb.y] };
@@ -402,6 +432,7 @@ $('le-redo').addEventListener('click', redo);
 $('le-save').addEventListener('click', save);
 $('le-reload').addEventListener('click', reload);
 $('le-fit').addEventListener('click', () => { fit(); render(); });
+document.querySelectorAll('[data-le-view]').forEach((b) => b.addEventListener('click', () => setView(b.dataset.leView)));
 $('le-zoomin').addEventListener('click', () => zoom(1 / 1.3));
 $('le-zoomout').addEventListener('click', () => zoom(1.3));
 initPreview();

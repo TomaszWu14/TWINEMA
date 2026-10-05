@@ -33,10 +33,10 @@
 
 ## Relationships
 
-- [shared.py](shared.py.md) (10 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (10 shared connections)
 - [layout-core.js](layout-core.js.md) (4 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (2 shared connections)
-- [Scan](Scan.md) (2 shared connections)
+- [ewm_tasks.py](ewm_tasks.py.md) (2 shared connections)
 - [StudioViewTests](StudioViewTests.md) (2 shared connections)
 - [Pochodzenie kodu](Pochodzenie_kodu.md) (2 shared connections)
 

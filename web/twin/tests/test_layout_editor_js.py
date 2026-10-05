@@ -9,6 +9,7 @@ from pathlib import Path
 
 from twin.blender_route import rack_corners
 from twin.layout import analyze, rack_geom
+from twin.site import site_to_hall
 
 TWIN = Path(__file__).resolve().parent.parent
 CORE = (TWIN / "static" / "twin" / "js" / "layout-core.js").as_uri()
@@ -28,7 +29,8 @@ class LayoutCoreJsTests(unittest.TestCase):
                                str(TWIN / "tests" / "js" / "scene_data.test.mjs"),
                                str(TWIN / "tests" / "js" / "scene_look.test.mjs"),
                                str(TWIN / "tests" / "js" / "fullscreen.test.mjs"),
-                               str(TWIN / "tests" / "js" / "day_timeline.test.mjs")],
+                               str(TWIN / "tests" / "js" / "day_timeline.test.mjs"),
+                               str(TWIN / "tests" / "js" / "site.test.mjs")],
                               capture_output=True, text=True, timeout=120)
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
 
@@ -42,6 +44,17 @@ class LayoutCoreJsTests(unittest.TestCase):
             for (px, py), (jx, jy) in zip(rack_corners(rack_geom(r)), c, strict=True):
                 self.assertAlmostEqual(px, jx, places=9)
                 self.assertAlmostEqual(py, jy, places=9)
+
+    def test_site_to_hall_matches_python(self):
+        site = {"hall": {"x": 40.0, "y": 25.0, "angle": 33.0}}
+        pts = [[0, 0], [100, 0], [37.5, 12.25], [-5, 70]]
+        data = TWIN / "static" / "twin" / "js" / "scene-data.js"
+        js = node_eval(f"import {{siteToHall}} from '{data.as_uri()}'; "
+                       f"console.log(JSON.stringify({json.dumps(pts)}.map((p) => siteToHall({json.dumps(site)}, p))))")
+        for p, (jx, jy) in zip(pts, js, strict=True):
+            px, py = site_to_hall(site, p)
+            self.assertAlmostEqual(px, jx, places=9)
+            self.assertAlmostEqual(py, jy, places=9)
 
     def test_js_block_has_no_collisions_in_python(self):
         racks = node_eval(

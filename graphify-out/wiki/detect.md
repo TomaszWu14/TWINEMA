@@ -1,4 +1,4 @@
-# test_design_compare.py
+# detect
 
 > 17 nodes · cohesion 0.19
 
@@ -24,7 +24,7 @@
 
 ## Relationships
 
-- [shared.py](shared.py.md) (9 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (9 shared connections)
 - [simulate](simulate.md) (7 shared connections)
 - [Material](Material.md) (3 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (2 shared connections)
