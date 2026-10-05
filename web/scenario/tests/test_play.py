@@ -109,7 +109,7 @@ class PlayViewTests(TestCase):
         self.assertContains(r, '"fleet_kind": "agv"')
 
     def test_run_without_events_shows_message(self):
-        ScenarioRun.objects.filter(pk=self.run.pk).update(events=[])
+        ScenarioRun.objects.filter(pk=self.run.pk).update(events=[], has_events=False)
         r = self.client.get(reverse("scenario:run_play", args=[self.run.pk]))
         self.assertContains(r, "nie ma zapisanych zdarzeń")
         self.assertNotContains(r, "day-player.js")

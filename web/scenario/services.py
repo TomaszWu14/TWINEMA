@@ -40,7 +40,7 @@ def simulate(day, wm, *, runs=12, user=None):
     res["bottlenecks"] = placement_bottlenecks(res["placement"]) + res["bottlenecks"]
     run = ScenarioRun.objects.create(
         scenario=sc, day_kind=day.kind, model=wm, runs=runs, seed=sc.seed,
-        duration_s=round(time.perf_counter() - t0, 2), events=res.pop("events"), result=res, created_by=user)
+        duration_s=round(time.perf_counter() - t0, 2), events=(ev := res.pop("events")), has_events=bool(ev), result=res, created_by=user)
     old = ScenarioRun.objects.filter(scenario=sc).values_list("pk", flat=True)[KEEP_RUNS:]
     ScenarioRun.objects.filter(pk__in=list(old)).delete()
     return run
@@ -92,16 +92,28 @@ def _shift_hours(sh):
     return max(0.0, length - sh["break_min"] / 60) * sh["people"]
 
 
-def run_costs(run, rates=None):
-    """Koszty wyniku symulacji (C1) — liczone przy wyświetleniu, więc zmiana stawek działa od razu.
-    Layout = aktualny stan modelu hali (jak pojemność w `placement_for`)."""
-    rates = rates or CostRate.as_dict()
-    sc, wm = run.scenario, run.model
+def _memo(memo, key, fn):
+    if key not in memo:
+        memo[key] = fn()
+    return memo[key]
+
+
+def _layout_costs_input(wm):
     positions = {"reach": 0, "vna": 0, "shelf": 0}
     for r in model_racks(wm):
         p = rack_to_element(r)["params"]
         positions[{"pallet": "reach"}.get(r["rack_class"], r["rack_class"])] += p["bays"] * p["levels"] * p["pallets_per_bay"]
-    kinds = list(wm.features.values_list("kind", flat=True))
+    return positions, list(wm.features.values_list("kind", flat=True))
+
+
+def run_costs(run, rates=None, memo=None):
+    """Koszty wyniku symulacji (C1) — liczone przy wyświetleniu, więc zmiana stawek działa od razu.
+    Layout = aktualny stan modelu hali (jak pojemność w `placement_for`). `memo` — słownik współdzielony
+    przez kilka wywołań w jednym żądaniu (R3: stawki, layout, dni i zmiany czytane raz, nie per przebieg)."""
+    memo = {} if memo is None else memo
+    rates = rates or _memo(memo, "rates", CostRate.as_dict)
+    sc, wm = run.scenario, run.model
+    positions, kinds = _memo(memo, ("layout", wm.pk), lambda: _layout_costs_input(wm))
     eq = sc.fleet_equipment
     fleet = {"name": eq.name if eq else "wózki", "units": sc.fleet_units,
              "purchase": eq.cost_range("cost_purchase", "cost_purchase_max") if eq else None,
@@ -109,12 +121,13 @@ def run_costs(run, rates=None):
     # miks dni w roku: ta symulacja + najnowsza symulacja drugiego typu dnia na tym samym modelu
     by_kind = {run.day_kind: run}
     other = "peak" if run.day_kind == "typical" else "typical"
-    if (o := ScenarioRun.objects.filter(scenario=sc, model=wm, day_kind=other)
-              .defer("events").order_by("-created_at").first()):
+    if (o := _memo(memo, ("run", sc.pk, wm.pk, other), lambda: ScenarioRun.objects.filter(
+            scenario=sc, model=wm, day_kind=other).defer("events").order_by("-created_at").first())):
         by_kind[other] = o
+    sc_days = _memo(memo, ("days", sc.pk), lambda: {d.kind: d for d in sc.days.all()})
     days = []
     for kind, n in costs.mix_days(sc.work_days, sc.peak_days_year, "peak" in by_kind, "typical" in by_kind):
-        a, day = by_kind[kind].result["agg"], sc.days.filter(kind=kind).first()
+        a, day = by_kind[kind].result["agg"], sc_days.get(kind)
         busy = (a["fleet_busy_h"]["mean"] if "fleet_busy_h" in a          # stare przebiegi: odtwarzane z %
                 else a["fleet_util_pct"]["mean"] / 100 * sc.fleet_units * 24)
         days.append({"kind": kind, "days": n, "fleet_busy_h": busy,
@@ -123,4 +136,4 @@ def run_costs(run, rates=None):
     return costs.compute(
         rates, {"positions": positions, "docks": kinds.count("dock"), "stations": kinds.count("station"),
                 "area_m2": wm.floor_width_m * wm.floor_depth_m},
-        fleet, sum(_shift_hours(s) for s in sc.shift_dicts()), days)
+        fleet, _memo(memo, ("shift_h", sc.pk), lambda: sum(_shift_hours(s) for s in sc.shift_dicts())), days)

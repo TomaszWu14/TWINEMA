@@ -4,7 +4,7 @@ from urllib.parse import urlencode
 
 from django.core.cache import cache
 
-from twin.shared import _planner, get_object_or_404, hall_feature_dict, render, WarehouseModel
+from twin.shared import _planner, cache_digest, get_object_or_404, hall_feature_dict, render, WarehouseModel
 from twin.blender_scene import model_racks
 from twin.design_day import PERCENTILES, build_profile, load_inputs
 from twin.design_sim import FLEET_KINDS, load_day_tasks, simulate
@@ -63,7 +63,12 @@ def ewm_tasks_simulate(request, pk):
     day = design_day(batch, prm["p"])
     result, n_tasks = (None, 0)
     if day and wm and "run" in g:
-        result, n_tasks = run_simulation(batch, wm, day, prm)
+        # ten sam (partia, wersja modelu, dzień, parametry) = ten sam wynik — odświeżenie strony nie liczy dnia od nowa
+        key = "sim:" + cache_digest(batch.pk, wm.pk, wm.updated_at.timestamp(), day, prm)
+        result, n_tasks = cache.get(key) or (None, None)
+        if n_tasks is None:
+            result, n_tasks = run_simulation(batch, wm, day, prm)
+            cache.set(key, (result, n_tasks), CACHE_TTL)
     anim_query = urlencode({"sim": batch.pk, "p": prm["p"], "mult": prm["mult"], **prm["fleet"],
                             "kt": prm["calib"]["trucks"], "kp": prm["calib"]["picking"]})
     return render(request, "twin/ewm_tasks/simulate.html", {

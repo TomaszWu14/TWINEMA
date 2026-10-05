@@ -120,3 +120,20 @@ class SimulationViewTests(TestCase):
     def test_profile_links_to_simulation(self):
         r = self.client.get(f"/magazyn/zadania-ewm/{self.batch.pk}/profil/")
         self.assertContains(r, f"/magazyn/zadania-ewm/{self.batch.pk}/symulacja/")
+
+    def test_results_cached_per_model_version(self):
+        # R3: odświeżenie strony nie liczy dnia od nowa; edycja modelu hali (nowa wersja) — liczy
+        from unittest.mock import patch
+
+        from twin.views import warehouse_design_sim as v
+        url = f"/magazyn/zadania-ewm/{self.batch.pk}/symulacja/"
+        q = {"run": 1, "model": self.wm.pk, "agv": 2, "kombi": 2, "ept": 2}
+        with patch.object(v, "run_simulation", wraps=v.run_simulation) as sim:
+            for _ in range(2):
+                self.assertContains(self.client.get(url, q), "Sugerowane szt.")
+            self.assertEqual(sim.call_count, 1)
+            f = self.wm.features.first()
+            f.label = "Zmieniony"
+            f.save()                                              # sygnał podbija wersję modelu
+            self.client.get(url, q)
+            self.assertEqual(sim.call_count, 2)

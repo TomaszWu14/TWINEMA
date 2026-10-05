@@ -37,7 +37,7 @@ def _cell(agg, key):
             "worst": kpi_num(a["worst"], a["unit"])}
 
 
-def _sim_view(run):
+def _sim_view(run, memo=None):
     """Wynik zapisany w ScenarioRun → grupy karty KPI (#21), wykres osi czasu i wąskie gardła."""
     r = run.result
     agg, pl, tl = r["agg"], r["places"], r["rep"]["timeline"]
@@ -70,7 +70,7 @@ def _sim_view(run):
                         {"side": "wydań", "need": round(need["out"]), "drawn": pl["staging_m2"]["out"]}],
             "errors": sum(b["severity"] == "error" for b in r["bottlenecks"]),
             "capacity": (r.get("placement") or {}).get("capacity"), "cpp": r.get("cpp"), "fleet": r.get("fleet"),
-            "costs": services.run_costs(run)}
+            "costs": services.run_costs(run, memo=memo)}
 
 
 @designer
