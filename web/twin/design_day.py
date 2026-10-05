@@ -144,9 +144,10 @@ def build_profile(daily, hourly, material_days=None, lines_per_order=(), p=95, g
 # ─── ORM → agregaty ──────────────────────────────────────────────────────────
 
 def load_groups(materials):
-    """{materiał z zadań: grupa towarowa} z danych materiałowych; None, gdy ich jeszcze nie ma.
-    ponytail: zawsze None do czasu modułu Dane (F2) z grupami towarowymi materiałów."""
-    return None
+    """{materiał z zadań: grupa towarowa} z modułu Dane; None, gdy materiałów jeszcze nie ma."""
+    from masterdata.services import groups_for
+
+    return groups_for(materials)
 
 
 def load_inputs(batch):

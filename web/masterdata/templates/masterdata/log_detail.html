@@ -1,0 +1,44 @@
+{% extends "core/base.html" %}
+{% block title %}Raport importu — {{ app_name }}{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Okruszki"><a href="{% url 'masterdata:home' %}">Dane</a> <span aria-hidden="true">/</span> <span>Raport importu</span></nav>
+<div class="page-header">
+  <div>
+    <div class="page-header__title">{{ log.get_kind_display }}: {{ log.name }}</div>
+    <div class="page-header__sub">{{ log.uploaded_at|date:"d.m.Y H:i" }}{% if log.uploaded_by %} · {{ log.uploaded_by }}{% endif %}</div>
+  </div>
+</div>
+
+<div class="stats-grid" style="margin-bottom:24px">
+  <div class="stat-card"><div><div class="stat-value">{{ log.rows_total }}</div><div class="stat-label">wierszy w pliku</div></div></div>
+  <div class="stat-card"><div><div class="stat-value">{{ log.rows_ok }}</div><div class="stat-label">zapisanych</div></div></div>
+  <div class="stat-card"><div><div class="stat-value">{{ log.rows_rejected }}</div><div class="stat-label">odrzuconych</div></div></div>
+</div>
+
+{% if columns %}
+<div class="card" style="margin-bottom:16px">
+  <div class="card-header"><span class="card-header__title">Rozpoznane kolumny</span></div>
+  <div class="card-body">
+    <div class="table-wrap"><table class="table"><thead><tr><th>Pole</th><th>Kolumna w pliku</th></tr></thead>
+      <tbody>{% for field, header in columns %}<tr><td>{{ field }}</td><td>{{ header }}</td></tr>{% endfor %}</tbody></table></div>
+    {% if unmapped %}<p class="text-muted text-sm" style="margin:10px 0 0">Bez kolumny w pliku (wartość domyślna): {{ unmapped|join:", " }}.</p>{% endif %}
+  </div>
+</div>
+{% endif %}
+
+{% if log.rejects %}
+<div class="card" style="margin-bottom:16px">
+  <div class="card-header"><span class="card-header__title">Odrzucone wiersze{% if log.rows_rejected > log.rejects|length %} (pierwsze {{ log.rejects|length }} z {{ log.rows_rejected }}){% endif %}</span></div>
+  <div class="table-wrap"><table class="table"><thead><tr><th class="num">Wiersz</th><th>Powód</th></tr></thead>
+    <tbody>{% for r in log.rejects %}<tr><td class="num">{{ r.row }}</td><td>{{ r.reason }}</td></tr>{% endfor %}</tbody></table></div>
+</div>
+{% endif %}
+
+{% if stock_preview %}
+<div class="card">
+  <div class="card-header"><span class="card-header__title">Podgląd stanu (50 pierwszych pozycji)</span></div>
+  <div class="table-wrap"><table class="table"><thead><tr><th>Lokalizacja</th><th>Materiał</th><th class="num">Ilość</th><th>JM</th><th>HU</th><th>Partia</th><th>Ważność</th></tr></thead>
+    <tbody>{% for s in stock_preview %}<tr><td>{{ s.location_code }}</td><td>{{ s.material_code }}</td><td class="num">{{ s.qty|floatformat:"-2" }}</td><td>{{ s.unit }}</td><td>{{ s.hu }}</td><td>{{ s.lot }}</td><td>{{ s.expiry|date:"d.m.Y"|default:"—" }}</td></tr>{% endfor %}</tbody></table></div>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "core/base.html" %}
+{% block title %}Materiały — {{ app_name }}{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Okruszki"><a href="{% url 'masterdata:home' %}">Dane</a> <span aria-hidden="true">/</span> <span>Materiały</span></nav>
+<div class="page-header">
+  <div>
+    <div class="page-header__title">Materiały</div>
+    <div class="page-header__sub">{{ page.paginator.count }} pozycji{% if q %} dla „{{ q }}”{% endif %}</div>
+  </div>
+  <form class="page-header__actions" method="get" role="search">
+    <input class="form-control" type="search" name="q" value="{{ q }}" placeholder="Kod, nazwa albo grupa" aria-label="Szukaj materiału">
+    <button class="btn btn-secondary" type="submit">Szukaj</button>
+  </form>
+</div>
+{% if groups %}<p class="text-sm" style="margin:0 0 12px">{% for g in groups %}<a class="badge badge-gray" href="?q={{ g.group|urlencode }}">{{ g.group }} · {{ g.n }}</a> {% endfor %}</p>{% endif %}
+<div class="card">
+  {% if page.object_list %}
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>Kod</th><th>Nazwa</th><th>Grupa</th><th class="num">Szt/karton</th><th>Karton [cm]</th><th class="num">Kg</th><th class="num">Kart./paleta</th></tr></thead>
+    <tbody>{% for m in page.object_list %}
+      <tr><td>{{ m.code }}</td><td>{{ m.name }}</td><td>{{ m.group }}</td><td class="num">{{ m.pcs_per_carton|default:"—" }}</td>
+        <td>{% if m.carton_l_cm %}{{ m.carton_l_cm|floatformat:"-1" }}×{{ m.carton_w_cm|floatformat:"-1" }}×{{ m.carton_h_cm|floatformat:"-1" }}{% else %}—{% endif %}</td>
+        <td class="num">{{ m.carton_kg|floatformat:"-1"|default:"—" }}</td><td class="num">{{ m.cartons_per_pallet|default:"—" }}</td></tr>
+    {% endfor %}</tbody>
+  </table></div>
+  {% else %}<div class="empty-state">Brak materiałów{% if q %} dla „{{ q }}”{% endif %}. Zaimportuj plik na ekranie Dane.</div>{% endif %}
+</div>
+{% if page.has_other_pages %}
+<nav class="text-sm" style="margin-top:12px;display:flex;gap:8px;align-items:center" aria-label="Strony">
+  {% if page.has_previous %}<a class="btn btn-ghost btn-sm" href="?q={{ q|urlencode }}&amp;page={{ page.previous_page_number }}">← Poprzednia</a>{% endif %}
+  <span class="text-muted">Strona {{ page.number }} z {{ page.paginator.num_pages }}</span>
+  {% if page.has_next %}<a class="btn btn-ghost btn-sm" href="?q={{ q|urlencode }}&amp;page={{ page.next_page_number }}">Następna →</a>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

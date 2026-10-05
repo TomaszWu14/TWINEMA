@@ -1,0 +1,93 @@
+{% extends "core/base.html" %}
+{% block title %}Dane — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .md-imports { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; margin:0 0 24px; }
+  .md-imp { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:16px;
+            display:flex; flex-direction:column; gap:10px; }
+  .md-imp h2 { font-size:var(--fs-lg); margin:0; }
+  .md-imp p { color:var(--fg-muted); font-size:var(--fs-sm); margin:0; flex:1; }
+  .md-imp form { display:flex; flex-direction:column; gap:8px; }
+  .md-imp__row { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .md-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:0 0 12px; }
+  .md-demo { display:flex; gap:8px; align-items:end; flex-wrap:wrap; }
+  .md-demo label { display:flex; flex-direction:column; gap:4px; font-size:var(--fs-sm); color:var(--fg-muted); }
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-header__title">Dane</div>
+    <div class="page-header__sub">Materiały, master lokalizacji i stany — importy z plików xlsx / csv. Odrzucone wiersze nie blokują reszty, każdy import ma raport.</div>
+  </div>
+  <div class="page-header__actions"><a class="btn btn-secondary" href="{% url 'masterdata:materials' %}">Materiały</a></div>
+</div>
+
+<div class="stats-grid" style="margin-bottom:24px">
+  <div class="stat-card"><div><div class="stat-value">{{ n_materials }}</div><div class="stat-label">materiałów · {{ n_groups }} grup towarowych</div></div></div>
+  <div class="stat-card"><div><div class="stat-value">{% if master %}{{ master.location_count }}{% else %}—{% endif %}</div><div class="stat-label">lokalizacji w aktywnym masterze{% if master %} „{{ master.name }}”{% endif %}</div></div></div>
+  <div class="stat-card"><div><div class="stat-value">{% if stock_log %}{{ stock_log.rows_ok }}{% else %}—{% endif %}</div><div class="stat-label">{% if stock_log %}pozycji stanu w {{ stock_locations }} lokalizacjach ({{ stock_log.uploaded_at|date:"d.m.Y H:i" }}){% else %}brak importu stanów{% endif %}</div></div></div>
+</div>
+
+<h2 class="md-sec">Import</h2>
+<div class="md-imports">
+  {% for kind, label, help in kinds %}
+  <section class="md-imp">
+    <h2>{{ label }}</h2>
+    <p>{{ help }}</p>
+    {% if is_designer %}
+    <form method="post" action="{% url 'masterdata:upload' kind %}" enctype="multipart/form-data">{% csrf_token %}
+      <input class="form-control" type="file" name="file" accept=".xlsx,.xlsm,.csv,.txt" required aria-label="Plik: {{ label }}">
+      <div class="md-imp__row">
+        <button class="btn btn-primary btn-sm" type="submit">Importuj</button>
+        <a class="btn btn-ghost btn-sm" href="{% url 'masterdata:template' kind %}">Wzór pliku (CSV)</a>
+      </div>
+    </form>
+    {% else %}
+    <a class="btn btn-ghost btn-sm" href="{% url 'masterdata:template' kind %}">Wzór pliku (CSV)</a>
+    {% endif %}
+  </section>
+  {% endfor %}
+</div>
+<p class="text-muted text-sm" style="margin:-12px 0 24px">Limit pliku: {{ max_mb }} MB. Kolumny rozpoznajemy po nazwach (PL / EN / typowe eksporty WMS) — kolejność nie ma znaczenia.</p>
+
+{% if is_designer %}
+<h2 class="md-sec">Dane demonstracyjne</h2>
+<div class="card" style="margin-bottom:24px"><div class="card-body">
+  {% if models %}
+  <form class="md-demo" method="post" action="{% url 'masterdata:demo' %}">{% csrf_token %}
+    <label>Model hali
+      <select class="form-control" name="model">{% for m in models %}<option value="{{ m.pk }}">{{ m.name }}</option>{% endfor %}</select>
+    </label>
+    <button class="btn btn-secondary" type="submit">Wczytaj materiały i stan demo</button>
+  </form>
+  <p class="text-muted text-sm" style="margin:10px 0 0">Syntetyczne: 3 000 materiałów w 8 grupach (te same kody co w <code>tools/ewm_demo_tasks.py</code>) i ~70 % miejsc wybranego modelu zajętych paletami.</p>
+  {% else %}
+  <p class="text-muted text-sm" style="margin:0">Najpierw utwórz model hali w <a href="{% url 'twin:warehouse_model_generator' %}">generatorze</a> — stan demo rozkłada się po jego regałach.</p>
+  {% endif %}
+</div></div>
+{% endif %}
+
+<h2 class="md-sec">Historia importów</h2>
+<div class="card">
+  {% if logs %}
+  <div class="table-wrap"><table class="table">
+    <thead><tr><th>Kiedy</th><th>Rodzaj</th><th>Plik</th><th class="num">Zapisane</th><th class="num">Odrzucone</th><th>Kto</th></tr></thead>
+    <tbody>
+    {% for log in logs %}
+      <tr>
+        <td>{{ log.uploaded_at|date:"d.m.Y H:i" }}</td>
+        <td>{{ log.get_kind_display }}</td>
+        <td><a href="{% url 'masterdata:log_detail' log.pk %}">{{ log.name }}</a></td>
+        <td class="num">{{ log.rows_ok }}</td>
+        <td class="num">{% if log.rows_rejected %}<span class="badge badge-yellow">{{ log.rows_rejected }}</span>{% else %}0{% endif %}</td>
+        <td>{{ log.uploaded_by|default:"—" }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}
+  <div class="empty-state">Jeszcze nic nie zaimportowano.</div>
+  {% endif %}
+</div>
+{% endblock %}

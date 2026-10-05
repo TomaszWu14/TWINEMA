@@ -7,5 +7,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("health/", include("core.health_urls")),
     path("", include("core.urls")),
+    path("", include("masterdata.urls")),
     path("", include("twin.urls")),
 ]

@@ -6,13 +6,13 @@ TWINEMA łączy projektowanie centrum dystrybucyjnego w 3D z symulacją pracy i 
 prezentacji: układ hali i regałów → symulacja dnia projektowego → animacja przepływów
 w Blenderze → film z lektorem (ElevenLabs) i deck PDF.
 
-> Status: **F1 — rdzeń modelowania i symulacji działa** (generator hali, widok 3D, import zadań, dzień projektowy, kalibracja, prognoza, symulacja, porównanie, eksport do Blendera). Mapa drogi i decyzje: [`docs/PLAN.md`](docs/PLAN.md).
+> Status: **F2 — dane z plików (materiały, master lokalizacji, stany) zasilają scenę 3D i dzień projektowy; F1 — rdzeń modelowania i symulacji działa** (generator hali, widok 3D, import zadań, dzień projektowy, kalibracja, prognoza, symulacja, porównanie, eksport do Blendera). Mapa drogi i decyzje: [`docs/PLAN.md`](docs/PLAN.md).
 
 ## Moduły (plan)
 
 | Moduł | Co robi | Faza |
 |---|---|---|
-| Dane | importy materiałów, nośników, regałów, historii ruchów | F2 |
+| Dane | importy materiałów, mastera lokalizacji i stanów z raportem odrzuceń; dane demo | F2 ✅ |
 | Model hali | generator hali, regały, strefy, pola odkładcze, warianty, widok 3D | F1 |
 | Symulacja | dzień projektowy, flota, kalibracja, porównanie wariantów | F1 |
 | Prognozy i ML | wzrost wolumenów, segmentacja SKU, czas cyklu | F4 |
@@ -31,6 +31,7 @@ python manage.py createsuperuser
 python manage.py runserver 8090
 sh scripts/fetch_vendor.sh                           # raz: three.js + ECharts do static (bez CDN)
 python ../tools/ewm_demo_tasks.py demo.xlsx --scale 0.05   # syntetyczne zadania do importu
+python manage.py demo_dane --model 1                  # materiały + stan demo na regałach modelu
 ```
 
 Blender: eksport sceny z widoku modelu → `blender -b -P tools/blender/twinema_warehouse_anim.py -- scena.json`.

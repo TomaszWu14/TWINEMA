@@ -8,7 +8,7 @@
 > projekt z zewnątrz (rekruterzy). Scenariusz referencyjny: **budowa nowego centrum
 > dystrybucyjnego** — dane demonstracyjne, bez nazw firm i danych klientów.
 
-Status: F0 ✅, F1 ✅ (przeszczep rdzenia) — 2026-10-05. Następna: F2 (Dane).
+Status: F0 ✅, F1 ✅ (przeszczep rdzenia), F2 ✅ (Dane) — 2026-10-05. Następna: F3 (Render).
 
 ---
 
@@ -55,7 +55,8 @@ Paletyzacja kartonów, kontrola HU, skanery, transport, integracje online z WMS/
 web/
   twinema/     projekt Django: config (pydantic, fail-fast), settings, urls
   core/        role (zamrożony kontrakt), middleware, health, logowanie, hub
-  masterdata/  F2: Material, UnitConversion, RackType, LoadCarrier, Location, StockSnapshot, TaskHistory
+  masterdata/  F2: Material, StockItem, ImportLog (raport importu); master lokalizacji zapisuje do twin;
+               importy xlsx/csv z aliasami kolumn, wzory plików, dane demo (`manage.py demo_dane --model N`)
   twin/        F1: model hali, regały, elementy, szablony gniazd, warianty, import zadań, dzień projektowy,
                symulacja, kalibracja, prognoza, porównanie, eksport sceny — logika w czystym Pythonie
   ml/          F4: forecast, sku_segmentation, cycle_time + ModelRun (wersja, metryka)

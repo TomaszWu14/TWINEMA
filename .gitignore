@@ -20,3 +20,4 @@ renders/
 # Biblioteki JS pobierane skryptem web/scripts/fetch_vendor.sh (build Dockera / raz lokalnie)
 web/twin/static/twin/vendor/
 .idea/
+.run/

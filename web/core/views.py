@@ -4,8 +4,8 @@ from django.urls import reverse
 
 # Moduły platformy w kolejności przepływu pracy. `url` = nazwa widoku wejścia; brak = zapowiedź.
 MODULES = [
-    {"key": "dane", "name": "Dane", "desc": "Materiały, nośniki, regały, historia ruchów — importy z plików.",
-     "phase": "F2"},
+    {"key": "dane", "name": "Dane", "desc": "Materiały, master lokalizacji, stany — importy z plików z raportem.",
+     "phase": "F2", "url": "masterdata:home"},
     {"key": "model", "name": "Model hali", "desc": "Hala od zera albo z danych: regały, strefy, pola odkładcze.",
      "phase": "F1", "url": "twin:warehouse_model_list"},
     {"key": "symulacja", "name": "Symulacja", "desc": "Dzień projektowy, flota, kalibracja, porównanie wariantów.",
