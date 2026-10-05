@@ -62,7 +62,8 @@ def _sim_view(run):
             "staging": [{"side": "przyjęć", "need": round(need["in"]), "drawn": pl["staging_m2"]["in"]},
                         {"side": "wydań", "need": round(need["out"]), "drawn": pl["staging_m2"]["out"]}],
             "errors": sum(b["severity"] == "error" for b in r["bottlenecks"]),
-            "capacity": (r.get("placement") or {}).get("capacity"), "cpp": r.get("cpp"), "fleet": r.get("fleet")}
+            "capacity": (r.get("placement") or {}).get("capacity"), "cpp": r.get("cpp"), "fleet": r.get("fleet"),
+            "costs": services.run_costs(run)}
 
 
 @designer

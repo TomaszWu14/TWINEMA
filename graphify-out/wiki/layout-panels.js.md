@@ -25,14 +25,14 @@
 
 ## Relationships
 
-- [studio/models.py](studio-models.py.md) (10 shared connections)
-- [studio/api.py](studio-api.py.md) (6 shared connections)
+- [StudioViewTests](StudioViewTests.md) (10 shared connections)
+- [scenario/views.py](scenario-views.py.md) (6 shared connections)
 - [LayoutApiTests](LayoutApiTests.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (3 shared connections)
 - [day_demand](day_demand.md) (3 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
 - [SimViewTests](SimViewTests.md) (1 shared connections)
-- [staffing.py](staffing.py.md) (1 shared connections)
+- [bay_templates.py](bay_templates.py.md) (1 shared connections)
 
 ## Source Files
 

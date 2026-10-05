@@ -1,45 +1,34 @@
 # bay_templates.py
 
-> 18 nodes · cohesion 0.16
+> 11 nodes · cohesion 0.27
 
 ## Key Concepts
 
-- **BayTemplate** (17 connections) — `web/twin/models.py`
-- **test_bay_template_model.py** (9 connections) — `web/twin/tests/test_bay_template_model.py`
-- **RackRuleAndOverrideTests** (6 connections) — `web/twin/tests/test_bay_template_model.py`
-- **levels()** (5 connections) — `web/twin/tests/test_bay_template_model.py`
-- **BayTemplateTests** (4 connections) — `web/twin/tests/test_bay_template_model.py`
-- **.test_invalid_templates_raise_polish_errors()** (3 connections) — `web/twin/tests/test_bay_template_model.py`
-- **.test_valid_template_and_labels()** (3 connections) — `web/twin/tests/test_bay_template_model.py`
-- **TestCase** (2 connections)
-- **.setUp()** (2 connections) — `web/twin/tests/test_bay_template_model.py`
-- **.test_template_used_by_override_is_protected_rack_is_set_null()** (2 connections) — `web/twin/tests/test_bay_template_model.py`
-- **.clean()** (1 connections) — `web/twin/models.py`
-- **.ewm_types_label()** (1 connections) — `web/twin/models.py`
-- **.level_label()** (1 connections) — `web/twin/models.py`
-- **.__str__()** (1 connections) — `web/twin/models.py`
-- **Szablon gniazda (słupa regału): belka, palety na belce, poziomy od podłogi w…** (1 connections) — `web/twin/models.py`
-- **.test_override_unique()** (1 connections) — `web/twin/tests/test_bay_template_model.py`
-- **.test_rack_defaults_and_bay_numbers_validation()** (1 connections) — `web/twin/tests/test_bay_template_model.py`
-- **Modele części 1: szablon gniazda (walidacja), reguła rzędu, wyjątki…** (1 connections) — `web/twin/tests/test_bay_template_model.py`
+- **test_ewm_detect.py** (10 connections) — `web/twin/tests/test_ewm_detect.py`
+- **.test_irregular_bay_gets_nearest_template_plus_skip_and_add()** (5 connections) — `web/twin/tests/test_ewm_detect.py`
+- **expand_proposal()** (4 connections) — `web/twin/tests/test_ewm_detect.py`
+- **DetectHeightsTests** (3 connections) — `web/twin/tests/test_ewm_detect.py`
+- **.test_level_heights_and_weights_are_medians_from_master()** (3 connections) — `web/twin/tests/test_ewm_detect.py`
+- **DetectIrregularBayTests** (3 connections) — `web/twin/tests/test_ewm_detect.py`
+- **rows_of()** (3 connections) — `web/twin/tests/test_ewm_detect.py`
+- **master_of()** (2 connections) — `web/twin/tests/test_ewm_detect.py`
+- **SimpleTestCase** (2 connections)
+- **„Wykryj z EWM”: propozycja szablonów, numeracji i wyjątków z kodów; round-trip…** (1 connections) — `web/twin/tests/test_ewm_detect.py`
+- **Propozycja → obiekty jak z bazy → rozwinięte kody per przejście.** (1 connections) — `web/twin/tests/test_ewm_detect.py`
 
 ## Relationships
 
-- [twin/models.py](twin-models.py.md) (5 shared connections)
-- [BlenderExportViewTests](BlenderExportViewTests.md) (2 shared connections)
-- [test_ewm_service.py](test_ewm_service.py.md) (2 shared connections)
-- [SiteApiTests](SiteApiTests.md) (2 shared connections)
-- [warehouse_variants.py](warehouse_variants.py.md) (1 shared connections)
-- [day_demand](day_demand.md) (1 shared connections)
+- [scenario/views.py](scenario-views.py.md) (4 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
+- [layout-panels.js](layout-panels.js.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/models.py`
-- `web/twin/tests/test_bay_template_model.py`
+- `web/twin/tests/test_ewm_detect.py`
 
 ## Audit Trail
 
-- EXTRACTED: 61 (100%)
+- EXTRACTED: 37 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

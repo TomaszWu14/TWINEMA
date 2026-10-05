@@ -15,7 +15,7 @@
 
 ## Relationships
 
-- [Material](Material.md) (1 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
 
 ## Source Files
 

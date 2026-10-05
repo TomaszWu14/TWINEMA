@@ -4,9 +4,12 @@ from django.shortcuts import get_object_or_404, render
 
 from core.roles import any_role
 
+from equipment.models import CostRate
+
 from .compare import compare_columns
 from .export import compare_workbook, run_workbook
 from .models import ScenarioRun
+from .services import run_costs
 
 MAX_COLS = 6
 XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -24,11 +27,12 @@ def _xlsx(data, name):
 
 @any_role
 def compare(request):
-    runs = list(ScenarioRun.objects.defer("events").select_related("scenario", "model")[:40])
+    runs = list(ScenarioRun.objects.defer("events").select_related("scenario__fleet_equipment", "model")[:40])
     by_pk = {r.pk: r for r in runs}
     ids = [int(x) for x in request.GET.getlist("ids") if x.isdigit()]
     chosen = [by_pk[i] for i in dict.fromkeys(ids) if i in by_pk][:MAX_COLS]
-    rows = compare_columns([r.result for r in chosen]) if chosen else []
+    rates = CostRate.as_dict()
+    rows = compare_columns([{**r.result, "costs": run_costs(r, rates)} for r in chosen]) if chosen else []
     if chosen and request.GET.get("xlsx"):
         return _xlsx(compare_workbook([_label(r) for r in chosen], rows), "twinema_porownanie.xlsx")
     return render(request, "scenario/compare.html", {

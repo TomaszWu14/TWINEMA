@@ -800,13 +800,13 @@
     "semantic_hash": ""
   },
   "docs/HANDOFF.md": {
-    "mtime": 1791220461.4656332,
-    "ast_hash": "48b234f65e69938f7e7cb99555509534",
+    "mtime": 1791221390.8289905,
+    "ast_hash": "04f8e763fd578bdb8410ae6c3b25aaf7",
     "semantic_hash": ""
   },
   "docs/PLAN.md": {
-    "mtime": 1791220474.075212,
-    "ast_hash": "598060c8e001c0f45e8cd0c5d91e9fba",
+    "mtime": 1791221396.7802763,
+    "ast_hash": "75f054dd705a2654cb8bb4f0d1f2c389",
     "semantic_hash": ""
   },
   "docs/adr/0001-kopia-nie-przeniesienie.md": {
@@ -1235,8 +1235,8 @@
     "semantic_hash": ""
   },
   "web/scenario/models.py": {
-    "mtime": 1791219359.9930549,
-    "ast_hash": "782a464b29cfedf9f75d82e2305034fc",
+    "mtime": 1791221341.2233846,
+    "ast_hash": "63db83789eb3fe9d24ad9041decde00d",
     "semantic_hash": ""
   },
   "web/scenario/tests/__init__.py": {
@@ -1260,18 +1260,18 @@
     "semantic_hash": ""
   },
   "web/scenario/views.py": {
-    "mtime": 1791219220.0573773,
-    "ast_hash": "c58c80a33a01e2e189685bd1e7efa49f",
+    "mtime": 1791221341.2270913,
+    "ast_hash": "392cae173b5c86532ffd4813b5edafc7",
     "semantic_hash": ""
   },
   "docs/ZALOZENIA.md": {
-    "mtime": 1791219220.0303469,
-    "ast_hash": "4b4ebed90b016b937783b4c8125af40d",
+    "mtime": 1791221341.1458628,
+    "ast_hash": "2e9bdb79fd7526472ca41e7ccb47a23f",
     "semantic_hash": ""
   },
   "web/scenario/templates/scenario/detail.html": {
-    "mtime": 1791219460.8278918,
-    "ast_hash": "1f02ede7b4bce043bec27caf23a5e499",
+    "mtime": 1791221341.2248077,
+    "ast_hash": "a4d74f25168b361597d83b0c0ad19700",
     "semantic_hash": ""
   },
   "web/scenario/templates/scenario/list.html": {
@@ -1385,8 +1385,8 @@
     "semantic_hash": ""
   },
   "web/scenario/services.py": {
-    "mtime": 1791219220.066386,
-    "ast_hash": "7a94142fb194ae5ce3c0dcbb08cba09c",
+    "mtime": 1791221341.2233846,
+    "ast_hash": "2aebd4e628e08d89569f0be182d92dc0",
     "semantic_hash": ""
   },
   "web/scenario/sim/__init__.py": {
@@ -1425,8 +1425,8 @@
     "semantic_hash": ""
   },
   "web/scenario/views_sim.py": {
-    "mtime": 1791219220.0741284,
-    "ast_hash": "794152fc931a8f492c086735e7fa94bd",
+    "mtime": 1791221341.2282398,
+    "ast_hash": "9eec8679ef7fad022ede806a209a4199",
     "semantic_hash": ""
   },
   "web/twin/static/twin/js/fullscreen.js": {
@@ -1490,13 +1490,13 @@
     "semantic_hash": ""
   },
   "web/scenario/compare.py": {
-    "mtime": 1791219220.0180488,
-    "ast_hash": "3cff4e7b9f08eebee5dc87658749d061",
+    "mtime": 1791221341.220025,
+    "ast_hash": "054a53e6320508216c2c9887bfc6d85b",
     "semantic_hash": ""
   },
   "web/scenario/export.py": {
-    "mtime": 1791219220.0213287,
-    "ast_hash": "f61069b4fe26b3904f337991fc24c535",
+    "mtime": 1791221341.2213545,
+    "ast_hash": "e8abf33e20f86165125692719c0644d4",
     "semantic_hash": ""
   },
   "web/scenario/placement.py": {
@@ -1510,13 +1510,13 @@
     "semantic_hash": ""
   },
   "web/scenario/tests/test_s3b_views.py": {
-    "mtime": 1791219220.039346,
-    "ast_hash": "124193e3521338728d3c1ddb7e9b4d95",
+    "mtime": 1791221341.2270913,
+    "ast_hash": "597052f9c3f63df9c5c2947c76348f04",
     "semantic_hash": ""
   },
   "web/scenario/views_compare.py": {
-    "mtime": 1791219220.066386,
-    "ast_hash": "b408f4d868a7088cee856d10d5e1358d",
+    "mtime": 1791221341.2282398,
+    "ast_hash": "c5d3ba59ea49683682e2ead22c4e2c63",
     "semantic_hash": ""
   },
   "web/twin/migrations/0004_rola_doku_nosnosc.py": {
@@ -1600,8 +1600,8 @@
     "semantic_hash": ""
   },
   "web/equipment/models.py": {
-    "mtime": 1791219220.1370006,
-    "ast_hash": "54f26084f9a28e73f80aa1793d8b8973",
+    "mtime": 1791221341.2175422,
+    "ast_hash": "f594387463b68bb734259dea61beef31",
     "semantic_hash": ""
   },
   "web/equipment/services.py": {
@@ -1620,13 +1620,13 @@
     "semantic_hash": ""
   },
   "web/equipment/urls.py": {
-    "mtime": 1791219220.168803,
-    "ast_hash": "116e409a5865b2852b3ae7045b293032",
+    "mtime": 1791221341.2186627,
+    "ast_hash": "9780c1f682f9623a864aabbd272109ee",
     "semantic_hash": ""
   },
   "web/equipment/views.py": {
-    "mtime": 1791219220.1720839,
-    "ast_hash": "b8c8b9e11d1c55dc5ce7b5785c10f802",
+    "mtime": 1791221341.220025,
+    "ast_hash": "d091170a6c3f9046d7346f86af830c4f",
     "semantic_hash": ""
   },
   "web/scenario/migrations/0004_flota_z_katalogu.py": {
@@ -1660,13 +1660,48 @@
     "semantic_hash": ""
   },
   "web/equipment/templates/equipment/list.html": {
-    "mtime": 1791219220.159119,
-    "ast_hash": "eaaff579eb49709c8b3d8041cc1860e9",
+    "mtime": 1791221341.2186627,
+    "ast_hash": "1f9d98d35bf7266f9b7404a25284f433",
     "semantic_hash": ""
   },
-  "web/scenario/migrations/0005_prezentacja_3d.py": {
-    "mtime": 1791219680.5858376,
-    "ast_hash": "74f504be89e7948e48fa193f2c46c373",
+  "web/equipment/migrations/0003_koszty.py": {
+    "mtime": 1791221341.216253,
+    "ast_hash": "5779f76c3116dbb22183cb22d767bc97",
+    "semantic_hash": ""
+  },
+  "web/equipment/migrations/0004_stawki_domyslne.py": {
+    "mtime": 1791221341.216253,
+    "ast_hash": "e2ec8401b50fc4630b324217638ce2ab",
+    "semantic_hash": ""
+  },
+  "web/scenario/costs.py": {
+    "mtime": 1791221341.2213545,
+    "ast_hash": "de37c96d1e0f7229b567d00fafc1192e",
+    "semantic_hash": ""
+  },
+  "web/scenario/tests/test_costs.py": {
+    "mtime": 1791221341.2260747,
+    "ast_hash": "d90b5e04bb3b72a794ab9ac28d2061cb",
+    "semantic_hash": ""
+  },
+  "web/equipment/templates/equipment/rates.html": {
+    "mtime": 1791221341.2186627,
+    "ast_hash": "82ca2748ce6636b71b3341bbe32464b0",
+    "semantic_hash": ""
+  },
+  "web/scenario/templates/scenario/_costs.html": {
+    "mtime": 1791221341.2248077,
+    "ast_hash": "2bbad5b349d52b42f0a0852a130a6e9a",
+    "semantic_hash": ""
+  },
+  "web/scenario/migrations/0005_dni_szczytowe.py": {
+    "mtime": 1791221341.2223892,
+    "ast_hash": "2e3ca4615d4442ce02c46a78338fa7e0",
+    "semantic_hash": ""
+  },
+  "web/scenario/migrations/0006_prezentacja_3d.py": {
+    "mtime": 1791221362.0002844,
+    "ast_hash": "6da764cc9a9ee5910c8ce052621437dd",
     "semantic_hash": ""
   },
   "web/scenario/showcase.py": {

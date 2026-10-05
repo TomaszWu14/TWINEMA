@@ -52,7 +52,7 @@ prezentacji 3D → katalog sprzętu (z kosztami)**. Porównanie „obecny vs prz
 | 12 | Potrzebne miejsca paletowe | **z importu stanów** (× mnożnik wzrostu) vs dostępne w layoucie |
 | D3 | Kompletacja | **osobna strefa kompletacji** (półkowe/przepływowe lub poziom 0) zasilana z wysokiego składowania; ile SKU w pickingu, min/max w lokacji → uzupełnienia |
 | D9 | Sprzęt od początku | reach truck + regały standard, VNA (kombi), AGV/AMR transport poziomy, wózki paletowe elektryczne |
-| 15 | Koszty | **później** — razem z katalogiem sprzętu (CAPEX/OPEX) |
+| 15 | Koszty | razem z katalogiem sprzętu (C1): **widełki od–do**, stawki syntetyczne do podmiany. CAPEX = regały (miejsca × stawka wg sprzętu), doki, stanowiska, hala (m²), flota (zakup z katalogu); OPEX/rok = zakładana obsada × stawka godzinowa + godziny pracy floty z symulacji × koszt godziny; rok = dni pracy w tygodniu × 52 jako **miks**: „dni szczytowe w roku” (pole scenariusza, domyślnie 30) liczone z symulacji szczytu, reszta z symulacji dnia typowego na tym samym modelu — bez symulacji drugiego typu cały rok z jednego (z adnotacją); wskaźnik = OPEX ÷ wolumen roczny (paleta, paczka, zamówienie) |
 
 ## Wydania i paczki
 | # | Temat | Decyzja |

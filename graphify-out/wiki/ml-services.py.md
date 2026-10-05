@@ -1,4 +1,4 @@
-# ml/views.py
+# ml/services.py
 
 > 23 nodes · cohesion 0.14
 
@@ -31,15 +31,15 @@
 ## Relationships
 
 - [day-timeline.js](day-timeline.js.md) (7 shared connections)
-- [safe_json](safe_json.md) (5 shared connections)
+- [scenario/services.py](scenario-services.py.md) (5 shared connections)
 - [scene-data.js](scene-data.js.md) (4 shared connections)
-- [ForecastTests](ForecastTests.md) (4 shared connections)
+- [test_design_forecast.py](test_design_forecast.py.md) (4 shared connections)
 - [forecast.py](forecast.py.md) (2 shared connections)
-- [build_deck](build_deck.md) (2 shared connections)
-- [scenario/views.py](scenario-views.py.md) (2 shared connections)
+- [test_deck.py](test_deck.py.md) (2 shared connections)
+- [scenario/models.py](scenario-models.py.md) (2 shared connections)
 - [test_voice.py](test_voice.py.md) (1 shared connections)
-- [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
-- [views_sim.py](views_sim.py.md) (1 shared connections)
+- [views_showcase.py](views_showcase.py.md) (1 shared connections)
+- [roles.py](roles.py.md) (1 shared connections)
 
 ## Source Files
 

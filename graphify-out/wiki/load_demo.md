@@ -1,4 +1,4 @@
-# test_master_data.py
+# load_demo
 
 > 13 nodes · cohesion 0.19
 
@@ -20,14 +20,14 @@
 
 ## Relationships
 
-- [Material](Material.md) (5 shared connections)
-- [addressing.py](addressing.py.md) (2 shared connections)
-- [safe_json](safe_json.md) (2 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (5 shared connections)
+- [detect](detect.md) (2 shared connections)
+- [scenario/services.py](scenario-services.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [ForecastTests](ForecastTests.md) (1 shared connections)
 - [simulate](simulate.md) (1 shared connections)
 - [draft_script](draft_script.md) (1 shared connections)
-- [LayoutError](LayoutError.md) (1 shared connections)
+- [equipment/views.py](equipment-views.py.md) (1 shared connections)
 
 ## Source Files
 

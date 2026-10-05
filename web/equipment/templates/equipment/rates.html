@@ -1,0 +1,35 @@
+{% extends "core/base.html" %}
+{% block title %}Stawki kosztowe — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .rt-table { width:100%; border-collapse:collapse; font-size:var(--fs-sm); }
+  .rt-table th, .rt-table td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+  .rt-table thead th { color:var(--fg-muted); font-weight:600; }
+  .rt-table input { max-width:160px; }
+  .rt-err { color:var(--danger-fg); font-size:var(--fs-xs); display:block; }
+</style>
+{% endblock %}
+{% block content %}
+<nav class="breadcrumb" aria-label="Ścieżka"><a href="{% url 'equipment:list' %}">Katalog sprzętu</a> / stawki kosztowe</nav>
+<div class="page-header"><div>
+  <div class="page-header__title">Stawki kosztowe</div>
+  <div class="page-header__sub">Widełki od–do w zł netto. Z nich liczymy CAPEX layoutu (regały, doki, stanowiska, hala, flota) i OPEX roczny (praca, praca floty).
+    Wartości domyślne są syntetyczne i przybliżone — podmień na własne oferty. Koszty konkretnego sprzętu wpisuje się w jego karcie w katalogu.</div>
+</div></div>
+<div class="card"><div class="card-body" style="overflow-x:auto">
+  <form method="post" novalidate>{% csrf_token %}
+    {{ formset.management_form }}
+    {% if formset.non_form_errors %}<div class="alert alert-error" role="alert">{{ formset.non_form_errors|join:" " }}</div>{% endif %}
+    <table class="rt-table"><caption class="sr-only">Stawki kosztowe: od i do</caption>
+      <thead><tr><th scope="col">Pozycja</th><th scope="col">Jednostka</th><th scope="col">Od</th><th scope="col">Do</th></tr></thead>
+      <tbody>
+      {% for f in formset %}
+        <tr><th scope="row">{{ f.id }}<label for="{{ f.low.id_for_label }}">{{ f.instance.label }}</label></th><td>{{ f.instance.unit }}</td>
+          <td>{{ f.low }}{% for e in f.low.errors %}<span class="rt-err" role="alert">{{ e }}</span>{% endfor %}</td>
+          <td><label class="sr-only" for="{{ f.high.id_for_label }}">{{ f.instance.label }} — do</label>{{ f.high }}{% for e in f.high.errors %}<span class="rt-err" role="alert">{{ e }}</span>{% endfor %}</td></tr>
+      {% endfor %}
+      </tbody></table>
+    <div style="margin-top:14px"><button class="btn btn-primary" type="submit">Zapisz stawki</button></div>
+  </form>
+</div></div>
+{% endblock %}

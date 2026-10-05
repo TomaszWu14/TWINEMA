@@ -1,4 +1,4 @@
-# warehouse_model_ewm.py
+# ewm_service.py
 
 > 17 nodes · cohesion 0.18
 
@@ -26,7 +26,7 @@
 
 - [warehouse_variants.py](warehouse_variants.py.md) (8 shared connections)
 - [day_demand](day_demand.md) (3 shared connections)
-- [safe_json](safe_json.md) (2 shared connections)
+- [scenario/services.py](scenario-services.py.md) (2 shared connections)
 - [SimViewTests](SimViewTests.md) (1 shared connections)
 
 ## Source Files

@@ -1,60 +1,55 @@
 # masterdata/services.py
 
-> 29 nodes · cohesion 0.13
+> 24 nodes · cohesion 0.12
 
 ## Key Concepts
 
-- **test_dane.py** (23 connections) — `web/masterdata/tests/test_dane.py`
-- **Material** (15 connections) — `web/masterdata/models.py`
-- **masterdata/models.py** (11 connections) — `web/masterdata/models.py`
-- **ImportLog** (11 connections) — `web/masterdata/models.py`
-- **DaneViewTests** (9 connections) — `web/masterdata/tests/test_dane.py`
-- **StockItem** (8 connections) — `web/masterdata/models.py`
-- **_csv()** (8 connections) — `web/masterdata/tests/test_dane.py`
-- **ImportServiceTests** (7 connections) — `web/masterdata/tests/test_dane.py`
-- **Meta** (5 connections) — `web/masterdata/models.py`
-- **._upload()** (4 connections) — `web/masterdata/tests/test_dane.py`
-- **.test_bad_file_shows_message_not_500()** (3 connections) — `web/masterdata/tests/test_dane.py`
-- **.test_designer_upload_redirects_to_report_with_rejects()** (3 connections) — `web/masterdata/tests/test_dane.py`
-- **.test_home_lists_imports_and_hides_upload_for_viewer()** (3 connections) — `web/masterdata/tests/test_dane.py`
-- **DemoAndSceneTests** (3 connections) — `web/masterdata/tests/test_dane.py`
-- **TestCase** (3 connections)
-- **.test_demo_stock_lands_as_pallets_in_scene()** (2 connections) — `web/masterdata/tests/test_dane.py`
-- **.test_latest_stock_import_is_current_stock()** (2 connections) — `web/masterdata/tests/test_dane.py`
-- **.test_locations_create_new_active_master()** (2 connections) — `web/masterdata/tests/test_dane.py`
-- **.test_materials_upsert_and_report()** (2 connections) — `web/masterdata/tests/test_dane.py`
-- **.test_missing_required_column_saves_nothing()** (2 connections) — `web/masterdata/tests/test_dane.py`
-- **.__str__()** (1 connections) — `web/masterdata/models.py`
-- **.__str__()** (1 connections) — `web/masterdata/models.py`
-- **Dane podstawowe bliźniaka: materiały, stany w lokalizacjach i dziennik…** (1 connections) — `web/masterdata/models.py`
-- **Jeden import pliku: rodzaj, wynik i próbka odrzuconych wierszy. Import stanów…** (1 connections) — `web/masterdata/models.py`
-- **Nośnik (paleta): EUR 120×80 domyślnie, reszta edytowalna.** (1 connections) — `web/masterdata/models.py`
-- *... and 4 more nodes in this community*
+- **generate()** (30 connections) — `web/twin/design_generator.py`
+- **design_generator.py** (23 connections) — `web/twin/design_generator.py`
+- **test_model_edit.py** (15 connections) — `web/twin/tests/test_model_edit.py`
+- **GeneratorTests** (10 connections) — `web/twin/tests/test_design_generator.py`
+- **test_design_generator.py** (9 connections) — `web/twin/tests/test_design_generator.py`
+- **vna_levels()** (5 connections) — `web/twin/design_generator.py`
+- **_row_pairs()** (4 connections) — `web/twin/design_generator.py`
+- **_docks()** (3 connections) — `web/twin/design_generator.py`
+- **_feature()** (3 connections) — `web/twin/design_generator.py`
+- **_pair_pitch()** (3 connections) — `web/twin/design_generator.py`
+- **_rack()** (2 connections) — `web/twin/design_generator.py`
+- **.setUp()** (2 connections) — `web/twin/tests/test_design_generator.py`
+- **.test_levels_from_height()** (2 connections) — `web/twin/tests/test_design_generator.py`
+- **.test_pallet_too_tall_raises()** (2 connections) — `web/twin/tests/test_design_generator.py`
+- **.test_racks_inside_hall_and_not_overlapping()** (2 connections) — `web/twin/tests/test_design_generator.py`
+- **_rect()** (2 connections) — `web/twin/tests/test_design_generator.py`
+- **Generator hali od parametrów — nowy magazyn „od zera” (plan 2026-10-02, etap…** (1 connections) — `web/twin/design_generator.py`
+- **.test_capacity_meets_targets()** (1 connections) — `web/twin/tests/test_design_generator.py`
+- **.test_docks_on_opposite_walls()** (1 connections) — `web/twin/tests/test_design_generator.py`
+- **.test_hall_size_and_aspect()** (1 connections) — `web/twin/tests/test_design_generator.py`
+- **.test_vna_aisles_wide_enough()** (1 connections) — `web/twin/tests/test_design_generator.py`
+- **SimpleTestCase** (1 connections)
+- **Generator hali od parametrów (plan 2026-10-02, etap 1): pojemność, geometria,…** (1 connections) — `web/twin/tests/test_design_generator.py`
+- **Edycja wariantu hali blokami (plan 2026-10-02, etap 4).** (1 connections) — `web/twin/tests/test_model_edit.py`
 
 ## Relationships
 
-- [test_voice.py](test_voice.py.md) (7 shared connections)
-- [Fleet](Fleet.md) (4 shared connections)
-- [LayoutApiTests](LayoutApiTests.md) (3 shared connections)
-- [views_sim.py](views_sim.py.md) (2 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (2 shared connections)
-- [twin/models.py](twin-models.py.md) (2 shared connections)
-- [ml/views.py](ml-views.py.md) (1 shared connections)
-- [scene-data.js](scene-data.js.md) (1 shared connections)
-- [importers.py](importers.py.md) (1 shared connections)
-- [blender_scene.py](blender_scene.py.md) (1 shared connections)
-- [day-timeline.js](day-timeline.js.md) (1 shared connections)
-- [test_ewm_service.py](test_ewm_service.py.md) (1 shared connections)
+- [analyze](analyze.md) (7 shared connections)
+- [load_demo](load_demo.md) (5 shared connections)
+- [twin/models.py](twin-models.py.md) (4 shared connections)
+- [detect](detect.md) (3 shared connections)
+- [simulate](simulate.md) (3 shared connections)
+- [equipment/views.py](equipment-views.py.md) (2 shared connections)
+- [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)
+- [test_addressing.py](test_addressing.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/masterdata/models.py`
-- `web/masterdata/tests/test_dane.py`
+- `web/twin/design_generator.py`
+- `web/twin/tests/test_design_generator.py`
+- `web/twin/tests/test_model_edit.py`
 
 ## Audit Trail
 
-- EXTRACTED: 131 (97%)
-- INFERRED: 4 (3%)
+- EXTRACTED: 125 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

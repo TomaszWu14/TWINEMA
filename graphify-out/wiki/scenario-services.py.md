@@ -1,4 +1,4 @@
-# safe_json
+# scenario/services.py
 
 > 82 nodes · cohesion 0.05
 
@@ -6,7 +6,7 @@
 
 - **shared.py** (41 connections) — `web/twin/shared.py`
 - **warehouse_blender.py** (26 connections) — `web/twin/views/warehouse_blender.py`
-- **model_racks()** (23 connections) — `web/twin/blender_scene.py`
+- **model_racks()** (24 connections) — `web/twin/blender_scene.py`
 - **hall_feature_dict()** (23 connections) — `web/twin/shared.py`
 - **warehouse_design_sim.py** (23 connections) — `web/twin/views/warehouse_design_sim.py`
 - **WarehouseTaskBatch** (22 connections) — `web/twin/models_tasks.py`
@@ -39,12 +39,12 @@
 - [warehouse_tasks.py](warehouse_tasks.py.md) (10 shared connections)
 - [twin/models.py](twin-models.py.md) (9 shared connections)
 - [simulate](simulate.md) (9 shared connections)
-- [addressing.py](addressing.py.md) (9 shared connections)
-- [views_sim.py](views_sim.py.md) (8 shared connections)
-- [ForecastTests](ForecastTests.md) (7 shared connections)
+- [detect](detect.md) (9 shared connections)
+- [roles.py](roles.py.md) (8 shared connections)
 - [site.py](site.py.md) (7 shared connections)
-- [Equipment](Equipment.md) (6 shared connections)
-- [ml/views.py](ml-views.py.md) (5 shared connections)
+- [test_equipment.py](test_equipment.py.md) (6 shared connections)
+- [ml/services.py](ml-services.py.md) (5 shared connections)
+- [test_design_forecast.py](test_design_forecast.py.md) (5 shared connections)
 
 ## Source Files
 
@@ -68,7 +68,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 537 (99%)
+- EXTRACTED: 538 (99%)
 - INFERRED: 7 (1%)
 - AMBIGUOUS: 0 (0%)
 

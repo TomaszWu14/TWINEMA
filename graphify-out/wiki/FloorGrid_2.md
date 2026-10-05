@@ -2,7 +2,7 @@
 
 > God node · 20 connections · `web/twin/blender_route.py`
 
-**Community:** [views_compare.py](views_compare.py.md)
+**Community:** [staffing.py](staffing.py.md)
 
 ## Connections by Relation
 
@@ -12,7 +12,7 @@
 - .test_unreachable_target_falls_back_to_straight_line() `EXTRACTED`
 
 ### contains
-- [blender_route.py](blender_route.py.md) `EXTRACTED`
+- blender_route.py `EXTRACTED`
 
 ### imports
 - [blender_scene.py](blender_scene.py.md) `EXTRACTED`
@@ -33,7 +33,7 @@
 - Siatka zajętości posadzki: komórka zablokowana, jeśli leży w obrysie regału.… `EXTRACTED`
 
 ### uses
-- [BlenderExportViewTests](BlenderExportViewTests.md) `INFERRED`
+- BlenderExportViewTests `INFERRED`
 - BuildSceneTests `INFERRED`
 - _Ctx `INFERRED`
 - RouteGeometryTests `INFERRED`

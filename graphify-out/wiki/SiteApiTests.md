@@ -18,10 +18,10 @@
 
 ## Relationships
 
-- [bay_templates.py](bay_templates.py.md) (2 shared connections)
-- [safe_json](safe_json.md) (2 shared connections)
+- [BayTemplate](BayTemplate.md) (2 shared connections)
+- [scenario/services.py](scenario-services.py.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (1 shared connections)
-- [BlenderExportViewTests](BlenderExportViewTests.md) (1 shared connections)
+- [test_ml.py](test_ml.py.md) (1 shared connections)
 
 ## Source Files
 

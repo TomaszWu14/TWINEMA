@@ -6,13 +6,14 @@ from django.views.decorators.http import require_POST
 from core.roles import GROUP_ADMIN, any_role, designer, has_role
 
 from .catalog import KINDS, capacity_at
-from .models import PARAM_FIELDS, Equipment
+from .models import PARAM_FIELDS, CostRate, Equipment
 
 
 class EquipmentForm(forms.ModelForm):
     class Meta:
         model = Equipment
-        fields = ["kind", "name", *PARAM_FIELDS, "cost_purchase", "cost_per_hour", "notes"]
+        fields = ["kind", "name", *PARAM_FIELDS, "cost_purchase", "cost_purchase_max", "cost_per_hour",
+                  "cost_per_hour_max", "notes"]
         widgets = {"lift_curve": forms.Textarea(attrs={"rows": 2}), "notes": forms.Textarea(attrs={"rows": 2})}
 
     def __init__(self, *args, **kwargs):
@@ -32,7 +33,33 @@ class EquipmentForm(forms.ModelForm):
         for f in ("speed_loaded_kmh", "speed_empty_kmh"):
             if data.get(f) is not None and data[f] <= 0:
                 self.add_error(f, "Prędkość musi być dodatnia.")
+        for lo, hi in (("cost_purchase", "cost_purchase_max"), ("cost_per_hour", "cost_per_hour_max")):
+            _check_range(self, data, lo, hi)
         return data
+
+
+def _check_range(form, data, lo, hi):
+    a, b = data.get(lo), data.get(hi)
+    if (a is not None and a < 0) or (b is not None and b < 0):
+        form.add_error(lo, "Koszt nie może być ujemny.")
+    elif a is not None and b is not None and a > b:
+        form.add_error(hi, "„Do” musi być nie mniejsze niż „od”.")
+
+
+class RateForm(forms.ModelForm):
+    class Meta:
+        model = CostRate
+        fields = ["low", "high"]
+        widgets = {f: forms.NumberInput(attrs={"class": "form-control", "min": 0, "step": "0.01"})
+                   for f in ("low", "high")}
+
+    def clean(self):
+        data = super().clean()
+        _check_range(self, data, "low", "high")
+        return data
+
+
+RateFormSet = forms.modelformset_factory(CostRate, form=RateForm, extra=0)
 
 
 def _can_edit(user, eq):
@@ -62,6 +89,10 @@ def catalog_list(request):
 def catalog_detail(request, pk):
     eq = get_object_or_404(Equipment, pk=pk)
     rows = [(Equipment._meta.get_field(f).verbose_name, getattr(eq, f)) for f in PARAM_FIELDS if f != "lift_curve"]
+    for label, lo, hi in (("Koszt zakupu [zł]", "cost_purchase", "cost_purchase_max"),
+                          ("Koszt godziny pracy [zł]", "cost_per_hour", "cost_per_hour_max")):
+        r = eq.cost_range(lo, hi)
+        rows.append((label, f"{r[0]:,.0f} – {r[1]:,.0f}".replace(",", " ") if r else None))
     curve = _curve(eq)
     top = max([c["kg"] for c in curve] or [1])
     return render(request, "equipment/detail.html", {
@@ -107,3 +138,16 @@ def catalog_delete(request, pk):
     eq.delete()
     messages.success(request, f"Usunięto „{name}” (regały i scenariusze z tym sprzętem wracają do ustawień ogólnych).")
     return redirect("equipment:list")
+
+
+@designer
+def rates(request):
+    """Stawki kosztowe (C1) — widełki od–do; edytuje Projektant i administrator, Podgląd widzi tylko wyniki."""
+    formset = RateFormSet(request.POST or None, queryset=CostRate.objects.all())
+    if request.method == "POST":
+        if formset.is_valid():
+            formset.save()
+            messages.success(request, "Zapisano stawki — koszty w wynikach symulacji przeliczą się przy wyświetleniu.")
+            return redirect("equipment:rates")
+        messages.error(request, "Popraw zaznaczone stawki.")
+    return render(request, "equipment/rates.html", {"formset": formset})

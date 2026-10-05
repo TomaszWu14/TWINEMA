@@ -1,4 +1,4 @@
-# Equipment
+# test_equipment.py
 
 > 45 nodes · cohesion 0.07
 
@@ -33,10 +33,10 @@
 
 ## Relationships
 
-- [safe_json](safe_json.md) (6 shared connections)
+- [scenario/services.py](scenario-services.py.md) (6 shared connections)
 - [scene-data.js](scene-data.js.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [views_sim.py](views_sim.py.md) (1 shared connections)
+- [roles.py](roles.py.md) (1 shared connections)
 
 ## Source Files
 

@@ -124,7 +124,7 @@ class SimS3bTests(TestCase):
         resp = self.client.get(reverse("scenario:run_xlsx", args=[run.pk]))
         self.assertEqual(resp.status_code, 200)
         wb = load_workbook(BytesIO(resp.content))
-        self.assertEqual(wb.sheetnames, ["Założenia", "KPI", "Wąskie gardła", "Obsada", "Pojemność"])
+        self.assertEqual(wb.sheetnames, ["Założenia", "KPI", "Wąskie gardła", "Obsada", "Pojemność", "Koszty"])
         self.assertEqual(wb["Założenia"]["B2"].value, "Rok bazowy")          # wiersz 1 = nagłówek
         self.assertEqual(wb["KPI"]["A1"].value, "Wskaźnik")
         self.assertEqual(wb["Pojemność"]["B2"].value, 240)

@@ -34,11 +34,15 @@ class Equipment(models.Model):
     length_m = models.FloatField(null=True, blank=True, verbose_name="Długość [m]")
     width_m = models.FloatField(null=True, blank=True, verbose_name="Szerokość [m]")
     throughput_h = models.PositiveIntegerField(null=True, blank=True, verbose_name="Wydajność nominalna [szt./h]")
-    # pod przyszły CAPEX/OPEX (UI kosztów później)
+    # C1: widełki kosztów (min–max) — CAPEX z zakupu, OPEX z godziny pracy (energia + serwis)
     cost_purchase = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True,
-                                        verbose_name="Koszt zakupu [zł]")
+                                        verbose_name="Zakup od [zł]")
+    cost_purchase_max = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True,
+                                            verbose_name="Zakup do [zł]")
     cost_per_hour = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True,
-                                        verbose_name="Koszt godziny pracy [zł]")
+                                        verbose_name="Godzina pracy od [zł]")
+    cost_per_hour_max = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True,
+                                            verbose_name="Godzina pracy do [zł]")
     notes = models.TextField(blank=True, verbose_name="Uwagi")
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -55,5 +59,35 @@ class Equipment(models.Model):
     def rack_category(self):
         return RACK_CATEGORY.get(self.kind)
 
+    def cost_range(self, low, high):
+        """(od, do) jako float; brak „do” = „od”; brak obu = None."""
+        a, b = getattr(self, low), getattr(self, high)
+        if a is None and b is None:
+            return None
+        a = float(a if a is not None else b)
+        return a, float(b if b is not None else a)
+
     def params(self):
         return {f: getattr(self, f) for f in PARAM_FIELDS} | {"id": self.pk, "kind": self.kind, "name": self.name}
+
+
+class CostRate(models.Model):
+    """Stawka kosztowa (C1) jako widełki min–max — wartości domyślne syntetyczne, przybliżone (bez cenników firm)."""
+    key = models.CharField(max_length=24, unique=True, editable=False)
+    label = models.CharField(max_length=120, editable=False)
+    unit = models.CharField(max_length=24, editable=False)
+    low = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Od")
+    high = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Do")
+    order = models.PositiveSmallIntegerField(default=0, editable=False)
+
+    class Meta:
+        ordering = ["order", "key"]
+        verbose_name = "Stawka kosztowa"
+        verbose_name_plural = "Stawki kosztowe"
+
+    def __str__(self):
+        return self.label
+
+    @classmethod
+    def as_dict(cls):
+        return {r.key: (float(r.low), float(r.high)) for r in cls.objects.all()}

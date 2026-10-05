@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('scenario', '0004_flota_z_katalogu'),
+        ('scenario', '0005_dni_szczytowe'),
         ('twin', '0006_sprzet_z_katalogu'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]

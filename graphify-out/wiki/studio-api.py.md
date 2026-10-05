@@ -1,43 +1,28 @@
 # studio/api.py
 
-> 16 nodes · cohesion 0.21
+> 5 nodes · cohesion 0.40
 
 ## Key Concepts
 
-- **detect()** (14 connections) — `web/twin/ewm_detect.py`
-- **ewm_detect.py** (13 connections) — `web/twin/ewm_detect.py`
-- **parse_code()** (8 connections) — `web/twin/addressing.py`
-- **letter_rank()** (5 connections) — `web/twin/addressing.py`
-- **_grid()** (5 connections) — `web/twin/ewm_detect.py`
-- **_shape()** (5 connections) — `web/twin/ewm_detect.py`
-- **_distance()** (4 connections) — `web/twin/ewm_detect.py`
-- **_template_sig()** (3 connections) — `web/twin/ewm_detect.py`
-- **_new_template()** (2 connections) — `web/twin/ewm_detect.py`
-- **Klucz sortowania liter poziomów: znane litery wg LETTER_ORDER, obce na końcu.** (1 connections) — `web/twin/addressing.py`
-- **Kod EWM → (strefa, przejście, gniazdo, pozycja, litera, połówka) albo None.** (1 connections) — `web/twin/addressing.py`
-- **„Wykryj z EWM”: kody lokalizacji z mastera → propozycja szablonów gniazd, reguł…** (1 connections) — `web/twin/ewm_detect.py`
-- **k pozycji × [(litera, split)] → zbiór komórek (pozycja, litera, połówka).** (1 connections) — `web/twin/ewm_detect.py`
-- **Komórki gniazda → (sygnatura obrysu, czy siatka regularna). Sygnatura = (k,…** (1 connections) — `web/twin/ewm_detect.py`
-- **Liczba różnic gniazda od szablonu: brakujące + nadmiarowe komórki + inne typy…** (1 connections) — `web/twin/ewm_detect.py`
-- **rows: [{"zone", "rack_id", "n_bays"}]; master: [(kod, typ_ewm, wysokość_mm,…** (1 connections) — `web/twin/ewm_detect.py`
+- **DesignHubTests** (6 connections) — `web/twin/tests/test_design_hub.py`
+- **.setUp()** (1 connections) — `web/twin/tests/test_design_hub.py`
+- **.test_steps_link_latest_import()** (1 connections) — `web/twin/tests/test_design_hub.py`
+- **.test_steps_without_import_are_disabled()** (1 connections) — `web/twin/tests/test_design_hub.py`
+- **TestCase** (1 connections)
 
 ## Relationships
 
-- [layout-panels.js](layout-panels.js.md) (6 shared connections)
-- [staffing.py](staffing.py.md) (4 shared connections)
-- [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
-- [SimViewTests](SimViewTests.md) (2 shared connections)
-- [studio/models.py](studio-models.py.md) (1 shared connections)
+- [scenario/services.py](scenario-services.py.md) (1 shared connections)
+- [studio/views.py](studio-views.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/addressing.py`
-- `web/twin/ewm_detect.py`
+- `web/twin/tests/test_design_hub.py`
 
 ## Audit Trail
 
-- EXTRACTED: 64 (97%)
-- INFERRED: 2 (3%)
+- EXTRACTED: 9 (90%)
+- INFERRED: 1 (10%)
 - AMBIGUOUS: 0 (0%)
 
 ---
