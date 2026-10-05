@@ -16,7 +16,7 @@
 ## Relationships
 
 - [GeneratorTests](GeneratorTests.md) (2 shared connections)
-- [ewm_service.py](ewm_service.py.md) (1 shared connections)
+- [StudioViewTests](StudioViewTests.md) (1 shared connections)
 
 ## Source Files
 

@@ -11,7 +11,7 @@
 ## Relationships
 
 - [twin/models.py](twin-models.py.md) (1 shared connections)
-- [shared.py](shared.py.md) (1 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (1 shared connections)
 
 ## Source Files
 

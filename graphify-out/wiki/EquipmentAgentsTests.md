@@ -1,4 +1,4 @@
-# _inside
+# EquipmentAgentsTests
 
 > 16 nodes · cohesion 0.20
 

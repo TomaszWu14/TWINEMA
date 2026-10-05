@@ -16,7 +16,7 @@
 ## Relationships
 
 - [design_day.py](design_day.py.md) (1 shared connections)
-- [shared.py](shared.py.md) (1 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (1 shared connections)
 
 ## Source Files
 

@@ -1,4 +1,4 @@
-# context_processors.py
+# roles.py
 
 > 22 nodes · cohesion 0.09
 
@@ -30,17 +30,17 @@
 ## Relationships
 
 - [twin/models.py](twin-models.py.md) (6 shared connections)
-- [ml/services.py](ml-services.py.md) (4 shared connections)
+- [blender_stock.py](blender_stock.py.md) (4 shared connections)
 - [studio/api.py](studio-api.py.md) (3 shared connections)
 - [pre-push](pre-push.md) (2 shared connections)
 - [WorkerApiTests](WorkerApiTests.md) (2 shared connections)
 - [test_foundation.py](test_foundation.py.md) (1 shared connections)
 - [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
 - [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
-- [shared.py](shared.py.md) (1 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (1 shared connections)
 - [forecast.py](forecast.py.md) (1 shared connections)
 - [build_deck](build_deck.md) (1 shared connections)
-- [StudioViewTests](StudioViewTests.md) (1 shared connections)
+- [draft_script](draft_script.md) (1 shared connections)
 
 ## Source Files
 

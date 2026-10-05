@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from django.contrib import messages
 from django.db import transaction
@@ -6,9 +8,13 @@ from django.views.decorators.http import require_POST
 
 from core.roles import GROUP_ADMIN, GROUP_DESIGNER, any_role, designer, has_role
 
-from .models import InboundStream, Scenario, ScenarioDay
+from .inbound import _hhmm
+from .models import InboundStream, OutboundStream, Scenario, ScenarioDay, Shift
+from .staffing import cutoff_risk, process_hours, staffing
 
 KIND_LABEL = dict(InboundStream._meta.get_field("kind").choices)
+OUT_LABEL = dict(OutboundStream._meta.get_field("kind").choices)
+LEVELS = ("avg", "max")
 
 
 def _fc(widget):
@@ -16,10 +22,38 @@ def _fc(widget):
     return widget
 
 
+class HourField(forms.Field):
+    """Godzina jako GG:MM (np. 13:30, 24:00 = koniec doby) ↔ liczba godzin w bazie (13.5)."""
+    widget = forms.TextInput
+    PATTERN = re.compile(r"^\s*(\d{1,2})(?::([0-5]\d))?\s*$")
+
+    def widget_attrs(self, widget):
+        return {"class": "form-control", "inputmode": "numeric", "placeholder": "GG:MM",
+                "pattern": r"\d{1,2}(:[0-5]\d)?", "size": 5}
+
+    def prepare_value(self, value):
+        if isinstance(value, (int, float)):
+            m = round(value * 60)
+            return f"{m // 60:02d}:{m % 60:02d}"
+        return value
+
+    def to_python(self, value):
+        if value in self.empty_values:
+            return None
+        m = self.PATTERN.match(str(value))
+        if not m:
+            raise forms.ValidationError("Godzina w formacie GG:MM, np. 13:30.")
+        h = int(m.group(1)) + int(m.group(2) or 0) / 60
+        if h > 24:
+            raise forms.ValidationError("Godzina 0:00–24:00.")
+        return h
+
+
 class ScenarioForm(forms.ModelForm):
     class Meta:
         model = Scenario
-        fields = ["name", "description", "growth", "seed", "shift_h", *Scenario.NORM_FIELDS]
+        fields = ["name", "description", "growth", "seed", "shift_h", "work_days", *Scenario.NORM_FIELDS,
+                  "return_restock_pct"]
         widgets = {"description": forms.Textarea(attrs={"rows": 2})}
 
     def __init__(self, *args, **kwargs):
@@ -35,28 +69,97 @@ class NewScenarioForm(forms.ModelForm):
         widgets = {"name": forms.TextInput(attrs={"class": "form-control", "maxlength": 200})}
 
 
-STREAM_FIELDS = ["kind", "arrivals_min", "arrivals_avg", "arrivals_max", "pallets_min", "pallets_avg",
-                 "pallets_max", "window_from", "window_to", "mono_pct", "inspect_pct", "inspect_min"]
+class DayProfileForm(forms.ModelForm):
+    class Meta:
+        model = ScenarioDay
+        fields = ScenarioDay.PROFILE_FIELDS
+        widgets = {f: _fc(forms.NumberInput(attrs={"step": "any", "min": 0})) for f in ScenarioDay.PROFILE_FIELDS}
+
+
+def _num(fields):
+    return {f: _fc(forms.NumberInput(attrs={"step": "any", "min": 0})) for f in fields}
+
+
+IN_FIELDS = ["kind", "arrivals_min", "arrivals_avg", "arrivals_max", "pallets_min", "pallets_avg",
+             "pallets_max", "window_from", "window_to", "mono_pct", "inspect_pct", "inspect_min"]
+OUT_FIELDS = ["kind", "departures_min", "departures_avg", "departures_max", "pallets_min", "pallets_avg",
+              "pallets_max", "window_from", "window_to"]
+SHIFT_FIELDS = ["process", "start_h", "end_h", "break_min", "people"]
+
+
+class InForm(forms.ModelForm):
+    window_from = HourField(label="Okno od")
+    window_to = HourField(label="Okno do")
+
+
+class OutForm(forms.ModelForm):
+    window_from = HourField(label="Załadunek od")
+    window_to = HourField(label="Cut-off")
+
+
+class ShiftForm(forms.ModelForm):
+    start_h = HourField(label="Od")
+    end_h = HourField(label="Do")
+
+
 StreamFormSet = forms.modelformset_factory(
-    InboundStream, fields=STREAM_FIELDS, extra=1, can_delete=True,
-    widgets={f: _fc(forms.NumberInput(attrs={"step": "any", "min": 0})) for f in STREAM_FIELDS if f != "kind"}
-    | {"kind": _fc(forms.Select())})
+    InboundStream, form=InForm, fields=IN_FIELDS, extra=1, can_delete=True,
+    widgets=_num(f for f in IN_FIELDS if f not in ("kind", "window_from", "window_to")) | {"kind": _fc(forms.Select())})
+OutFormSet = forms.modelformset_factory(
+    OutboundStream, form=OutForm, fields=OUT_FIELDS, extra=1, can_delete=True,
+    widgets=_num(f for f in OUT_FIELDS if f not in ("kind", "window_from", "window_to")) | {"kind": _fc(forms.Select())})
+ShiftFormSet = forms.modelformset_factory(
+    Shift, form=ShiftForm, fields=SHIFT_FIELDS, extra=1, can_delete=True,
+    widgets=_num(["break_min", "people"]) | {"process": _fc(forms.Select())})
 
 
-def _results(day):
-    return {"day": day, "avg": day.demand("avg"), "max": day.demand("max")}
+def _results(day, shifts):
+    r = {"day": day}
+    for lvl in LEVELS:
+        i, o = day.demand(lvl), day.outbound_demand(lvl)
+        st = staffing(process_hours(i, o), shifts)
+        r[lvl] = {"in": i, "out": o, "staff": st, "short": [p["label"] for p in st if p["short"]],
+                  "cutoff": cutoff_risk(o["person_hours"]["pack"], shifts, o["courier_cutoff"])}
+    return r
 
 
-def _arrival_rows(results):
-    """Wiersz na typ dostawy: komórki w kolejności kolumn tabeli (dzień × poziom)."""
+def _arrival_rows(results, side="in", label=KIND_LABEL):
+    """Wiersz na typ auta: komórki w kolejności kolumn tabeli (dzień × poziom)."""
     out = {}
     for r in results:
-        for level in ("avg", "max"):
-            for row in r[level]["rows"]:
-                out.setdefault(row["kind"], {"label": KIND_LABEL[row["kind"]], "cells": {}})
+        for level in LEVELS:
+            for row in r[level][side]["rows"]:
+                out.setdefault(row["kind"], {"label": label[row["kind"]], "cells": {}})
                 out[row["kind"]]["cells"][(r["day"].kind, level)] = row
-    cols = [(r["day"].kind, lvl) for r in results for lvl in ("avg", "max")]
+    cols = [(r["day"].kind, lvl) for r in results for lvl in LEVELS]
     return [{"label": v["label"], "cells": [v["cells"].get(c) for c in cols]} for v in out.values()]
+
+
+def _staff_rows(results, shifts):
+    """Obsada: wiersz na proces × zmianę; kolumny = zakładana + potrzebna dla (dzień × poziom)."""
+    rows = []
+    cols = [r[lvl]["staff"] for r in results for lvl in LEVELS]
+    for i, proc in enumerate(cols[0]):
+        own = proc["shifts"] or [None]
+        for j, sh in enumerate(own):
+            cells = []
+            for col in cols:
+                p = col[i]
+                if sh is None:
+                    cells.append({"needed": "—" if not p["hours"] else "brak zmiany", "short": p["short"]})
+                else:
+                    c = p["shifts"][j]
+                    cells.append({"needed": c["needed"], "short": c["gap"] < 0, "gap": c["gap"]})
+            when = f"{_hhmm(sh['start_h'])}–{_hhmm(sh['end_h'])}" if sh else ""
+            rows.append({"label": proc["label"] if j == 0 else "", "shift": sh, "when": when, "cells": cells,
+                         "first": j == 0, "span": len(own)})
+    return rows
+
+
+def _hours_rows(results):
+    """Osobogodziny: wiersz na proces, komórki w kolejności kolumn (dzień × poziom)."""
+    cols = [r[lvl]["staff"] for r in results for lvl in LEVELS]
+    return [{"label": p["label"], "cells": [col[i]["hours"] for col in cols]} for i, p in enumerate(cols[0])]
 
 
 @any_role
@@ -76,7 +179,8 @@ def scenario_create(request):
     sc.created_by = request.user
     sc.save()
     sc.ensure_days()
-    messages.success(request, f"Utworzono scenariusz „{sc}” z przykładowym planem przyjęć — popraw liczby.")
+    messages.success(request, f"Utworzono scenariusz „{sc}” z przykładowym planem przyjęć, wydań i obsady — "
+                              "popraw liczby.")
     return redirect("scenario:detail", pk=sc.pk)
 
 
@@ -84,13 +188,41 @@ def scenario_create(request):
 def scenario_detail(request, pk):
     sc = get_object_or_404(Scenario, pk=pk)
     sc.ensure_days(with_defaults=False)
-    days = list(sc.days.prefetch_related("inbound"))
-    results = [_results(d) for d in days]
-    ctx = {"sc": sc, "results": results, "arrival_rows": _arrival_rows(results)}
+    days = list(sc.days.prefetch_related("inbound", "outbound"))
+    shifts = sc.shift_dicts()
+    results = [_results(d, shifts) for d in days]
+    ctx = {"sc": sc, "results": results, "arrival_rows": _arrival_rows(results),
+           "departure_rows": _arrival_rows(results, "out", OUT_LABEL), "staff_rows": _staff_rows(results, shifts),
+           "hours_rows": _hours_rows(results),
+           "ncols": 1 + 2 * len(results)}
     if has_role(request.user, GROUP_ADMIN, GROUP_DESIGNER):
         ctx["form"] = ScenarioForm(instance=sc)
-        ctx["formsets"] = [(d, StreamFormSet(queryset=d.inbound.all(), prefix=d.kind)) for d in days]
+        ctx["day_forms"] = [{"day": d, "inbound": StreamFormSet(queryset=d.inbound.all(), prefix=d.kind),
+                             "outbound": OutFormSet(queryset=d.outbound.all(), prefix=f"{d.kind}-out"),
+                             "profile": DayProfileForm(instance=d, prefix=f"{d.kind}-p")} for d in days]
+        ctx["shift_fs"] = ShiftFormSet(queryset=sc.shifts.all(), prefix="shift")
     return render(request, "scenario/detail.html", ctx)
+
+
+def _errors(request, title, fs=None, form=None):
+    if form is not None:
+        for errs in form.errors.values():
+            messages.error(request, f"{title}: {' '.join(errs)}")
+    if fs is not None:
+        for i, errs in enumerate(fs.errors):
+            for msg in [e for v in errs.values() for e in v]:
+                messages.error(request, f"{title}, wiersz {i + 1}: {msg}")
+        for msg in fs.non_form_errors():
+            messages.error(request, f"{title}: {msg}")
+
+
+def _save_formset(fs, **parent):
+    for obj in fs.save(commit=False):
+        for k, v in parent.items():
+            setattr(obj, k, v)
+        obj.save()
+    for obj in fs.deleted_objects:
+        obj.delete()
 
 
 @designer
@@ -102,8 +234,7 @@ def scenario_save(request, pk):
         form.save()
         messages.success(request, "Zapisano parametry i normy — wyniki przeliczone.")
     else:
-        for errs in form.errors.values():
-            messages.error(request, " ".join(errs))
+        _errors(request, "Parametry", form=form)
     return redirect("scenario:detail", pk=pk)
 
 
@@ -113,18 +244,44 @@ def day_save(request, pk, kind):
     day = get_object_or_404(ScenarioDay, scenario_id=pk, kind=kind)
     fs = StreamFormSet(request.POST, queryset=day.inbound.all(), prefix=kind)
     if not fs.is_valid():
-        for i, errs in enumerate(fs.errors):
-            for msg in [e for v in errs.values() for e in v]:
-                messages.error(request, f"{day.get_kind_display()}, wiersz {i + 1}: {msg}")
+        _errors(request, day.get_kind_display(), fs=fs)
         return redirect("scenario:detail", pk=pk)
     with transaction.atomic():
-        for s in fs.save(commit=False):
-            s.day = day
-            s.save()
-        for s in fs.deleted_objects:
-            s.delete()
+        _save_formset(fs, day=day)
         day.scenario.save(update_fields=["updated_at"])
     messages.success(request, f"Zapisano plan przyjęć: {day.get_kind_display().lower()} — wyniki przeliczone.")
+    return redirect("scenario:detail", pk=pk)
+
+
+@designer
+@require_POST
+def outbound_save(request, pk, kind):
+    day = get_object_or_404(ScenarioDay, scenario_id=pk, kind=kind)
+    fs = OutFormSet(request.POST, queryset=day.outbound.all(), prefix=f"{kind}-out")
+    form = DayProfileForm(request.POST, instance=day, prefix=f"{kind}-p")
+    if not (fs.is_valid() and form.is_valid()):
+        _errors(request, f"Wydania — {day.get_kind_display().lower()}", fs=fs, form=form)
+        return redirect("scenario:detail", pk=pk)
+    with transaction.atomic():
+        form.save()
+        _save_formset(fs, day=day)
+        day.scenario.save(update_fields=["updated_at"])
+    messages.success(request, f"Zapisano wydania, paczki i zwroty: {day.get_kind_display().lower()}.")
+    return redirect("scenario:detail", pk=pk)
+
+
+@designer
+@require_POST
+def shifts_save(request, pk):
+    sc = get_object_or_404(Scenario, pk=pk)
+    fs = ShiftFormSet(request.POST, queryset=sc.shifts.all(), prefix="shift")
+    if not fs.is_valid():
+        _errors(request, "Obsada", fs=fs)
+        return redirect("scenario:detail", pk=pk)
+    with transaction.atomic():
+        _save_formset(fs, scenario=sc)
+        sc.save(update_fields=["updated_at"])
+    messages.success(request, "Zapisano obsadę i zmiany — porównanie z potrzebą przeliczone.")
     return redirect("scenario:detail", pk=pk)
 
 
@@ -133,15 +290,21 @@ def day_save(request, pk, kind):
 def scenario_copy(request, pk):
     src = get_object_or_404(Scenario, pk=pk)
     with transaction.atomic():
-        days = list(src.days.prefetch_related("inbound"))
+        days = list(src.days.prefetch_related("inbound", "outbound"))
+        shifts = list(src.shifts.all())
         sc = Scenario.objects.get(pk=pk)
         sc.pk, sc.name, sc.created_by = None, f"{src.name} (kopia)"[:200], request.user
         sc.save()
         for d in days:
-            nd = ScenarioDay.objects.create(scenario=sc, kind=d.kind)
-            for s in d.inbound.all():
-                s.pk, s.day = None, nd
+            streams = [*d.inbound.all(), *d.outbound.all()]
+            d.pk, d.scenario = None, sc
+            d.save()
+            for s in streams:
+                s.pk, s.day = None, d
                 s.save()
+        for s in shifts:
+            s.pk, s.scenario = None, sc
+            s.save()
     messages.success(request, f"Skopiowano scenariusz jako „{sc}”.")
     return redirect("scenario:detail", pk=sc.pk)
 

@@ -1,4 +1,4 @@
-# RenderJob
+# render/views.py
 
 > 13 nodes · cohesion 0.29
 
@@ -25,9 +25,9 @@
 - [blender_scene.py](blender_scene.py.md) (2 shared connections)
 - [ScenarioViewTests](ScenarioViewTests.md) (2 shared connections)
 - [layout.py](layout.py.md) (1 shared connections)
-- [shared.py](shared.py.md) (1 shared connections)
+- [WarehouseTaskBatch](WarehouseTaskBatch.md) (1 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [test_design_calibration.py](test_design_calibration.py.md) (1 shared connections)
+- [resolve_moves](resolve_moves.md) (1 shared connections)
 
 ## Source Files
 

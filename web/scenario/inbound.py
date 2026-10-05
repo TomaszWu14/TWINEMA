@@ -13,7 +13,7 @@ norms:  {container_cartons_per_h, container_people, cartons_per_pallet, truck_mi
 import math
 
 CONTAINER = "container40"
-DOCK_OF = {CONTAINER: "container", "truck33": "pallet", "solo": "pallet"}
+DOCK_OF = {CONTAINER: "container", "truck33": "pallet", "solo": "pallet", "crossdock": "pallet"}
 LEVELS = {"avg": 1, "max": 2}
 
 
@@ -55,7 +55,7 @@ def peak_concurrency(intervals):
 def day_demand(streams, norms, *, growth=1.0, level="avg", shift_h=8.0):
     rows, docks = [], {"container": [], "pallet": []}
     ph = {"unload": 0.0, "palletize": 0.0, "repack": 0.0, "inspect": 0.0}
-    pallets_in = cartons_in = 0.0
+    pallets_in = cartons_in = xdock = 0.0
     for s in streams:
         n = arrivals_count(_pick(s["arrivals"], level), growth)
         p = _pick(s["pallets"], level)
@@ -64,6 +64,8 @@ def day_demand(streams, norms, *, growth=1.0, level="avg", shift_h=8.0):
             docks[DOCK_OF[s["kind"]]].append((t, t + hours))
         pallets = n * p
         pallets_in += pallets
+        if s["kind"] == "crossdock":            # z doku prosto na pole odkładcze wydań
+            xdock += pallets
         if s["kind"] == CONTAINER:
             cartons = pallets * norms["cartons_per_pallet"]
             cartons_in += cartons
@@ -80,6 +82,7 @@ def day_demand(streams, norms, *, growth=1.0, level="avg", shift_h=8.0):
     ph["total"] = round(sum(ph.values()), 1)
     return {
         "level": level, "rows": rows, "pallets_in": round(pallets_in), "cartons_in": round(cartons_in),
+        "pallets_xdock": round(xdock),
         "docks_peak": {k: v[0] for k, v in peaks.items()},
         "docks_peak_at": {k: _hhmm(v[1]) for k, v in peaks.items()},
         "person_hours": ph,
