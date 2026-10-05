@@ -26,7 +26,7 @@
 - [blender_stock.py](blender_stock.py.md) `EXTRACTED`
 
 ### imports
-- [test_design_calibration.py](test_design_calibration.py.md) `EXTRACTED`
+- test_design_calibration.py `EXTRACTED`
 - test_ewm_tasks_flow.py `EXTRACTED`
 - warehouse_calibration.py `EXTRACTED`
 - ewm_tasks_import.py `EXTRACTED`

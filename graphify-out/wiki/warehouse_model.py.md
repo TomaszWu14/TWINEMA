@@ -1,50 +1,64 @@
 # warehouse_model.py
 
-> 18 nodes · cohesion 0.14
+> 49 nodes · cohesion 0.07
 
 ## Key Concepts
 
-- **addressing.py** (18 connections) — `web/twin/addressing.py`
-- **parse_bay_numbers()** (11 connections) — `web/twin/addressing.py`
-- **format_bay_numbers()** (6 connections) — `web/twin/addressing.py`
-- **row_bay_numbers()** (6 connections) — `web/twin/addressing.py`
-- **ParseTests** (6 connections) — `web/twin/tests/test_addressing.py`
-- **_bay_locations()** (4 connections) — `web/twin/addressing.py`
-- **make_code()** (4 connections) — `web/twin/addressing.py`
-- **validate_bay_numbers()** (3 connections) — `web/twin/models.py`
-- **.test_bay_numbers_ranges_round_trip()** (3 connections) — `web/twin/tests/test_addressing.py`
-- **.test_row_numbers_default_and_truncation()** (3 connections) — `web/twin/tests/test_addressing.py`
-- **.test_bay_numbers_invalid()** (2 connections) — `web/twin/tests/test_addressing.py`
-- **.test_parse_code_with_half_and_lowercase()** (2 connections) — `web/twin/tests/test_addressing.py`
-- **Adresy miejsc paletowych modelu magazynu: szablon gniazda + reguła rzędu +…** (1 connections) — `web/twin/addressing.py`
-- **„10-47,50” → [10, …, 47, 50]. Pusty tekst → []. Błędny zapis → ValueError.** (1 connections) — `web/twin/addressing.py`
-- **[10, …, 47, 50] → „10-47,50” (odwrotność parse_bay_numbers).** (1 connections) — `web/twin/addressing.py`
-- **Numery gniazd rzędu w kolejności fizycznej; pusta reguła = 1..n_bays; nadmiar…** (1 connections) — `web/twin/addressing.py`
-- **Miejsca jednego gniazda (numer `bay`, fizyczny indeks `slot`) wg szablonu i…** (1 connections) — `web/twin/addressing.py`
-- **Numeracja gniazd rzędu: zakresy „10-47,50”.** (1 connections) — `web/twin/models.py`
+- **warehouse_model.py** (30 connections) — `web/twin/views/warehouse_model.py`
+- **rack_corners()** (12 connections) — `web/twin/blender_route.py`
+- **test_model_geometry.py** (11 connections) — `web/twin/tests/test_model_geometry.py`
+- **parse_geometry_csv()** (10 connections) — `web/twin/model_geometry.py`
+- **active_master()** (8 connections) — `web/twin/ewm_service.py`
+- **model_geometry.py** (7 connections) — `web/twin/model_geometry.py`
+- **floor_size()** (7 connections) — `web/twin/model_geometry.py`
+- **GeometryUploadTests** (7 connections) — `web/twin/tests/test_model_geometry.py`
+- **_create_from_geometry()** (7 connections) — `web/twin/views/warehouse_model.py`
+- **is_geometry_csv()** (6 connections) — `web/twin/model_geometry.py`
+- **_parse_location_code()** (6 connections) — `web/twin/shared.py`
+- **save_hall_features()** (6 connections) — `web/twin/shared.py`
+- **GeometryParserTests** (6 connections) — `web/twin/tests/test_model_geometry.py`
+- **warehouse_model_paste()** (6 connections) — `web/twin/views/warehouse_model.py`
+- **warehouse_model_view()** (6 connections) — `web/twin/views/warehouse_model.py`
+- **_md_role** (5 connections)
+- **hall_feature_kinds()** (4 connections) — `web/twin/shared.py`
+- **.test_floor_fits_rotated_racks()** (4 connections) — `web/twin/tests/test_model_geometry.py`
+- **._upload()** (4 connections) — `web/twin/tests/test_model_geometry.py`
+- **_features_data()** (4 connections) — `web/twin/views/warehouse_model.py`
+- **_parse_pasted_codes()** (4 connections) — `web/twin/views/warehouse_model.py`
+- **warehouse_model_features()** (4 connections) — `web/twin/views/warehouse_model.py`
+- **warehouse_model_coords()** (3 connections) — `web/twin/views/warehouse_model.py`
+- **_num()** (2 connections) — `web/twin/model_geometry.py`
+- **.test_detects_geometry_header_not_location_codes()** (2 connections) — `web/twin/tests/test_model_geometry.py`
+- *... and 24 more nodes in this community*
 
 ## Relationships
 
-- [test_addressing.py](test_addressing.py.md) (10 shared connections)
-- [design_day.py](design_day.py.md) (6 shared connections)
-- [BlenderExportViewTests](BlenderExportViewTests.md) (3 shared connections)
-- [twin/models.py](twin-models.py.md) (3 shared connections)
-- [test_model_geometry.py](test_model_geometry.py.md) (3 shared connections)
-- [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
-- [ewm_tasks.py](ewm_tasks.py.md) (1 shared connections)
-- [hall_feature_dict](hall_feature_dict.md) (1 shared connections)
+- [twin/models.py](twin-models.py.md) (12 shared connections)
+- [shared.py](shared.py.md) (11 shared connections)
+- [script.py](script.py.md) (3 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
+- [ewm_service.py](ewm_service.py.md) (3 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (3 shared connections)
+- [test_model_edit.py](test_model_edit.py.md) (2 shared connections)
+- [ParseTests](ParseTests.md) (2 shared connections)
+- [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
+- [FloorGrid](FloorGrid.md) (1 shared connections)
+- [blender_scene.py](blender_scene.py.md) (1 shared connections)
 - [ValueError](ValueError.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/addressing.py`
-- `web/twin/models.py`
-- `web/twin/tests/test_addressing.py`
+- `web/twin/blender_route.py`
+- `web/twin/ewm_service.py`
+- `web/twin/model_geometry.py`
+- `web/twin/shared.py`
+- `web/twin/tests/test_model_geometry.py`
+- `web/twin/views/warehouse_model.py`
 
 ## Audit Trail
 
-- EXTRACTED: 73 (99%)
-- INFERRED: 1 (1%)
+- EXTRACTED: 194 (96%)
+- INFERRED: 9 (4%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -1,60 +1,50 @@
 # masterdata/services.py
 
-> 30 nodes · cohesion 0.13
+> 18 nodes · cohesion 0.14
 
 ## Key Concepts
 
-- **test_dane.py** (23 connections) — `web/masterdata/tests/test_dane.py`
-- **Material** (13 connections) — `web/masterdata/models.py`
-- **DaneViewTests** (12 connections) — `web/masterdata/tests/test_dane.py`
-- **ImportLog** (11 connections) — `web/masterdata/models.py`
-- **StockItem** (10 connections) — `web/masterdata/models.py`
-- **ImportServiceTests** (10 connections) — `web/masterdata/tests/test_dane.py`
-- **_csv()** (8 connections) — `web/masterdata/tests/test_dane.py`
-- **masterdata/models.py** (7 connections) — `web/masterdata/models.py`
-- **DemoAndSceneTests** (6 connections) — `web/masterdata/tests/test_dane.py`
-- **._upload()** (4 connections) — `web/masterdata/tests/test_dane.py`
-- **Meta** (3 connections) — `web/masterdata/models.py`
-- **.test_bad_file_shows_message_not_500()** (3 connections) — `web/masterdata/tests/test_dane.py`
-- **.test_designer_upload_redirects_to_report_with_rejects()** (3 connections) — `web/masterdata/tests/test_dane.py`
-- **.test_home_lists_imports_and_hides_upload_for_viewer()** (3 connections) — `web/masterdata/tests/test_dane.py`
-- **TestCase** (3 connections)
-- **.test_demo_stock_lands_as_pallets_in_scene()** (2 connections) — `web/masterdata/tests/test_dane.py`
-- **.test_latest_stock_import_is_current_stock()** (2 connections) — `web/masterdata/tests/test_dane.py`
-- **.test_locations_create_new_active_master()** (2 connections) — `web/masterdata/tests/test_dane.py`
-- **.test_materials_upsert_and_report()** (2 connections) — `web/masterdata/tests/test_dane.py`
-- **.test_missing_required_column_saves_nothing()** (2 connections) — `web/masterdata/tests/test_dane.py`
-- **.__str__()** (1 connections) — `web/masterdata/models.py`
-- **.__str__()** (1 connections) — `web/masterdata/models.py`
-- **Dane podstawowe bliźniaka: materiały, stany w lokalizacjach i dziennik…** (1 connections) — `web/masterdata/models.py`
-- **Jeden import pliku: rodzaj, wynik i próbka odrzuconych wierszy. Import stanów…** (1 connections) — `web/masterdata/models.py`
-- **Materiał (SKU): opakowanie zbiorcze i paletyzacja — wejście do rozmieszczenia i…** (1 connections) — `web/masterdata/models.py`
-- *... and 5 more nodes in this community*
+- **addressing.py** (18 connections) — `web/twin/addressing.py`
+- **parse_bay_numbers()** (11 connections) — `web/twin/addressing.py`
+- **format_bay_numbers()** (6 connections) — `web/twin/addressing.py`
+- **row_bay_numbers()** (6 connections) — `web/twin/addressing.py`
+- **ParseTests** (6 connections) — `web/twin/tests/test_addressing.py`
+- **_bay_locations()** (4 connections) — `web/twin/addressing.py`
+- **make_code()** (4 connections) — `web/twin/addressing.py`
+- **validate_bay_numbers()** (3 connections) — `web/twin/models.py`
+- **.test_bay_numbers_ranges_round_trip()** (3 connections) — `web/twin/tests/test_addressing.py`
+- **.test_row_numbers_default_and_truncation()** (3 connections) — `web/twin/tests/test_addressing.py`
+- **.test_bay_numbers_invalid()** (2 connections) — `web/twin/tests/test_addressing.py`
+- **.test_parse_code_with_half_and_lowercase()** (2 connections) — `web/twin/tests/test_addressing.py`
+- **Adresy miejsc paletowych modelu magazynu: szablon gniazda + reguła rzędu +…** (1 connections) — `web/twin/addressing.py`
+- **„10-47,50” → [10, …, 47, 50]. Pusty tekst → []. Błędny zapis → ValueError.** (1 connections) — `web/twin/addressing.py`
+- **[10, …, 47, 50] → „10-47,50” (odwrotność parse_bay_numbers).** (1 connections) — `web/twin/addressing.py`
+- **Numery gniazd rzędu w kolejności fizycznej; pusta reguła = 1..n_bays; nadmiar…** (1 connections) — `web/twin/addressing.py`
+- **Miejsca jednego gniazda (numer `bay`, fizyczny indeks `slot`) wg szablonu i…** (1 connections) — `web/twin/addressing.py`
+- **Numeracja gniazd rzędu: zakresy „10-47,50”.** (1 connections) — `web/twin/models.py`
 
 ## Relationships
 
-- [test_voice.py](test_voice.py.md) (7 shared connections)
-- [BlenderExportViewTests](BlenderExportViewTests.md) (6 shared connections)
-- [masterdata/views.py](masterdata-views.py.md) (4 shared connections)
-- [build_scene_for_model](build_scene_for_model.md) (2 shared connections)
-- [shared.py](shared.py.md) (2 shared connections)
-- [twin/models.py](twin-models.py.md) (2 shared connections)
-- [ml/services.py](ml-services.py.md) (1 shared connections)
-- [roles.py](roles.py.md) (1 shared connections)
+- [test_addressing.py](test_addressing.py.md) (10 shared connections)
+- [load_groups](load_groups.md) (6 shared connections)
+- [detect](detect.md) (3 shared connections)
+- [twin/models.py](twin-models.py.md) (3 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (3 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
+- [ewm_tasks.py](ewm_tasks.py.md) (1 shared connections)
+- [addressing.py](addressing.py.md) (1 shared connections)
 - [ValueError](ValueError.md) (1 shared connections)
-- [blender_scene.py](blender_scene.py.md) (1 shared connections)
-- [design_calibration.py](design_calibration.py.md) (1 shared connections)
-- [ewm_service.py](ewm_service.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/masterdata/models.py`
-- `web/masterdata/tests/test_dane.py`
+- `web/twin/addressing.py`
+- `web/twin/models.py`
+- `web/twin/tests/test_addressing.py`
 
 ## Audit Trail
 
-- EXTRACTED: 118 (85%)
-- INFERRED: 21 (15%)
+- EXTRACTED: 73 (99%)
+- INFERRED: 1 (1%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -1,23 +1,23 @@
-# api.py
+# studio/api.py
 
-> 46 nodes · cohesion 0.07
+> 45 nodes · cohesion 0.07
 
 ## Key Concepts
 
-- **api.py** (13 connections) — `web/render/api.py`
-- **RenderJob** (12 connections) — `web/render/models.py`
+- **render/api.py** (14 connections) — `web/render/api.py`
+- **RenderJob** (14 connections) — `web/render/models.py`
 - **render/views.py** (12 connections) — `web/render/views.py`
-- **_scene_from_request()** (10 connections) — `web/twin/views/warehouse_blender.py`
+- **_scene_from_request()** (12 connections) — `web/twin/views/warehouse_blender.py`
+- **worker_required()** (11 connections) — `web/render/api.py`
+- **_forbidden()** (8 connections) — `web/render/api.py`
+- **render/models.py** (8 connections) — `web/render/models.py`
 - **RenderJobForm** (8 connections) — `web/render/views.py`
 - **scene()** (6 connections) — `web/render/api.py`
-- **render/models.py** (6 connections) — `web/render/models.py`
 - **fail()** (5 connections) — `web/render/api.py`
 - **result()** (5 connections) — `web/render/api.py`
-- **worker_required()** (5 connections) — `web/render/api.py`
 - **create()** (5 connections) — `web/render/views.py`
 - **claim()** (4 connections) — `web/render/api.py`
 - **_claimed_job()** (4 connections) — `web/render/api.py`
-- **_forbidden()** (4 connections) — `web/render/api.py`
 - **warehouse_model_blender_json()** (4 connections) — `web/twin/views/warehouse_blender.py`
 - **warehouse_model_flow_json()** (4 connections) — `web/twin/views/warehouse_blender.py`
 - **require_POST** (3 connections)
@@ -29,14 +29,14 @@
 - **.scene_query()** (3 connections) — `web/render/views.py`
 - **status_json()** (3 connections) — `web/render/views.py`
 - **Meta** (2 connections) — `web/render/views.py`
-- *... and 21 more nodes in this community*
+- *... and 20 more nodes in this community*
 
 ## Relationships
 
-- [warehouse_design_sim.py](warehouse_design_sim.py.md) (6 shared connections)
+- [shared.py](shared.py.md) (6 shared connections)
 - [roles.py](roles.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [build_scene_for_model](build_scene_for_model.md) (1 shared connections)
+- [blender_route.py](blender_route.py.md) (1 shared connections)
 
 ## Source Files
 
@@ -49,8 +49,8 @@
 
 ## Audit Trail
 
-- EXTRACTED: 154 (97%)
-- INFERRED: 4 (3%)
+- EXTRACTED: 170 (98%)
+- INFERRED: 4 (2%)
 - AMBIGUOUS: 0 (0%)
 
 ---

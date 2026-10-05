@@ -1,4 +1,4 @@
-# hall_feature_dict
+# addressing.py
 
 > 11 nodes · cohesion 0.27
 
@@ -18,9 +18,9 @@
 
 ## Relationships
 
-- [design_day.py](design_day.py.md) (4 shared connections)
+- [load_groups](load_groups.md) (4 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (1 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
 
 ## Source Files
 

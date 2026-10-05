@@ -1,10 +1,19 @@
 from django.urls import path
 
-from . import views
+from . import api, views
 
 app_name = "studio"
 
 urlpatterns = [
+    path("studio/<int:pk>/render/", views.render_shots, name="render_shots"),
+    path("studio/<int:pk>/montaz/", views.montage_create, name="montage_create"),
+    path("studio/<int:pk>/status.json", views.status_json, name="status_json"),
+    path("studio/film/<int:pk>.mp4", views.film_file, name="film_file"),
+    path("api/studio/montage/claim/", api.claim, name="api_claim"),
+    path("api/studio/montage/<int:pk>/clip/<int:n>/", api.clip, name="api_clip"),
+    path("api/studio/montage/<int:pk>/audio/<int:n>/", api.audio, name="api_audio"),
+    path("api/studio/montage/<int:pk>/result/", api.result, name="api_result"),
+    path("api/studio/montage/<int:pk>/fail/", api.fail, name="api_fail"),
     path("studio/", views.presentation_list, name="list"),
     path("studio/nowa/", views.presentation_create, name="create"),
     path("studio/<int:pk>/", views.presentation_detail, name="detail"),
