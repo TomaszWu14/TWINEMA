@@ -8,11 +8,12 @@
 // Układ: hala x → three X, hala y („w głąb") → three Z, wysokość z → three Y.
 // Kierunek heading [°] (0 = +x, 90 = +y) → rotation.y = −heading (jak rotation.y regałów).
 import * as THREE from 'three';
+import { UNIT_BOX, buildAgent as agentMesh } from './flow-agents.js';
 
 const FLOW_Y = { inbound: 0.03, outbound: 0.05, picking: 0.07, replenishment: 0.09, transfer: 0.11 };
 const FLOW_LABELS = { inbound: 'Przyjęcie (dok → regał)', outbound: 'Wydanie (regał → dok)', picking: 'Kompletacja',
                       replenishment: 'Uzupełnienie (regał → regał)', transfer: 'Przesunięcie (regał → regał)' };
-const WOOD = 0xb45309, LOAD = 0xc8a26a, FORK = 0x27272a, SKIN = 0xf2c9a0, TROUSERS = 0x374151;
+const WOOD = 0xb45309, LOAD = 0xc8a26a;
 const NO_DATA = '#a1a1aa';
 const SKU_PALETTE = ['#2563eb', '#16a34a', '#f59e0b', '#dc2626', '#7c3aed', '#0891b2',
                      '#db2777', '#65a30d', '#ea580c', '#4f46e5', '#0d9488', '#a16207'];
@@ -75,31 +76,8 @@ export function fmtTime(s) {
 }
 
 // ── Geometria pomocnicza ───────────────────────────────────────────────────────────
-const UNIT_BOX = new THREE.BoxGeometry(1, 1, 1);
 const _m = new THREE.Matrix4(), _q = new THREE.Quaternion(), _p = new THREE.Vector3(),
       _s = new THREE.Vector3(), _e = new THREE.Euler(), _up = new THREE.Vector3(0, 1, 0);
-
-// Pudełka jak w skrypcie Blendera: (cx, cy, cz, sx, sy, sz, idx) — X do przodu, Z w górę.
-function boxes(list, mats, parent) {
-  for (const [cx, cy, cz, sx, sy, sz, mi] of list) {
-    const mesh = new THREE.Mesh(UNIT_BOX, mats[mi]);
-    mesh.position.set(cx, cz, cy); mesh.scale.set(sx, sz, sy);
-    mesh.castShadow = true;
-    parent.add(mesh);
-  }
-}
-
-function labelSprite(text) {
-  const cv = document.createElement('canvas'); cv.width = 256; cv.height = 56;
-  const x = cv.getContext('2d');
-  x.fillStyle = 'rgba(15,23,42,0.78)'; x.fillRect(0, 0, 256, 56);
-  x.fillStyle = '#fff'; x.font = 'bold 26px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle';
-  x.fillText(String(text).slice(0, 18), 128, 29);
-  const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace;
-  const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false }));
-  spr.scale.set(2.2, 0.48, 1); spr.renderOrder = 10;
-  return spr;
-}
 
 // Przepływ jako płaska „wstęga" na posadzce (linie WebGL mają zawsze 1 px — za cienkie).
 function ribbon(polylines, width, y) {
@@ -160,48 +138,10 @@ export function createFlowPlayer({ scene, camera, canvas, requestRender, root, u
   }
 
   function buildAgent(a) {
-    const rootObj = new THREE.Group();
-    const color = new THREE.MeshStandardMaterial({ color: a.color, roughness: 0.55, metalness: 0.1 });
-    let carriage = null;
-    if (a.kind === 'forklift') {
-      const dark = new THREE.MeshStandardMaterial({ color: FORK, roughness: 0.6, metalness: 0.4 });
-      boxes([[-0.2, 0, 0.45, 1.5, 0.95, 0.6, 0], [-0.6, 0, 1.0, 0.5, 0.8, 0.5, 0], [-0.15, 0, 1.55, 0.9, 0.9, 0.06, 1],
-             [0.2, 0.4, 1.0, 0.05, 0.05, 1.1, 1], [0.2, -0.4, 1.0, 0.05, 0.05, 1.1, 1],
-             [0.62, 0, 1.2, 0.08, 0.7, 2.2, 1]], [color, dark], rootObj);
-      carriage = new THREE.Group();
-      boxes([[1.2, 0.22, 0.05, 1.1, 0.1, 0.04, 0], [1.2, -0.22, 0.05, 1.1, 0.1, 0.04, 0],
-             [0.7, 0, 0.4, 0.06, 0.8, 0.8, 0]], [dark], carriage);
-      rootObj.add(carriage);
-    } else if (a.kind === 'kombi') {
-      // Wózek systemowy VNA: maszt 7 m, kabina operatora jedzie w górę razem z widłami.
-      const dark = new THREE.MeshStandardMaterial({ color: FORK, roughness: 0.6, metalness: 0.4 });
-      boxes([[-0.3, 0, 0.4, 2.6, 1.4, 0.8, 0], [0.95, 0, 3.5, 0.15, 1.2, 7.0, 1]], [color, dark], rootObj);
-      carriage = new THREE.Group();
-      boxes([[0.5, 0, 1.25, 0.8, 1.0, 1.2, 0], [0.5, 0, 1.9, 0.9, 1.1, 0.06, 1],
-             [1.3, 0.22, 0.05, 1.1, 0.1, 0.04, 1], [1.3, -0.22, 0.05, 1.1, 0.1, 0.04, 1]], [color, dark], carriage);
-      rootObj.add(carriage);
-    } else if (a.kind === 'agv') {
-      const dark = new THREE.MeshStandardMaterial({ color: FORK, roughness: 0.6, metalness: 0.4 });
-      boxes([[0, 0, 0.17, 1.3, 0.9, 0.3, 0], [0, 0, 0.33, 1.2, 0.8, 0.04, 1], [0.6, 0, 0.42, 0.1, 0.1, 0.12, 1]],
-            [color, dark], rootObj);
-    } else {
-      // Pracownik; „ept" = ten sam pracownik na elektrycznym wózku paletowym (widły z przodu).
-      const x = a.kind === 'ept' ? -0.45 : 0;
-      boxes([[x, 0, 0.45, 0.22, 0.3, 0.9, 1], [x, 0, 1.2, 0.26, 0.46, 0.62, 0],
-             [x, 0, 1.66, 0.22, 0.2, 0.26, 2], [x + 0.14, 0, 1.2, 0.05, 0.3, 0.05, 0]],
-            [color, new THREE.MeshStandardMaterial({ color: TROUSERS, roughness: 0.8 }),
-             new THREE.MeshStandardMaterial({ color: SKIN, roughness: 0.7 })], rootObj);
-      if (a.kind === 'ept') {
-        const dark = new THREE.MeshStandardMaterial({ color: FORK, roughness: 0.6, metalness: 0.4 });
-        boxes([[0.1, 0, 0.45, 0.5, 0.7, 0.8, 0], [-0.45, 0, 0.05, 0.5, 0.7, 0.1, 1],
-               [0.9, 0.25, 0.08, 1.2, 0.16, 0.08, 1], [0.9, -0.25, 0.08, 1.2, 0.16, 0.08, 1]], [color, dark], rootObj);
-      }
-    }
-    const lbl = labelSprite(a.label);
-    lbl.position.set(0, { forklift: 3.0, kombi: 7.8, agv: 1.6, ept: 2.4 }[a.kind] || 2.3, 0);
-    rootObj.add(lbl); labels.push(lbl);
-    group.add(rootObj);
-    return { a, obj: rootObj, carriage };
+    const { obj, carriage, label } = agentMesh(a);
+    labels.push(label);
+    group.add(obj);
+    return { a, obj, carriage };
   }
 
   // Ruchome ładunki: 3 InstancedMesh (podstawa palety, ładunek palety, karton) → 3 draw calle.

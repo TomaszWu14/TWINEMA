@@ -105,7 +105,7 @@ def peak_index(timeline):
 
 @any_role
 def run_play(request, pk):
-    run = get_object_or_404(ScenarioRun.objects.select_related("model", "scenario"), pk=pk)
+    run = get_object_or_404(ScenarioRun.objects.select_related("model", "scenario__fleet_equipment"), pk=pk)
     wm = run.model
     racks, features, _ = model_scene_data(wm)
     floor = {"width": wm.floor_width_m, "depth": wm.floor_depth_m}
@@ -122,5 +122,7 @@ def run_play(request, pk):
             "site": wm.site or {},
             "timeline": {"step_s": 900, "fleet_busy": tl.get("fleet_busy", []), "people": people},
             "peak_t": peak * 900, "colors": {"staging": HALL_FEATURE_COLORS["staging"]},
+            # typ floty z katalogu (agv/amr/reach…) → model sprzętu przy regałach w animacji (G2b); "" = domyślny
+            "fleet_kind": run.scenario.fleet_equipment.kind if run.scenario.fleet_equipment else "",
         }),
     })

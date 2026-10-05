@@ -4,6 +4,7 @@ from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
 from core.roles import GROUP_DESIGNER, GROUP_VIEWER
+from equipment.models import Equipment
 from scenario.models import Scenario, ScenarioRun
 from scenario.views_play import bottleneck_focus, layout_places, peak_index
 from twin.models import WarehouseModel
@@ -99,6 +100,13 @@ class PlayViewTests(TestCase):
             self.assertContains(r, "Tabela godzinowa")
         detail = self.client.get(reverse("scenario:detail", args=[self.sc.pk]))
         self.assertContains(detail, url)                              # link „Animacja dnia” przy wyniku
+
+    def test_fleet_kind_from_catalog_in_player_data(self):
+        r = self.client.get(reverse("scenario:run_play", args=[self.run.pk]))
+        self.assertContains(r, '"fleet_kind": ""')                      # bez floty z katalogu → domyślny model
+        Scenario.objects.filter(pk=self.sc.pk).update(fleet_equipment=Equipment.objects.filter(kind="agv").first())
+        r = self.client.get(reverse("scenario:run_play", args=[self.run.pk]))
+        self.assertContains(r, '"fleet_kind": "agv"')
 
     def test_run_without_events_shows_message(self):
         ScenarioRun.objects.filter(pk=self.run.pk).update(events=[])
