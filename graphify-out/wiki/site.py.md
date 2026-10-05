@@ -42,9 +42,9 @@
 - [scene-builder.js](scene-builder.js.md) (1 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [scenario/services.py](scenario-services.py.md) (1 shared connections)
+- [views_sim.py](views_sim.py.md) (1 shared connections)
 - [packaging.py](packaging.py.md) (1 shared connections)
-- [DaneViewTests](DaneViewTests.md) (1 shared connections)
+- [test_dane.py](test_dane.py.md) (1 shared connections)
 
 ## Source Files
 

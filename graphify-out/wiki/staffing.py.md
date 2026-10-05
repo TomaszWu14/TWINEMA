@@ -28,7 +28,7 @@
 - [simulate](simulate.md) (7 shared connections)
 - [test_master_data.py](test_master_data.py.md) (3 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (2 shared connections)
-- [test_dane.py](test_dane.py.md) (2 shared connections)
+- [demo_materials](demo_materials.md) (2 shared connections)
 - [test_ml.py](test_ml.py.md) (2 shared connections)
 - [blender_scene.py](blender_scene.py.md) (1 shared connections)
 

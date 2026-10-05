@@ -6,126 +6,24 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
-import { EDGE_KINDS, FLAT_KINDS, camAt, decorParts, effectiveQuality, extents, hallWalls, isoView, localToWorld, outward, sitePlan,
-  rackMatrices, steelMatrices, steelMode, wallHidden } from './scene-data.js';
+import { COLOR_MODES, EDGE_KINDS, FLAT_KINDS, camAt, colorLegend, contactShadowPart, decorParts, effectiveQuality, extents,
+  hallWalls, isoView, localToWorld, outward, rackMatrices, rackOutline, rackTint, sitePlan, steelMatrices, steelMode,
+  wallHidden } from './scene-data.js';
 import { buildSite } from './scene-site.js';
+import { asphaltTex, cartonTex, doorTex, hatchTex, LABEL_NEAR_M, makeLabel, panelTex, signTex, slabTex, slotTex,
+  shadowTex, stdMat, steelMat, woodTex } from './scene-materials.js';
 
 const YARD = 25;                                  // plac wokół hali [m]
-const QKEY = 'tw3d.quality';
+const QKEY = 'tw3d.quality', CKEY = 'tw3d.colors';
+// Ile koloru trybu przyjmuje ładunek palet: w trybie typów delikatnie (realizm), w pozostałych mocniej (czytelność z daleka).
+const LOAD_TINT = { type: 0.22, zones: 0.5, fill: 0.55 };
 const _unitBox = new THREE.BoxGeometry(1, 1, 1);
 const _lw = new THREE.Vector3();
+const _shadowPlane = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
 const HATCH = new Set(['fire_route', 'walkway', 'truckway']);
 
-// ── Tekstury proceduralne (współdzielone, cache) ─────────────────────────────────────────────
-const _texCache = {};
-function mkTex(key, size, draw, srgb = true) {
-  if (_texCache[key]) return _texCache[key];
-  const c = document.createElement('canvas'); c.width = c.height = size;
-  draw(c.getContext('2d'), size);
-  const t = new THREE.CanvasTexture(c);
-  t.wrapS = t.wrapT = THREE.RepeatWrapping;
-  if (srgb) t.colorSpace = THREE.SRGBColorSpace;
-  t.anisotropy = 8;
-  return (_texCache[key] = t);
-}
-const hex2rgb = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
-function noise(x, s, amt, dark, light) {
-  const d = hex2rgb(dark), l = hex2rgb(light), img = x.getImageData(0, 0, s, s), p = img.data;
-  for (let i = 0; i < p.length; i += 4) {
-    const c = Math.random() > 0.5 ? d : l, a = Math.random() * amt;
-    p[i] += (c[0] - p[i]) * a; p[i + 1] += (c[1] - p[i + 1]) * a; p[i + 2] += (c[2] - p[i + 2]) * a;
-  }
-  x.putImageData(img, 0, 0);
-}
-const lines = (x, s, n, horiz, style, w) => {
-  x.strokeStyle = style; x.lineWidth = w;
-  for (let i = 1; i < n; i++) {
-    const p = i * s / n; x.beginPath();
-    if (horiz) { x.moveTo(0, p); x.lineTo(s, p); } else { x.moveTo(p, 0); x.lineTo(p, s); }
-    x.stroke();
-  }
-};
-const steelRough = () => mkTex('steelR', 128, (x, s) => { x.fillStyle = '#6e6e6e'; x.fillRect(0, 0, s, s); noise(x, s, 0.45, '#4a4a4a', '#a0a0a0'); }, false);
-// Posadzka hali: beton + fugi dylatacyjne co 6 m (tekstura = 1 płyta 6 × 6 m).
-const slabTex = () => mkTex('slab', 512, (x, s) => {
-  x.fillStyle = '#aeb2b2'; x.fillRect(0, 0, s, s); noise(x, s, 0.18, '#8e9292', '#cdd0d0');
-  for (let i = 0; i < 200; i++) {
-    x.fillStyle = `rgba(110,112,110,${Math.random() * 0.18})`;
-    x.beginPath(); x.arc(Math.random() * s, Math.random() * s, Math.random() * 4, 0, 7); x.fill();
-  }
-  x.strokeStyle = 'rgba(80,82,82,0.35)'; x.lineWidth = 2; x.strokeRect(0, 0, s, s);
-});
-const asphaltTex = () => mkTex('asphalt', 256, (x, s) => { x.fillStyle = '#5a5e62'; x.fillRect(0, 0, s, s); noise(x, s, 0.35, '#3e4246', '#7b8085'); });
-// Karton z ładunkiem: 3 × 4 kartony w warstwach + taśma (jedna bryła udaje cały ładunek palety).
-const cartonTex = () => mkTex('carton', 256, (x, s) => {
-  x.fillStyle = '#b4874f'; x.fillRect(0, 0, s, s); noise(x, s, 0.14, '#94683a', '#c99f68');
-  for (let r = 0; r < 4; r++) { x.fillStyle = 'rgba(238,228,205,0.55)'; x.fillRect(0, r * s / 4 + s / 8 - 5, s, 10); }
-  lines(x, s, 4, true, 'rgba(85,55,25,0.6)', 3); lines(x, s, 3, false, 'rgba(85,55,25,0.45)', 3);
-});
-const woodTex = () => mkTex('wood', 128, (x, s) => {
-  x.fillStyle = '#3d2f22'; x.fillRect(0, 0, s, s);
-  for (let i = 0; i < 5; i++) { x.fillStyle = i % 2 ? '#b58a55' : '#a87d4a'; x.fillRect(2, i * s / 5 + 3, s - 4, s / 5 - 6); }
-  noise(x, s, 0.18, '#7a5a35', '#d0a670');
-});
-const panelTex = () => mkTex('panel', 256, (x, s) => {   // płyta warstwowa ściany: pionowe przetłoczenia
-  x.fillStyle = '#d9dde1'; x.fillRect(0, 0, s, s); noise(x, s, 0.06, '#c3c8cd', '#eef0f2');
-  lines(x, s, 8, false, 'rgba(120,128,136,0.55)', 2);
-});
-const doorTex = () => mkTex('door', 128, (x, s) => {     // brama segmentowa: poziome panele
-  x.fillStyle = '#9aa3ab'; x.fillRect(0, 0, s, s); lines(x, s, 6, true, 'rgba(50,55,60,0.7)', 3);
-});
-// Pole odkładcze: posadzka z malowaną siatką miejsc paletowych (tekstura = 1 miejsce 1,4 × 1,4 m).
-const slotTex = () => mkTex('slot', 128, (x, s) => {
-  x.fillStyle = '#b9bdbd'; x.fillRect(0, 0, s, s); noise(x, s, 0.12, '#9ea2a2', '#cfd2d2');
-  x.strokeStyle = '#e2b007'; x.lineWidth = 6; x.strokeRect(3, 3, s - 6, s - 6);
-});
-const hatchTex = (color) => mkTex(`hatch:${color}`, 128, (x, s) => {
-  x.clearRect(0, 0, s, s); x.fillStyle = color;
-  for (let i = -s; i < s * 2; i += 32) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i + 16, 0); x.lineTo(i + 16 - s, s); x.lineTo(i - s, s); x.fill(); }
-});
-
-// Znak numeru regału: biała cyfra na niebieskim tle (jak magazynowy znak „30").
-function signTex(text) {
-  return mkTex(`sign:${text}`, 256, (x) => {
-    x.fillStyle = '#1e50a0'; x.fillRect(0, 0, 256, 256);
-    x.strokeStyle = '#ffffff'; x.lineWidth = 14; x.strokeRect(16, 16, 224, 224);
-    x.fillStyle = '#ffffff'; x.textAlign = 'center'; x.textBaseline = 'middle';
-    x.font = `bold ${String(text).length > 2 ? 120 : 150}px Arial, sans-serif`;
-    x.fillText(String(text), 128, 140);
-  });
-}
-// Etykieta 3D (sprite) — tekstura z cache po tekście i kolorze. `screen`: stały rozmiar na ekranie
-// (etykiety elementów hali — czytelny tekst; widoczne tylko z bliska, LABEL_NEAR_M).
-const _lblCache = {};
-const LABEL_SCREEN_H = 0.024;                    // ułamek wysokości ekranu
-const LABEL_NEAR_M = 55;                         // etykiety elementów tylko z bliska (z daleka nachodzą na siebie)
-function makeLabel(text, color, screen = false) {
-  const t = String(text).slice(0, screen ? 28 : 18), k = `${color}:${screen}:${t}`;
-  if (!_lblCache[k]) {
-    const cv = document.createElement('canvas'), ctx = cv.getContext('2d');
-    const font = screen ? 'bold 40px sans-serif' : 'bold 30px sans-serif';
-    ctx.font = font;
-    cv.width = screen ? Math.ceil(ctx.measureText(t).width) + 40 : 256; cv.height = screen ? 64 : 64;
-    ctx.fillStyle = 'rgba(15,23,42,0.82)'; ctx.fillRect(0, 0, cv.width, cv.height);
-    ctx.fillStyle = color || '#fff'; ctx.font = font;
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(t, cv.width / 2, 33);
-    _lblCache[k] = new THREE.CanvasTexture(cv);
-    _lblCache[k].colorSpace = THREE.SRGBColorSpace;
-  }
-  const img = _lblCache[k].image;
-  const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: _lblCache[k], transparent: true, toneMapped: false,
-    sizeAttenuation: !screen }));
-  if (screen) spr.scale.set(LABEL_SCREEN_H * img.width / img.height, LABEL_SCREEN_H, 1);
-  else spr.scale.set(4, 1, 1);
-  return spr;
-}
-
-const steelMat = (color, rough) => new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: 0.82, roughnessMap: steelRough() });
-const stdMat = (o) => new THREE.MeshStandardMaterial({ roughness: 0.8, metalness: 0.05, ...o });
-
-function readQuality() { try { return localStorage.getItem(QKEY); } catch { return null; } }
-function saveQuality(q) { try { localStorage.setItem(QKEY, q); } catch { /* tryb prywatny — tylko na tę sesję */ } }
+function readPref(k) { try { return localStorage.getItem(k); } catch { return null; } }
+function savePref(k, v) { try { localStorage.setItem(k, v); } catch { /* tryb prywatny — tylko na tę sesję */ } }
 
 /**
  * createViewer({canvas, wrap, labels, fill, decor}) → { scene, camera, renderer, controls, requestRender,
@@ -165,7 +63,11 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
   const fillLight = new THREE.DirectionalLight(0xcfe0ff, 0.45);
   scene.add(fillLight);
 
-  const matUp = steelMat(0x2f4f86, 0.42), matBeam = steelMat(0xd9660f, 0.38), matBrace = steelMat(0x8f9499, 0.5);
+  // Słupki grafitowe, kratownice ocynk; kolor trybu (typ / strefa / wypełnienie) niosą belki — instancje, bez przebudowy.
+  const matUp = steelMat(0x3b4452, 0.42), matBeam = steelMat(0xffffff, 0.38), matBrace = steelMat(0x9aa0a6, 0.5);
+  const matShadow = new THREE.MeshBasicMaterial({ color: 0x000000, map: shadowTex(), transparent: true, opacity: 0.38,
+    depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
+  const matOutline = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.85 });
   const matWood = stdMat({ map: woodTex(), roughness: 0.9 });
   const matLoad = stdMat({ map: cartonTex(), roughness: 0.85 });
   const slabMat = stdMat({ map: slabTex(), roughness: 0.82, metalness: 0.02 });
@@ -180,7 +82,8 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
 
   let content = new THREE.Group(), hiGroup = new THREE.Group(), decorGroup = new THREE.Group(), disposables = [], nearLabels = [];
   let ext = extents([], { width: 50, depth: 30 }), boxes = new Map(), walls = [], last = null;
-  let quality = 'high', decorOn = decor;
+  let quality = 'high', decorOn = decor, colorMode = COLOR_MODES[readPref(CKEY)] ? readPref(CKEY) : 'type';
+  let tinted = [], outline = null;                   // tinted: [InstancedMesh, właściciele instancji, rodzaj, kolory bazowe]
   scene.add(content, hiGroup);
 
   function track(obj) { disposables.push(obj); return obj; }
@@ -238,19 +141,31 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
   function buildDecor(racks) {
     decorGroup = new THREE.Group();
     const b = rackMatrices(racks, decorParts), shadow = quality === 'high';
-    const tint = new THREE.Color();
     if (b.pbase) decorGroup.add(instanced(matWood, b.pbase, shadow));
     for (const k of ['pload', 'bin']) {
       if (!b[k]) continue;
-      const inst = instanced(matLoad, b[k], shadow);
+      const inst = instanced(matLoad, b[k], shadow), base = new Float32Array(inst.count * 3);
       for (let i = 0; i < inst.count; i++) {   // lekka zmienność odcienia kartonów (i folii) na paletę
         const h = (Math.sin(i * 12.9898) * 43758.5453) % 1, v = Math.abs(h);
-        inst.setColorAt(i, v > 0.88 ? tint.setRGB(0.92, 0.95, 1.0) : tint.setRGB(0.86 + v * 0.14, 0.84 + v * 0.14, 0.8 + v * 0.12));
+        base.set(v > 0.88 ? [0.92, 0.95, 1.0] : [0.86 + v * 0.14, 0.84 + v * 0.14, 0.8 + v * 0.12], i * 3);
       }
+      tinted.push([inst, b._owner[k], 'load', base]);
       decorGroup.add(inst);
     }
     decorGroup.visible = decorOn;
     content.add(decorGroup);
+  }
+
+  // Cień kontaktowy pod regałem (miękka krawędź) „przykleja” bryły do posadzki bez post-processingu;
+  // obrys brył = jedna geometria linii na całą halę, kolor trybu w atrybucie wierzchołków.
+  function buildShadowsAndOutline(racks) {
+    const s = instanced(matShadow, rackMatrices(racks, (r) => contactShadowPart(r)).shadow, false);
+    s.geometry = _shadowPlane; s.renderOrder = 1;
+    const pos = new Float32Array(racks.flatMap(rackOutline)), geo = track(new THREE.BufferGeometry());
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(new Float32Array(pos.length), 3));
+    outline = new THREE.LineSegments(geo, matOutline);
+    content.add(s, outline);
   }
 
   function buildHall(floor, racks, site) {
@@ -292,7 +207,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
         ? track(new THREE.MeshStandardMaterial({ map: hatchTex(`#${col.getHexString()}`), transparent: true, roughness: 0.6 }))
         : f.kind === 'staging'
           ? track(new THREE.MeshStandardMaterial({ map: slotTex(), roughness: 0.8 }))
-          : track(new THREE.MeshStandardMaterial({ color: col, transparent: true, opacity: 0.5, roughness: 0.6, depthWrite: false }));
+          : track(new THREE.MeshStandardMaterial({ color: col, transparent: true, opacity: 0.42, roughness: 0.6, depthWrite: false }));
       if (mat.map) {
         const tile = f.kind === 'staging' ? 1.4 : 1.2;
         mat.map = mat.map.clone(); mat.map.needsUpdate = true; mat.map.repeat.set(w / tile, d / tile); track(mat.map);
@@ -368,20 +283,25 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
     const t0 = performance.now();
     last = data;
     const { floor, racks, features, site } = data;
-    quality = effectiveQuality(readQuality(), racks);
+    quality = effectiveQuality(readPref(QKEY), racks);
     scene.remove(content);
     disposables.forEach((x) => x.dispose());
     content.traverse((c) => { if (c.isInstancedMesh) c.dispose(); });
-    disposables = []; boxes = new Map(); nearLabels = [];
+    disposables = []; boxes = new Map(); nearLabels = []; tinted = []; outline = null;
     content = new THREE.Group();
     scene.add(content);
     ext = extents(racks, floor);
     const mode = steelMode(racks), batches = steelMatrices(racks, mode), high = quality === 'high';
     racks.forEach(buildRack);
     [['up', matUp], ['beam', matBeam], ['brace', matBrace]].forEach(([k, mat]) => {
-      if (batches[k].length) content.add(instanced(mat, batches[k], high && mode !== 'xl'));
+      if (!batches[k].length) return;
+      const inst = instanced(mat, batches[k], high && mode !== 'xl');
+      if (k === 'beam') tinted.push([inst, batches._owner.beam, 'steel']);
+      content.add(inst);
     });
+    if (racks.length) buildShadowsAndOutline(racks);
     if (high) buildDecor(racks);
+    recolor();
     buildHall(floor, racks, site);
     features.forEach((f) => buildFeature(f, floor));
     key.castShadow = high;
@@ -480,20 +400,79 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
   window.addEventListener('resize', resize);
   new ResizeObserver(resize).observe(wrap);     // przejście 0 → realny rozmiar dorysowuje 1. klatkę
 
+  /** Kolor trybu na belkach, ładunku i obrysie — bez przebudowy geometrii (zmiana trybu = jedno przejście). */
+  const _c = new THREE.Color(), _t = new THREE.Color();
+  function recolor() {
+    if (!last) return;
+    const { racks, features } = last, tints = racks.map((r) => new THREE.Color(rackTint(r, colorMode, features)));
+    const k = LOAD_TINT[colorMode];
+    for (const [inst, owner, kind, base] of tinted) {
+      for (let i = 0; i < inst.count; i++) {
+        const t = tints[owner[i]];
+        inst.setColorAt(i, kind === 'steel' ? t : _c.fromArray(base, i * 3).lerp(_t.copy(t), k));
+      }
+      inst.instanceColor.needsUpdate = true;
+    }
+    if (outline) {
+      const col = outline.geometry.attributes.color;
+      racks.forEach((r, i) => {
+        _c.copy(tints[i]).multiplyScalar(0.75);
+        for (let v = 0; v < 24; v++) col.setXYZ(i * 24 + v, _c.r, _c.g, _c.b);
+      });
+      col.needsUpdate = true;
+    }
+    renderLegend();
+    requestRender();
+  }
+
+  // Nakładka w rogu sceny: legenda trybu, jakość i kolorowanie (dostępne z klawiatury, etykiety po polsku).
+  const panel = document.createElement('div');
+  panel.style.cssText = 'position:absolute;left:10px;bottom:10px;z-index:3;display:flex;flex-direction:column;gap:6px;'
+    + 'align-items:flex-start;max-width:calc(100% - 20px)';
+  const legend = document.createElement('ul');
+  legend.setAttribute('aria-label', 'Legenda kolorów regałów');
+  legend.style.cssText = 'list-style:none;margin:0;padding:6px 10px;border-radius:8px;background:rgba(15,23,42,.78);'
+    + 'color:#e2e8f0;font:12px/1.5 system-ui,sans-serif;display:flex;flex-wrap:wrap;gap:4px 12px';
+  legend.hidden = true;
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap';
+  const cSel = document.createElement('select');
+  cSel.className = 'form-control';
+  cSel.setAttribute('aria-label', 'Kolorowanie regałów');
+  cSel.style.cssText = 'width:auto;padding:2px 8px;height:auto;font-size:13px';
+  for (const [k, l] of Object.entries(COLOR_MODES)) cSel.add(new Option(`Kolory: ${l.toLowerCase()}`, k, false, k === colorMode));
+  cSel.addEventListener('change', () => setColorMode(cSel.value));
+  function renderLegend() {
+    legend.replaceChildren(...colorLegend(last.racks, colorMode, last.features).map(([c, l]) => {
+      const li = document.createElement('li'), sw = document.createElement('span');
+      sw.style.cssText = `display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:${c}`;
+      li.append(sw, l);
+      return li;
+    }));
+    legend.hidden = !last.racks.length;
+  }
+  function setColorMode(m) {
+    colorMode = COLOR_MODES[m] ? m : 'type';
+    savePref(CKEY, colorMode);
+    cSel.value = colorMode;
+    recolor();
+  }
+
   // Przełącznik jakości (nakładka w rogu sceny): wysoka = cienie + palety z ładunkiem, szybka = bez nich.
   const qBtn = document.createElement('button');
   qBtn.type = 'button';
   qBtn.className = 'btn btn-secondary btn-sm';
-  qBtn.style.cssText = 'position:absolute;left:10px;bottom:10px;z-index:3';
   qBtn.title = 'Wysoka: cienie i palety z ładunkiem. Szybka: dla słabszych komputerów i bardzo dużych hal.';
   if (getComputedStyle(wrap).position === 'static') wrap.style.position = 'relative';
-  wrap.appendChild(qBtn);
+  row.append(qBtn, cSel);
+  panel.append(legend, row);
+  wrap.appendChild(panel);
   function syncQualityButton() {
     qBtn.textContent = `Jakość: ${quality === 'high' ? 'wysoka' : 'szybka'}`;
     qBtn.setAttribute('aria-pressed', String(quality === 'high'));
   }
   function setQuality(q) {
-    saveQuality(q);
+    savePref(QKEY, q);
     if (last) setData(last); else { quality = q; syncQualityButton(); }
   }
   qBtn.addEventListener('click', () => setQuality(quality === 'high' ? 'fast' : 'high'));
@@ -509,7 +488,8 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
     return { pos: camera.position.toArray(), target: controls.target.toArray() };
   }
 
-  const api = { scene, camera, renderer, controls, requestRender, setData, highlight, view, resize, setDecor,
+  const api = { scene, camera, renderer, controls, requestRender, setData, highlight, view, resize, setDecor, setColorMode,
+    colorMode: () => colorMode,
     setQuality, quality: () => quality, look, pose, setFlyMs: (ms) => { flyMs = ms; },
     renderNow: () => { fly && (camera.position.set(...fly.b.pos), controls.target.set(...fly.b.target), fly = null);
       controls.update(); cameraDependent(); renderer.render(scene, camera); } };

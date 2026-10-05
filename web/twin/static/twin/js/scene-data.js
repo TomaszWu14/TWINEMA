@@ -64,15 +64,16 @@ export function steelMatrices(racks, mode) {
     ...rackMatrices(racks, (r) => steelParts(r, mode)) };
 }
 
-/** Części regałów (partsFn(r, i) → [partia, sx, sy, sz, x, y, z, obrótX]) → { partia: Float32Array }.
+/** Części regałów (partsFn(r, i) → [partia, sx, sy, sz, x, y, z, obrótX]) → { partia: Float32Array,
+ *  _owner: { partia: Uint32Array } } (_owner = indeks regału każdej instancji — przekolorowanie bez przebudowy).
  *  Złożenie T(regał)·Ry(θ)·T(część)·Rx(a)·S liczone wprost (bez Matrix4/Vector3 na każdy z dziesiątek
  *  tysięcy elementów). */
 export function rackMatrices(racks, partsFn) {
   const lists = racks.map((r, i) => partsFn(r, i));
   const n = {};
   lists.forEach((parts) => parts.forEach((p) => { n[p[0]] = (n[p[0]] || 0) + 1; }));
-  const out = {}, at = {};
-  for (const k of Object.keys(n)) { out[k] = new Float32Array(n[k] * 16); at[k] = 0; }
+  const out = { _owner: {} }, at = {};
+  for (const k of Object.keys(n)) { out[k] = new Float32Array(n[k] * 16); out._owner[k] = new Uint32Array(n[k]); at[k] = 0; }
   racks.forEach((r, i) => {
     const t = (r.angle || 0) * Math.PI / 180, c = Math.cos(t), s = Math.sin(t), rx0 = r.x || 0, rz0 = r.y || 0;
     for (const [b, sx, sy, sz, x, y, z, a = 0] of lists[i]) {
@@ -81,6 +82,7 @@ export function rackMatrices(racks, partsFn) {
       m[o + 4] = s * sa * sy; m[o + 5] = ca * sy; m[o + 6] = c * sa * sy; m[o + 7] = 0;     // R·Rx·(0,sy,0)
       m[o + 8] = s * ca * sz; m[o + 9] = -sa * sz; m[o + 10] = c * ca * sz; m[o + 11] = 0;  // R·Rx·(0,0,sz)
       m[o + 12] = rx0 + c * x + s * z; m[o + 13] = y; m[o + 14] = rz0 - s * x + c * z; m[o + 15] = 1;
+      out._owner[b][o / 16] = i;
       at[b] = o + 16;
     }
   });
@@ -126,6 +128,84 @@ export function steelParts(r, mode) {
   return out;
 }
 
+// ── G2: kolor regału wg trybu (typy / strefy specjalne / wypełnienie), obrysy, cienie kontaktowe ──────
+
+/** Rodzaj regału: jeden predykat z serwera (rack_class); w edytorze — pole equipment; geometria tylko dla
+ *  starych danych. → 'pallet' | 'vna' | 'shelf' */
+export function rackClass(r) {
+  if (r.rack_class) return r.rack_class;
+  if (r.equipment) return r.equipment === 'shelf' || r.equipment === 'vna' ? r.equipment : 'pallet';
+  return r.level_h < 1.0 || r.depth < 0.9 ? 'shelf' : 'pallet';
+}
+
+// Kolory trybów: nasycone tylko tam, gdzie niosą informację; reszta neutralna (stal ocynk / grafit).
+export const COLOR_MODES = { type: 'Typy regałów', zones: 'Strefy specjalne', fill: 'Wypełnienie' };
+export const RACK_TYPE_COLORS = { pallet: '#e07a1f', vna: '#2f7fc1', shelf: '#4f9a6b' };
+export const RACK_TYPE_LABELS = { pallet: 'Paletowe (reach)', vna: 'VNA (wąska alejka)', shelf: 'Półkowe' };
+export const SPECIAL_ZONES = new Set(['zone_temp', 'zone_adr', 'zone_oversize', 'zone_value']);
+export const NEUTRAL_RACK = '#8b939c';
+export const FILL_COLORS = [[50, '#3fa66b', 'do 50 %'], [80, '#e0a92b', '50–80 %'], [101, '#d4553f', 'powyżej 80 %']];
+
+/** Strefa specjalna (element zone_*), w której leży środek regału — pierwsza pasująca; brak → null. */
+export function rackZone(r, features) {
+  const [cx, cz] = localToWorld({ x: r.x || 0, y: r.y || 0, angle: r.angle }, [r.width / 2, r.depth / 2]);
+  for (const f of features || []) {
+    if (!SPECIAL_ZONES.has(f.kind)) continue;
+    const t = (f.angle || 0) * Math.PI / 180, dx = cx - f.x, dz = cz - f.y;
+    const a = dx * Math.cos(t) - dz * Math.sin(t), c = dx * Math.sin(t) + dz * Math.cos(t);   // odwrotność localToWorld
+    if (a >= 0 && a <= f.width && c >= 0 && c <= f.depth) return f;
+  }
+  return null;
+}
+
+/** Kolor regału w trybie: typ → RACK_TYPE_COLORS; strefy → kolor elementu strefy (jak na planie) albo
+ *  neutralny; wypełnienie → progi FILL_COLORS (brak danych → neutralny). */
+export function rackTint(r, mode, features) {
+  if (mode === 'zones') return rackZone(r, features)?.color || NEUTRAL_RACK;
+  if (mode === 'fill') {
+    if (typeof r.fill_pct !== 'number') return NEUTRAL_RACK;
+    return FILL_COLORS.find(([lim]) => r.fill_pct < lim)[1];
+  }
+  return RACK_TYPE_COLORS[rackClass(r)];
+}
+
+/** Legenda trybu: [[kolor, opis]] — tylko pozycje obecne w hali (bez szumu pustych kategorii). */
+export function colorLegend(racks, mode, features) {
+  if (mode === 'fill') {
+    const has = racks.some((r) => typeof r.fill_pct === 'number');
+    return has ? FILL_COLORS.map(([, c, l]) => [c, l]) : [[NEUTRAL_RACK, 'brak danych o stanie']];
+  }
+  if (mode === 'zones') {
+    const seen = new Map();
+    let outside = false;
+    for (const r of racks) {
+      const f = rackZone(r, features);
+      if (!f) outside = true;
+      else if (!seen.has(f.kind)) seen.set(f.kind, [f.color || NEUTRAL_RACK, f.kind_label || f.label || f.kind]);
+    }
+    return [...seen.values(), ...(outside ? [[NEUTRAL_RACK, 'Poza strefami specjalnymi']] : [])];
+  }
+  const cs = new Set(racks.map(rackClass));
+  return Object.keys(RACK_TYPE_COLORS).filter((k) => cs.has(k)).map((k) => [RACK_TYPE_COLORS[k], RACK_TYPE_LABELS[k]]);
+}
+
+/** Obrys bryły regału: 12 krawędzi prostopadłościanu (x, y, z ×2 na krawędź) — jeden LineSegments na halę. */
+export function rackOutline(r) {
+  const H = Math.max(1, r.n_levels) * r.level_h, base = { x: r.x || 0, y: r.y || 0, angle: r.angle };
+  const c = [[0, 0], [r.width, 0], [r.width, r.depth], [0, r.depth]].map((p) => localToWorld(base, p));
+  const out = [];
+  for (let i = 0; i < 4; i++) {
+    const [ax, az] = c[i], [bx, bz] = c[(i + 1) % 4];
+    out.push(ax, 0.02, az, bx, 0.02, bz, ax, H, az, bx, H, bz, ax, 0.02, az, ax, H, az);
+  }
+  return out;
+}
+
+/** Cień kontaktowy (miękki ciemny prostokąt na posadzce) — część w formacie steelParts, poszerzona o `pad`. */
+export function contactShadowPart(r, pad = 0.35) {
+  return [['shadow', r.width + pad * 2, 1, r.depth + pad * 2, r.width / 2, 0.012, r.depth / 2]];
+}
+
 // ── G1: wygląd sceny (palety w regałach, kadr, ściany hali, jakość) ─────────────────────────────
 
 export const PALLET = { w: 0.8, d: 1.2, base: 0.144 };   // EUR: 0,8 m wzdłuż regału, 1,2 m w głąb
@@ -147,7 +227,7 @@ export function decorParts(r, i) {
   const D = r.depth, LH = r.level_h, BW = r.width / BAYS;
   const fill = typeof r.fill_pct === 'number' ? Math.max(0, Math.min(100, r.fill_pct)) / 100 : DECOR_FILL;
   // jeden predykat z serwera (rack_class); w edytorze — pole equipment; geometria tylko dla starych danych
-  const shelf = r.rack_class ? r.rack_class === 'shelf' : r.equipment ? r.equipment === 'shelf' : (LH < 1.0 || D < 0.9);
+  const shelf = rackClass(r) === 'shelf';
   const clear = LH - 0.12;                                 // światło pod belką wyższego poziomu
   for (let lvl = 0; lvl < LEVELS; lvl++) {
     const y = lvl * LH;

@@ -33,8 +33,8 @@
 
 ## Relationships
 
-- [analyze](analyze.md) (7 shared connections)
-- [test_dane.py](test_dane.py.md) (5 shared connections)
+- [layout](layout.md) (7 shared connections)
+- [demo_materials](demo_materials.md) (5 shared connections)
 - [twin/models.py](twin-models.py.md) (4 shared connections)
 - [staffing.py](staffing.py.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
