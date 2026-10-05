@@ -6,6 +6,8 @@ from django.urls import reverse
 MODULES = [
     {"key": "dane", "name": "Dane", "desc": "Materiały, master lokalizacji, stany — importy z plików z raportem.",
      "phase": "F2", "url": "masterdata:home"},
+    {"key": "scenariusze", "name": "Scenariusze", "desc": "Wolumeny dnia typowego i szczytowego: przyjęcia, doki, obsada.",
+     "phase": "S2", "url": "scenario:list"},
     {"key": "model", "name": "Model hali", "desc": "Hala od zera albo z danych: regały, strefy, pola odkładcze.",
      "phase": "F1", "url": "twin:warehouse_model_list"},
     {"key": "symulacja", "name": "Symulacja", "desc": "Dzień projektowy, flota, kalibracja, porównanie wariantów.",

@@ -12,4 +12,5 @@ urlpatterns = [
     path("", include("render.urls")),
     path("", include("ml.urls")),
     path("", include("studio.urls")),
+    path("", include("scenario.urls")),
 ]

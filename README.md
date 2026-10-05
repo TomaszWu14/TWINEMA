@@ -12,6 +12,7 @@ w Blenderze → film z lektorem (ElevenLabs) i deck PDF.
 
 | Moduł | Co robi | Faza |
 |---|---|---|
+| Scenariusze | wolumeny dnia typowego i szczytowego: plan przyjęć (kontenery, auta 33-pal., solówki; min/śr/max), doki w szczycie, osobogodziny | S2a ✅ |
 | Dane | importy materiałów, mastera lokalizacji i stanów z raportem odrzuceń; dane demo | F2 ✅ |
 | Model hali | generator hali, regały, strefy, pola odkładcze, warianty, widok 3D | F1 ✅ |
 | Symulacja | dzień projektowy, flota, kalibracja, porównanie wariantów | F1 ✅ |

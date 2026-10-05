@@ -1,0 +1,51 @@
+{% extends "core/base.html" %}
+{% block title %}Scenariusze — {{ app_name }}{% endblock %}
+{% block extra_head %}
+<style>
+  .sc-sec { font:600 var(--fs-xs) var(--font-mono); text-transform:uppercase; letter-spacing:.12em; color:var(--primary); margin:0 0 12px; }
+  .sc-new { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; align-items:end; }
+  .sc-new label { display:flex; flex-direction:column; gap:4px; font-size:var(--fs-sm); color:var(--fg-muted); }
+  .sc-list { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; margin-top:24px; }
+  .sc-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:14px 16px;
+             display:flex; flex-direction:column; gap:6px; color:inherit; text-decoration:none; }
+  .sc-card:hover, .sc-card:focus-visible { border-color:var(--primary); }
+  .sc-card h3 { margin:0; font-size:var(--fs-md); }
+  .sc-meta { font-size:var(--fs-xs); color:var(--fg-subtle); }
+</style>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <div class="page-header__title">Scenariusze</div>
+    <div class="page-header__sub">Założenia wolumenów niezależne od layoutu: dzień typowy i szczytowy, plan przyjęć, normy wydajności. Ten sam scenariusz testuje różne hale.</div>
+  </div>
+</div>
+
+<div class="card"><div class="card-body">
+  <h2 class="sc-sec">Nowy scenariusz</h2>
+  {% if is_designer %}
+  <form class="sc-new" method="post" action="{% url 'scenario:create' %}">{% csrf_token %}
+    <label for="{{ form.name.id_for_label }}">Nazwa {{ form.name }}</label>
+    <button class="btn btn-primary" type="submit">Utwórz</button>
+  </form>
+  <p class="text-muted text-sm" style="margin:8px 0 0">Startuje z przykładowym planem przyjęć (kontenery 40', auta 33-paletowe, solówki) — liczby syntetyczne do poprawienia.</p>
+  {% else %}
+  <p class="text-muted text-sm" style="margin:0">Scenariusze tworzy Projektant — tutaj oglądasz wyniki.</p>
+  {% endif %}
+</div></div>
+
+{% if scenarios %}
+<div class="sc-list">
+  {% for s in scenarios %}
+  <a class="sc-card" href="{% url 'scenario:detail' s.pk %}">
+    <h3>{{ s.name }}</h3>
+    {% if s.description %}<div class="text-sm">{{ s.description|truncatechars:120 }}</div>{% endif %}
+    <div class="sc-meta">Mnożnik wzrostu ×{{ s.growth|floatformat:"-2" }} · zmiana {{ s.shift_h|floatformat:"-1" }} h</div>
+    <div class="sc-meta">{{ s.updated_at|date:"d.m.Y H:i" }}{% if s.created_by %} · {{ s.created_by }}{% endif %}</div>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card" style="margin-top:24px"><div class="empty-state">Brak scenariuszy. Utwórz pierwszy albo uruchom <code>manage.py demo_scenariusz</code>.</div></div>
+{% endif %}
+{% endblock %}
