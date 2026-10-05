@@ -5,23 +5,41 @@ import * as THREE from 'three';
 import { TRAVEL_S, VEHICLES, buildTracks, countersAt, dayRange, hhmm, lPath, palletAt, rackFront, rectCenter,
   rectSlot, seriesAt, vehicleAt } from './day-timeline.js';
 
-const SIZE = {                                   // [długość, wysokość, szerokość] m
-  container: [12.2, 2.6, 2.45], truck: [13.6, 4.0, 2.55], courier: [5.9, 2.6, 2.1], pallet: [1.2, 1.3, 0.8],
-  parcel: [0.6, 0.4, 0.4],
-};
-const COLOR = { container: 0xb45309, truck: 0x1d4ed8, courier: 0xf8fafc, pallet: 0xc8a165, parcel: 0x92400e };
 const MAX_PARCEL_STACK = 120;
 
-function instanced(scene, kind, n) {
-  const [l, h, w] = SIZE[kind];
-  const geo = new THREE.BoxGeometry(l, h, w).translate(0, h / 2, 0);
-  const mesh = new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial({ color: COLOR[kind], roughness: 0.7 }),
-    Math.max(1, n));
-  mesh.count = 0;
-  mesh.castShadow = kind !== 'parcel';
-  mesh.frustumCulled = false;
-  scene.add(mesh);
-  return mesh;
+// Pojazdy i ładunki z prostych brył (bez cudzych modeli): [długość, wysokość, szerokość, x środka, y dołu, kolor].
+// Oś +x pojazdu = od doku na zewnątrz (kabina z dala od hali), środek naczepy jak dotąd ~7 m przed dokiem.
+const WHEEL = 0x1f2329, CHASSIS = 0x30353a;
+const axles = (xs) => xs.map((x) => [1.0, 1.0, 2.6, x, 0, WHEEL]);
+const PARTS = {
+  truck: [[13.6, 2.75, 2.55, 0, 1.25, 0xe5e7eb], [0.06, 0.5, 2.57, 0, 2.6, 0x1d4ed8], [15.6, 0.35, 2.2, 0.9, 0.85, CHASSIS],
+    [2.3, 2.9, 2.5, 8.15, 0.75, 0x1d4ed8], [0.05, 1.0, 2.2, 9.32, 2.2, 0x0f172a], ...axles([-4.6, -3.3, -2.0, 7.4, 8.8])],
+  container: [[12.2, 2.6, 2.45, 0, 1.25, 0xb45309], [14.0, 0.35, 2.2, 0.8, 0.85, CHASSIS],
+    [2.3, 2.9, 2.5, 7.45, 0.75, 0x374151], [0.05, 1.0, 2.2, 8.62, 2.2, 0x0f172a], ...axles([-4.2, -2.9, -1.6, 6.7, 8.1])],
+  courier: [[4.0, 2.2, 2.0, -0.8, 0.45, 0xf8fafc], [1.7, 1.75, 2.0, 2.05, 0.45, 0xf8fafc], [0.05, 0.8, 1.8, 2.92, 1.25, 0x0f172a],
+    [0.8, 0.75, 2.1, -1.9, 0, WHEEL], [0.8, 0.75, 2.1, 1.9, 0, WHEEL]],
+  pallet: [[1.2, 0.144, 0.8, 0, 0, 0xa87d4a], [1.16, 1.1, 0.76, 0, 0.144, 0xb4874f]],
+  parcel: [[0.6, 0.4, 0.4, 0, 0, 0x92400e]],
+};
+
+/** Jeden rodzaj obiektu = po jednej siatce instancyjnej na część; wspólny licznik `count`. */
+function fleet(scene, kind, n) {
+  const parts = PARTS[kind].map(([l, h, w, x, y, color]) => {
+    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(l, h, w).translate(x, y + h / 2, 0),
+      new THREE.MeshStandardMaterial({ color, roughness: color === 0x0f172a ? 0.15 : 0.6, metalness: color === 0x0f172a ? 0.6 : 0.15 }),
+      Math.max(1, n));
+    mesh.count = 0;
+    mesh.castShadow = kind !== 'parcel';
+    mesh.frustumCulled = false;
+    scene.add(mesh);
+    return mesh;
+  });
+  return {
+    parts, count: 0,
+    reset() { this.count = 0; parts.forEach((p) => { p.count = 0; }); },
+    push(m) { parts.forEach((p) => { p.setMatrixAt(this.count, m); p.count = this.count + 1; }); this.count++; },
+    flush() { parts.forEach((p) => { p.instanceMatrix.needsUpdate = true; }); },
+  };
 }
 
 /**
@@ -36,17 +54,17 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
   const byKind = (k) => all.filter((tr) => tr.kind === k);
   const vehicles = all.filter((tr) => VEHICLES.has(tr.kind)), pallets = byKind('pallet');
   const mesh = {
-    container: instanced(viewer.scene, 'container', byKind('container').length),
-    truck: instanced(viewer.scene, 'truck', byKind('truck').length),
-    courier: instanced(viewer.scene, 'courier', byKind('courier').length),
-    pallet: instanced(viewer.scene, 'pallet', pallets.length),
-    parcel: instanced(viewer.scene, 'parcel', MAX_PARCEL_STACK),
+    container: fleet(viewer.scene, 'container', byKind('container').length),
+    truck: fleet(viewer.scene, 'truck', byKind('truck').length),
+    courier: fleet(viewer.scene, 'courier', byKind('courier').length),
+    pallet: fleet(viewer.scene, 'pallet', pallets.length),
+    parcel: fleet(viewer.scene, 'parcel', MAX_PARCEL_STACK),
   };
   const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), P = new THREE.Vector3(), S1 = new THREE.Vector3(1, 1, 1);
   const UP = new THREE.Vector3(0, 1, 0);
   const put = (m, x, y, z, yaw = 0) => {
     Q.setFromAxisAngle(UP, yaw);
-    m.setMatrixAt(m.count++, M.compose(P.set(x, z, y), Q, S1));
+    m.push(M.compose(P.set(x, z, y), Q, S1));
   };
 
   // ── Miejsca → punkty w hali ────────────────────────────────────────────────────────────────
@@ -108,7 +126,7 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
   let frameMs = 0;
   function update(t) {
     const t0 = performance.now();
-    Object.values(mesh).forEach((m) => { m.count = 0; });
+    Object.values(mesh).forEach((m) => m.reset());
     // pojazdy: kolejka przy bramie (kolejne miejsca co 4 m), dojazd, postój w doku, odjazd
     const queue = [];
     for (const tr of vehicles) {
@@ -148,7 +166,7 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
     for (let i = 0; i < Math.min(MAX_PARCEL_STACK, Math.ceil(c.pending / 20)); i++) {
       put(mesh.parcel, px + (i % 5) * 0.65, py + (Math.floor(i / 5) % 4) * 0.45, Math.floor(i / 20) * 0.42);
     }
-    Object.values(mesh).forEach((m) => { m.instanceMatrix.needsUpdate = true; });
+    Object.values(mesh).forEach((m) => m.flush());
     highlight(t);
     c.fleet = seriesAt(data.timeline.fleet_busy, data.timeline.step_s, t);
     c.people = Object.fromEntries(Object.entries(data.timeline.people || {})

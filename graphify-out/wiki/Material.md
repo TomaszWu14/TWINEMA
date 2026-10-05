@@ -40,7 +40,7 @@
 - [simulate](simulate.md) (3 shared connections)
 - [segmentation.py](segmentation.py.md) (2 shared connections)
 - [design_catalog.py](design_catalog.py.md) (1 shared connections)
-- [detect](detect.md) (1 shared connections)
+- [ewm_service.py](ewm_service.py.md) (1 shared connections)
 
 ## Source Files
 

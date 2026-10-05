@@ -19,11 +19,11 @@
 
 ## Relationships
 
-- [scenario/views.py](scenario-views.py.md) (7 shared connections)
+- [Scenario](Scenario.md) (7 shared connections)
 - [packaging.py](packaging.py.md) (4 shared connections)
 - [views_compare.py](views_compare.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (3 shared connections)
-- [EquipmentAgentsTests](EquipmentAgentsTests.md) (3 shared connections)
+- [test_equipment_agents.py](test_equipment_agents.py.md) (3 shared connections)
 - [ScenarioViewTests](ScenarioViewTests.md) (3 shared connections)
 - [layout-editor.js](layout-editor.js.md) (3 shared connections)
 - [ParseTests](ParseTests.md) (2 shared connections)

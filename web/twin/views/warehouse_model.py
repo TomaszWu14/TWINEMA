@@ -287,6 +287,7 @@ def warehouse_model_view(request, pk):
         "zone_legend": [{"zone": z, "color": zone_color[z]} for z in zones],
         "floor_w": wm.floor_width_m,
         "floor_d": wm.floor_depth_m,
+        "clear_h": wm.clear_height_m or 0,     # wysokość ścian hali w 3D (0 = z wysokości regałów)
         "has_master": active_master() is not None,
         # Ruchy wózków: importy zadań EWM (?wt=<pk> z raportu importu = wybrany od razu).
         "flow_wt_batches": WarehouseTaskBatch.objects.filter(status="done", first_confirmed__isnull=False)[:12],

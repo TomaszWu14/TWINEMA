@@ -170,6 +170,10 @@ S4 ✅: animacja dnia w przeglądarce (`scenariusze/symulacja/<pk>/animacja/`) �
 kontener, auto, kurier i paleta z przebiegu reprezentatywnego (InstancedMesh), stos paczek przy pakowaniu; zegar,
 suwak, ×10–×300, skok do szczytu, liczniki, wąskie gardła na czerwono w oknie czasu + dymek z podpowiedzią (klik =
 skok czasu i kamery), pełny ekran (F), klawiatura, tabela godzinowa jako alternatywa tekstowa.
+G1 ✅: grafika 3D w przeglądarce (wspólny `scene-builder.js`) — palety z ładunkiem w regałach, ściany hali
+z przekrojem, bramy i doki, posadzka z fugami i plac, pasy BHP, kadr dopasowany do hali, cienie i mgła zależne od
+kamery, pojazdy z kabiną i kołami; przełącznik jakości wysoka/szybka. Ocena ~6/10 (cel 6–7/10 jak programy
+symulacyjne); fotorealizm tylko offline w Blenderze (Cycles). Dalej: D1 działka → K1 katalog → tryb prezentacji.
 
 ---
 

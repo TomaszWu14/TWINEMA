@@ -130,7 +130,7 @@ function disposeTree(obj) {
 // ═══════════════════════════════════════════════════════════════════════════════════
 const SIM_KEYS = ['sim', 'sim_h', 'p', 'mult', 'agv', 'kombi', 'ept', 'kt', 'kp'];
 
-export function createFlowPlayer({ scene, camera, canvas, requestRender, root, url }) {
+export function createFlowPlayer({ scene, camera, canvas, requestRender, root, url, onStock = () => {} }) {
   const simParams = new URLSearchParams(window.location.search);
   const $ = sel => root.querySelector(sel);
   const ui = {
@@ -295,6 +295,7 @@ export function createFlowPlayer({ scene, camera, canvas, requestRender, root, u
       }
     });
     stock = sc.pallets && sc.pallets.length ? buildStock(sc.pallets) : null;
+    onStock(!!stock);                       // prawdziwy stan HU → scena chowa palety poglądowe
     duration = sc.duration || 0;
     ui.seek.max = String(duration);
     ui.player.hidden = false;

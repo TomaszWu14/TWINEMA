@@ -26,6 +26,7 @@ class LayoutCoreJsTests(unittest.TestCase):
     def test_node_unit_tests(self):
         proc = subprocess.run([NODE, "--test", str(TWIN / "tests" / "js" / "layout_core.test.mjs"),
                                str(TWIN / "tests" / "js" / "scene_data.test.mjs"),
+                               str(TWIN / "tests" / "js" / "scene_look.test.mjs"),
                                str(TWIN / "tests" / "js" / "fullscreen.test.mjs"),
                                str(TWIN / "tests" / "js" / "day_timeline.test.mjs")],
                               capture_output=True, text=True, timeout=120)

@@ -274,7 +274,8 @@ import { bindFullscreenButton } from '{% static "twin/js/fullscreen.js" %}';
 const RACKS_JSON    = {{ racks_json|safe }};
 const FEATURES_JSON = {{ features_json|safe }};
 {% localize off %}const FLOOR_W = {{ floor_w }};
-const FLOOR_D = {{ floor_d }};{% endlocalize %}
+const FLOOR_D = {{ floor_d }};
+const CLEAR_H = {{ clear_h }};{% endlocalize %}
 
 // ── Tab switching ───────────────────────────────────────────────────────────
 window.switchTab = function(tab, btn) {
@@ -310,7 +311,7 @@ if (window.__tw3dNoWebGL) {
 }
 const viewer = createViewer({ canvas: document.getElementById('three-canvas'),
                               wrap: document.getElementById('three-canvas-wrap') });
-viewer.setData({ floor: { width: FLOOR_W, depth: FLOOR_D }, racks: RACKS_JSON, features: FEATURES_JSON },
+viewer.setData({ floor: { width: FLOOR_W, depth: FLOOR_D, clear_height: CLEAR_H || null }, racks: RACKS_JSON, features: FEATURES_JSON },
                { frame: true });
 window.tw3dReady();                          // scena zbudowana — zdejmij spinner
 
@@ -328,7 +329,7 @@ document.addEventListener('keydown', (e) => {
 // żeby jego błąd nie zabrał widoku 3D; scena liczona dopiero po „Załaduj animację".
 import('{% static "twin/js/flow-player.js" %}')
   .then(m => m.createFlowPlayer({ scene: viewer.scene, camera: viewer.camera, canvas: viewer.renderer.domElement,
-                                  requestRender: viewer.requestRender,
+                                  requestRender: viewer.requestRender, onStock: has => viewer.setDecor(!has),
                                   root: document.getElementById('flow-player'),
                                   url: '{% url "twin:warehouse_model_flow_json" wm.pk %}' }))
   .catch(err => { console.error(err); document.getElementById('flow-player').style.display = 'none'; });

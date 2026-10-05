@@ -27,7 +27,7 @@
 
 ## Relationships
 
-- [StudioViewTests](StudioViewTests.md) (1 shared connections)
+- [scenario/services.py](scenario-services.py.md) (1 shared connections)
 - [importers.py](importers.py.md) (1 shared connections)
 
 ## Source Files

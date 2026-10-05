@@ -33,16 +33,19 @@ export function editorScene(S, featureColors = {}) {
     ...(S.colList || []).map((c) => ({ kind: 'column', label: '', x: c.x - c.size / 2, y: c.y - c.size / 2,
       width: c.size, depth: c.size, angle: 0, color: '#475569', height: h })),
   ];
-  return { floor: { width: S.floor.width, depth: S.floor.depth }, racks, features };
+  return { floor: { width: S.floor.width, depth: S.floor.depth, clear_height: S.floor.clear_height || null }, racks, features };
 }
 
-/** Obrys sceny: hala albo dalej, jeśli regały wychodzą poza nią (obrót do 90° → większy wymiar). */
+/** Obrys sceny: hala albo dalej (+2 m), jeśli narożniki regałów wychodzą poza nią. Z narożników, nie
+ *  z „najdłuższego boku w każdą stronę” — tamto powiększało obrys hali o długość regału i psuło kadr. */
 export function extents(racks, floor) {
   let x = floor.width, z = floor.depth;
   for (const r of racks) {
-    const reach = Math.max(r.width, r.depth) + 2;
-    x = Math.max(x, (r.x || 0) + reach);
-    z = Math.max(z, (r.y || 0) + reach);
+    for (const p of [[0, 0], [r.width, 0], [0, r.depth], [r.width, r.depth]]) {
+      const [wx, wz] = localToWorld({ x: r.x || 0, y: r.y || 0, angle: r.angle }, p);
+      if (wx > x) x = wx + 2;
+      if (wz > z) z = wz + 2;
+    }
   }
   return { x, z, cx: x / 2, cz: z / 2, diag: Math.hypot(x, z) };
 }
@@ -54,17 +57,24 @@ export function steelMode(racks) {
 }
 
 /** Macierze instancji stali wszystkich regałów (kolumnowo 4×4, jak InstancedMesh.instanceMatrix):
- *  { up, beam, brace } → Float32Array. Złożenie T(regał)·Ry(θ)·T(część)·Rx(a)·S liczone wprost
- *  (bez Matrix4/Vector3 na każdy z dziesiątek tysięcy elementów). */
+ *  { up, beam, brace } → Float32Array. */
 export function steelMatrices(racks, mode) {
-  const lists = racks.map((r) => steelParts(r, mode));
-  const n = { up: 0, beam: 0, brace: 0 };
-  lists.forEach((parts) => parts.forEach((p) => { n[p[0]]++; }));
-  const out = { up: new Float32Array(n.up * 16), beam: new Float32Array(n.beam * 16), brace: new Float32Array(n.brace * 16) };
-  const at = { up: 0, beam: 0, brace: 0 };
+  return { up: new Float32Array(0), beam: new Float32Array(0), brace: new Float32Array(0),
+    ...rackMatrices(racks, (r) => steelParts(r, mode)) };
+}
+
+/** Części regałów (partsFn(r, i) → [partia, sx, sy, sz, x, y, z, obrótX]) → { partia: Float32Array }.
+ *  Złożenie T(regał)·Ry(θ)·T(część)·Rx(a)·S liczone wprost (bez Matrix4/Vector3 na każdy z dziesiątek
+ *  tysięcy elementów). */
+export function rackMatrices(racks, partsFn) {
+  const lists = racks.map((r, i) => partsFn(r, i));
+  const n = {};
+  lists.forEach((parts) => parts.forEach((p) => { n[p[0]] = (n[p[0]] || 0) + 1; }));
+  const out = {}, at = {};
+  for (const k of Object.keys(n)) { out[k] = new Float32Array(n[k] * 16); at[k] = 0; }
   racks.forEach((r, i) => {
     const t = (r.angle || 0) * Math.PI / 180, c = Math.cos(t), s = Math.sin(t), rx0 = r.x || 0, rz0 = r.y || 0;
-    for (const [b, sx, sy, sz, x, y, z, a] of lists[i]) {
+    for (const [b, sx, sy, sz, x, y, z, a = 0] of lists[i]) {
       const ca = Math.cos(a), sa = Math.sin(a), m = out[b], o = at[b];
       m[o] = c * sx; m[o + 1] = 0; m[o + 2] = -s * sx; m[o + 3] = 0;                       // R·(sx,0,0)
       m[o + 4] = s * sa * sy; m[o + 5] = ca * sy; m[o + 6] = c * sa * sy; m[o + 7] = 0;     // R·Rx·(0,sy,0)
@@ -113,4 +123,87 @@ export function steelParts(r, mode) {
     }
   }
   return out;
+}
+
+// ── G1: wygląd sceny (palety w regałach, kadr, ściany hali, jakość) ─────────────────────────────
+
+export const PALLET = { w: 0.8, d: 1.2, base: 0.144 };   // EUR: 0,8 m wzdłuż regału, 1,2 m w głąb
+export const DECOR_FILL = 0.72;                          // zapełnienie „jak w pracującym magazynie”
+export const FAST_ABOVE = 120000;                        // gniazdo-poziomów → domyślnie jakość szybka
+
+/** Deterministyczny „los” 0..1 z indeksów (ten sam layout = te same palety po każdej przebudowie). */
+export function hash01(a, b, c, d) {
+  let h = Math.imul(a + 1, 73856093) ^ Math.imul(b + 1, 19349663) ^ Math.imul(c + 1, 83492791) ^ Math.imul(d + 1, 2654435761);
+  h = Math.imul(h ^ (h >>> 13), 1274126177);
+  return ((h ^ (h >>> 16)) >>> 0) / 4294967296;
+}
+
+/** Ładunek regału w jego układzie lokalnym (format steelParts): palety EUR z ładunkiem na podłodze
+ *  i na belkach albo kartony na półkach (regał półkowy). Zapełnienie z `fill_pct`, inaczej DECOR_FILL. */
+export function decorParts(r, i) {
+  const out = [];
+  const BAYS = Math.max(1, r.n_bays), LEVELS = Math.max(1, r.n_levels);
+  const D = r.depth, LH = r.level_h, BW = r.width / BAYS;
+  const fill = typeof r.fill_pct === 'number' ? Math.max(0, Math.min(100, r.fill_pct)) / 100 : DECOR_FILL;
+  const shelf = LH < 1.0 || D < 0.9;
+  const clear = LH - 0.12;                                 // światło pod belką wyższego poziomu
+  for (let lvl = 0; lvl < LEVELS; lvl++) {
+    const y = lvl * LH;
+    for (let b = 0; b < BAYS; b++) {
+      const slots = shelf ? Math.max(1, Math.floor(BW / 0.6)) : Math.max(1, Math.floor((BW - 0.1) / 0.95));
+      for (let s = 0; s < slots; s++) {
+        if (hash01(i, b, lvl, s) >= fill) continue;
+        const x = b * BW + (s + 0.5) * BW / slots, k = hash01(s, lvl, b, i);
+        if (shelf) {
+          const sy = Math.max(0.12, clear * (0.45 + 0.4 * k));
+          out.push(['bin', BW / slots * 0.82, sy, D * 0.85, x, y + sy / 2, D / 2]);
+          continue;
+        }
+        const sz = Math.min(PALLET.d, D + 0.1), lh = Math.max(0.3, Math.min(1.8, clear - 0.2) * (0.65 + 0.35 * k));
+        out.push(['pbase', PALLET.w, PALLET.base, sz, x, y + PALLET.base / 2, D / 2]);
+        out.push(['pload', PALLET.w - 0.04, lh, sz - 0.06, x, y + PALLET.base + lh / 2, D / 2]);
+      }
+    }
+  }
+  return out;
+}
+
+/** Izometria kadrowana do hali: kamera tak blisko, żeby obrys hali wypełnił kadr (zamiast stałego
+ *  „diag × 1,1”, które przy szerokich halach odsuwało kamerę daleko). → { pos, target, dist } */
+export function isoView({ cx, cz, x, z }, fovDeg = 42, aspect = 16 / 9, elevDeg = 34, azimDeg = 32) {
+  const r = 0.5 * Math.hypot(x, z);
+  const vf = fovDeg * Math.PI / 360, hf = Math.atan(Math.tan(vf) * aspect);
+  // Ciasno w szerokim kadrze (hala i tak jest szersza niż wyższa na ekranie), luźniej w wąskim panelu.
+  const k = 0.62 + 0.3 * Math.min(1, Math.max(0, (1.6 - aspect) / 1.0));
+  const dist = (r / Math.sin(Math.min(vf, hf))) * k + 4;
+  const e = elevDeg * Math.PI / 180, a = azimDeg * Math.PI / 180;
+  return { pos: [cx + dist * Math.cos(e) * Math.sin(a), dist * Math.sin(e), cz + dist * Math.cos(e) * Math.cos(a)],
+    target: [cx, 0, cz], dist };
+}
+
+/** Ściany hali (w osiach sceny: x, z = y hali) z normalną na zewnątrz. */
+export function hallWalls({ width, depth }) {
+  return [
+    { x0: 0, z0: 0, x1: width, z1: 0, nx: 0, nz: -1 },
+    { x0: width, z0: 0, x1: width, z1: depth, nx: 1, nz: 0 },
+    { x0: 0, z0: depth, x1: width, z1: depth, nx: 0, nz: 1 },
+    { x0: 0, z0: 0, x1: 0, z1: depth, nx: -1, nz: 0 },
+  ];
+}
+
+/** Przekrój: ściana między kamerą a halą (kamera po jej zewnętrznej stronie) jest ukryta. */
+export function wallHidden(w, camX, camZ) {
+  return (camX - w.x0) * w.nx + (camZ - w.z0) * w.nz > 0;
+}
+
+/** Normalna najbliższej ściany hali dla punktu (dok, brama) — tam stoją drzwi i auto. */
+export function outward(cx, cz, { width, depth }) {
+  return [[cx, [-1, 0]], [width - cx, [1, 0]], [cz, [0, -1]], [depth - cz, [0, 1]]].sort((a, b) => a[0] - b[0])[0][1];
+}
+
+/** Jakość grafiki: wybór użytkownika, a bez wyboru — szybka dla bardzo dużych hal. */
+export function effectiveQuality(stored, racks) {
+  if (stored === 'fast' || stored === 'high') return stored;
+  const n = racks.reduce((s, r) => s + Math.max(1, r.n_bays) * Math.max(1, r.n_levels), 0);
+  return n > FAST_ABOVE ? 'fast' : 'high';
 }

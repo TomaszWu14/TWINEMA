@@ -1,4 +1,4 @@
-# test_ml.py
+# ForecastTests
 
 > 12 nodes · cohesion 0.17
 
@@ -22,7 +22,7 @@
 - [simulate](simulate.md) (3 shared connections)
 - [test_design_sim_scene.py](test_design_sim_scene.py.md) (2 shared connections)
 - [shared.py](shared.py.md) (2 shared connections)
-- [draft_script](draft_script.md) (2 shared connections)
+- [StudioViewTests](StudioViewTests.md) (2 shared connections)
 - [test_design_compare.py](test_design_compare.py.md) (2 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (1 shared connections)
 - [sim/__init__.py](sim-__init__.py.md) (1 shared connections)

@@ -34,7 +34,7 @@
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [design_kpi.py](design_kpi.py.md) (2 shared connections)
 - [design_catalog.py](design_catalog.py.md) (1 shared connections)
-- [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)
+- [scene-builder.js](scene-builder.js.md) (1 shared connections)
 
 ## Source Files
 
