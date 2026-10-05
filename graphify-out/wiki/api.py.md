@@ -36,7 +36,7 @@
 - [warehouse_design_sim.py](warehouse_design_sim.py.md) (6 shared connections)
 - [roles.py](roles.py.md) (3 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
-- [blender_stock.py](blender_stock.py.md) (1 shared connections)
+- [build_scene_for_model](build_scene_for_model.md) (1 shared connections)
 
 ## Source Files
 

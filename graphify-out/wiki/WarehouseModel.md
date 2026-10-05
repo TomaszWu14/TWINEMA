@@ -1,6 +1,6 @@
 # WarehouseModel
 
-> God node · 28 connections · `web/twin/models.py`
+> God node · 29 connections · `web/twin/models.py`
 
 **Community:** [twin/models.py](twin-models.py.md)
 
@@ -11,26 +11,26 @@
 - Meta `EXTRACTED`
 
 ### imports
-- [shared.py](shared.py.md) `EXTRACTED`
 - [studio/views.py](studio-views.py.md) `EXTRACTED`
-- [test_dane.py](test_dane.py.md) `EXTRACTED`
-- test_design_calibration.py `EXTRACTED`
+- [shared.py](shared.py.md) `EXTRACTED`
+- test_dane.py `EXTRACTED`
+- [test_design_calibration.py](test_design_calibration.py.md) `EXTRACTED`
 - test_ewm_tasks_flow.py `EXTRACTED`
-- [test_ewm_service.py](test_ewm_service.py.md) `EXTRACTED`
-- test_blender_export.py `EXTRACTED`
+- test_ewm_service.py `EXTRACTED`
+- [test_blender_export.py](test_blender_export.py.md) `EXTRACTED`
 - [masterdata/views.py](masterdata-views.py.md) `EXTRACTED`
 - [test_model_edit.py](test_model_edit.py.md) `EXTRACTED`
 - render/views.py `EXTRACTED`
+- test_voice_views.py `EXTRACTED`
 - test_flow_player.py `EXTRACTED`
-- test_model_geometry.py `EXTRACTED`
+- [test_model_geometry.py](test_model_geometry.py.md) `EXTRACTED`
 - test_views.py `EXTRACTED`
 - test_bay_template_model.py `EXTRACTED`
 - test_bay_template_views.py `EXTRACTED`
 - test_design_generator.py `EXTRACTED`
 - test_render.py `EXTRACTED`
-- [test_warehouse_model_view.py](test_warehouse_model_view.py.md) `EXTRACTED`
+- test_warehouse_model_view.py `EXTRACTED`
 - demo_dane.py `EXTRACTED`
-- test_warehouse_hall_features.py `EXTRACTED`
 
 ### method
 - .rack_count() `EXTRACTED`

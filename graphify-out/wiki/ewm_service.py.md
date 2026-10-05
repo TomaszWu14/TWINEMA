@@ -1,43 +1,60 @@
 # ewm_service.py
 
-> 17 nodes · cohesion 0.18
+> 24 nodes · cohesion 0.12
 
 ## Key Concepts
 
-- **warehouse_model_ewm.py** (16 connections) — `web/twin/views/warehouse_model_ewm.py`
-- **compliance_for_model()** (7 connections) — `web/twin/ewm_service.py`
-- **_compliance_xlsx()** (5 connections) — `web/twin/views/warehouse_model_ewm.py`
-- **warehouse_model_compliance()** (5 connections) — `web/twin/views/warehouse_model_ewm.py`
-- **xlsx.py** (5 connections) — `web/twin/xlsx.py`
-- **warehouse_model_detect()** (4 connections) — `web/twin/views/warehouse_model_ewm.py`
-- **_finalize_xlsx()** (4 connections) — `web/twin/xlsx.py`
-- **_make_xlsx_response()** (4 connections) — `web/twin/xlsx.py`
-- **_safe()** (3 connections) — `web/twin/views/warehouse_model_ewm.py`
-- **safe_cell()** (3 connections) — `web/twin/xlsx.py`
-- **_planner** (2 connections)
-- **Raport zgodności planu modelu z aktywnym masterem (batch=None → brak kodów EWM).** (1 connections) — `web/twin/ewm_service.py`
-- **„Wykryj z EWM” (podgląd propozycji → zapis) i raport zgodności modelu z EWM (+…** (1 connections) — `web/twin/views/warehouse_model_ewm.py`
-- **Ucieczka przed wstrzyknięciem formuły XLSX: string zaczynający się od =+-@…** (1 connections) — `web/twin/views/warehouse_model_ewm.py`
-- **Eksport XLSX z neutralizacją formuł (CSV/formula injection).** (1 connections) — `web/twin/xlsx.py`
-- **Tekst zaczynający się od = + - @ TAB CR → prefiks `'`. Liczby bez zmian.** (1 connections) — `web/twin/xlsx.py`
-- **(workbook, worksheet, HttpResponse) gotowe do wypełnienia.** (1 connections) — `web/twin/xlsx.py`
+- **test_ewm_service.py** (18 connections) — `web/twin/tests/test_ewm_service.py`
+- **WarehouseLocationMasterBatch** (12 connections) — `web/twin/models.py`
+- **WarehouseLocationMaster** (10 connections) — `web/twin/models.py`
+- **make_model_and_master()** (9 connections) — `web/twin/tests/test_ewm_service.py`
+- **test_ewm_views.py** (8 connections) — `web/twin/tests/test_ewm_views.py`
+- **locations.py** (7 connections) — `web/twin/locations.py`
+- **ServiceTests** (6 connections) — `web/twin/tests/test_ewm_service.py`
+- **load_sample()** (4 connections) — `web/twin/tests/ewm_sample.py`
+- **ewm_sample.py** (3 connections) — `web/twin/tests/ewm_sample.py`
+- **active_master_qs()** (2 connections) — `web/twin/locations.py`
+- **.test_detect_apply_and_compliance_is_100_percent()** (2 connections) — `web/twin/tests/test_ewm_service.py`
+- **.test_master_rows_filters_by_zone_and_active_master()** (2 connections) — `web/twin/tests/test_ewm_service.py`
+- **.test_rack_without_template_and_missing_master()** (2 connections) — `web/twin/tests/test_ewm_service.py`
+- **.test_second_detect_reuses_templates_and_replaces_overrides()** (2 connections) — `web/twin/tests/test_ewm_service.py`
+- **Kody lokalizacji magazynu — wspólna konwencja mapy 3D / eksportu SAP. Litera na…** (1 connections) — `web/twin/locations.py`
+- **Lokalizacje z aktywnej partii master-daty (pusty queryset, gdy brak partii).…** (1 connections) — `web/twin/locations.py`
+- **One import of location master data (height, volume, weight, type).** (1 connections) — `web/twin/models.py`
+- **Master data for a single warehouse location.** (1 connections) — `web/twin/models.py`
+- **.__str__()** (1 connections) — `web/twin/models.py`
+- **Syntetyczna próbka mastera lokalizacji (hala B0) dla testów „Wykryj z EWM” i…** (1 connections) — `web/twin/tests/ewm_sample.py`
+- **[(kod, typ EWM)] — kod B0-<rząd>-<gniazdo><pozycja palety><litera poziomu>.** (1 connections) — `web/twin/tests/ewm_sample.py`
+- **TestCase** (1 connections)
+- **Warstwa ORM części 1: zapis „Wykryj z EWM” + raport zgodności na syntetycznej…** (1 connections) — `web/twin/tests/test_ewm_service.py`
+- **Ekrany „Wykryj z EWM” (podgląd → zapis) i „Zgodność z EWM” (+ XLSX), z rolami.** (1 connections) — `web/twin/tests/test_ewm_views.py`
 
 ## Relationships
 
-- [model_racks](model_racks.md) (8 shared connections)
-- [warehouse_model.py](warehouse_model.py.md) (3 shared connections)
+- [twin/models.py](twin-models.py.md) (6 shared connections)
+- [test_voice.py](test_voice.py.md) (4 shared connections)
+- [params_for](params_for.md) (4 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
+- [ewm_tasks.py](ewm_tasks.py.md) (3 shared connections)
 - [warehouse_design_sim.py](warehouse_design_sim.py.md) (2 shared connections)
-- [ewm_tasks.py](ewm_tasks.py.md) (1 shared connections)
+- [BayTemplate](BayTemplate.md) (2 shared connections)
+- [EwmViewsTests](EwmViewsTests.md) (2 shared connections)
+- [build_scene_for_model](build_scene_for_model.md) (1 shared connections)
+- [blender_stock.py](blender_stock.py.md) (1 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
+- [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/ewm_service.py`
-- `web/twin/views/warehouse_model_ewm.py`
-- `web/twin/xlsx.py`
+- `web/twin/locations.py`
+- `web/twin/models.py`
+- `web/twin/tests/ewm_sample.py`
+- `web/twin/tests/test_ewm_service.py`
+- `web/twin/tests/test_ewm_views.py`
 
 ## Audit Trail
 
-- EXTRACTED: 64 (100%)
+- EXTRACTED: 97 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

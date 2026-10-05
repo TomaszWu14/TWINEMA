@@ -18,7 +18,7 @@
 
 ## Relationships
 
-- [test_ewm_service.py](test_ewm_service.py.md) (2 shared connections)
+- [ewm_service.py](ewm_service.py.md) (2 shared connections)
 
 ## Source Files
 

@@ -27,9 +27,9 @@
 
 ## Relationships
 
-- [addressing.py](addressing.py.md) (10 shared connections)
-- [model_racks](model_racks.md) (3 shared connections)
-- [detect](detect.md) (1 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (10 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
+- [design_day.py](design_day.py.md) (1 shared connections)
 
 ## Source Files
 

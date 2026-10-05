@@ -14,4 +14,7 @@ urlpatterns = [
     path("studio/<int:pk>/zatwierdz/", views.approve, name="approve"),
     path("studio/<int:pk>/edycja/", views.reopen, name="reopen"),
     path("studio/<int:pk>/usun/", views.presentation_delete, name="delete"),
+    path("studio/<int:pk>/lektor/<int:shot_pk>/", views.voice_shot, name="voice_shot"),
+    path("studio/<int:pk>/napisy.srt", views.subtitles, name="subtitles"),
+    path("studio/lektor/<int:pk>.mp3", views.voice_file, name="voice_file"),
 ]

@@ -24,10 +24,10 @@
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (3 shared connections)
 - [blender_scene.py](blender_scene.py.md) (2 shared connections)
 - [CalibrationViewTests](CalibrationViewTests.md) (2 shared connections)
-- [blender_stock.py](blender_stock.py.md) (1 shared connections)
+- [build_scene_for_model](build_scene_for_model.md) (1 shared connections)
 - [warehouse_design_sim.py](warehouse_design_sim.py.md) (1 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
-- [calibrate](calibrate.md) (1 shared connections)
+- [test_design_calibration.py](test_design_calibration.py.md) (1 shared connections)
 
 ## Source Files
 

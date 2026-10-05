@@ -13,9 +13,9 @@
 ## Relationships
 
 - [design_calibration.py](design_calibration.py.md) (2 shared connections)
-- [test_dane.py](test_dane.py.md) (2 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (2 shared connections)
 - [warehouse_design_sim.py](warehouse_design_sim.py.md) (2 shared connections)
-- [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
+- [test_voice.py](test_voice.py.md) (1 shared connections)
 
 ## Source Files
 

@@ -14,12 +14,12 @@
 - [warehouse_blender.py](warehouse_blender.py.md) `EXTRACTED`
 - [warehouse_design_sim.py](warehouse_design_sim.py.md) `EXTRACTED`
 - [warehouse_tasks.py](warehouse_tasks.py.md) `EXTRACTED`
-- [test_design_sim.py](test_design_sim.py.md) `EXTRACTED`
+- test_design_sim.py `EXTRACTED`
 - warehouse_compare.py `EXTRACTED`
 - warehouse_calibration.py `EXTRACTED`
 - ewm_tasks_import.py `EXTRACTED`
-- [ml/views.py](ml-views.py.md) `EXTRACTED`
-- test_design_forecast.py `EXTRACTED`
+- ml/views.py `EXTRACTED`
+- [test_design_forecast.py](test_design_forecast.py.md) `EXTRACTED`
 - warehouse_design_day.py `EXTRACTED`
 - warehouse_forecast.py `EXTRACTED`
 - test_design_hub.py `EXTRACTED`
@@ -29,10 +29,10 @@
 - .__str__() `EXTRACTED`
 
 ### uses
-- SimulationViewTests `INFERRED`
+- [SimulationViewTests](SimulationViewTests.md) `INFERRED`
 - SimulationTests `INFERRED`
-- ForecastTests `INFERRED`
-- ForecastViewTests `INFERRED`
+- [ForecastTests](ForecastTests.md) `INFERRED`
+- [ForecastViewTests](ForecastViewTests.md) `INFERRED`
 - [DesignHubTests](DesignHubTests.md) `INFERRED`
 - DemoFileTests `INFERRED`
 

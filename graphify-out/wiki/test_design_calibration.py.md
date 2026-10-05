@@ -1,4 +1,4 @@
-# calibrate
+# test_design_calibration.py
 
 > 15 nodes · cohesion 0.21
 
@@ -28,7 +28,7 @@
 - [CalibrationViewTests](CalibrationViewTests.md) (2 shared connections)
 - [resolve_moves](resolve_moves.md) (1 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (1 shared connections)
-- [simulate](simulate.md) (1 shared connections)
+- [design_sim.py](design_sim.py.md) (1 shared connections)
 
 ## Source Files
 

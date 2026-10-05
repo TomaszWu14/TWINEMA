@@ -25,6 +25,8 @@
   .st-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
   .st-actions form { margin:0; }
   .st-sum { font-size:var(--fs-sm); color:var(--fg-muted); margin:12px 0 0; }
+  .st-audio { width:100%; height:36px; margin-top:8px; }
+  .st-progress { width:100%; height:8px; accent-color:var(--primary); margin:10px 0 0; }
 </style>
 {% endblock %}
 {% block content %}
@@ -63,9 +65,11 @@
     </form>
     {% else %}
       {% for s in shots %}
-      <div class="st-read">
-        <div class="st-est">{{ forloop.counter }}. {{ s.get_preset_display }} · ok. {{ s.estimated_seconds }} s</div>
+      <div class="st-read" id="shot-{{ s.pk }}">
+        <div class="st-est">{{ forloop.counter }}. {{ s.get_preset_display }} ·
+          {% if s.voice_ok %}nagranie {{ s.voice.duration_s|floatformat:1 }} s{% else %}ok. {{ s.estimated_seconds }} s{% if s.voice %} · nagranie nieaktualne{% endif %}{% endif %}</div>
         <p>{{ s.text }}</p>
+        {% if s.voice_ok %}<audio class="st-audio" controls preload="none" src="{% url 'studio:voice_file' s.voice.pk %}" aria-label="Nagranie kwestii {{ forloop.counter }}"></audio>{% endif %}
       </div>
       {% empty %}<div class="empty-state">Brak kwestii.</div>{% endfor %}
     {% endif %}
@@ -103,6 +107,32 @@
       {% endif %}
     </div></div>
 
+    {% if not p.is_draft %}
+    <div class="card"><div class="card-body">
+      <h2 class="st-sec">Lektor</h2>
+      <p class="text-sm" style="margin:0">Nagrane {{ voiced_count }} z {{ shots|length }} kwestii{% if voiced_count %} · {{ audio_seconds }} s narracji{% endif %}.</p>
+      {% if is_designer and not all_voiced %}
+        {% if tts_enabled and voice %}
+        <div class="st-actions" style="margin-top:10px">
+          <button class="btn btn-primary" type="button" id="st-voice"
+                  data-urls="{% for s in shots %}{% if not s.voice_ok %}{% url 'studio:voice_shot' p.pk s.pk %} {% endif %}{% endfor %}">Nagraj lektora</button>
+        </div>
+        <progress class="st-progress" id="st-voice-bar" max="1" value="0" hidden aria-hidden="true"></progress>
+        <p class="text-muted text-sm" style="margin:6px 0 0">Kwestia po kwestii; niezmienione kwestie biorą gotowe nagranie z pamięci (bez kosztu).</p>
+        <noscript><p class="text-sm">Nagrywanie wymaga włączonego JavaScriptu.</p></noscript>
+        {% elif not tts_enabled %}
+        <p class="text-sm" style="margin:10px 0 0">Lektor wyłączony — ustaw <code>ELEVENLABS_API_KEY</code> w zmiennych serwera.</p>
+        {% else %}
+        <p class="text-sm" style="margin:10px 0 0">Brak głosu — ustaw <code>ELEVENLABS_VOICE_ID</code> albo głos w prezentacji.</p>
+        {% endif %}
+      {% endif %}
+      <p class="text-sm" id="st-voice-live" role="status" aria-live="polite" style="margin:6px 0 0"></p>
+      {% if all_voiced %}
+        <div class="st-actions" style="margin-top:10px"><a class="btn btn-ghost btn-sm" href="{% url 'studio:subtitles' p.pk %}">Pobierz napisy (SRT)</a></div>
+      {% endif %}
+    </div></div>
+    {% endif %}
+
     <div class="card"><div class="card-body">
       <h2 class="st-sec">Fakty z modelu</h2>
       {% if facts %}
@@ -117,6 +147,27 @@
 {% endblock %}
 {% block extra_scripts %}
 <script>
+(function () {
+  var btn = document.getElementById('st-voice');
+  if (!btn) return;
+  var csrf = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  var live = document.getElementById('st-voice-live'), bar = document.getElementById('st-voice-bar');
+  btn.addEventListener('click', function () {
+    var urls = btn.dataset.urls.trim().split(/\s+/), i = 0;
+    btn.disabled = true; bar.hidden = false; bar.max = urls.length;
+    (function next() {
+      if (i >= urls.length) { live.textContent = 'Lektor nagrany — odświeżam…'; location.reload(); return; }
+      live.textContent = 'Nagrywam kwestię ' + (i + 1) + ' z ' + urls.length + '…';
+      fetch(urls[i], {method: 'POST', credentials: 'same-origin', headers: {'X-CSRFToken': csrf}})
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (d.error) { live.textContent = 'Kwestia ' + (i + 1) + ': ' + d.error; btn.disabled = false; return; }
+          i += 1; bar.value = i; next();
+        })
+        .catch(function () { live.textContent = 'Brak połączenia z serwerem — spróbuj ponownie.'; btn.disabled = false; });
+    })();
+  });
+})();
 (function () {
   var f = document.getElementById('st-ai');
   if (!f) return;

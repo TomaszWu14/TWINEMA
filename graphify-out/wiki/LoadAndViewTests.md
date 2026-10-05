@@ -15,7 +15,7 @@
 
 ## Relationships
 
-- [design_day.py](design_day.py.md) (1 shared connections)
+- [test_design_day.py](test_design_day.py.md) (1 shared connections)
 - [warehouse_design_sim.py](warehouse_design_sim.py.md) (1 shared connections)
 
 ## Source Files

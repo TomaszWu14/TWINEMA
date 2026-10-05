@@ -1,10 +1,10 @@
-# Api
+# VoiceViewTests
 
 > 12 nodes · cohesion 0.33
 
 ## Key Concepts
 
-- **Api** (7 connections) — `tools/render_worker.py`
+- **Api** (8 connections) — `tools/render_worker.py`
 - **main()** (6 connections) — `tools/render_worker.py`
 - **render_worker.py** (5 connections) — `tools/render_worker.py`
 - **.get()** (5 connections) — `tools/render_worker.py`
@@ -27,7 +27,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 44 (100%)
+- EXTRACTED: 45 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 

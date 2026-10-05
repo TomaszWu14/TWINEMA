@@ -1,46 +1,58 @@
 # ml/services.py
 
-> 20 nodes · cohesion 0.20
+> 23 nodes · cohesion 0.14
 
 ## Key Concepts
 
-- **test_design_forecast.py** (13 connections) — `web/twin/tests/test_design_forecast.py`
-- **forecast()** (12 connections) — `web/twin/design_forecast.py`
-- **ForecastTests** (11 connections) — `web/twin/tests/test_design_forecast.py`
-- **_daily()** (9 connections) — `web/twin/tests/test_design_forecast.py`
-- **backtest()** (6 connections) — `web/twin/design_forecast.py`
-- **fit()** (6 connections) — `web/twin/design_forecast.py`
-- **_total()** (5 connections) — `web/twin/tests/test_design_forecast.py`
-- **.test_backtest_small_error_on_clean_trend()** (4 connections) — `web/twin/tests/test_design_forecast.py`
-- **.test_flat_history_gives_multiplier_one()** (4 connections) — `web/twin/tests/test_design_forecast.py`
-- **.test_p90_is_above_p50_with_noise()** (4 connections) — `web/twin/tests/test_design_forecast.py`
-- **.test_recovers_known_growth()** (4 connections) — `web/twin/tests/test_design_forecast.py`
-- **.test_short_history_is_flagged()** (4 connections) — `web/twin/tests/test_design_forecast.py`
-- **.test_partial_weeks_and_weekends_are_dropped()** (3 connections) — `web/twin/tests/test_design_forecast.py`
-- **.test_fit_slope_is_log_weekly_rate()** (2 connections) — `web/twin/tests/test_design_forecast.py`
-- **series: [(dzień porządkowy, wartość)] → (nachylenie log/tydzień, wyraz wolny,…** (1 connections) — `web/twin/design_forecast.py`
-- **MAPE [%] prognozy ostatnich `weeks` tygodni z modelu uczonego bez nich (None —…** (1 connections) — `web/twin/design_forecast.py`
-- **Wzrost per strumień: roczne tempo P50/P90, mnożnik na `years` lat, MAPE testu…** (1 connections) — `web/twin/design_forecast.py`
-- **SimpleTestCase** (1 connections)
-- **Prognoza wzrostu z historii zadań EWM (plan 2026-10-02, etap 5).** (1 connections) — `web/twin/tests/test_design_forecast.py`
-- **Dni robocze (pn–pt) z wykładniczym wzrostem `growth_year` rocznie; weekendy…** (1 connections) — `web/twin/tests/test_design_forecast.py`
+- **ml/services.py** (18 connections) — `web/ml/services.py`
+- **ml/views.py** (13 connections) — `web/ml/views.py`
+- **weekly()** (10 connections) — `web/twin/design_forecast.py`
+- **run_segmentation()** (7 connections) — `web/ml/services.py`
+- **ModelRun** (6 connections) — `web/ml/models.py`
+- **run_forecast()** (6 connections) — `web/ml/services.py`
+- **run()** (6 connections) — `web/ml/views.py`
+- **ml/models.py** (5 connections) — `web/ml/models.py`
+- **ml/__init__.py** (4 connections) — `web/ml/__init__.py`
+- **_user()** (3 connections) — `web/ml/services.py`
+- **any_role** (3 connections)
+- **ml/urls.py** (2 connections) — `web/ml/urls.py`
+- **detail()** (2 connections) — `web/ml/views.py`
+- **home()** (2 connections) — `web/ml/views.py`
+- **_int()** (2 connections) — `web/ml/views.py`
+- **segments_csv()** (2 connections) — `web/ml/views.py`
+- **Meta** (1 connections) — `web/ml/models.py`
+- **.__str__()** (1 connections) — `web/ml/models.py`
+- **Przebiegi modeli ML: wersja algorytmu, dane wejściowe, parametry, miary i wynik…** (1 connections) — `web/ml/models.py`
+- **Przebiegi ML na imporcie zadań: dane z bliźniaka → czyste moduły…** (1 connections) — `web/ml/services.py`
+- **designer** (1 connections)
+- **require_POST** (1 connections)
+- **[(poniedziałek tygodnia, suma)] — tylko pełne tygodnie (bez pierwszego i…** (1 connections) — `web/twin/design_forecast.py`
 
 ## Relationships
 
+- [design_calibration.py](design_calibration.py.md) (7 shared connections)
 - [warehouse_design_sim.py](warehouse_design_sim.py.md) (5 shared connections)
-- [design_calibration.py](design_calibration.py.md) (4 shared connections)
-- [ml/views.py](ml-views.py.md) (4 shared connections)
-- [draft_script](draft_script.md) (4 shared connections)
+- [roles.py](roles.py.md) (4 shared connections)
+- [test_design_forecast.py](test_design_forecast.py.md) (4 shared connections)
+- [forecast.py](forecast.py.md) (2 shared connections)
+- [Przekazanie — stan projektu i następny krok (F5)](Przekazanie_%E2%80%94_stan_projektu_i_nast%C4%99pny_krok_%28F5%29.md) (2 shared connections)
+- [SlotLocator](SlotLocator.md) (2 shared connections)
+- [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
+- [build_scene_for_model](build_scene_for_model.md) (1 shared connections)
 
 ## Source Files
 
+- `web/ml/__init__.py`
+- `web/ml/models.py`
+- `web/ml/services.py`
+- `web/ml/urls.py`
+- `web/ml/views.py`
 - `web/twin/design_forecast.py`
-- `web/twin/tests/test_design_forecast.py`
 
 ## Audit Trail
 
-- EXTRACTED: 91 (98%)
-- INFERRED: 2 (2%)
+- EXTRACTED: 98 (100%)
+- INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
 ---

@@ -1,45 +1,43 @@
 # design_day.py
 
-> 19 nodes · cohesion 0.16
+> 16 nodes · cohesion 0.21
 
 ## Key Concepts
 
-- **test_design_day.py** (12 connections) — `web/twin/tests/test_design_day.py`
-- **ProfileTests** (9 connections) — `web/twin/tests/test_design_day.py`
-- **percentile()** (8 connections) — `web/twin/design_day.py`
-- **PercentileTests** (4 connections) — `web/twin/tests/test_design_day.py`
-- **WorkingDaysTests** (4 connections) — `web/twin/tests/test_design_day.py`
-- **_daily()** (3 connections) — `web/twin/tests/test_design_day.py`
-- **.setUp()** (3 connections) — `web/twin/tests/test_design_day.py`
-- **._stream()** (3 connections) — `web/twin/tests/test_design_day.py`
-- **.test_streams_and_design_value_is_percentile_not_mean_or_max()** (3 connections) — `web/twin/tests/test_design_day.py`
-- **SimpleTestCase** (3 connections)
-- **.test_trickle_days_excluded()** (3 connections) — `web/twin/tests/test_design_day.py`
-- **.test_degenerate()** (2 connections) — `web/twin/tests/test_design_day.py`
-- **.test_matches_excel_percentile_inc()** (2 connections) — `web/twin/tests/test_design_day.py`
-- **.test_abc_xyz_and_order_profile()** (2 connections) — `web/twin/tests/test_design_day.py`
-- **.test_peak_hour_from_hourly_volumes()** (2 connections) — `web/twin/tests/test_design_day.py`
-- **.test_percentile_choice_changes_design()** (2 connections) — `web/twin/tests/test_design_day.py`
-- **Percentyl z interpolacją liniową (jak numpy/Excel PERCENTILE.INC); pusta lista…** (1 connections) — `web/twin/design_day.py`
-- **.test_design_day_is_real_day_nearest_percentile()** (1 connections) — `web/twin/tests/test_design_day.py`
-- **Profil ruchów i dzień projektowy (krok 3): percentyle, dni robocze, dzień…** (1 connections) — `web/twin/tests/test_design_day.py`
+- **detect()** (14 connections) — `web/twin/ewm_detect.py`
+- **ewm_detect.py** (13 connections) — `web/twin/ewm_detect.py`
+- **parse_code()** (8 connections) — `web/twin/addressing.py`
+- **letter_rank()** (5 connections) — `web/twin/addressing.py`
+- **_grid()** (5 connections) — `web/twin/ewm_detect.py`
+- **_shape()** (5 connections) — `web/twin/ewm_detect.py`
+- **_distance()** (4 connections) — `web/twin/ewm_detect.py`
+- **_template_sig()** (3 connections) — `web/twin/ewm_detect.py`
+- **_new_template()** (2 connections) — `web/twin/ewm_detect.py`
+- **Klucz sortowania liter poziomów: znane litery wg LETTER_ORDER, obce na końcu.** (1 connections) — `web/twin/addressing.py`
+- **Kod EWM → (strefa, przejście, gniazdo, pozycja, litera, połówka) albo None.** (1 connections) — `web/twin/addressing.py`
+- **„Wykryj z EWM”: kody lokalizacji z mastera → propozycja szablonów gniazd, reguł…** (1 connections) — `web/twin/ewm_detect.py`
+- **k pozycji × [(litera, split)] → zbiór komórek (pozycja, litera, połówka).** (1 connections) — `web/twin/ewm_detect.py`
+- **Komórki gniazda → (sygnatura obrysu, czy siatka regularna). Sygnatura = (k,…** (1 connections) — `web/twin/ewm_detect.py`
+- **Liczba różnic gniazda od szablonu: brakujące + nadmiarowe komórki + inne typy…** (1 connections) — `web/twin/ewm_detect.py`
+- **rows: [{"zone", "rack_id", "n_bays"}]; master: [(kod, typ_ewm, wysokość_mm,…** (1 connections) — `web/twin/ewm_detect.py`
 
 ## Relationships
 
-- [design_calibration.py](design_calibration.py.md) (11 shared connections)
-- [warehouse_design_sim.py](warehouse_design_sim.py.md) (1 shared connections)
-- [twin/models.py](twin-models.py.md) (1 shared connections)
-- [LoadAndViewTests](LoadAndViewTests.md) (1 shared connections)
+- [warehouse_model.py](warehouse_model.py.md) (6 shared connections)
+- [hall_feature_dict](hall_feature_dict.md) (4 shared connections)
+- [warehouse_variants.py](warehouse_variants.py.md) (3 shared connections)
+- [ewm_tasks.py](ewm_tasks.py.md) (2 shared connections)
+- [test_addressing.py](test_addressing.py.md) (1 shared connections)
 
 ## Source Files
 
-- `web/twin/design_day.py`
-- `web/twin/tests/test_design_day.py`
+- `web/twin/addressing.py`
+- `web/twin/ewm_detect.py`
 
 ## Audit Trail
 
-- EXTRACTED: 68 (100%)
-- INFERRED: 0 (0%)
+- EXTRACTED: 64 (97%)
+- INFERRED: 2 (3%)
 - AMBIGUOUS: 0 (0%)
 
 ---
