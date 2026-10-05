@@ -1,10 +1,17 @@
 from django.urls import path
 
-from . import views, views_compare, views_play, views_sim
+from . import views, views_compare, views_play, views_showcase, views_sim
 
 app_name = "scenario"
 
 urlpatterns = [
+    path("prezentacje/", views_showcase.showcase_list, name="showcase_list"),
+    path("prezentacje/nowa/", views_showcase.showcase_create, name="showcase_create"),
+    path("prezentacje/<int:pk>/", views_showcase.showcase_detail, name="showcase"),
+    path("prezentacje/<int:pk>/dane.json", views_showcase.showcase_data, name="showcase_data"),
+    path("prezentacje/<int:pk>/zapisz/", views_showcase.showcase_save, name="showcase_save"),
+    path("prezentacje/<int:pk>/szablon/", views_showcase.showcase_reset, name="showcase_reset"),
+    path("prezentacje/<int:pk>/usun/", views_showcase.showcase_delete, name="showcase_delete"),
     path("scenariusze/<int:pk>/symulacja/", views_sim.scenario_simulate, name="simulate"),
     path("scenariusze/symulacja/<int:pk>/zdarzenia.json", views_sim.run_events, name="run_events"),
     path("scenariusze/symulacja/<int:pk>/wyniki.xlsx", views_compare.run_xlsx, name="run_xlsx"),

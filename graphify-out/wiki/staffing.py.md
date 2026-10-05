@@ -18,7 +18,7 @@
 
 ## Relationships
 
-- [designer](designer.md) (4 shared connections)
+- [studio/api.py](studio-api.py.md) (4 shared connections)
 - [warehouse_variants.py](warehouse_variants.py.md) (2 shared connections)
 - [layout-panels.js](layout-panels.js.md) (1 shared connections)
 

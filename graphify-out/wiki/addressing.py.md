@@ -1,4 +1,4 @@
-# detect
+# addressing.py
 
 > 17 nodes · cohesion 0.19
 
@@ -24,11 +24,11 @@
 
 ## Relationships
 
-- [shared.py](shared.py.md) (9 shared connections)
+- [safe_json](safe_json.md) (9 shared connections)
 - [simulate](simulate.md) (7 shared connections)
-- [test_s3b_views.py](test_s3b_views.py.md) (3 shared connections)
+- [Material](Material.md) (3 shared connections)
 - [RenderMontageTests](RenderMontageTests.md) (2 shared connections)
-- [test_dane.py](test_dane.py.md) (2 shared connections)
+- [test_master_data.py](test_master_data.py.md) (2 shared connections)
 - [ForecastTests](ForecastTests.md) (2 shared connections)
 - [blender_scene.py](blender_scene.py.md) (1 shared connections)
 

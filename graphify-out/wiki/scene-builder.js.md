@@ -29,7 +29,7 @@
 
 ## Relationships
 
-- [twinema_design_kit.py](twinema_design_kit.py.md) (9 shared connections)
+- [views_showcase.py](views_showcase.py.md) (9 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
 - [site.py](site.py.md) (1 shared connections)
 

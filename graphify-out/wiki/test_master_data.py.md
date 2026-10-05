@@ -1,4 +1,4 @@
-# test_dane.py
+# test_master_data.py
 
 > 13 nodes · cohesion 0.19
 
@@ -20,14 +20,14 @@
 
 ## Relationships
 
-- [test_s3b_views.py](test_s3b_views.py.md) (5 shared connections)
-- [detect](detect.md) (2 shared connections)
-- [shared.py](shared.py.md) (2 shared connections)
+- [Material](Material.md) (5 shared connections)
+- [addressing.py](addressing.py.md) (2 shared connections)
+- [safe_json](safe_json.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [ForecastTests](ForecastTests.md) (1 shared connections)
 - [simulate](simulate.md) (1 shared connections)
-- [StudioViewTests](StudioViewTests.md) (1 shared connections)
-- [equipment/views.py](equipment-views.py.md) (1 shared connections)
+- [draft_script](draft_script.md) (1 shared connections)
+- [LayoutError](LayoutError.md) (1 shared connections)
 
 ## Source Files
 

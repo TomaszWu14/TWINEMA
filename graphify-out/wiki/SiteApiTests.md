@@ -18,8 +18,8 @@
 
 ## Relationships
 
-- [BayTemplate](BayTemplate.md) (2 shared connections)
-- [shared.py](shared.py.md) (2 shared connections)
+- [bay_templates.py](bay_templates.py.md) (2 shared connections)
+- [safe_json](safe_json.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (1 shared connections)
 - [BlenderExportViewTests](BlenderExportViewTests.md) (1 shared connections)
 

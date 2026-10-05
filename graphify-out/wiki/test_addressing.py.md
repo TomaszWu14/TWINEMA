@@ -15,7 +15,7 @@
 
 ## Relationships
 
-- [test_s3b_views.py](test_s3b_views.py.md) (1 shared connections)
+- [Material](Material.md) (1 shared connections)
 
 ## Source Files
 

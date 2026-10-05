@@ -1,4 +1,4 @@
-# twinema_design_kit.py
+# views_showcase.py
 
 > 19 nodes · cohesion 0.15
 
@@ -30,8 +30,8 @@
 - [site.py](site.py.md) (11 shared connections)
 - [scene-builder.js](scene-builder.js.md) (9 shared connections)
 - [kpi_facts](kpi_facts.md) (1 shared connections)
-- [scenario/models.py](scenario-models.py.md) (1 shared connections)
-- [test_s3b_views.py](test_s3b_views.py.md) (1 shared connections)
+- [day_demand](day_demand.md) (1 shared connections)
+- [Material](Material.md) (1 shared connections)
 
 ## Source Files
 

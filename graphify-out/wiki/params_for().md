@@ -2,7 +2,7 @@
 
 > God node · 19 connections · `web/twin/design_catalog.py`
 
-**Community:** [twinema_design_kit.py](twinema_design_kit.py.md)
+**Community:** [views_showcase.py](views_showcase.py.md)
 
 ## Connections by Relation
 

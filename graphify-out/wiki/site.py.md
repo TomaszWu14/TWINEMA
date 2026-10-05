@@ -33,9 +33,9 @@
 
 ## Relationships
 
-- [twinema_design_kit.py](twinema_design_kit.py.md) (11 shared connections)
-- [shared.py](shared.py.md) (7 shared connections)
-- [layout-hall.js](layout-hall.js.md) (4 shared connections)
+- [views_showcase.py](views_showcase.py.md) (11 shared connections)
+- [safe_json](safe_json.md) (7 shared connections)
+- [layout-site.js](layout-site.js.md) (4 shared connections)
 - [blender_scene.py](blender_scene.py.md) (3 shared connections)
 - [kpi_facts](kpi_facts.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)

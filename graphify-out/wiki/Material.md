@@ -1,4 +1,4 @@
-# test_s3b_views.py
+# Material
 
 > 24 nodes · cohesion 0.12
 
@@ -31,13 +31,13 @@
 
 ## Relationships
 
-- [analyze](analyze.md) (7 shared connections)
-- [test_dane.py](test_dane.py.md) (5 shared connections)
+- [layout](layout.md) (7 shared connections)
+- [test_master_data.py](test_master_data.py.md) (5 shared connections)
 - [twin/models.py](twin-models.py.md) (4 shared connections)
-- [detect](detect.md) (3 shared connections)
+- [addressing.py](addressing.py.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
-- [equipment/views.py](equipment-views.py.md) (2 shared connections)
-- [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)
+- [LayoutError](LayoutError.md) (2 shared connections)
+- [views_showcase.py](views_showcase.py.md) (1 shared connections)
 - [test_addressing.py](test_addressing.py.md) (1 shared connections)
 
 ## Source Files

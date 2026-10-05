@@ -1,4 +1,4 @@
-# StudioViewTests
+# draft_script
 
 > 16 nodes · cohesion 0.13
 
@@ -23,14 +23,13 @@
 
 ## Relationships
 
-- [WarehouseTask](WarehouseTask.md) (4 shared connections)
-- [shared.py](shared.py.md) (3 shared connections)
+- [ForecastTests](ForecastTests.md) (6 shared connections)
+- [safe_json](safe_json.md) (3 shared connections)
 - [warehouse_tasks.py](warehouse_tasks.py.md) (2 shared connections)
 - [simulate](simulate.md) (2 shared connections)
-- [ForecastTests](ForecastTests.md) (2 shared connections)
 - [scene-data.js](scene-data.js.md) (1 shared connections)
 - [ScenarioViewTests](ScenarioViewTests.md) (1 shared connections)
-- [test_dane.py](test_dane.py.md) (1 shared connections)
+- [test_master_data.py](test_master_data.py.md) (1 shared connections)
 
 ## Source Files
 

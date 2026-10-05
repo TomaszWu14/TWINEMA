@@ -1,4 +1,4 @@
-# layout-hall.js
+# layout-site.js
 
 > 11 nodes · cohesion 0.24
 

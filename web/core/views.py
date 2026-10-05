@@ -18,6 +18,8 @@ MODULES = [
      "phase": "F4", "url": "ml:home"},
     {"key": "render", "name": "Render 3D", "desc": "Blender: ujęcia i animacje przepływów.",
      "phase": "F3", "url": "render:jobs"},
+    {"key": "prezentacje", "name": "Prezentacje 3D", "desc": "Pokaz dla zarządu: ujęcia hali, wyniki dnia, szczyt animacji, wnioski.",
+     "phase": "P1", "url": "scenario:showcase_list"},
     {"key": "studio", "name": "Studio prezentacji", "desc": "Scenariusz, lektor, montaż — film i deck.",
      "phase": "F5", "url": "studio:list"},
 ]

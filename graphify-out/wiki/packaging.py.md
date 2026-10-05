@@ -24,7 +24,7 @@
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (1 shared connections)
 - [scenario/views.py](scenario-views.py.md) (1 shared connections)
 - [test_ewm_service.py](test_ewm_service.py.md) (1 shared connections)
-- [studio/api.py](studio-api.py.md) (1 shared connections)
+- [test_voice.py](test_voice.py.md) (1 shared connections)
 
 ## Source Files
 

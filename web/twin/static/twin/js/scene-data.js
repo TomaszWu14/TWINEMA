@@ -182,6 +182,13 @@ export function isoView({ cx, cz, x, z }, fovDeg = 42, aspect = 16 / 9, elevDeg 
     target: [cx, 0, cz], dist };
 }
 
+/** Przelot kamery: ujęcie {pos, target} w chwili k ∈ [0, 1] (smoothstep — łagodny start i hamowanie). */
+export function camAt(a, b, k) {
+  const t = Math.min(1, Math.max(0, k)), e = t * t * (3 - 2 * t);
+  const mix = (u, v) => u.map((x, i) => x + (v[i] - x) * e);
+  return { pos: mix(a.pos, b.pos), target: mix(a.target, b.target) };
+}
+
 /** Ściany hali (w osiach sceny: x, z = y hali) z normalną na zewnątrz. */
 export function hallWalls({ width, depth }) {
   return [

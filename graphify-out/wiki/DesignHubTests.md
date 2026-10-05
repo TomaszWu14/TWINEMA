@@ -12,7 +12,7 @@
 
 ## Relationships
 
-- [shared.py](shared.py.md) (1 shared connections)
+- [safe_json](safe_json.md) (1 shared connections)
 - [studio/views.py](studio-views.py.md) (1 shared connections)
 
 ## Source Files

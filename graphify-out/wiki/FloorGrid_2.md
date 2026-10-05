@@ -12,7 +12,7 @@
 - .test_unreachable_target_falls_back_to_straight_line() `EXTRACTED`
 
 ### contains
-- blender_route.py `EXTRACTED`
+- [blender_route.py](blender_route.py.md) `EXTRACTED`
 
 ### imports
 - [blender_scene.py](blender_scene.py.md) `EXTRACTED`
