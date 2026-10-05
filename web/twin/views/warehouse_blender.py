@@ -1,7 +1,12 @@
 # Scena przepływów modelu magazynu: eksport do Blendera (tools/blender/) oraz ten sam
 # JSON dla animacji w aplikacji (odtwarzacz three.js w widoku 3D modelu).
+
+
+from django.core.cache import cache
+
+from core.roles import GROUP_ADMIN, GROUP_DESIGNER, has_role
 from twin.shared import (
-    _planner, get_object_or_404, hall_feature_dict, JsonResponse, WarehouseModel,
+    _planner, cache_digest, get_object_or_404, hall_feature_dict, JsonResponse, WarehouseModel,
 )
 from twin.blender_scene import build_scene_for_model, model_floor, model_racks
 from twin.blender_tasks import MAX_HOURS, default_start, load_window, parse_start
@@ -10,6 +15,29 @@ from twin.models_tasks import WarehouseTaskBatch
 # Limity: A* ~20 ms na trasę (hala 120×80 m) — 10 pickerów × 25 pobrań ≈ 6 s liczenia,
 # a widok jest synchroniczny (jeden worker gunicorna na czas liczenia).
 MAX_FORKLIFTS, MAX_PICKERS, MAX_PICKS = 10, 10, 25
+# Dane źródłowe (stany, partie, HU, kody lokalizacji z mastera) — rola Podgląd ich nie widzi (ZALOZENIA #25).
+SOURCE_PALLET_KEYS = ("sku", "name", "lot", "hu", "qty", "unit", "expiry", "days_to_expiry")
+SIM_TRACE_TTL = 3600
+
+
+def _full_access(request):
+    """Projektant/Administratorzy albo wywołanie wewnętrzne (worker renderów, studio — bez `user`)."""
+    user = getattr(request, "user", None)
+    return user is None or has_role(user, GROUP_ADMIN, GROUP_DESIGNER)
+
+
+def _for_viewer(scene):
+    """Scena bez danych źródłowych: palety jako anonimowe bryły (stan, klasa ABC, liczba pobrań zostają)."""
+    for p in scene.get("pallets") or []:
+        for k in SOURCE_PALLET_KEYS:
+            p.pop(k, None)
+        p["code"] = ""
+    for it in scene.get("items") or []:
+        it["sku"] = ""
+    for key in ("batch", "tasks_batch", "snapshot"):
+        (scene.get("source") or {}).pop(key, None)
+    (scene.get("info") or {}).pop("batch", None)
+    return scene
 
 
 def _clamped(raw, default, lo, hi):
@@ -64,9 +92,15 @@ def _sim_scene(request, wm):
     features = [hall_feature_dict(f) for f in wm.features.all()]
     model = {"id": wm.pk, "name": wm.name}
     day = design_day(batch, prm["p"])
-    trace = []
-    result = run_simulation(batch, wm, day, prm, trace=trace)[0] if day else None
-    if result is None:                    # brak dnia albo model bez VNA/półek → pusta scena + komunikat
+    # cały dzień liczony raz na (partia, model, parametry) — zmiana godziny tylko wycina fragment śladu
+    key = "sim-trace:" + cache_digest(batch.pk, wm.pk, wm.updated_at.timestamp(), day, prm)
+    cached = cache.get(key) if day else None
+    if day and cached is None:
+        trace = []
+        cached = (trace, run_simulation(batch, wm, day, prm, trace=trace)[0] is not None)
+        cache.set(key, cached, SIM_TRACE_TTL)
+    trace, ok = cached or ([], False)
+    if not ok:                    # brak dnia albo model bez VNA/półek → pusta scena + komunikat
         return build_sim_scene(model, model_floor(wm, racks), racks, features, [], hour)
     return build_sim_scene(model, model_floor(wm, racks), racks, features, trace, hour,
                            info={"batch": batch.name, "day": day.isoformat(), "p": prm["p"],
@@ -79,15 +113,14 @@ def _scene_from_request(request, wm):
     Kompletacja = symulacja demo (import aktywności pickerów dojdzie z modułem Dane).
     ?pallets=0 — bez palet w lokalizacjach. ?forklifts=0–10 (demo), ?pickers=1–10, ?picks=1–25.
     ?wt=… — wózki z zadań EWM (patrz `_wt_window`)."""
-    sim = _sim_scene(request, wm)
-    if sim is not None:
-        return sim
-    return build_scene_for_model(
+    full = _full_access(request)
+    scene = _sim_scene(request, wm) or build_scene_for_model(
         wm, None,
         forklifts=_clamped(request.GET.get("forklifts"), 3, 0, MAX_FORKLIFTS),
         max_pickers=_clamped(request.GET.get("pickers"), 6, 1, MAX_PICKERS),
         max_picks=_clamped(request.GET.get("picks"), 12, 1, MAX_PICKS),
-        with_pallets=request.GET.get("pallets") != "0", wt=_wt_window(request))
+        with_pallets=request.GET.get("pallets") != "0", wt=_wt_window(request) if full else None)
+    return scene if full else _for_viewer(scene)
 
 
 @_planner

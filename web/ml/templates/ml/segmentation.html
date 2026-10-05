@@ -21,7 +21,7 @@
     <div class="page-header__title">Segmentacja materiałów</div>
     <div class="page-header__sub">Import „{{ run.batch.name }}” · {{ run.created_at|date:"d.m.Y H:i" }} · <code>{{ run.version }}</code>{% if res.ok %} · {{ res.skus }} materiałów, cechy: {{ res.features|join:", " }}{% endif %}</div>
   </div>
-  {% if res.ok %}<div class="page-header__actions"><a class="btn btn-secondary" href="{% url 'ml:segments_csv' run.pk %}">Przypisania (CSV)</a></div>{% endif %}
+  {% if res.ok and is_designer %}<div class="page-header__actions"><a class="btn btn-secondary" href="{% url 'ml:segments_csv' run.pk %}">Przypisania (CSV)</a></div>{% endif %}
 </div>
 
 {% if not res.ok %}

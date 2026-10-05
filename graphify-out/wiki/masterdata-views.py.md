@@ -1,4 +1,4 @@
-# masterdata/services.py
+# masterdata/views.py
 
 > 24 nodes · cohesion 0.12
 
@@ -32,9 +32,9 @@
 ## Relationships
 
 - [analyze](analyze.md) (7 shared connections)
-- [load_demo](load_demo.md) (5 shared connections)
+- [test_dane.py](test_dane.py.md) (5 shared connections)
 - [twin/models.py](twin-models.py.md) (4 shared connections)
-- [detect](detect.md) (3 shared connections)
+- [ewm_service.py](ewm_service.py.md) (3 shared connections)
 - [simulate](simulate.md) (3 shared connections)
 - [equipment/views.py](equipment-views.py.md) (2 shared connections)
 - [twinema_design_kit.py](twinema_design_kit.py.md) (1 shared connections)

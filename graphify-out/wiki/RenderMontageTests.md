@@ -23,7 +23,7 @@
 - [simulate](simulate.md) (15 shared connections)
 - [TWINEMA — zakres i plan](TWINEMA_%E2%80%94_zakres_i_plan.md) (5 shared connections)
 - [blender_scene.py](blender_scene.py.md) (3 shared connections)
-- [detect](detect.md) (2 shared connections)
+- [ewm_service.py](ewm_service.py.md) (2 shared connections)
 - [ForecastTests](ForecastTests.md) (1 shared connections)
 
 ## Source Files

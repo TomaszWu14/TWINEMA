@@ -15,7 +15,7 @@
 
 ## Relationships
 
-- [masterdata/services.py](masterdata-services.py.md) (1 shared connections)
+- [masterdata/views.py](masterdata-views.py.md) (1 shared connections)
 
 ## Source Files
 

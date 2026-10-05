@@ -58,6 +58,31 @@ class CompareViewTests(TestCase):
         self.assertEqual(len(area["cells"]), 2)
         self.assertLess(area["cells"][1]["value"], area["cells"][0]["value"])   # 17,5 m → mniejsza hala
 
+    def test_compare_cached_and_viewer_never_computes(self):
+        from unittest import mock
+
+        from django.contrib.auth.models import Group
+
+        from core.roles import GROUP_VIEWER
+        from twin.views import warehouse_compare
+
+        url = f"/magazyn/zadania-ewm/{self.batch.pk}/porownanie/"
+        params = {"models": [self.wm.pk]}
+        viewer = get_user_model().objects.create_user("podglad", password="x")
+        viewer.groups.add(Group.objects.get_or_create(name=GROUP_VIEWER)[0])
+        with mock.patch.object(warehouse_compare, "required_fleet", wraps=required_fleet) as rf:
+            self.client.force_login(viewer)
+            r = self.client.get(url, params)
+            self.assertContains(r, "Jeszcze niepoliczone")          # Podgląd nie odpala symulacji
+            self.assertEqual(rf.call_count, 0)
+            self.client.force_login(get_user_model().objects.get(username="c"))
+            self.client.get(url, params)
+            self.client.get(url, params)                            # drugi raz z cache
+            self.assertEqual(rf.call_count, 1)
+            self.client.force_login(viewer)
+            self.assertContains(self.client.get(url, params), "Wymagane: AGV")   # policzone → widzi wynik
+            self.assertEqual(rf.call_count, 1)
+
     def test_links_from_profile(self):
         r = self.client.get(f"/magazyn/zadania-ewm/{self.batch.pk}/profil/")
         self.assertContains(r, f"/magazyn/zadania-ewm/{self.batch.pk}/porownanie/")

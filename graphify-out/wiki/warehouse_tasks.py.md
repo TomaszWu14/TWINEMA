@@ -33,7 +33,7 @@
 
 ## Relationships
 
-- [scenario/services.py](scenario-services.py.md) (10 shared connections)
+- [test_sim.py](test_sim.py.md) (10 shared connections)
 - [layout-core.js](layout-core.js.md) (4 shared connections)
 - [ADR-0001: Kopia kodu modelowania magazynu, nie przeniesienie](ADR-0001-_Kopia_kodu_modelowania_magazynu%2C_nie_przeniesienie.md) (2 shared connections)
 - [warehouse_blender.py](warehouse_blender.py.md) (2 shared connections)

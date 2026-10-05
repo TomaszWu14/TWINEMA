@@ -1,6 +1,6 @@
 # WarehouseModel
 
-> God node · 45 connections · `web/twin/models.py`
+> God node · 46 connections · `web/twin/models.py`
 
 **Community:** [twin/models.py](twin-models.py.md)
 
@@ -15,20 +15,20 @@
 - [scenario/views.py](scenario-views.py.md) `EXTRACTED`
 - [shared.py](shared.py.md) `EXTRACTED`
 - [views_showcase.py](views_showcase.py.md) `EXTRACTED`
-- test_dane.py `EXTRACTED`
-- masterdata/views.py `EXTRACTED`
+- [test_dane.py](test_dane.py.md) `EXTRACTED`
+- [masterdata/views.py](masterdata-views.py.md) `EXTRACTED`
 - demo_scenariusz.py `EXTRACTED`
 - views_sim.py `EXTRACTED`
 - test_s3b_views.py `EXTRACTED`
-- [test_design_calibration.py](test_design_calibration.py.md) `EXTRACTED`
-- [test_ewm_tasks_flow.py](test_ewm_tasks_flow.py.md) `EXTRACTED`
+- test_design_calibration.py `EXTRACTED`
+- test_ewm_tasks_flow.py `EXTRACTED`
 - test_costs.py `EXTRACTED`
 - [test_ewm_service.py](test_ewm_service.py.md) `EXTRACTED`
-- [test_fleet_catalog.py](test_fleet_catalog.py.md) `EXTRACTED`
+- test_fleet_catalog.py `EXTRACTED`
 - test_blender_export.py `EXTRACTED`
 - test_layout_equipment.py `EXTRACTED`
 - test_showcase.py `EXTRACTED`
-- [test_deck.py](test_deck.py.md) `EXTRACTED`
+- test_deck.py `EXTRACTED`
 - test_model_edit.py `EXTRACTED`
 - test_play.py `EXTRACTED`
 

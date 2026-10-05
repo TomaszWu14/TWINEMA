@@ -11,24 +11,24 @@
 - **warehouse_model_detect_save()** (6 connections) — `web/twin/views/warehouse_model_ewm.py`
 - **master_rows()** (4 connections) — `web/twin/ewm_service.py`
 - **plan_for_model()** (4 connections) — `web/twin/ewm_service.py`
+- **_md_role** (3 connections)
 - **[(rząd, szablon, wyjątki), …] → (miejsca z kluczami zone/aisle, {kod: [„B0-07”,…** (1 connections) — `web/twin/addressing.py`
 - **Warstwa ORM nad czystymi modułami adresowania: master EWM, plan modelu, zapis…** (1 connections) — `web/twin/ewm_service.py`
 - **[(kod, typ EWM, wysokość mm, udźwig kg)] z mastera — tylko kody stref modelu.** (1 connections) — `web/twin/ewm_service.py`
 - **Propozycja „Wykryj z EWM” dla rzędów modelu (nic nie zapisuje).** (1 connections) — `web/twin/ewm_service.py`
 - **Zapis propozycji: nowe szablony, szablon domyślny + numeracja rzędów, wyjątki…** (1 connections) — `web/twin/ewm_service.py`
 - **Rozwinięty plan modelu → (rzędy, miejsca, duplikaty).** (1 connections) — `web/twin/ewm_service.py`
-- **_md_role** (1 connections)
 - **require_POST** (1 connections)
 
 ## Relationships
 
-- [ewm_service.py](ewm_service.py.md) (8 shared connections)
+- [warehouse_model_ewm.py](warehouse_model_ewm.py.md) (10 shared connections)
 - [StudioViewTests](StudioViewTests.md) (3 shared connections)
-- [scenario/views.py](scenario-views.py.md) (3 shared connections)
-- [day_demand](day_demand.md) (3 shared connections)
+- [designer](designer.md) (3 shared connections)
+- [scenario/models.py](scenario-models.py.md) (3 shared connections)
 - [test_ewm_service.py](test_ewm_service.py.md) (3 shared connections)
 - [layout-panels.js](layout-panels.js.md) (2 shared connections)
-- [bay_templates.py](bay_templates.py.md) (2 shared connections)
+- [simulate_plan](simulate_plan.md) (2 shared connections)
 - [SimViewTests](SimViewTests.md) (2 shared connections)
 - [twin/models.py](twin-models.py.md) (2 shared connections)
 - [test_ml.py](test_ml.py.md) (2 shared connections)
@@ -42,7 +42,7 @@
 
 ## Audit Trail
 
-- EXTRACTED: 66 (100%)
+- EXTRACTED: 68 (100%)
 - INFERRED: 0 (0%)
 - AMBIGUOUS: 0 (0%)
 
