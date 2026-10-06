@@ -59,8 +59,8 @@ Testy: `cd web && python manage.py test --parallel 4` (env: `DJANGO_DEBUG=true D
   (koszty) → P1 (tryb prezentacji 3D) → … → K3 (flota mieszana: `ScenarioFleet`, grupy z katalogu per rola, przekazanie AGV → VNA, wyniki i koszty per grupa) — szczegóły w `docs/PLAN.md` („Po F5”) i `docs/ZALOZENIA.md`.
 - **Co zostało (do wyboru przez właściciela):**
   - ~~plansza kosztów w prezentacji~~ — zrobione (P2 #47, karta `costs`);
-  - **grafika ~6 → 6–7/10** (poziom programów symulacyjnych): SSAO (pliki postprocessingu three do `fetch_vendor.sh`), szczegóły palet i wózków z bliska, **ruch ludzi** (dziś stoją przy stanowiskach), **ładowanie palet na auta**, osobne trasy wózków po alejkach, modele AGV/AMR z katalogu;
-  - **działka**: wielokąt zamiast prostokąta, **trasy aut po drogach wewnętrznych** (dziś odcinek prosty), kolizje elementów terenu;
+  - **grafika**: zrobione 2026-10-06 — G2d #51 (miganie współpłaszczyznowych warstw działki/pól, `scene-data.stackLayer`; **czeka na potwierdzenie właściciela**), G3 #52 (załadunek/rozładunek wózkiem w trakcie postoju, ludzie chodzą), G4 #53 (wózki alejkami, `site-route.hallRouter`). SSAO/GTAO sprawdzone i odrzucone (szum, znikają obrysy, ~2× koszt; cienie kontaktowe wystarczają). Zostało: szczegóły palet i wózków z bliska; jeśli dalej miga — obrysy 1-px na krawędziach brył, mory kreskowanych tekstur;
+  - **działka**: wielokąt (D2 #42) i trasy aut (D3 #43, D4 #48) zrobione; zostały kolizje elementów terenu;
   - ~~publiczny link prezentacji~~ — zrobione (P3 #49: `/p/<token>/`, wygasa 1–90 dni, wyłączanie; zakres = token, bez nowej roli); trasowanie dojazdu w serwerowym sprawdzeniu działki — zrobione (D4 #48); prezentacja: przybliżenie „strefa z bliska” dla stref na całą halę (dziś kadr całej strefy);
   - **wdrożenie po stronie właściciela** — sekcja wyżej (Coolify, sekrety, `RENDER_WORKER_TOKEN`, klucze).
 - ML3: model czasu cyklu (gradient boosting vs mediana real÷sym, MAE na odłożonych dniach).
