@@ -6,7 +6,7 @@ import { QUEUE_M, QUEUE_PITCH_M, TRAVEL_S, VEHICLES, buildTracks, countersAt, cr
   hhmm, lPath, lPathYaw, orderedSlot, palletAt, queueSides, rackFront, rectCenter, seriesAt, slotOrder,
   stationSpots, vehicleAt, vehiclePose, walkAt, yawOut, ENTER_S } from './day-timeline.js';
 import { localToWorld, nearestEntry, sitePlan } from './scene-data.js';
-import { routePath } from './site-route.js';
+import { alongPath, hallRouter, routePath } from './site-route.js';
 import { CARRY, modelForEquipment, modelParts } from './equipment-models.js';
 
 const MAX_PARCEL_STACK = 120;
@@ -92,6 +92,7 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
   const asked = new URLSearchParams(globalThis.location?.search).get('sprzet'), fk = asked ? {} : (data.fleet_kinds || {});
   const carrier = modelForEquipment(asked || fk.rack || fk.transport || data.fleet_kind) || 'reach';
   const shuttle = fk.vna && fk.transport ? modelForEquipment(fk.transport) : null;
+  const hall = hallRouter(racks, data.floor);        // G4: wózki jeżdżą alejkami, nie przez regały
   const need = { ptruck: nDocks * 6, vna: pallets.length };       // G3: + wózki wożące palety pole ↔ naczepa
   for (const k of [carrier, shuttle]) if (k) need[k] = (need[k] || 0) + pallets.length;
   for (const [k, n] of Object.entries(need)) mesh[k] = fleet(viewer.scene, k, n);
@@ -232,7 +233,8 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
         }
       } else {
         const end = (k) => (s.dock && k.startsWith('dock:') && places.docks[k.slice(5)] ? inside(places.docks[k.slice(5)], -2) : anchor(k, tr.obj));
-        const a = end(s.from), b = end(s.to), [x, y] = lPath(a, b, s.p), yaw = lPathYaw(a, b, s.p);
+        const a = end(s.from), b = end(s.to), path = hall(a, b), q = path && alongPath(path, s.p);
+        const [x, y, yaw] = q ? [q.x, q.y, q.yaw] : [...lPath(a, b, s.p), lPathYaw(a, b, s.p)];
         const r = rackOf(tr.obj), onShuttle = s.from === 'rack' ? s.p >= 0.5 : s.p < 0.5;   // połowa drogi po stronie pola = pojazd transportowy
         const kind = s.dock ? 'ptruck' : (r?.rack_class ?? r?.equipment) !== 'vna' ? carrier : shuttle && onShuttle ? shuttle : 'vna', c = CARRY[kind];
         put(mesh.pallet, x, y, c.z, yaw);

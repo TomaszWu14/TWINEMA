@@ -23,20 +23,51 @@ export function walkable(plan, floor) {
     && (!paved.length || paved.some((r) => inPolygon(r, p)));
 }
 
-function grid(plan) {
+/** Trasa a → b (punkty hali) po przejezdnym terenie działki: [a, …, b] albo null. */
+export function routePath(plan, floor, a, b) {
   const xs = plan.plot.map((p) => p[0]), ys = plan.plot.map((p) => p[1]);
-  const x0 = Math.min(...xs), y0 = Math.min(...ys);
-  return { x0, y0, nx: Math.ceil((Math.max(...xs) - x0) / CELL_M) + 1, ny: Math.ceil((Math.max(...ys) - y0) / CELL_M) + 1 };
+  return gridRoute(walkable(plan, floor), [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)], CELL_M, a, b);
 }
 
-/** Trasa a → b (punkty hali) po przejezdnym terenie: [a, …, b] albo null. */
-export function routePath(plan, floor, a, b) {
-  const ok = walkable(plan, floor), g = grid(plan), N = g.nx * g.ny;
-  const at = (i) => [g.x0 + (i % g.nx) * CELL_M, g.y0 + Math.floor(i / g.nx) * CELL_M];
+/** G4: trasy wózków w hali — po posadzce, z ominięciem rzutów regałów (z zapasem `pad` m); wyniki w pamięci
+ *  podręcznej per para punktów (te same miejsca odkładcze i fronty regałów powtarzają się przez cały dzień).
+ *  → route(a, b) = [a, …, b] albo null (wtedy przejazd w L jak dotąd). */
+export function hallRouter(racks, floor, { cell = 1, pad = 0.3 } = {}) {
+  const nx = Math.ceil(floor.width / cell) + 1, ny = Math.ceil(floor.depth / cell) + 1;
+  const blocked = new Uint8Array(nx * ny);
+  for (const r of racks) {                              // rasteryzacja obróconego prostokąta regału
+    const t = ((r.angle || 0) * Math.PI) / 180, c = Math.cos(t), sn = Math.sin(t);
+    const corners = [[0, 0], [r.width, 0], [0, r.depth], [r.width, r.depth]]
+      .map(([u, v]) => [r.x + u * c + v * sn, r.y - u * sn + v * c]);
+    const [x0, x1] = [Math.min(...corners.map((q) => q[0])) - pad, Math.max(...corners.map((q) => q[0])) + pad];
+    const [y0, y1] = [Math.min(...corners.map((q) => q[1])) - pad, Math.max(...corners.map((q) => q[1])) + pad];
+    for (let iy = Math.max(0, Math.floor(y0 / cell)); iy <= Math.min(ny - 1, Math.ceil(y1 / cell)); iy++) {
+      for (let ix = Math.max(0, Math.floor(x0 / cell)); ix <= Math.min(nx - 1, Math.ceil(x1 / cell)); ix++) {
+        const dx = ix * cell - r.x, dy = iy * cell - r.y, u = dx * c - dy * sn, v = dx * sn + dy * c;
+        if (u >= -pad && u <= r.width + pad && v >= -pad && v <= r.depth + pad) blocked[iy * nx + ix] = 1;
+      }
+    }
+  }
+  const ok = ([x, y]) => {
+    const ix = Math.round(x / cell), iy = Math.round(y / cell);
+    return x >= 0 && y >= 0 && x <= floor.width && y <= floor.depth && !blocked[iy * nx + ix];
+  };
+  const cache = new Map();
+  return (a, b) => {
+    const key = `${a[0].toFixed(1)},${a[1].toFixed(1)}>${b[0].toFixed(1)},${b[1].toFixed(1)}`;
+    if (!cache.has(key)) cache.set(key, gridRoute(ok, [0, 0, floor.width, floor.depth], cell, a, b));
+    return cache.get(key);
+  };
+}
+
+/** A* po siatce `cell` w prostokącie [x0, y0, x1, y1] po punktach spełniających `ok` → [a, …, b] albo null. */
+export function gridRoute(ok, [bx0, by0, bx1, by1], cell, a, b) {
+  const g = { x0: bx0, y0: by0, nx: Math.ceil((bx1 - bx0) / cell) + 1, ny: Math.ceil((by1 - by0) / cell) + 1 }, N = g.nx * g.ny;
+  const at = (i) => [g.x0 + (i % g.nx) * cell, g.y0 + Math.floor(i / g.nx) * cell];
   const free = new Uint8Array(N);
   for (let i = 0; i < N; i++) free[i] = ok(at(i)) ? 1 : 0;
   const cellOf = ([x, y]) => {                         // najbliższa wolna komórka (punkt bywa na granicy / w bramie)
-    const cx = Math.round((x - g.x0) / CELL_M), cy = Math.round((y - g.y0) / CELL_M);
+    const cx = Math.round((x - g.x0) / cell), cy = Math.round((y - g.y0) / cell);
     let best = -1, bd = Infinity;
     for (let r = 0; r <= 6 && best < 0; r++) {
       for (let dy = -r; dy <= r; dy++) {
