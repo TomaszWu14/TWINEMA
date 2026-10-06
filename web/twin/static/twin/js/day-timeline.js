@@ -8,6 +8,7 @@ export const VEHICLES = new Set(['container', 'truck', 'courier']);
 export const TRAVEL_S = 90;          // dojazd brama → dok / odjazd dok → brama
 export const MOVE_MAX_S = 120;       // przejazd palety regał → pole wydań (koniec ruchu znamy, początku nie)
 export const SLOT_M = 1.4;
+export const DOCK_MOVE_S = 45;       // G3: przejazd wózka paletowego pole odkładcze ↔ naczepa
 export const ENTER_S = 75;           // D1: przejazd od wjazdu działki do placu przed dokiem (i z powrotem)           // pitch palety na polu odkładczym (EUR 1,2 × 0,8 + odstęp)
 
 /** Pierwszy indeks i, dla którego arr[i] > t (wyszukiwanie binarne po posortowanej tablicy liczb). */
@@ -42,7 +43,66 @@ export function buildTracks(events) {
       tr.t1 = truck.t[i];
     }
   }
+  spreadDockMoves(tracks);
   return tracks;
+}
+
+function insertAt(tr, i, t, what, place) {
+  tr.t.splice(i, 0, t); tr.what.splice(i, 0, what); tr.place.splice(i, 0, place); tr.n.splice(i, 0, 1);
+}
+
+/** G3: palety przy aucie w trakcie postoju zamiast „wszystkie naraz”. Załadunek: symulacja daje jedno „loaded”
+ *  na początku postoju dla całego auta → k-ta paleta trafia do naczepy w k-tej części postoju, wcześniej
+ *  przejazd „loading” z pola wydań. Rozładunek (auta, nie kontenery — tam kartony): k-ta paleta wyjeżdża
+ *  z naczepy („unloading”) jak w silniku (start + postój × (k − 0,5) / n), potem czeka („wait”) w pierwszym
+ *  miejscu swojej ścieżki. Mutuje ścieżki; liczniki (`staging`, `loaded`) bez zmian. */
+export function spreadDockMoves(tracks) {
+  const stops = {};                                          // „dock:X@t” → {t0, t1} postoju auta
+  const inbound = new Map();
+  for (const tr of tracks.values()) {
+    if (!VEHICLES.has(tr.kind)) continue;
+    const i = tr.what.indexOf('dock'), j = tr.what.indexOf('depart');
+    if (i < 0 || j < 0) continue;
+    stops[`${tr.place[i]}@${tr.t[i]}`] = { t0: tr.t[i], t1: tr.t[j] };
+    if (tr.kind === 'truck') inbound.set(tr.obj, { dock: tr.place[i], t0: tr.t[i], t1: tr.t[j] });
+  }
+  const loads = {}, unloads = {};
+  for (const tr of tracks.values()) {
+    if (tr.kind !== 'pallet') continue;
+    const i = tr.what.indexOf('loaded');
+    if (i > 0 && stops[`${tr.place[i]}@${tr.t[i]}`]) (loads[`${tr.place[i]}@${tr.t[i]}`] ??= []).push(tr);
+    const [own, k] = tr.obj.split('-p'), stop = inbound.get(own);
+    if (stop && tr.what[0] !== 'retrieved' && tr.t[0] >= stop.t0) (unloads[own] ??= []).push([+k, tr]);
+  }
+  const num = (tr) => +tr.obj.split('-p')[1] || 0;
+  for (const [key, list] of Object.entries(loads)) {
+    const { t0, t1 } = stops[key], n = list.length;
+    list.sort((a, b) => num(a) - num(b)).forEach((tr, k) => {
+      const i = tr.what.indexOf('loaded'), at = t0 + ((t1 - t0) * (k + 0.5)) / n;
+      tr.t[i] = Math.max(at, tr.t[i - 1]);
+      insertAt(tr, i, Math.max(tr.t[i - 1], tr.t[i] - DOCK_MOVE_S), 'loading', tr.place[i - 1]);
+      tr.t1 = tr.t[tr.t.length - 1];
+    });
+  }
+  for (const [own, list] of Object.entries(unloads)) {
+    const { dock, t0, t1 } = inbound.get(own), n = Math.max(...list.map(([k]) => k));
+    for (const [k, tr] of list) {
+      const out = Math.min(tr.t[0], t0 + ((t1 - t0) * (k - 0.5)) / n);
+      if (tr.t[0] > out + 1) insertAt(tr, 0, out, 'wait', tr.place[0]);
+      insertAt(tr, 0, Math.max(t0, out - DOCK_MOVE_S), 'unloading', dock);
+      tr.t0 = tr.t[0];
+    }
+  }
+}
+
+/** G3: chodzenie tam i z powrotem a ↔ b w czasie symulacji: `speed` m/s, postój `pause` s na każdym końcu,
+ *  przesunięcie fazy `phase` (0–1, różne osoby nie idą w nogę) → {x, y, yaw} (yaw jak `lPathYaw`). */
+export function walkAt(a, b, t, { speed = 1.0, pause = 20, phase = 0 } = {}) {
+  const dx = b[0] - a[0], dy = b[1] - a[1], walk = Math.hypot(dx, dy) / speed, cyc = 2 * (walk + pause) || 1;
+  const u = ((((t / cyc + phase) % 1) + 1) % 1) * cyc;
+  const k = u < pause ? 0 : u < pause + walk ? (u - pause) / walk : u < 2 * pause + walk ? 1 : 1 - (u - 2 * pause - walk) / walk;
+  const back = u >= pause + walk;
+  return { x: a[0] + dx * k, y: a[1] + dy * k, yaw: Math.atan2(back ? dy : -dy, back ? -dx : dx) };
 }
 
 /** Indeks ostatniego zdarzenia ścieżki w chwili t (−1 = jeszcze nie zaczęła). */
@@ -72,6 +132,9 @@ export function palletAt(tr, t) {
   if (i < 0) return null;
   const what = tr.what[i], place = tr.place[i];
   if (what === 'stored' || what === 'loaded') return null;           // w regale / na aucie
+  if ((what === 'loading' || what === 'unloading') && i + 1 < tr.t.length) {    // G3: wózek pole ↔ naczepa
+    return { from: place, to: tr.place[i + 1], p: Math.min(1, (t - tr.t[i]) / Math.max(1, tr.t[i + 1] - tr.t[i])), dock: true };
+  }
   if (what === 'move') {
     const j = tr.what.indexOf('stored', i);
     if (j < 0) return { at: place };

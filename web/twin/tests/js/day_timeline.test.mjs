@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { STAND_M, buildTracks, countersAt, crewAt, dayRange, hashId, lPath, lPathYaw, orderedSlot, palletAt,
-  queueSides, rackFront, rectSlot, seriesAt, slotOrder, stationSpots, upperBound, vehicleAt, vehiclePose, yawOut,
+  queueSides, rackFront, rectSlot, seriesAt, slotOrder, stationSpots, upperBound, vehicleAt, vehiclePose, walkAt, yawOut,
   TRAVEL_S } from '../../static/twin/js/day-timeline.js';
 
 const EV = [
@@ -50,19 +50,51 @@ test('paleta: stanowisko → pole → przejazd → regał (znika)', () => {
   assert.equal(palletAt(tr, 5300), null);
 });
 
-test('paleta wydań: z regału na pole (ostatnie 2 min), znika po załadunku', () => {
+test('paleta wydań: z regału na pole (ostatnie 2 min), wózkiem do naczepy w trakcie postoju (G3)', () => {
   const tr = buildTracks(EV).get('out1-p1');
   assert.deepEqual(palletAt(tr, 9100), { at: 'rack' });
   const m = palletAt(tr, 9440);
   assert.equal(m.from, 'rack'); assert.equal(m.to, 'staging_out'); assert.ok(m.p > 0.4 && m.p < 0.6);
   assert.deepEqual(palletAt(tr, 10000), { at: 'staging_out' });
-  assert.equal(palletAt(tr, 11001), null);
+  assert.deepEqual(palletAt(tr, 11001), { at: 'staging_out' });     // jedyna paleta: w połowie postoju 11000–12000
+  const l = palletAt(tr, 11480);
+  assert.equal(l.from, 'staging_out'); assert.equal(l.to, 'dock:9'); assert.ok(l.dock && l.p > 0.4 && l.p < 0.8);
+  assert.equal(palletAt(tr, 11501), null);
+});
+
+test('G3: załadunek rozłożony na postój, rozładunek auta z naczepy na pole', () => {
+  const ev = [[0, 'in2', 'truck', 'arrive', 'gate'], [100, 'in2', 'truck', 'dock', 'dock:1'],
+    ...[1, 2, 3, 4].map((k) => [100 + 100 * (k - 0.5), `in2-p${k}`, 'pallet', 'staging', 'staging_in']),
+    [500, 'in2', 'truck', 'depart', 'dock:1'],
+    ...[1, 2].map((k) => [600, `out2-p${k}`, 'pallet', 'staging', 'staging_out']),
+    [1000, 'out2', 'truck', 'dock', 'dock:2'], [1000, 'out2-p1', 'pallet', 'loaded', 'dock:2'],
+    [1000, 'out2-p2', 'pallet', 'loaded', 'dock:2'], [1400, 'out2', 'truck', 'depart', 'dock:2']];
+  const tracks = buildTracks(ev);
+  const loadedAt = (id) => tracks.get(id).t[tracks.get(id).what.indexOf('loaded')];
+  assert.deepEqual([loadedAt('out2-p1'), loadedAt('out2-p2')], [1100, 1300]);
+  const p3 = tracks.get('in2-p3');
+  assert.deepEqual(p3.what.slice(0, 2), ['unloading', 'staging']);
+  const u = palletAt(p3, 340);
+  assert.equal(u.from, 'dock:1'); assert.equal(u.to, 'staging_in'); assert.ok(u.dock);
+  assert.deepEqual(palletAt(p3, 351), { at: 'staging_in' });
+  assert.equal(countersAt(tracks, 2000).palletsIn, 4);                  // liczniki bez zmian
+  assert.equal(countersAt(tracks, 2000).palletsOut, 2);
+  for (const tr of tracks.values()) assert.deepEqual(tr.t, [...tr.t].sort((a, b) => a - b));
+});
+
+test('G3: chodzenie tam i z powrotem z postojem na końcach', () => {
+  const a = [0, 0], b = [10, 0], o = { speed: 1, pause: 5 };
+  assert.deepEqual([2, 10, 17].map((t) => Math.round(walkAt(a, b, t, o).x * 1e6) / 1e6), [0, 5, 10]);
+  assert.ok(Math.abs(walkAt(a, b, 25, o).x - 5) < 1e-9);                            // w drodze powrotnej
+  assert.ok(Math.abs(walkAt(a, b, 10, o).yaw) < 1e-9);
+  assert.equal(Math.abs(walkAt(a, b, 25, o).yaw), Math.PI);
+  assert.ok(Math.abs(walkAt(a, b, 30, o).x) < 1e-9);                            // pełny cykl 30 s
 });
 
 test('stary format bez „loaded”: paleta znika, gdy jej auto podjeżdża do doku', () => {
   const tr = buildTracks(EV.filter((e) => e[3] !== 'loaded')).get('out1-p1');
   assert.deepEqual(palletAt(tr, 10900), { at: 'staging_out' });
-  assert.equal(palletAt(tr, 11001), null);
+  assert.equal(palletAt(tr, 11501), null);                            // G3: ładowana w trakcie postoju
 });
 
 test('liczniki w chwili t', () => {
