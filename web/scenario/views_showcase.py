@@ -1,22 +1,26 @@
 """Prezentacje 3D (P1): lista, tworzenie (ze szablonem startowym), odtwarzacz + edytor slajdów, dane JSON.
 
 Podgląd ogląda (odtwarzacz i dane: layout 3D + wyniki, bez danych źródłowych), Projektant tworzy i edytuje.
-Udostępnienie = adres strony prezentacji dla zalogowanych (bez publicznego linku)."""
+Udostępnienie: adres dla zalogowanych albo (P3) publiczny link tylko do odczytu — losowy token w adresie,
+wygasa po N dniach, Projektant może go wyłączyć; zakres danych jak dla roli Podgląd."""
 import json
+import secrets
+from datetime import timedelta
 
 from django import forms
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.http import require_POST
 
 from core.roles import any_role, designer
+from twin.views.warehouse_model import model_scene_data
 from twin.layout import rack_row
 from twin.models import WarehouseModel
 from twin.shared import safe_json
 from twin.site import site_kpi
-from twin.views.warehouse_model import model_scene_data
 
 from .models import ScenarioRun, Showcase
 from .showcase import CARDS, SlideError, clean_slides, kpi_cards, template_slides
@@ -24,6 +28,7 @@ from .views_play import bottleneck_focus, layout_places, peak_index
 from .views_sim import _sim_view
 
 MAX_BODY = 512 * 1024
+SHARE_DAYS = (1, 7, 14, 30, 90)
 
 
 class ShowcaseForm(forms.ModelForm):
@@ -111,23 +116,35 @@ def showcase_create(request):
     return redirect("scenario:showcase", pk=sc.pk)
 
 
-@any_role
-def showcase_detail(request, pk):
-    sc = get_object_or_404(Showcase.objects.select_related("model", "run__scenario").defer("run__events"), pk=pk)
+def _detail(request, sc, public=False):
     ctx = _context(sc)
-    return render(request, "scenario/showcase.html", {
-        "sc": sc, "cards": ctx["cards"], "card_names": CARDS, "bottlenecks": ctx["bottlenecks"],
-        "share_url": request.build_absolute_uri(reverse("scenario:showcase", args=[pk])),
-        "config_json": safe_json({"data": reverse("scenario:showcase_data", args=[pk]),
-                                  "save": reverse("scenario:showcase_save", args=[pk]),
-                                  "events": reverse("scenario:run_events", args=[sc.run_id]) if sc.run_id else None}),
+    if public:
+        urls = {"data": reverse("scenario:public_data", args=[sc.share_token]), "save": None,
+                "events": reverse("scenario:public_events", args=[sc.share_token]) if sc.run_id else None}
+    else:
+        urls = {"data": reverse("scenario:showcase_data", args=[sc.pk]),
+                "save": reverse("scenario:showcase_save", args=[sc.pk]),
+                "events": reverse("scenario:run_events", args=[sc.run_id]) if sc.run_id else None}
+    active = bool(sc.share_token and sc.share_expires and sc.share_expires > timezone.now())
+    resp = render(request, "scenario/showcase.html", {
+        "sc": sc, "cards": ctx["cards"], "card_names": CARDS, "bottlenecks": ctx["bottlenecks"], "public": public,
+        **({"is_designer": False, "is_admin": False} if public else {}),   # link publiczny = zawsze sam pokaz
+        "share_url": request.build_absolute_uri(reverse("scenario:showcase", args=[sc.pk])),
+        "public_url": request.build_absolute_uri(reverse("scenario:public", args=[sc.share_token])) if active else "",
+        "share_days": SHARE_DAYS, "config_json": safe_json(urls),
     })
+    return _no_index(resp) if public else resp
 
 
-@any_role
-def showcase_data(request, pk):
-    """Dane odtwarzacza: scena (layout + działka), miejsca, wyniki (karty KPI, wąskie gardła, oś czasu), slajdy."""
-    sc = get_object_or_404(Showcase.objects.select_related("model", "run").defer("run__events"), pk=pk)
+def _no_index(resp):
+    """Publiczny link: bez indeksowania, bez wysyłania adresu z tokenem dalej, bez cache pośredników."""
+    resp["X-Robots-Tag"] = "noindex, nofollow"
+    resp["Referrer-Policy"] = "no-referrer"
+    resp["Cache-Control"] = "private, no-store"
+    return resp
+
+
+def _data(sc):
     ctx = _context(sc)
     tl = (sc.run.result.get("rep", {}).get("timeline") if sc.run else None) or {"t": []}
     return JsonResponse({
@@ -138,6 +155,70 @@ def showcase_data(request, pk):
         "timeline": {"step_s": 900, "fleet_busy": tl.get("fleet_busy", []),
                      "people": {p: v["busy"] for p, v in (tl.get("people") or {}).items()}},
     }, json_dumps_params={"ensure_ascii": False})
+
+
+def _shared(token):
+    """Prezentacja po aktywnym tokenie; nieznany, wyłączony albo wygasły → 404 (bez rozróżniania)."""
+    sc = Showcase.objects.select_related("model", "run__scenario").defer("run__events").filter(
+        share_token=token, share_expires__gt=timezone.now()).first() if token else None
+    if not sc:
+        raise Http404
+    return sc
+
+
+@any_role
+def showcase_detail(request, pk):
+    return _detail(request, get_object_or_404(
+        Showcase.objects.select_related("model", "run__scenario").defer("run__events"), pk=pk))
+
+
+@any_role
+def showcase_data(request, pk):
+    """Dane odtwarzacza: scena (layout + działka), miejsca, wyniki (karty KPI, wąskie gardła, oś czasu), slajdy."""
+    return _data(get_object_or_404(Showcase.objects.select_related("model", "run").defer("run__events"), pk=pk))
+
+
+def public_showcase(request, token):
+    return _detail(request, _shared(token), public=True)
+
+
+def public_data(request, token):
+    return _no_index(_data(_shared(token)))
+
+
+def public_events(request, token):
+    sc = _shared(token)
+    if not sc.run_id:
+        raise Http404
+    run = ScenarioRun.objects.only("pk", "model_id", "day_kind", "result", "events").get(pk=sc.run_id)
+    return _no_index(JsonResponse({"format": "twinema.scenario-events", "version": 1, "run": run.pk,
+                                   "model": run.model_id, "day": run.day_kind, "seed": run.result["rep"]["seed"],
+                                   "columns": ["t_s", "obj", "kind", "what", "place"], "events": run.events}))
+
+
+@designer
+@require_POST
+def showcase_share(request, pk):
+    sc = get_object_or_404(Showcase, pk=pk)
+    try:
+        days = int(request.POST.get("days", 14))
+    except ValueError:
+        days = 0
+    if days not in SHARE_DAYS:
+        messages.error(request, f"Ważność linku: {', '.join(map(str, SHARE_DAYS))} dni.")
+        return redirect("scenario:showcase", pk=pk)
+    sc.share_token, sc.share_expires = secrets.token_urlsafe(24), timezone.now() + timedelta(days=days)
+    sc.save(update_fields=["share_token", "share_expires", "updated_at"])
+    messages.success(request, f"Utworzono publiczny link ważny {days} dni — poprzedni link (jeśli był) przestał działać.")
+    return redirect("scenario:showcase", pk=pk)
+
+
+@designer
+@require_POST
+def showcase_unshare(request, pk):
+    Showcase.objects.filter(pk=pk).update(share_token=None, share_expires=None)
+    messages.success(request, "Publiczny link wyłączony.")
+    return redirect("scenario:showcase", pk=pk)
 
 
 @designer

@@ -367,6 +367,9 @@ class Showcase(models.Model):
     run = models.ForeignKey(ScenarioRun, on_delete=models.SET_NULL, null=True, blank=True, related_name="showcases",
                             verbose_name="Wynik symulacji")
     slides = models.JSONField(default=list)
+    # P3: publiczny link tylko do odczytu (bez logowania) — losowy token w adresie, wygasa; brak tokenu = wyłączony
+    share_token = models.CharField(max_length=64, unique=True, null=True, blank=True, editable=False)
+    share_expires = models.DateTimeField(null=True, blank=True, editable=False)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
