@@ -83,3 +83,14 @@ test('zakres głębi (G2c): warstwy 1,2 cm nad posadzką rozróżnialne z każde
     assert.ok(near <= Math.max(0.5, d / 20) && far > d * 4, 'cel i hala w kadrze nie są obcinane (orbita: min. 1,5 m od celu)');
   }
 });
+
+test('stackLayer: nakładające się warstwy płaskie mają stałą, różną kolejność wg rodzaju (G2d — bez migania)', async () => {
+  const { stackLayer } = await import('../../static/twin/js/scene-data.js');
+  const layer = (kind) => stackLayer({ material: {} }, kind);
+  const [yard, road, parking, fire, unknown] = ['yard', 'road', 'parking', 'fire_route', 'xyz'].map(layer);
+  for (const m of [yard, road, parking, fire, unknown]) assert.equal(m.material.polygonOffset, true);
+  const units = [yard, road, parking, fire, unknown].map((m) => m.material.polygonOffsetUnits);
+  assert.equal(new Set(units).size, units.length);                 // każdy rodzaj inna warstwa
+  assert.ok(road.renderOrder > yard.renderOrder && road.material.polygonOffsetUnits < yard.material.polygonOffsetUnits);
+  assert.deepEqual(layer('road').material, road.material);        // deterministycznie
+});

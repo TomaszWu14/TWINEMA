@@ -10,6 +10,18 @@ import { edgeSetbacks, entryOnBoundary, insetPolygon, plotPolygon } from './site
 export const FLAT_KINDS = new Set(['corridor', 'block_zone', 'staging', 'returns', 'fire_route', 'charging',
   'walkway', 'truckway', 'zone_temp', 'zone_adr', 'zone_oversize', 'zone_value']);
 export const EDGE_KINDS = new Set(['dock', 'gate']);
+
+// G2d: warstwy płaskie na tej samej wysokości (teren działki, pola na posadzce) nakładają się — bez stałej kolejności
+// GPU co klatkę wybiera inną (z-fighting współpłaszczyznowy, żadna precyzja głębi go nie usuwa), a przezroczyste
+// zmieniają kolejność z odległością kamery. Kolejność wg rodzaju: polygonOffset (przesunięcie w buforze głębi
+// niezależne od odległości) + renderOrder. Ten sam rodzaj = ten sam kolor, więc jego nakładki nie migają.
+const LAYERS = ['green', 'yard', 'road', 'parking', ...FLAT_KINDS];
+export function stackLayer(mesh, kind) {
+  const r = LAYERS.indexOf(kind) + 1 || LAYERS.length + 1;
+  Object.assign(mesh.material, { polygonOffset: true, polygonOffsetFactor: -1, polygonOffsetUnits: -2 * r });
+  mesh.renderOrder = r;
+  return mesh;
+}
 export const DEFAULT_CLEAR_H = 8.0;   // jak shared.model_columns, gdy hala nie ma wysokości w świetle
 
 /** Punkt lokalny regału (a wzdłuż szerokości, c w głąb) → współrzędne hali; to samo robi grupa three.js. */

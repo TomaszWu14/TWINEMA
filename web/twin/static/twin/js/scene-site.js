@@ -2,6 +2,8 @@
 // ogrodzenie po granicy z przerwami na wjazdy. Geometria w układzie hali liczona w scene-data.sitePlan.
 import * as THREE from 'three';
 
+import { stackLayer } from './scene-data.js';
+
 const GROUND = { green: 0x6f9a52, yard: 0xe2e2e2, road: 0xcdcdcd, parking: 0xf2f2f2 };   // asfalt: mnożnik tekstury
 const POST_M = 3.0;
 
@@ -38,7 +40,7 @@ export function buildSite(group, plan, { track, asphalt }) {
   group.add(outside, flat(plan.plot, mat(GROUND.green), -0.04, track));
   for (const a of plan.areas) {                         // zieleń pod asfaltem: kolejność warstw = rodzaj
     const h = a.kind === 'green' ? -0.03 : -0.025;
-    group.add(flat(a.pts, mat(GROUND[a.kind] ?? 0x888888, a.kind === 'green' ? null : asphalt), h, track));
+    group.add(stackLayer(flat(a.pts, mat(GROUND[a.kind] ?? 0x888888, a.kind === 'green' ? null : asphalt), h, track), a.kind));
     if (a.kind === 'parking') {                         // miejsca postojowe co 2,5 m wzdłuż dłuższego boku
       const [p0, p1, , p3] = a.pts, long = a.w >= a.d, [u, v] = long ? [p1, p3] : [p3, p1];
       const L = Math.hypot(u[0] - p0[0], u[1] - p0[1]), M = Math.hypot(v[0] - p0[0], v[1] - p0[1]);
