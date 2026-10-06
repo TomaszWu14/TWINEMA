@@ -53,3 +53,22 @@ test('alongPath: końce, połowa długości, kierunek odcinka', () => {
   assert.deepEqual([end.x, end.y], [10, 10]);
   assert.ok(Math.abs(alongPath(pts, 0.75).yaw + Math.PI / 2) < 1e-9);   // w dół planu (+y) = yaw −π/2
 });
+
+test('G4: trasa wózka w hali omija regały (także obrócone), wynik z pamięci podręcznej', async () => {
+  const { hallRouter } = await import('../../static/twin/js/site-route.js');
+  const floor = { width: 40, depth: 30 };
+  // ściana regałów w poprzek hali z przejściem przy górnej krawędzi; drugi regał obrócony o 90°
+  const racks = [{ x: 18, y: 0, width: 2, depth: 24, angle: 0 }, { x: 28, y: 20, width: 8, depth: 1.2, angle: 90 }];
+  const inRack = ([x, y]) => racks.some((r) => {
+    const t = (r.angle * Math.PI) / 180, dx = x - r.x, dy = y - r.y;
+    const u = dx * Math.cos(t) - dy * Math.sin(t), v = dx * Math.sin(t) + dy * Math.cos(t);
+    return u > 0 && u < r.width && v > 0 && v < r.depth;
+  });
+  const route = hallRouter(racks, floor);
+  const p = route([5, 5], [35, 5]);
+  assert.ok(p && p.length > 2, 'objazd zamiast prostej');
+  assert.ok(sampled(p, (q) => !inRack(q)));
+  assert.ok(Math.max(...p.map((q) => q[1])) > 24);                 // przez przejście przy górnej ścianie
+  assert.equal(route([5, 5], [35, 5]), p);                          // ta sama tablica z pamięci
+  assert.deepEqual(hallRouter([], floor)([5, 5], [35, 5]), [[5, 5], [35, 5]]);
+});
