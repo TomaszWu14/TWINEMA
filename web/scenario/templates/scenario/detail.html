@@ -28,6 +28,7 @@
             margin:0; border-left:0; border-right:0; border-bottom:0; }
   .sc-row--in { grid-template-columns:170px repeat(11, minmax(64px,1fr)) 60px; min-width:1100px; }
   .sc-row--out { grid-template-columns:190px repeat(8, minmax(70px,1fr)) 60px; min-width:900px; }
+  .sc-row--fleet { grid-template-columns:minmax(260px,2fr) minmax(80px,1fr) 60px; min-width:420px; }
   .sc-row--shift { grid-template-columns:230px repeat(4, minmax(80px,1fr)) 60px; min-width:640px; }
   .sc-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-top:12px; }
   .sc-actions form { margin:0; }
@@ -210,6 +211,10 @@
     {% endif %}
     {% include "scenario/_costs.html" with c=v.costs %}
     {% if v.fleet %}<p class="text-muted text-sm" style="margin:4px 0 0">Flota z katalogu: <b>{{ v.fleet.name }}</b> — ruch palety {{ v.fleet.min_per_move|floatformat:"-2" }} min (droga {{ v.fleet.dist_m|floatformat:"-1" }} m w jedną stronę, podniesienie średnio {{ v.fleet.lift_m|floatformat:"-2" }} m), bateria {{ v.fleet.battery_h|floatformat:"-1" }} h, ładowanie {{ v.fleet.charge_h|floatformat:"-1" }} h.</p>{% endif %}
+    {% if v.fleet_groups %}<div class="sc-scroll"><table class="sc-table"><caption class="text-sm" style="text-align:left">Flota mieszana — przebieg reprezentatywny</caption>
+      <thead><tr><th scope="col">Grupa</th><th scope="col">Obsługuje</th><th scope="col">Sztuk</th><th scope="col">Ruch palety [min]</th><th scope="col">Etap przy przekazaniu [min]</th><th scope="col">Godzin pracy</th><th scope="col">Wykorzystanie</th><th scope="col">Czekanie P95 [min]</th></tr></thead>
+      <tbody>{% for g in v.fleet_groups %}<tr><th scope="row">{{ g.name }}</th><td>{{ g.role_label }}</td><td>{{ g.units }}</td><td>{{ g.min_per_move|floatformat:"-2" }}</td><td>{{ g.leg_min|floatformat:"-2" }}</td><td>{{ g.busy_h|floatformat:"-1" }}</td><td class="{% if g.util_pct > 85 %}is-short{% endif %}">{{ g.util_pct }} %</td><td class="{% if g.wait_p95_min > 30 %}is-short{% endif %}">{{ g.wait_p95_min|floatformat:"-1" }}</td></tr>{% endfor %}</tbody>
+    </table></div>{% endif %}
     <div class="sc-fsbox" id="sim-box-{{ v.run.pk }}">
     <div class="sc-fsbar"><button type="button" class="btn btn-ghost btn-sm" aria-pressed="false" data-fs-target="sim-box-{{ v.run.pk }}">Pełny ekran</button></div>
     <div class="sc-chart" id="sim-{{ v.run.pk }}" role="img" aria-label="Oś czasu dnia ({{ v.run.get_day_kind_display|lower }}): auta w kolejce, palety na polach odkładczych, wózki w pracy — wartości w tabeli poniżej"></div>
@@ -272,6 +277,26 @@
   </form>
 </div></section>
 {% endfor %}
+
+<section class="card" style="margin-top:16px" aria-labelledby="sc-fleet-h"><div class="card-body">
+  <h2 class="sc-sec" id="sc-fleet-h">Flota mieszana</h2>
+  <p class="text-muted text-sm" style="margin:0 0 8px">Grupy sprzętu z katalogu. Reach, czołowy i podobne obsługują regały paletowe, VNA — regały VNA, AGV/AMR i wózki paletowe wożą palety poziomo; przy AGV + VNA paleta do regału VNA jedzie dwoma etapami z przekazaniem u czoła alejki. Pusta lista = jedna flota z pól „Flota: …” w parametrach.</p>
+  <form method="post" action="{% url 'scenario:fleet_save' sc.pk %}">{% csrf_token %}
+    {{ fleet_fs.management_form }}
+    <div class="sc-scroll">
+    {% for f in fleet_fs %}
+      <fieldset class="sc-row sc-row--fleet">
+        <legend class="sr-only">{% if f.instance.pk %}Grupa floty {{ forloop.counter }}{% else %}Nowa grupa floty (opcjonalnie){% endif %}</legend>
+        {{ f.id }}
+        {% for field in f.visible_fields %}{% if field.name != "DELETE" %}<label for="{{ field.id_for_label }}">{{ field.label }} {{ field }}</label>{% endif %}{% endfor %}
+        {% if f.instance.pk %}<label for="{{ f.DELETE.id_for_label }}">Usuń {{ f.DELETE }}</label>{% else %}<span></span>{% endif %}
+      </fieldset>
+    {% endfor %}
+    </div>
+    <div class="sc-actions"><button class="btn btn-primary" type="submit">Zapisz flotę</button>
+      <span class="text-muted text-sm">Czas ruchu każdej grupy liczony z katalogu na regałach jej rodzaju w wybranym layoucie.</span></div>
+  </form>
+</div></section>
 
 <section class="card" style="margin-top:16px" aria-labelledby="sc-shift-h"><div class="card-body">
   <h2 class="sc-sec" id="sc-shift-h">Zmiany i zakładana obsada</h2>

@@ -25,6 +25,7 @@ urlpatterns = [
     path("scenariusze/<int:pk>/przyjecia/<str:kind>/", views.day_save, name="day_save"),
     path("scenariusze/<int:pk>/wydania/<str:kind>/", views.outbound_save, name="outbound_save"),
     path("scenariusze/<int:pk>/obsada/", views.shifts_save, name="shifts_save"),
+    path("scenariusze/<int:pk>/flota/", views.fleet_save, name="fleet_save"),
     path("scenariusze/<int:pk>/kopia/", views.scenario_copy, name="copy"),
     path("scenariusze/<int:pk>/usun/", views.scenario_delete, name="delete"),
 ]

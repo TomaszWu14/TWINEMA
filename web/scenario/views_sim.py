@@ -70,7 +70,17 @@ def _sim_view(run, memo=None):
                         {"side": "wydań", "need": round(need["out"]), "drawn": pl["staging_m2"]["out"]}],
             "errors": sum(b["severity"] == "error" for b in r["bottlenecks"]),
             "capacity": (r.get("placement") or {}).get("capacity"), "cpp": r.get("cpp"), "fleet": r.get("fleet"),
-            "costs": services.run_costs(run, memo=memo)}
+            "costs": services.run_costs(run, memo=memo), "fleet_groups": _fleet_groups(r)}
+
+
+ROLE_LABEL = {"vna": "regały VNA", "rack": "regały paletowe", "transport": "transport poziomy", "any": "wszystko"}
+
+
+def _fleet_groups(r):
+    """K3: grupy floty mieszanej — parametry z katalogu + praca w przebiegu reprezentatywnym. [] = jedna flota."""
+    kpi = {i: g for i, g in enumerate(r["rep"]["kpi"].get("fleet_groups") or [])}
+    return [{**g, **kpi.get(i, {}), "role_label": ROLE_LABEL.get(g["role"], g["role"])}
+            for i, g in enumerate(r.get("fleet_groups") or [])]
 
 
 @designer

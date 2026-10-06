@@ -87,6 +87,11 @@ def run_report(rec):
     charge_h = sum(min(e, 24) - s for s, e in fleet.charging if s < 24)
     kpi["fleet_charge_h"] = round(charge_h, 1)
     kpi["fleet_effective"] = round(n_units - charge_h / 24, 1)      # średnio wózków dostępnych (nie na ładowaniu)
+    kpi["fleet_groups"] = [{                                           # K3: per grupa floty (przebieg)
+        "name": g["name"], "kind": g.get("kind", ""), "role": g["role"], "units": g["units"],
+        "busy_h": round(sum(e - s for s, e in g["fleet"].busy), 1),
+        "util_pct": round(100 * sum(e - s for s, e in g["fleet"].busy) / (max(1, g["units"]) * 24)),
+        "wait_p95_min": round(p95([(s - r) * 60 for r, s, _ in g["fleet"].waits]), 1)} for g in getattr(fleet, "groups", [])]
     tl["people"] = {}
     for p, _ in PROCS:
         pool = pools[p]
@@ -193,12 +198,16 @@ def bottlenecks(agg, rep, places, shifts, rerun):
             else "Nawet +8 os. nie wystarcza — przesuń odbiór kuriera albo dodaj zmianę.")
     fw, fp = agg["fleet_wait_p95_min"]["worst"], agg["fleet_peak_pct"]["worst"]
     if fw > 30:
-        k = _smallest(lambda k: rerun("fleet", k), lambda kp: kp["fleet_wait_p95_min"] <= 30, 6)
-        add("error" if fw > 90 else "warning", "Flota wózków", "wózki / AGV",
+        # K3: dokładamy do grupy, na którą zadania czekają najdłużej (flota mieszana); jedna flota — do niej
+        groups = rep["kpi"].get("fleet_groups") or []
+        gi = max(range(len(groups)), key=lambda i: groups[i]["wait_p95_min"]) if groups else 0
+        who = f" ({groups[gi]['name']})" if len(groups) > 1 else ""
+        k = _smallest(lambda k: rerun("fleet", k, gi), lambda kp: kp["fleet_wait_p95_min"] <= 30, 6)
+        add("error" if fw > 90 else "warning", "Flota wózków", f"wózki / AGV{who}",
             window(tl["fleet_busy"], lambda v: v >= tl["fleet_units"]),
             f"Zadania czekają na wózek P95 {fw:g} min, szczyt wykorzystania {fp:g} %, "
             f"ładowanie zabiera {agg['fleet_charge_h']['mean']:g} h wózko-godzin dziennie.",
-            f"+{k} {'wózek' if k == 1 else 'wózki' if k < 5 else 'wózków'}." if k
+            f"+{k} {'wózek' if k == 1 else 'wózki' if k < 5 else 'wózków'}{who}." if k
             else "Nawet +6 wózków nie wystarcza — sprawdź normę czasu ruchu i ładowanie.")
     for p, label in PROCS:
         if p == "pack":

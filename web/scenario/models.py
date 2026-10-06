@@ -310,6 +310,24 @@ class ScenarioRun(models.Model):
         return f"{self.scenario} — {self.get_day_kind_display()} na „{self.model}”"
 
 
+class ScenarioFleet(models.Model):
+    """K3: grupa floty mieszanej — sprzęt z katalogu × sztuk; rola w symulacji z typu (`catalog.FLEET_ROLE`).
+    Bez grup scenariusz liczy jedną flotę z pól `fleet_*` / `fleet_equipment` jak dotąd."""
+    scenario = models.ForeignKey(Scenario, on_delete=models.CASCADE, related_name="fleet")
+    equipment = models.ForeignKey("equipment.Equipment", on_delete=models.CASCADE, related_name="scenario_fleets",
+                                  verbose_name="Sprzęt z katalogu")
+    units = models.PositiveSmallIntegerField(default=1, verbose_name="Sztuk")
+
+    class Meta:
+        ordering = ["scenario", "pk"]
+        verbose_name = "Grupa floty"
+        verbose_name_plural = "Flota mieszana"
+
+    def clean(self):
+        if not self.units:
+            raise ValidationError("Liczba sztuk musi być dodatnia.")
+
+
 class Shift(models.Model):
     """Zmiana procesu: godziny, przerwa, zakładana obsada. Koniec ≤ początek = zmiana przez północ."""
     scenario = models.ForeignKey(Scenario, on_delete=models.CASCADE, related_name="shifts")

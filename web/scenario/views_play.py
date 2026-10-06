@@ -124,5 +124,7 @@ def run_play(request, pk):
             "peak_t": peak * 900, "colors": {"staging": HALL_FEATURE_COLORS["staging"]},
             # typ floty z katalogu (agv/amr/reach…) → model sprzętu przy regałach w animacji (G2b); "" = domyślny
             "fleet_kind": run.scenario.fleet_equipment.kind if run.scenario.fleet_equipment else "",
+            # K3 flota mieszana: typ sprzętu per rola (rack / vna / transport) z przebiegu
+            "fleet_kinds": {g["role"]: g["kind"] for g in reversed(run.result.get("fleet_groups") or [])},
         }),
     })

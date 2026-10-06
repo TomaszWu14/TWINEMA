@@ -4,7 +4,7 @@
 
 day     — {inbound:[stream], outbound:[stream], profile:{…}} (formaty jak w `scenario.inbound/outbound`)
 params  — normy scenariusza + growth + return_restock_pct + flota (fleet_units, fleet_min_per_move,
-          battery_h, charge_h)
+          battery_h, charge_h) albo flota mieszana `fleet_groups` + `vna_share` (K3, engine.FleetMix)
 shifts  — [{process, start_h, end_h, break_min, people}]
 places  — `sim.places.places_from_features(features)`
 
@@ -30,7 +30,7 @@ odtwarzacz radzi sobie bez nich (palety wydań znikają z pola przy odjeździe a
 import copy
 
 from ..staffing import span
-from .engine import simulate_plan
+from .engine import fleet_groups, simulate_plan
 from .places import with_extra_docks
 from .plan import build_plan
 from .report import aggregate, bottlenecks, run_report
@@ -77,7 +77,9 @@ def run_many(day, params, shifts, places, seed, runs=12):
             sh = copy.deepcopy(shifts)
             sh[args[0]]["people"] += args[1]
         elif kind == "fleet":
-            p = {**params, "fleet_units": params["fleet_units"] + args[0]}
+            gs = copy.deepcopy(fleet_groups(params))                   # K3: +k w grupie args[1]
+            gs[args[1] if len(args) > 1 else 0]["units"] += args[0]
+            p = {**params, "fleet_groups": gs, "fleet_units": params["fleet_units"] + args[0]}
         return run_day(day, p, sh, pl, rep_seed)["kpi"]
 
     return {"agg": agg, "rep": {"kpi": rep["kpi"], "timeline": rep["timeline"], "seed": rep_seed},

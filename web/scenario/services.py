@@ -1,7 +1,7 @@
 """Klej Django ↔ symulacja dnia (`scenario.sim` jest czystym Pythonem)."""
 import time
 
-from equipment.catalog import move_minutes
+from equipment.catalog import FLEET_ROLE, move_minutes
 from equipment.models import CostRate
 from masterdata.packaging import weighted_cartons_per_pallet
 from masterdata.services import cartons_per_pallet_distribution as cartons_distribution
@@ -30,11 +30,18 @@ def simulate(day, wm, *, runs=12, user=None):
     if cpp:
         # kartonów/paletę z master daty (rozkład po stanie) zastępuje średnią normę scenariusza
         params.update(cpp_dist=cpp[0], cartons_per_pallet=weighted_cartons_per_pallet(cpp[0]))
-    fleet = fleet_from_catalog(sc.fleet_equipment, wm) if sc.fleet_equipment_id else None
-    if fleet:
+    groups = fleet_groups_for(sc, wm)
+    fleet = None
+    if groups:                                  # K3: flota mieszana — grupy z katalogu, udział VNA z layoutu
+        positions, _ = _layout_costs_input(wm)
+        params.update(fleet_groups=groups, fleet_units=sum(g["units"] for g in groups),
+                      vna_share=positions["vna"] / max(1, positions["vna"] + positions["reach"]))
+    elif sc.fleet_equipment_id and (fleet := fleet_from_catalog(sc.fleet_equipment, wm)):
         params.update(fleet_min_per_move=fleet["min_per_move"], battery_h=fleet["battery_h"], charge_h=fleet["charge_h"])
     res = run_many(sim_day, params, sc.shift_dicts(), places, sc.seed, runs=runs)
     res["fleet"] = fleet
+    res["fleet_groups"] = [{k: g[k] for k in ("name", "kind", "role", "units", "min_per_move", "leg_min",
+                                              "battery_h", "charge_h", "dist_m", "lift_m")} for g in groups]
     res["cpp"] = {"value": params["cartons_per_pallet"], "source": f"master data ({cpp[2]})" if cpp else "norma"}
     res["placement"] = placement_for(wm, sc.growth)
     res["bottlenecks"] = placement_bottlenecks(res["placement"]) + res["bottlenecks"]
@@ -46,11 +53,14 @@ def simulate(day, wm, *, runs=12, user=None):
     return run
 
 
-def fleet_from_catalog(eq, wm):
+def fleet_from_catalog(eq, wm, rack_class=None):
     """Sprzęt floty z katalogu (K1) → czas ruchu palety na tym layoucie: średnia droga od punktów obsługi
     (doki, stanowiska) do miejsc paletowych (`travel_stats`) tam i z powrotem + podniesienie na średnią wysokość
-    belki + pobranie/odłożenie; bateria i ładowanie z katalogu. Półki (kompletacja ręczna) pomijamy."""
-    racks = [r for r in model_racks(wm) if (r.get("equipment") or "reach") != "shelf"]
+    belki + pobranie/odłożenie; bateria i ładowanie z katalogu. Półki (kompletacja ręczna) pomijamy.
+    `rack_class` ("vna" | "pallet") — tylko regały tej klasy (K3: grupa floty liczona na swoich regałach),
+    brak takich regałów → wszystkie."""
+    racks = [r for r in model_racks(wm) if r["rack_class"] != "shelf"]
+    racks = [r for r in racks if r["rack_class"] == rack_class] or racks
     p = eq.params()
     if not racks:
         dist, lift = 0.0, 0.0
@@ -64,6 +74,26 @@ def fleet_from_catalog(eq, wm):
     return {"name": eq.name, "dist_m": round(dist, 1), "lift_m": round(lift, 2),
             "min_per_move": round(move_minutes(p, dist, lift), 2),
             "battery_h": p["battery_h"] or 8.0, "charge_h": p["charge_h"] or 1.5}
+
+
+VNA_LEG_SHARE = 1 / 3      # ponytail: etap VNA = ⅓ średniej drogi (punkt przekazania u czoła alejki) — z layoutu, gdy zaznaczymy punkty przekazania
+
+
+def fleet_groups_for(sc, wm):
+    """K3: grupy floty mieszanej scenariusza → `engine.FleetMix`. Czas jednego ruchu (`min_per_move`) jak
+    w `fleet_from_catalog` na regałach roli grupy; etap przy przekazaniu (`leg_min`): transport = sama jazda
+    bez podnoszenia, VNA = krótszy odcinek + podniesienie. Bez grup → [] (dawna jedna flota)."""
+    groups = []
+    for f in sc.fleet.select_related("equipment"):
+        eq, role = f.equipment, FLEET_ROLE.get(f.equipment.kind)
+        if not role:
+            continue
+        c = fleet_from_catalog(eq, wm, "vna" if role == "vna" else "pallet")
+        dist, lift, p = c["dist_m"], c["lift_m"], eq.params()
+        leg = (move_minutes(p, dist, 0) if role == "transport" else
+               move_minutes(p, dist * VNA_LEG_SHARE, lift) if role == "vna" else c["min_per_move"])
+        groups.append({**c, "kind": eq.kind, "role": role, "units": f.units, "leg_min": round(leg, 2)})
+    return groups
 
 
 def placement_for(wm, growth):
@@ -106,6 +136,26 @@ def _layout_costs_input(wm):
     return positions, list(wm.features.values_list("kind", flat=True))
 
 
+def _cost_range(eq, lo, hi):
+    return eq.cost_range(lo, hi) if eq else None
+
+
+def _fleet_costs_input(run):
+    """Flota do kosztów: grupy floty mieszanej z przebiegu (K3) — godziny pracy dzielone wg udziału grup
+    w przebiegu reprezentatywnym — albo jedna flota scenariusza (`fleet_equipment` / norma)."""
+    sc, groups = run.scenario, run.result.get("rep", {}).get("kpi", {}).get("fleet_groups") or []
+    if groups and run.result.get("fleet_groups"):
+        eqs = {f.equipment.name: f.equipment for f in sc.fleet.select_related("equipment")}
+        total = sum(g["busy_h"] for g in groups) or 1
+        return [{"name": g["name"], "units": g["units"], "share": g["busy_h"] / total,
+                 "purchase": _cost_range(eqs.get(g["name"]), "cost_purchase", "cost_purchase_max"),
+                 "hour": _cost_range(eqs.get(g["name"]), "cost_per_hour", "cost_per_hour_max")} for g in groups]
+    eq = sc.fleet_equipment
+    return [{"name": eq.name if eq else "wózki", "units": sc.fleet_units, "share": 1,
+             "purchase": _cost_range(eq, "cost_purchase", "cost_purchase_max"),
+             "hour": _cost_range(eq, "cost_per_hour", "cost_per_hour_max")}]
+
+
 def run_costs(run, rates=None, memo=None):
     """Koszty wyniku symulacji (C1) — liczone przy wyświetleniu, więc zmiana stawek działa od razu.
     Layout = aktualny stan modelu hali (jak pojemność w `placement_for`). `memo` — słownik współdzielony
@@ -114,10 +164,7 @@ def run_costs(run, rates=None, memo=None):
     rates = rates or _memo(memo, "rates", CostRate.as_dict)
     sc, wm = run.scenario, run.model
     positions, kinds = _memo(memo, ("layout", wm.pk), lambda: _layout_costs_input(wm))
-    eq = sc.fleet_equipment
-    fleet = {"name": eq.name if eq else "wózki", "units": sc.fleet_units,
-             "purchase": eq.cost_range("cost_purchase", "cost_purchase_max") if eq else None,
-             "hour": eq.cost_range("cost_per_hour", "cost_per_hour_max") if eq else None}
+    fleet = _fleet_costs_input(run)
     # miks dni w roku: ta symulacja + najnowsza symulacja drugiego typu dnia na tym samym modelu
     by_kind = {run.day_kind: run}
     other = "peak" if run.day_kind == "typical" else "typical"
@@ -129,7 +176,7 @@ def run_costs(run, rates=None, memo=None):
     for kind, n in costs.mix_days(sc.work_days, sc.peak_days_year, "peak" in by_kind, "typical" in by_kind):
         a, day = by_kind[kind].result["agg"], sc_days.get(kind)
         busy = (a["fleet_busy_h"]["mean"] if "fleet_busy_h" in a          # stare przebiegi: odtwarzane z %
-                else a["fleet_util_pct"]["mean"] / 100 * sc.fleet_units * 24)
+                else a["fleet_util_pct"]["mean"] / 100 * sum(f["units"] for f in fleet) * 24)
         days.append({"kind": kind, "days": n, "fleet_busy_h": busy,
                      "volumes": {"pallets": a["pallets_in"]["mean"] + a["pallets_out"]["mean"],
                                  "parcels": a["parcels"]["mean"], "orders": (day.orders_avg * sc.growth) if day else 0}})

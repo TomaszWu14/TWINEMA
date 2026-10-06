@@ -83,6 +83,53 @@ class Fleet:
         return start, start + dur
 
 
+class FleetMix:
+    """Flota mieszana (K3): grupy {name, kind, role, units, min_per_move, leg_min, battery_h, charge_h};
+    role: "vna" (regały VNA), "rack" (regały paletowe — reach, czołowy…), "transport" (AGV/AMR/paletowy —
+    poziomo między polem a punktem przekazania), "any" (dawna jedna flota). Paleta do regału VNA przy grupie
+    transportu jedzie dwoma etapami (transport → VNA, czasy `leg_min`), inaczej jednym ruchem (`min_per_move`)
+    grupy właściwej dla regału albo zastępczej. Dla raportu — wspólne u/busy/waits/charging jak `Fleet`."""
+
+    def __init__(self, groups):
+        self.groups = [{**g, "fleet": Fleet(g["units"], g["battery_h"], g["charge_h"])} for g in groups]
+        by = {g["role"]: g for g in self.groups}
+        vna, rack, tr, first = by.get("vna"), by.get("rack"), by.get("transport"), self.groups[0]
+        self.legs = {
+            "vna": [(tr, "leg_min"), (vna, "leg_min")] if vna and tr else [(vna or rack or tr or first, "min_per_move")],
+            "rack": [(rack or tr or vna or first, "min_per_move")],
+        }
+
+    def move(self, release, dest):
+        """Ruch palety do/z regału `dest` ("vna" | "rack") → (start pierwszego etapu, koniec ostatniego)."""
+        start, t = None, release
+        for g, key in self.legs[dest]:
+            s, t = g["fleet"].take(t, g[key] / 60)
+            start = s if start is None else start
+        return start, t
+
+    def _all(self, attr):
+        return [x for g in self.groups for x in getattr(g["fleet"], attr)]
+
+    u = property(lambda self: self._all("u"))
+    busy = property(lambda self: self._all("busy"))
+    waits = property(lambda self: self._all("waits"))
+    charging = property(lambda self: self._all("charging"))
+
+
+def fleet_groups(params):
+    """Grupy floty z parametrów: `fleet_groups` (K3) albo jedna grupa ze starych pól (fleet_units, …)."""
+    if params.get("fleet_groups"):
+        return params["fleet_groups"]
+    return [{"name": "Flota", "kind": "", "role": "any", "units": params["fleet_units"],
+             "min_per_move": params["fleet_min_per_move"], "leg_min": params["fleet_min_per_move"],
+             "battery_h": params["battery_h"], "charge_h": params["charge_h"]}]
+
+
+def dest_of(key, vna_share):
+    """Regał docelowy palety: VNA dla ułamka `vna_share` miejsc (deterministycznie po id), reszta paletowe."""
+    return "vna" if zlib.crc32(str(key).encode()) % 10_000 / 10_000 < vna_share else "rack"
+
+
 class Docks:
     def __init__(self, docks):
         self.free = {d["id"]: 0.0 for d in docks}
@@ -101,10 +148,10 @@ def simulate_plan(plan, params, shifts, places):
     places: `places.places_from_features`. Zwraca surowe zapisy przebiegu (do `report`)."""
     pools = {p: Pool([s for s in shifts if s["process"] == p]) for p in
              ("unload", "palletize", "inspect", "pick", "pack", "load", "returns")}
-    fleet = Fleet(params["fleet_units"], params["battery_h"], params["charge_h"])
+    fleet = FleetMix(fleet_groups(params))
+    vna_share = params.get("vna_share", 0.0)
     docks = Docks(places["docks"])
     role = places["roles"]
-    move_h = params["fleet_min_per_move"] / 60
     rec = {"trucks": [], "staging_in": [], "staging_out": [], "parcels": [], "events": [], "unfinished": {},
            "unfinished_last": {}}
     heap, seq = [], [0]
@@ -201,14 +248,14 @@ def simulate_plan(plan, params, shifts, places):
             push(t, "putaway", (len(rec["staging_in"]) - 1, pid))
         elif kind == "putaway":
             i, pid = d
-            start, end = fleet.take(t, move_h)
+            start, end = fleet.move(t, dest_of(pid, vna_share))
             rec["staging_in"][i][1] = start
             ev(start, pid, "pallet", "move", "staging_in")
             ev(end, pid, "pallet", "stored", "rack")
         elif kind == "retrieve":
             v, k, picked = d
             pid = f"{v['id']}-p{k + 1}"
-            start, end = fleet.take(t, move_h)
+            start, end = fleet.move(t, dest_of(pid, vna_share))
             ev(end, pid, "pallet", "retrieved", "rack" if not picked else "pick")
             if picked:
                 got = pools["load"].take(end, n["wrap_min_per_pallet"] / 60)
@@ -278,7 +325,7 @@ def simulate_plan(plan, params, shifts, places):
                 lost("returns")
                 continue
             if r["restock"]:
-                fleet.take(got[1], move_h)
+                fleet.move(got[1], dest_of(r.get("id", got[1]), vna_share))
 
     couriers = {v["id"]: v for v in plan["out"] if v["kind"] == "courier"}
     for p in rec["parcels"]:

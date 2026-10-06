@@ -56,7 +56,7 @@ Testy: `cd web && python manage.py test --parallel 4` (env: `DJANGO_DEBUG=true D
 
 ## Następny krok
 - **Zrobione od 2026-10-05:** E1 → S2a → E2 → S2b → E2b → E3 → S1 → S3a → S3b → S4 → G1 → G1b → D1 → K1 → C1/C1b
-  (koszty) → P1 (tryb prezentacji 3D) — szczegóły w `docs/PLAN.md` („Po F5”) i `docs/ZALOZENIA.md`.
+  (koszty) → P1 (tryb prezentacji 3D) → … → K3 (flota mieszana: `ScenarioFleet`, grupy z katalogu per rola, przekazanie AGV → VNA, wyniki i koszty per grupa) — szczegóły w `docs/PLAN.md` („Po F5”) i `docs/ZALOZENIA.md`.
 - **Co zostało (do wyboru przez właściciela):**
   - **plansza kosztów w prezentacji** — karta „Koszty” z C1 (`services.run_costs`) jako kolejna karta KPI slajdu (`scenario/showcase.py` CARDS);
   - **grafika ~6 → 6–7/10** (poziom programów symulacyjnych): SSAO (pliki postprocessingu three do `fetch_vendor.sh`), szczegóły palet i wózków z bliska, **ruch ludzi** (dziś stoją przy stanowiskach), **ładowanie palet na auta**, osobne trasy wózków po alejkach, modele AGV/AMR z katalogu;

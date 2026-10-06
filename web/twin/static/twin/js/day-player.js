@@ -87,9 +87,13 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
   };
   // Sprzęt przy regałach: VNA w regałach VNA, poza nimi flota scenariusza z katalogu (AGV, AMR, czołowy…), domyślnie reach.
   // `?sprzet=<typ z katalogu>` w adresie podmienia flotę — podgląd modelu bez zmiany scenariusza.
-  const carrier = modelForEquipment(new URLSearchParams(globalThis.location?.search).get('sprzet') || data.fleet_kind) || 'reach';
+  // K3 flota mieszana (`fleet_kinds` per rola): regały paletowe — grupa „rack” (albo transport), a przy AGV/AMR + VNA
+  // paleta do regału VNA jedzie pierwszą połowę drogi pojazdem transportowym, resztę VNA (przekazanie).
+  const asked = new URLSearchParams(globalThis.location?.search).get('sprzet'), fk = asked ? {} : (data.fleet_kinds || {});
+  const carrier = modelForEquipment(asked || fk.rack || fk.transport || data.fleet_kind) || 'reach';
+  const shuttle = fk.vna && fk.transport ? modelForEquipment(fk.transport) : null;
   const need = { ptruck: nDocks * 2, vna: pallets.length };
-  need[carrier] = (need[carrier] || 0) + pallets.length;
+  for (const k of [carrier, shuttle]) if (k) need[k] = (need[k] || 0) + pallets.length;
   for (const [k, n] of Object.entries(need)) mesh[k] = fleet(viewer.scene, k, n);
   const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), P = new THREE.Vector3(), S1 = new THREE.Vector3(1, 1, 1);
   const UP = new THREE.Vector3(0, 1, 0);
@@ -228,7 +232,8 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
         }
       } else {
         const a = anchor(s.from, tr.obj), b = anchor(s.to, tr.obj), [x, y] = lPath(a, b, s.p), yaw = lPathYaw(a, b, s.p);
-        const r = rackOf(tr.obj), kind = (r?.rack_class ?? r?.equipment) === 'vna' ? 'vna' : carrier, c = CARRY[kind];
+        const r = rackOf(tr.obj), onShuttle = s.from === 'rack' ? s.p >= 0.5 : s.p < 0.5;   // połowa drogi po stronie pola = pojazd transportowy
+        const kind = (r?.rack_class ?? r?.equipment) !== 'vna' ? carrier : shuttle && onShuttle ? shuttle : 'vna', c = CARRY[kind];
         put(mesh.pallet, x, y, c.z, yaw);
         put(mesh[kind], x - Math.cos(yaw) * c.dx, y + Math.sin(yaw) * c.dx, 0, yaw);
       }
