@@ -49,7 +49,7 @@
 </style>
 {% endblock %}
 {% block content %}
-<nav class="breadcrumb" aria-label="Ścieżka"><a href="{% url 'scenario:showcase_list' %}">Prezentacje 3D</a> / {{ sc.title }}</nav>
+{% if not public %}<nav class="breadcrumb" aria-label="Ścieżka"><a href="{% url 'scenario:showcase_list' %}">Prezentacje 3D</a> / {{ sc.title }}</nav>{% endif %}
 <div class="page-header">
   <div>
     <div class="page-header__title">{{ sc.title }}</div>
@@ -99,6 +99,22 @@
         <button type="button" class="btn btn-ghost btn-sm" id="sh-copy">Kopiuj</button>
       </div>
       <p class="text-sm text-muted" style="margin:0">Dla zalogowanych — odbiorca z rolą Podgląd widzi tylko pokaz.</p>
+      <h3 class="sh-sec" style="margin-top:8px">Publiczny link (bez logowania)</h3>
+      {% if public_url %}
+      <div class="sh-share">
+        <label class="sr-only" for="sh-public">Publiczny adres prezentacji</label>
+        <input class="form-control" id="sh-public" value="{{ public_url }}" readonly>
+        <button type="button" class="btn btn-ghost btn-sm" id="sh-copy-public">Kopiuj</button>
+      </div>
+      <p class="text-sm text-muted" style="margin:0">Ważny do {{ sc.share_expires|date:"j E Y, H:i" }}. Każdy z tym adresem zobaczy pokaz — layout i wyniki, bez danych źródłowych.</p>
+      <form method="post" action="{% url 'scenario:showcase_unshare' sc.pk %}">{% csrf_token %}
+        <button type="submit" class="btn btn-ghost btn-sm">Wyłącz publiczny link</button></form>
+      {% endif %}
+      <form method="post" action="{% url 'scenario:showcase_share' sc.pk %}" class="sh-share">{% csrf_token %}
+        <label class="text-sm" for="sh-days">Ważny</label>
+        <select class="form-control" id="sh-days" name="days">{% for d in share_days %}<option value="{{ d }}"{% if d == 14 %} selected{% endif %}>{{ d }} {% if d == 1 %}dzień{% else %}dni{% endif %}</option>{% endfor %}</select>
+        <button type="submit" class="btn btn-secondary btn-sm">{% if public_url %}Nowy link (stary przestanie działać){% else %}Utwórz publiczny link{% endif %}</button>
+      </form>
       <form method="post" action="{% url 'scenario:showcase_reset' sc.pk %}">{% csrf_token %}
         <button type="submit" class="btn btn-ghost btn-sm">Zastąp slajdy szablonem startowym</button></form>
       <form method="post" action="{% url 'scenario:showcase_delete' sc.pk %}">{% csrf_token %}
@@ -135,10 +151,12 @@ if (window.__tw3dNoWebGL) {
   window.tw3dFail('Twoja przeglądarka nie obsługuje grafiki 3D (WebGL) — zobacz wersję tekstową slajdów poniżej.');
   throw new Error('WebGL unavailable');
 }
-$('sh-copy')?.addEventListener('click', async () => {
-  try { await navigator.clipboard.writeText($('sh-share').value); $('sh-save-state').textContent = 'Skopiowano adres.'; }
-  catch { $('sh-share').select(); }
-});
+for (const [btn, input] of [['sh-copy', 'sh-share'], ['sh-copy-public', 'sh-public']]) {
+  $(btn)?.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText($(input).value); $('sh-save-state').textContent = 'Skopiowano adres.'; }
+    catch { $(input).select(); }
+  });
+}
 startShowcase({
   cfg: {{ config_json|safe }}, editable: {{ is_designer|yesno:"true,false" }},
   csrf: document.querySelector('[name=csrfmiddlewaretoken]').value,
