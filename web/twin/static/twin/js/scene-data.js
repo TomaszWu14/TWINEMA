@@ -251,6 +251,17 @@ export function decorParts(r, i) {
   return out;
 }
 
+/** Zakres głębi kamery z odległości do celu `d` i przekątnej sceny (G2c). Stałe near = 0,05 m przy far = 4000 m
+ *  dawało ~10 cm rozdzielczości bufora głębi na 300 m — warstwy 1–2 cm nad posadzką (pola, cienie kontaktowe,
+ *  teren działki) mrugały przy ruchu kamery (z-fighting). near ∝ d trzyma rozdzielczość w milimetrach.
+ *  → {near, far} */
+export function depthRange(d, diag) {
+  return { near: Math.min(25, Math.max(0.5, d * 0.02)), far: Math.max(500, d * 8 + diag * 4) };
+}
+
+/** Rozdzielczość bufora głębi 24-bit [m] na odległości z (do testów i diagnostyki). */
+export const depthStep = (z, near) => (z * z) / (near * 2 ** 24);
+
 /** Izometria kadrowana do hali: kamera tak blisko, żeby obrys hali wypełnił kadr (zamiast stałego
  *  „diag × 1,1”, które przy szerokich halach odsuwało kamerę daleko). → { pos, target, dist } */
 export function isoView({ cx, cz, x, z }, fovDeg = 42, aspect = 16 / 9, elevDeg = 34, azimDeg = 32) {
