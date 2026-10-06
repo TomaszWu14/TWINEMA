@@ -217,19 +217,23 @@ def scenario_demo(request):
 @any_role
 def scenario_detail(request, pk):
     sc = get_object_or_404(Scenario, pk=pk)
-    sc.ensure_days(with_defaults=False)
     days = list(sc.days.prefetch_related("inbound", "outbound"))
+    if len(days) < len(ScenarioDay.KIND_CHOICES):   # R3: dni zakłada tworzenie scenariusza; tu tylko brakujące
+        sc.ensure_days(with_defaults=False)          # (np. utworzony z ORM) — zwykły GET nic nie zapisuje
+        days = list(sc.days.prefetch_related("inbound", "outbound"))
     shifts = sc.shift_dicts()
     results = [_results(d, shifts) for d in days]
     ctx = {"sc": sc, "results": results, "arrival_rows": _arrival_rows(results),
            "departure_rows": _arrival_rows(results, "out", OUT_LABEL), "staff_rows": _staff_rows(results, shifts),
            "hours_rows": _hours_rows(results),
            "ncols": 1 + 2 * len(results)}
-    sim_runs = []
-    for kind, _ in ScenarioDay.KIND_CHOICES:
-        run = sc.runs.defer("events").select_related("model").filter(day_kind=kind).first()
-        if run:
-            sim_runs.append(_sim_view(run))
+    sim_runs, memo = [], {}                     # memo: koszty obu przebiegów czytają stawki/layout/dni raz (R3)
+    runs = [r for kind, _ in ScenarioDay.KIND_CHOICES
+            if (r := sc.runs.defer("events").select_related("model", "scenario__fleet_equipment")
+                .filter(day_kind=kind).first())]
+    for r in runs:                              # najnowszy przebieg danego dnia = „drugi dzień” miksu kosztów
+        memo[("run", sc.pk, r.model_id, r.day_kind)] = r
+    sim_runs = [_sim_view(r, memo) for r in runs]
     ctx["sim_runs"] = sim_runs
     ctx["sim_charts"] = {f"sim-{v['run'].pk}": v["chart"] for v in sim_runs}
     if has_role(request.user, GROUP_ADMIN, GROUP_DESIGNER):

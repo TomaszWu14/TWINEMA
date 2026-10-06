@@ -65,8 +65,8 @@ export function buildSite(group, plan, { track, asphalt }) {
   // Ogrodzenie: słupki co 3 m (instancje) + górna linia; przerwy na wjazdach.
   const gaps = plan.entries.map((e) => ({ at: e.at, r: e.width / 2 + 0.5 }));
   const pts = [];
-  for (let i = 0; i < 4; i++) {
-    for (const p of posts(plan.plot[i], plan.plot[(i + 1) % 4], POST_M)) {
+  for (let i = 0; i < plan.plot.length; i++) {             // D2: dowolny wielokąt granicy
+    for (const p of posts(plan.plot[i], plan.plot[(i + 1) % plan.plot.length], POST_M)) {
       if (!gaps.some((g) => Math.hypot(p[0] - g.at[0], p[1] - g.at[1]) < g.r)) pts.push(p);
     }
   }

@@ -212,3 +212,31 @@ def load_master_levels():
     if batch is None:
         return {}
     return dict(batch.locations.values_list("location_code", "level"))
+
+
+def rack_capacity(r):
+    """Miejsca paletowe regału: boki × poziomy × palety na belce (szerokość boku / 0,9 m — jak design_kpi)."""
+    bays = max(1, r["n_bays"])
+    return bays * max(1, r["n_levels"]) * max(1, round(r["width"] / bays / 0.9))
+
+
+def rack_fill_pct(racks, occupied_codes, levels=None):
+    """{(strefa, regał): % zajętych miejsc} z kodów lokalizacji na stanie (ta sama konwencja kodu co scena —
+    SlotLocator). Regał bez pozycji na stanie = 0 %, nie więcej niż 100 %. Kody spoza modelu pomijane."""
+    codes = {c.strip().upper() for c in occupied_codes if c}
+    loc = SlotLocator(racks, codes, levels)
+    used = Counter()
+    for code in codes:
+        found = loc.rack_and_bay(code)
+        if found:
+            used[(found[0]["zone"], found[0]["rack_id"])] += 1
+    return {(r["zone"], r["rack_id"]): min(100, round(100 * used[(r["zone"], r["rack_id"])] / rack_capacity(r)))
+            for r in racks}
+
+
+def load_occupied_codes():
+    """Kody lokalizacji z najnowszego importu stanów (bez SKU/HU — tylko zajętość); None, gdy brak importu."""
+    from masterdata.services import current_stock_log
+
+    log = current_stock_log()
+    return None if log is None else set(log.stock_items.values_list("location_code", flat=True).distinct())

@@ -296,6 +296,8 @@ class ScenarioRun(models.Model):
     duration_s = models.FloatField(default=0)
     result = models.JSONField(default=dict)
     events = models.JSONField(default=list)
+    # R3: czy są zdarzenia animacji — bez wczytywania ciężkiej listy `events` (widoki ją odraczają)
+    has_events = models.BooleanField(default=False)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

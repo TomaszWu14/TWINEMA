@@ -130,3 +130,61 @@ class GeneratorSiteTests(TestCase):
         s = clean_site(copy.deepcopy(g["site"]))
         self.assertEqual(check_site(s, floor, racks, feats), [])
         self.assertTrue(math.isclose(s["hall"]["x"], 45.0))
+
+
+class PolygonPlotTests(TestCase):
+    """D2: granica-wielokąt — pole, linie zabudowy per krawędź, wcięcie, wjazd dosunięty do granicy."""
+    # „L”: 200 × 160 bez prawego górnego narożnika 80 × 60 (dojazd od południa = dolna krawędź planu)
+    L = [[0, 0], [120, 0], [120, 60], [200, 60], [200, 160], [0, 160]]
+
+    def plot(self, hall=(20.0, 80.0), **kw):
+        base = {"boundary": self.L, "hall": {"x": hall[0], "y": hall[1], "angle": 0}, "max_height": None,
+                "max_coverage_pct": None, "min_bio_pct": None, "setback": {"road": 12, "other": 6},
+                "access_side": "S", "entries": [{"kind": "truck", "side": "S", "pos": 100, "width": 10}], "areas": []}
+        base.update(kw)
+        return clean_site(base)
+
+    def test_bbox_and_area(self):
+        from twin.site import polygon_area
+        s = self.plot()
+        self.assertEqual((s["width"], s["depth"]), (200, 160))
+        self.assertEqual(site_kpi(s, FLOOR)["plot_m2"], 200 * 160 - 80 * 60)
+        self.assertEqual(abs(polygon_area([(0, 0), (0, 10), (10, 10), (10, 0)])), 100)   # kolejność bez znaczenia
+
+    def test_road_edge_gets_road_setback(self):
+        from twin.site import edge_setbacks
+        sbs = edge_setbacks(self.plot())
+        self.assertEqual(sbs[4], 12)                      # (200,160)→(0,160): dolna krawędź = od drogi
+        self.assertEqual(set(sbs[:4] + sbs[5:]), {6})
+
+    def test_building_line_inside_notch_and_road(self):
+        ok = self.plot(hall=(20.0, 80.0))                  # hala 100 × 60 w dolnej części „L”
+        self.assertNotIn("building_line", codes(check_site(ok, FLOOR, [], [])))
+        notch = self.plot(hall=(90.0, 10.0))               # wchodzi we wcięcie (x > 120, y < 60)
+        self.assertIn("building_line", codes(check_site(notch, FLOOR, [], [])))
+        # wklęsły wierzchołek granicy 3 m od boku hali (narożniki hali daleko od krawędzi) — też naruszenie
+        dent = self.plot(hall=(20.0, 80.0), boundary=[[0, 0], [120, 0], [120, 60], [200, 60], [200, 160], [0, 160],
+                                                      [0, 120], [17, 110], [0, 100]])
+        self.assertIn("building_line", codes(check_site(dent, FLOOR, [], [])))
+        road = self.plot(hall=(20.0, 92.0))                # 8 m od dolnej granicy < 12 m od drogi
+        self.assertIn("building_line", codes(check_site(road, FLOOR, [], [])))
+
+    def test_entry_snaps_to_boundary_and_insets_inward(self):
+        s = self.plot(entries=[{"kind": "truck", "side": "N", "pos": 160, "width": 10}])
+        self.assertEqual(entry_point(s, s["entries"][0]), (160.0, 60.0))    # bok N obrysu → krawędź wcięcia
+        self.assertEqual(entry_point(s, s["entries"][0], inset=2), (160.0, 62.0))
+
+    def test_reserve_uses_polygon_buildable_area(self):
+        k = site_kpi(self.plot(), FLOOR)
+        self.assertGreater(k["reserve_m2"], 0)
+        self.assertLess(k["reserve_m2"], 200 * 160 - 80 * 60)
+
+    def test_rect_without_boundary_unchanged(self):
+        s = site()
+        self.assertNotIn("boundary", s)
+        self.assertEqual(site_kpi(s, FLOOR)["plot_m2"], round(s["width"] * s["depth"]))
+
+    def test_bad_boundary_rejected(self):
+        for bad in ([[0, 0], [10, 0]], [[0, 0], [10, 0], [20, 0]], [[0, 0], [10, 0], ["x", 5]]):
+            with self.assertRaises(LayoutError):
+                self.plot(boundary=bad)

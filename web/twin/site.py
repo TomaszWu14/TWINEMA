@@ -10,7 +10,10 @@ Format (JSON w `WarehouseModel.site`, pusty = model bez działki — wszystko dz
    "max_height", "max_coverage_pct", "min_bio_pct",      # None = bez ograniczenia
    "setback": {"road", "other"}, "access_side": "N|S|E|W",
    "entries": [{"kind": "truck|car", "side", "pos", "width"}],   # pos = odległość od początku boku (N/S od x 0, W/E od y 0)
-   "areas": [{"kind": "yard|parking|green|road", "label", "x", "y", "width", "depth", "angle"}]}
+   "areas": [{"kind": "yard|parking|green|road", "label", "x", "y", "width", "depth", "angle"}],
+   "boundary": [[x, y], …]}   # D2, opcjonalnie: granica-wielokąt (3–64 punkty); width/depth = jej obrys
+Granica-wielokąt: odległość od granicy liczona per krawędź — krawędź zwrócona ku stronie dojazdu „od drogi”,
+pozostałe „od sąsiadów”; wjazd (strona + pozycja jak dla prostokąta) dosuwany do najbliższego punktu granicy.
 Problemy jak w `twin.layout` + klucze `areas` (indeksy elementów terenu) i `hall` (dotyczy całej hali).
 """
 import math
@@ -29,6 +32,9 @@ VAN_YARD_M = 20.0        # dok kurierski (bus / solówka)
 ROOF_M = 1.0             # konstrukcja dachu nad wysokością w świetle
 STEP_M = 2.0             # próbkowanie odcinków (plac, droga)
 MAX_AREAS, MAX_ENTRIES = 200, 6
+MAX_VERTICES = 64
+OUT_DIR = {"N": (0.0, -1.0), "S": (0.0, 1.0), "W": (-1.0, 0.0), "E": (1.0, 0.0)}   # na zewnątrz działki
+ROAD_EDGE_COS = 0.7      # krawędź „od drogi”, gdy jej normalna zewnętrzna odchyla się od strony dojazdu < ~45°
 
 
 # ── wejście z przeglądarki ─────────────────────────────────────────────────────────────────
@@ -42,8 +48,13 @@ def clean_site(d):
         return {}
     if not isinstance(d, dict):
         raise LayoutError("Działka: oczekiwany obiekt.")
-    out = {"width": _num(d.get("width"), "Działka: szerokość", 5, 10000),
-           "depth": _num(d.get("depth"), "Działka: głębokość", 5, 10000)}
+    boundary = _clean_boundary(d.get("boundary"))
+    if boundary:
+        out = {"width": round(max(x for x, _ in boundary), 3), "depth": round(max(y for _, y in boundary), 3),
+               "boundary": boundary}
+    else:
+        out = {"width": _num(d.get("width"), "Działka: szerokość", 5, 10000),
+               "depth": _num(d.get("depth"), "Działka: głębokość", 5, 10000)}
     hall = d.get("hall") or {}
     if not isinstance(hall, dict):
         raise LayoutError("Działka: położenie hali — oczekiwany obiekt.")
@@ -84,6 +95,106 @@ def clean_site(d):
                              "depth": _num(a.get("depth"), f"Element terenu {i}: głębokość", 0.5, 10000),
                              "angle": _num(a.get("angle", 0), f"Element terenu {i}: kąt", -3600, 3600) % 360})
     return out
+
+
+def _clean_boundary(raw):
+    """Granica-wielokąt: lista [x, y] (≥ 0), 3–MAX_VERTICES punktów, pole > 1 m²; brak → None (prostokąt)."""
+    if raw in (None, "", []):
+        return None
+    if not isinstance(raw, list) or not 3 <= len(raw) <= MAX_VERTICES:
+        raise LayoutError(f"Granica działki: od 3 do {MAX_VERTICES} wierzchołków.")
+    pts = []
+    for i, p in enumerate(raw, 1):
+        if not isinstance(p, (list, tuple)) or len(p) != 2:
+            raise LayoutError(f"Granica działki: wierzchołek {i} — oczekiwane [x, y].")
+        pts.append((_num(p[0], f"Wierzchołek {i}: X", 0, 10000), _num(p[1], f"Wierzchołek {i}: Y", 0, 10000)))
+    if abs(polygon_area(pts)) < 1:
+        raise LayoutError("Granica działki: wierzchołki nie tworzą wielokąta (pole ≈ 0).")
+    # ponytail: bez sprawdzania samoprzecięć — przy „ósemce” pole i testy punktów będą mylące; dodać, gdy
+    # granice zaczną przychodzić z importu, a nie tylko z edytora.
+    return [[round(x, 3), round(y, 3)] for x, y in pts]
+
+
+# ── wielokąt granicy (D2) ──────────────────────────────────────────────────────────────────
+def polygon_area(pts):
+    """Pole ze znakiem (wzór Gaussa); > 0 = punkty zgodnie z ruchem wskazówek przy y w dół planu."""
+    return sum(a[0] * b[1] - b[0] * a[1] for a, b in zip(pts, pts[1:] + pts[:1], strict=True)) / 2
+
+
+def plot_polygon(site):
+    """Granica działki jako lista punktów: wielokąt albo prostokąt [0, W] × [0, D]."""
+    if site.get("boundary"):
+        return [tuple(p) for p in site["boundary"]]
+    W, D = site["width"], site["depth"]
+    return [(0.0, 0.0), (W, 0.0), (W, D), (0.0, D)]
+
+
+def _edges(pts):
+    return list(zip(pts, pts[1:] + pts[:1], strict=True))
+
+
+def _outward_normal(a, b, sign):
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    L = math.hypot(dx, dy) or 1.0
+    return (dy / L * sign, -dx / L * sign)
+
+
+def edge_setbacks(site):
+    """Odległość od granicy dla każdej krawędzi wielokąta (kolejność `plot_polygon`)."""
+    pts = plot_polygon(site)
+    sign = 1.0 if polygon_area(pts) > 0 else -1.0
+    road = OUT_DIR[site["access_side"]]
+    out = []
+    for a, b in _edges(pts):
+        n = _outward_normal(a, b, sign)
+        out.append(site["setback"]["road"] if n[0] * road[0] + n[1] * road[1] > ROAD_EDGE_COS
+                   else site["setback"]["other"])
+    return out
+
+
+def dist_segment(p, a, b):
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    L2 = dx * dx + dy * dy
+    t = 0.0 if not L2 else max(0.0, min(1.0, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / L2))
+    return math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy)
+
+
+def in_polygon(pts, p):
+    """Punkt w wielokącie (promień w prawo, parzystość przecięć)."""
+    inside = False
+    for (x0, y0), (x1, y1) in _edges(pts):
+        if (y0 > p[1]) != (y1 > p[1]) and p[0] < x0 + (p[1] - y0) * (x1 - x0) / (y1 - y0):
+            inside = not inside
+    return inside
+
+
+def in_plot(site, p, tol=0.0):
+    """Punkt na działce (z tolerancją przy granicy)."""
+    pts = plot_polygon(site)
+    return in_polygon(pts, p) or (tol > 0 and min(dist_segment(p, a, b) for a, b in _edges(pts)) <= tol)
+
+
+def _buildable(site, p, setbacks_):
+    pts = plot_polygon(site)
+    return in_polygon(pts, p) and all(dist_segment(p, a, b) >= sb - 0.01 for (a, b), sb in zip(_edges(pts), setbacks_, strict=True))
+
+
+def buildable_m2(site):
+    """Pole w liniach zabudowy: prostokąt — dokładnie; wielokąt — próbkowanie siatki co STEP_M."""
+    if not site.get("boundary"):
+        b = building_rect(site)
+        return (b[2] - b[0]) * (b[3] - b[1]) if b else 0.0
+    sbs = edge_setbacks(site)
+    n = sum(_buildable(site, (x + STEP_M / 2, y + STEP_M / 2), sbs)
+            for x in _frange(0, site["width"], STEP_M) for y in _frange(0, site["depth"], STEP_M))
+    return n * STEP_M * STEP_M
+
+
+def _frange(a, b, step):
+    v = a
+    while v < b:
+        yield v
+        v += step
 
 
 # ── geometria ──────────────────────────────────────────────────────────────────────────────
@@ -128,10 +239,39 @@ def building_rect(site):
 
 
 def entry_point(site, e, inset=0.0):
-    """Środek wjazdu na granicy (inset > 0 — tyle metrów w głąb działki)."""
+    """Środek wjazdu na granicy (inset > 0 — tyle metrów w głąb działki). Granica-wielokąt: z punktu na boku
+    obrysu promień w głąb działki do pierwszej krawędzi granicy (brak → najbliższa), wcięcie wzdłuż jej normalnej."""
     W, D = site["width"], site["depth"]
-    return {"N": (e["pos"], inset), "S": (e["pos"], D - inset),
-            "W": (inset, e["pos"]), "E": (W - inset, e["pos"])}[e["side"]]
+    if not site.get("boundary"):
+        return {"N": (e["pos"], inset), "S": (e["pos"], D - inset),
+                "W": (inset, e["pos"]), "E": (W - inset, e["pos"])}[e["side"]]
+    p = {"N": (e["pos"], 0.0), "S": (e["pos"], D), "W": (0.0, e["pos"]), "E": (W, e["pos"])}[e["side"]]
+    pts = plot_polygon(site)
+    sign = 1.0 if polygon_area(pts) > 0 else -1.0
+    hit = _ray_hit(pts, p, tuple(-v for v in OUT_DIR[e["side"]]))
+    if hit is None:
+        a, b = min(_edges(pts), key=lambda ab: dist_segment(p, *ab))
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        t = max(0.0, min(1.0, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / ((dx * dx + dy * dy) or 1.0)))
+        hit = (a, b, (a[0] + t * dx, a[1] + t * dy))
+    a, b, q = hit
+    n = _outward_normal(a, b, sign)
+    return (q[0] - n[0] * inset, q[1] - n[1] * inset)
+
+
+def _ray_hit(pts, p, d):
+    """Pierwsze przecięcie promienia p + s·d (s ≥ 0) z krawędzią wielokąta → (a, b, punkt) albo None."""
+    best = None
+    for a, b in _edges(pts):
+        ex, ey = b[0] - a[0], b[1] - a[1]
+        den = d[0] * ey - d[1] * ex
+        if abs(den) < 1e-12:
+            continue
+        wx, wy = a[0] - p[0], a[1] - p[1]
+        s_, t = (wx * ey - wy * ex) / den, (wx * d[1] - wy * d[0]) / den
+        if s_ >= -1e-9 and -1e-9 <= t <= 1 + 1e-9 and (best is None or s_ < best[0]):
+            best = (s_, a, b, (p[0] + s_ * d[0], p[1] + s_ * d[1]))
+    return best and best[1:]
 
 
 def _area_m2(a):
@@ -146,13 +286,12 @@ def building_height(floor, racks):
 
 
 def site_kpi(site, floor, racks=()):
-    plot = site["width"] * site["depth"]
+    plot = abs(polygon_area(plot_polygon(site)))
     hall = floor["width"] * floor["depth"]
     by_kind = {}
     for a in site["areas"]:
         by_kind[a["kind"]] = by_kind.get(a["kind"], 0.0) + _area_m2(a)
-    b = building_rect(site)
-    buildable = (b[2] - b[0]) * (b[3] - b[1]) if b else 0.0
+    buildable = buildable_m2(site)
     cap = min(buildable, plot * site["max_coverage_pct"] / 100) if site["max_coverage_pct"] else buildable
     def pct(v):
         return round(100 * v / plot, 1)
@@ -182,8 +321,7 @@ def check_site(site, floor, racks, features):
     hall = hall_rect(site, floor)
     corners = rack_corners(hall)
 
-    b = building_rect(site)
-    if not b or any(not (b[0] - 0.01 <= x <= b[2] + 0.01 and b[1] - 0.01 <= y <= b[3] + 0.01) for x, y in corners):
+    if not _within_building_line(site, hall, corners):
         sb = site["setback"]
         issues.append(_issue("building_line", "error", f"Hala wychodzi poza linie zabudowy (od drogi {sb['road']:g} m, "
                                                        f"od pozostałych granic {sb['other']:g} m).", hall=True))
@@ -202,7 +340,7 @@ def check_site(site, floor, racks, features):
         if overlap_depth(rack_corners(a), corners) > 0.05:
             issues.append(_issue("area_hall", "warning", f"„{a['label'] or AREA_KINDS[a['kind']]}” zachodzi pod halę.",
                                  areas=[i], hall=True))
-        if any(not _inside(plot, p, 0.05) for p in rack_corners(a)):
+        if any(not in_plot(site, p, 0.05) for p in rack_corners(a)):
             issues.append(_issue("area_outside", "warning", f"„{a['label'] or AREA_KINDS[a['kind']]}” wychodzi poza "
                                                             "działkę.", areas=[i]))
     for i, e in enumerate(site["entries"]):
@@ -213,6 +351,25 @@ def check_site(site, floor, racks, features):
     return issues
 
 
+def _within_building_line(site, hall, corners):
+    """Hala w liniach zabudowy: prostokąt — jak D1; wielokąt — narożniki na działce z odstępem od każdej
+    krawędzi i żaden wierzchołek granicy (wcięcie działki) nie wchodzi w halę."""
+    if not site.get("boundary"):
+        b = building_rect(site)
+        return bool(b) and all(b[0] - 0.01 <= x <= b[2] + 0.01 and b[1] - 0.01 <= y <= b[3] + 0.01 for x, y in corners)
+    # Odcinki bez przecięcia są najbliżej w którymś końcu: narożniki hali ↔ krawędzie granicy (_buildable)
+    # i wierzchołki granicy ↔ boki hali (wklęsłe „wcięcie” działki podchodzące pod bok hali).
+    sbs, pts = edge_setbacks(site), plot_polygon(site)
+    if not all(_buildable(site, c, sbs) for c in corners):
+        return False
+    sides = list(zip(corners, corners[1:] + corners[:1], strict=True))
+    for i, v in enumerate(pts):
+        need = min(sbs[i - 1], sbs[i])                 # krawędzie schodzące się w wierzchołku
+        if _inside(hall, v, -0.01) or min(dist_segment(v, a, b) for a, b in sides) < need - 0.01:
+            return False
+    return True
+
+
 def _dock_issues(site, floor, features, plot):
     """Plac przed dokami tirów (min. YARD_M) i droga od najbliższego wjazdu tirów do placu doku."""
     blocked = [a for a in site["areas"] if a["kind"] in ("green", "parking")]
@@ -221,7 +378,7 @@ def _dock_issues(site, floor, features, plot):
     trucks = [entry_point(site, e, inset=1.0) for e in site["entries"] if e["kind"] == "truck"]
 
     def ok(p):
-        return (_inside(plot, p) and not _inside(hall, p, -0.01) and not any(_inside(a, p) for a in blocked)
+        return (in_plot(site, p) and not _inside(hall, p, -0.01) and not any(_inside(a, p) for a in blocked)
                 and (not paved or any(_inside(a, p, 0.5) for a in paved)))
 
     out, no_yard, bad_route = [], [], []

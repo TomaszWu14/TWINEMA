@@ -36,7 +36,7 @@ class ShowcaseForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["run"].queryset = ScenarioRun.objects.select_related("scenario", "model")
+        self.fields["run"].queryset = ScenarioRun.objects.defer("events").select_related("scenario", "model")
         self.fields["run"].required = False
         self.fields["run"].empty_label = "— bez wyników symulacji —"
 
@@ -78,19 +78,19 @@ def _template(sc, ctx):
     return template_slides(
         title=sc.title, floor=ctx["floor"], racks=ctx["racks"], places=ctx["places"], site_kpi_=ctx["site_kpi"],
         cards=ctx["cards"], facts=facts,
-        run={"day": run.get_day_kind_display().lower(), "has_events": bool(run.events), "peak_t": ctx["peak"],
+        run={"day": run.get_day_kind_display().lower(), "has_events": run.has_events, "peak_t": ctx["peak"],
              "bottlenecks": ctx["bottlenecks"]} if run else None)
 
 
 @any_role
 def showcase_list(request):
     raw = request.GET.get("run", "")
-    run = ScenarioRun.objects.filter(pk=int(raw)).select_related("scenario").first() if raw.isdigit() else None
+    run = ScenarioRun.objects.defer("events", "result").filter(pk=int(raw)).select_related("scenario").first() if raw.isdigit() else None
     form = ShowcaseForm(initial={
         "model": run.model_id if run else WarehouseModel.objects.values_list("pk", flat=True).first(),
         "run": run.pk if run else None, "title": f"{run.scenario.name} — prezentacja" if run else ""})
     return render(request, "scenario/showcase_list.html", {
-        "form": form, "items": Showcase.objects.select_related("model", "run", "created_by")[:60]})
+        "form": form, "items": Showcase.objects.select_related("model", "run", "created_by").defer("run__events", "run__result")[:60]})
 
 
 @designer
@@ -113,7 +113,7 @@ def showcase_create(request):
 
 @any_role
 def showcase_detail(request, pk):
-    sc = get_object_or_404(Showcase.objects.select_related("model", "run__scenario"), pk=pk)
+    sc = get_object_or_404(Showcase.objects.select_related("model", "run__scenario").defer("run__events"), pk=pk)
     ctx = _context(sc)
     return render(request, "scenario/showcase.html", {
         "sc": sc, "cards": ctx["cards"], "card_names": CARDS, "bottlenecks": ctx["bottlenecks"],
@@ -127,14 +127,14 @@ def showcase_detail(request, pk):
 @any_role
 def showcase_data(request, pk):
     """Dane odtwarzacza: scena (layout + działka), miejsca, wyniki (karty KPI, wąskie gardła, oś czasu), slajdy."""
-    sc = get_object_or_404(Showcase.objects.select_related("model", "run"), pk=pk)
+    sc = get_object_or_404(Showcase.objects.select_related("model", "run").defer("run__events"), pk=pk)
     ctx = _context(sc)
     tl = (sc.run.result.get("rep", {}).get("timeline") if sc.run else None) or {"t": []}
     return JsonResponse({
         "format": "twinema.showcase", "version": 1, "title": sc.title, "slides": sc.slides,
         "floor": ctx["floor"], "racks": ctx["racks"], "features": ctx["features"], "site": sc.model.site or {},
         "places": ctx["places"], "cards": ctx["cards"], "bottlenecks": ctx["bottlenecks"], "peak_t": ctx["peak"],
-        "has_events": bool(sc.run and sc.run.events),
+        "has_events": bool(sc.run and sc.run.has_events),
         "timeline": {"step_s": 900, "fleet_busy": tl.get("fleet_busy", []),
                      "people": {p: v["busy"] for p, v in (tl.get("people") or {}).items()}},
     }, json_dumps_params={"ensure_ascii": False})
@@ -161,7 +161,7 @@ def showcase_save(request, pk):
 @designer
 @require_POST
 def showcase_reset(request, pk):
-    sc = get_object_or_404(Showcase.objects.select_related("model", "run"), pk=pk)
+    sc = get_object_or_404(Showcase.objects.select_related("model", "run").defer("run__events"), pk=pk)
     sc.slides = _template(sc, _context(sc))
     sc.save(update_fields=["slides", "updated_at"])
     messages.success(request, "Slajdy zastąpione szablonem startowym.")
