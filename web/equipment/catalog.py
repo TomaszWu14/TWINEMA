@@ -23,6 +23,10 @@ KINDS = [
 # Typy przypisywalne do regałów w edytorze. Ciągnik, AGV/AMR, przenośnik i sorter nie podnoszą palety do gniazda.
 RACK_CATEGORY = {"reach": "reach", "counterbalance": "reach", "stacker": "reach", "order_picker": "reach",
                  "vna": "vna"}
+# K3 flota mieszana: rola typu w symulacji — "vna" (regały VNA), "rack" (regały paletowe), "transport" (poziomo,
+# bez podnoszenia do gniazda). Przenośnik i sorter nie są flotą (brak klucza).
+FLEET_ROLE = {"vna": "vna", "reach": "rack", "counterbalance": "rack", "stacker": "rack", "order_picker": "rack",
+              "agv": "transport", "amr": "transport", "pallet_truck": "transport", "tractor": "transport"}
 
 # Osprzęt: kod → (etykieta, redukcja udźwigu [%], dodatkowy czas na pobranie i na odłożenie [s]).
 # Wartości przybliżone (typowe rzędy wielkości), do nadpisania własnym modelem z karty katalogowej.

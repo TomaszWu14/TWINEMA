@@ -4,14 +4,17 @@ from django import forms
 from django.contrib import messages
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.http import require_POST
+
+from equipment.catalog import FLEET_ROLE
 
 from core.roles import GROUP_ADMIN, GROUP_DESIGNER, any_role, designer, has_role
 
 from twin.models import WarehouseModel
 
 from .inbound import _hhmm
-from .models import InboundStream, OutboundStream, Scenario, ScenarioDay, Shift
+from .models import InboundStream, OutboundStream, Scenario, ScenarioDay, ScenarioFleet, Shift
 from .staffing import cutoff_risk, process_hours, staffing
 from .views_sim import SimForm, _sim_view
 
@@ -122,6 +125,20 @@ OutFormSet = forms.modelformset_factory(
 ShiftFormSet = forms.modelformset_factory(
     Shift, form=ShiftForm, fields=SHIFT_FIELDS, extra=1, can_delete=True,
     widgets=_num(["break_min", "people"]) | {"process": _fc(forms.Select())})
+
+
+
+class FleetForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        eq = self.fields["equipment"]
+        eq.queryset = eq.queryset.filter(kind__in=FLEET_ROLE)          # bez przenośników i sorterów
+        eq.widget.attrs["class"] = "form-control"
+
+
+FleetFormSet = forms.modelformset_factory(
+    ScenarioFleet, form=FleetForm, fields=["equipment", "units"], extra=1, can_delete=True,
+    widgets=_num(["units"]))
 
 
 def _results(day, shifts):
@@ -250,6 +267,7 @@ def scenario_detail(request, pk):
                              "outbound": OutFormSet(queryset=d.outbound.all(), prefix=f"{d.kind}-out"),
                              "profile": DayProfileForm(instance=d, prefix=f"{d.kind}-p")} for d in days]
         ctx["shift_fs"] = ShiftFormSet(queryset=sc.shifts.all(), prefix="shift")
+        ctx["fleet_fs"] = FleetFormSet(queryset=sc.fleet.all(), prefix="fleet")
         from masterdata.services import cartons_per_pallet_hint     # podpowiedź, nie nadpisuje normy
         ctx["cpp_hint"] = cartons_per_pallet_hint()
     return render(request, "scenario/detail.html", ctx)
@@ -338,11 +356,27 @@ def shifts_save(request, pk):
 
 @designer
 @require_POST
+def fleet_save(request, pk):
+    sc = get_object_or_404(Scenario, pk=pk)
+    fs = FleetFormSet(request.POST, queryset=sc.fleet.all(), prefix="fleet")
+    if not fs.is_valid():
+        _errors(request, "Flota", fs=fs)
+        return redirect("scenario:detail", pk=pk)
+    with transaction.atomic():
+        _save_formset(fs, scenario=sc)
+        sc.save(update_fields=["updated_at"])
+    messages.success(request, "Zapisano flotę mieszaną — uruchom symulację ponownie, by zobaczyć wynik.")
+    return redirect(reverse("scenario:detail", args=[pk]) + "#sc-fleet-h")
+
+
+@designer
+@require_POST
 def scenario_copy(request, pk):
     src = get_object_or_404(Scenario, pk=pk)
     with transaction.atomic():
         days = list(src.days.prefetch_related("inbound", "outbound"))
         shifts = list(src.shifts.all())
+        fleet = list(src.fleet.all())
         sc = Scenario.objects.get(pk=pk)
         sc.pk, sc.name, sc.created_by = None, f"{src.name} (kopia)"[:200], request.user
         sc.save()
@@ -353,7 +387,7 @@ def scenario_copy(request, pk):
             for s in streams:
                 s.pk, s.day = None, d
                 s.save()
-        for s in shifts:
+        for s in [*shifts, *fleet]:
             s.pk, s.scenario = None, sc
             s.save()
     messages.success(request, f"Skopiowano scenariusz jako „{sc}”.")

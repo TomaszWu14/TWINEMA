@@ -32,7 +32,8 @@ def mix_days(work_days, peak_days_year, have_peak=True, have_typical=True):
 
 def compute(rates, layout, fleet, labor_h_day, days):
     """rates: {klucz: (od, do)} — `CostRate`; layout: {positions: {reach|vna|shelf: n}, docks, stations, area_m2};
-    fleet: {name, units, purchase: (od, do) | None, hour: (od, do) | None} (None → stawki ogólne floty);
+    fleet: {name, units, purchase: (od, do) | None, hour: (od, do) | None} (None → stawki ogólne floty)
+           albo lista takich grup (K3 flota mieszana) z `share` — udział grupy w godzinach pracy floty;
     labor_h_day: osobogodziny zakładanej obsady / dzień (każdy dzień taki sam);
     days: [{kind, days, fleet_busy_h, volumes: {pallets, parcels, orders}}] — miks dni w roku; per dzień:
     godziny pracy floty (symulacja) i wolumeny → koszt OPEX na jednostkę (OPEX ÷ wolumen roczny)."""
@@ -44,14 +45,16 @@ def compute(rates, layout, fleet, labor_h_day, days):
         capex.append(_item("Stanowiska", layout["stations"], "szt.", rates["station"]))
     if layout.get("area_m2"):
         capex.append(_item("Hala (budynek)", round(layout["area_m2"]), "m²", rates["building_m2"]))
-    if fleet["units"]:
-        capex.append(_item(f"Flota: {fleet['name']}", fleet["units"], "szt.", fleet["purchase"] or rates["fleet_unit"]))
+    fleets = fleet if isinstance(fleet, list) else [{**fleet, "share": 1}]
+    for f in fleets:
+        if f["units"]:
+            capex.append(_item(f"Flota: {f['name']}", f["units"], "szt.", f["purchase"] or rates["fleet_unit"]))
 
     total_days = sum(d["days"] for d in days)
     fleet_h = sum(d["fleet_busy_h"] * d["days"] for d in days)
-    opex = [_item("Praca (zakładana obsada)", round(labor_h_day * total_days), "osobogodzin/rok", rates["labor_h"]),
-            _item(f"Flota: {fleet['name']} (energia, serwis)", round(fleet_h), "godzin pracy/rok",
-                  fleet["hour"] or rates["fleet_hour"])]
+    opex = [_item("Praca (zakładana obsada)", round(labor_h_day * total_days), "osobogodzin/rok", rates["labor_h"])]
+    opex += [_item(f"Flota: {f['name']} (energia, serwis)", round(fleet_h * f["share"]), "godzin pracy/rok",
+                   f["hour"] or rates["fleet_hour"]) for f in fleets]
     capex, opex = _total(capex), _total(opex)
 
     per_unit = {}
