@@ -7,8 +7,8 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { COLOR_MODES, EDGE_KINDS, FLAT_KINDS, camAt, colorLegend, contactShadowPart, decorParts, depthRange, effectiveQuality, extents,
-  hallWalls, isoView, localToWorld, outward, rackMatrices, rackOutline, rackTint, sitePlan, steelMatrices, steelMode,
-  wallHidden } from './scene-data.js';
+  hallWalls, isoView, localToWorld, outward, rackMatrices, rackOutline, rackTint, sitePlan, stackLayer, steelMatrices,
+  steelMode, wallHidden } from './scene-data.js';
 import { buildSite } from './scene-site.js';
 import { asphaltTex, cartonTex, doorTex, hatchTex, LABEL_NEAR_M, makeLabel, panelTex, signTex, slabTex, slotTex,
   shadowTex, stdMat, steelMat, woodTex } from './scene-materials.js';
@@ -213,7 +213,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
         mat.map = mat.map.clone(); mat.map.needsUpdate = true; mat.map.repeat.set(w / tile, d / tile); track(mat.map);
       }
       const m = new THREE.Mesh(track(new THREE.PlaneGeometry(w, d)), mat);
-      m.rotation.x = -Math.PI / 2; m.position.set(w / 2, 0.02, d / 2); m.receiveShadow = true;
+      m.rotation.x = -Math.PI / 2; m.position.set(w / 2, 0.02, d / 2); m.receiveShadow = true; stackLayer(m, f.kind);
       // Obwódka jak malowana linia na posadzce (pełny kolor).
       const edge = new THREE.LineSegments(track(new THREE.EdgesGeometry(track(new THREE.PlaneGeometry(w, d)))),
         track(new THREE.LineBasicMaterial({ color: col })));
