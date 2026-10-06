@@ -58,10 +58,10 @@ Testy: `cd web && python manage.py test --parallel 4` (env: `DJANGO_DEBUG=true D
 - **Zrobione od 2026-10-05:** E1 → S2a → E2 → S2b → E2b → E3 → S1 → S3a → S3b → S4 → G1 → G1b → D1 → K1 → C1/C1b
   (koszty) → P1 (tryb prezentacji 3D) → … → K3 (flota mieszana: `ScenarioFleet`, grupy z katalogu per rola, przekazanie AGV → VNA, wyniki i koszty per grupa) — szczegóły w `docs/PLAN.md` („Po F5”) i `docs/ZALOZENIA.md`.
 - **Co zostało (do wyboru przez właściciela):**
-  - **plansza kosztów w prezentacji** — karta „Koszty” z C1 (`services.run_costs`) jako kolejna karta KPI slajdu (`scenario/showcase.py` CARDS);
+  - ~~plansza kosztów w prezentacji~~ — zrobione (P2 #47, karta `costs`);
   - **grafika ~6 → 6–7/10** (poziom programów symulacyjnych): SSAO (pliki postprocessingu three do `fetch_vendor.sh`), szczegóły palet i wózków z bliska, **ruch ludzi** (dziś stoją przy stanowiskach), **ładowanie palet na auta**, osobne trasy wózków po alejkach, modele AGV/AMR z katalogu;
   - **działka**: wielokąt zamiast prostokąta, **trasy aut po drogach wewnętrznych** (dziś odcinek prosty), kolizje elementów terenu;
-  - prezentacja: publiczny link bez logowania (zaprojektować: token w adresie + osobna rola tylko-do-odczytu, wygasanie), przybliżenie „strefa z bliska” dla stref na całą halę (dziś kadr całej strefy);
+  - ~~publiczny link prezentacji~~ — zrobione (P3 #49: `/p/<token>/`, wygasa 1–90 dni, wyłączanie; zakres = token, bez nowej roli); trasowanie dojazdu w serwerowym sprawdzeniu działki — zrobione (D4 #48); prezentacja: przybliżenie „strefa z bliska” dla stref na całą halę (dziś kadr całej strefy);
   - **wdrożenie po stronie właściciela** — sekcja wyżej (Coolify, sekrety, `RENDER_WORKER_TOKEN`, klucze).
 - ML3: model czasu cyklu (gradient boosting vs mediana real÷sym, MAE na odłożonych dniach).
 - Porównania wariantów w filmie (split-screen „obecny vs wariant”), katalog rynku → CAPEX/OPEX.
