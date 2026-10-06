@@ -49,6 +49,8 @@ class AppEnv(BaseSettings):
     # ── Obserwowalność ──────────────────────────────────────────────────────
     SENTRY_DSN: str = ""
     SENTRY_ENVIRONMENT: str = "production"
+    GIT_SHA: str = ""                  # build-arg obrazu; puste → SOURCE_COMMIT (Coolify) → „unknown”
+    SOURCE_COMMIT: str = ""
 
     @model_validator(mode="after")
     def _cross_field_checks(self) -> "AppEnv":

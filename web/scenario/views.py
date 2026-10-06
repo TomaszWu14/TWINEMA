@@ -175,8 +175,11 @@ def _hours_rows(results):
 
 @any_role
 def scenario_list(request):
+    raw = request.GET.get("model", "")                # R4: przyszedł z „Symuluj scenariusz na tej hali”
+    target = WarehouseModel.objects.filter(pk=raw).only("pk", "name").first() if raw.isdigit() else None
     return render(request, "scenario/list.html", {
-        "form": NewScenarioForm(), "scenarios": Scenario.objects.select_related("created_by")[:50]})
+        "form": NewScenarioForm(), "scenarios": Scenario.objects.select_related("created_by")[:50],
+        "target_model": target, "model_pk": target.pk if target else None})
 
 
 @designer
@@ -192,6 +195,22 @@ def scenario_create(request):
     sc.ensure_days()
     messages.success(request, f"Utworzono scenariusz „{sc}” z przykładowym planem przyjęć, wydań i obsady — "
                               "popraw liczby.")
+    return redirect("scenario:detail", pk=sc.pk)
+
+
+@designer
+@require_POST
+def scenario_demo(request):
+    """R4: scenariusz referencyjny (dane syntetyczne) + hala demo jednym przyciskiem zamiast manage.py.
+    Idempotentnie — ponowne kliknięcie odtwarza ten sam plan."""
+    from io import StringIO
+
+    from django.core.management import call_command
+
+    from .management.commands.demo_scenariusz import NAME
+    call_command("demo_scenariusz", stdout=StringIO())
+    sc = Scenario.objects.get(name=NAME)
+    messages.success(request, f"Wczytano scenariusz demo „{sc}” z halą do symulacji — dane syntetyczne.")
     return redirect("scenario:detail", pk=sc.pk)
 
 
@@ -218,8 +237,14 @@ def scenario_detail(request, pk):
     ctx["sim_runs"] = sim_runs
     ctx["sim_charts"] = {f"sim-{v['run'].pk}": v["chart"] for v in sim_runs}
     if has_role(request.user, GROUP_ADMIN, GROUP_DESIGNER):
-        last = sim_runs[0]["run"].model_id if sim_runs else None
-        ctx["sim_form"] = SimForm(initial={"model": last or getattr(WarehouseModel.objects.first(), "pk", None)})
+        # model z linku „Symuluj na tej hali” (widok modelu) > ostatnio symulowany > pierwszy
+        asked = request.GET.get("model", "")
+        first = WarehouseModel.objects.values_list("pk", flat=True).first()
+        if first is None:
+            ctx["no_models"] = True                 # pusty stan: najpierw hala (generator), potem symulacja
+        else:
+            last = sim_runs[0]["run"].model_id if sim_runs else None
+            ctx["sim_form"] = SimForm(initial={"model": int(asked) if asked.isdigit() else last or first})
         ctx["form"] = ScenarioForm(instance=sc)
         ctx["day_forms"] = [{"day": d, "inbound": StreamFormSet(queryset=d.inbound.all(), prefix=d.kind),
                              "outbound": OutFormSet(queryset=d.outbound.all(), prefix=f"{d.kind}-out"),

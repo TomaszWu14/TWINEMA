@@ -79,6 +79,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "core.context_processors.branding",
                 "core.context_processors.user_roles",
+                "core.context_processors.navigation",
             ],
         },
     },
@@ -174,13 +175,13 @@ AXES_COOLOFF_TIME = 1
 AXES_RESET_ON_SUCCESS = True
 AXES_CLIENT_IP_CALLABLE = None if DEBUG else "core.middleware.client_ip"
 
-if env.SENTRY_DSN:
-    import os as _os
+GIT_SHA = (env.GIT_SHA or env.SOURCE_COMMIT or "unknown")[:40]   # /health/ i release Sentry
 
+if env.SENTRY_DSN:
     import sentry_sdk
     sentry_sdk.init(dsn=env.SENTRY_DSN, environment=env.SENTRY_ENVIRONMENT,
                     traces_sample_rate=0.2, send_default_pii=False,
-                    release=(_os.environ.get("GIT_SHA") or None))
+                    release=(GIT_SHA if GIT_SHA != "unknown" else None))
 
 LOGGING = {
     "version": 1,

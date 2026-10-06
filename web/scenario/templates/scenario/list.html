@@ -35,10 +35,14 @@
   {% endif %}
 </div></div>
 
+{% if target_model and scenarios %}
+<p class="alert alert-info" role="status" style="margin-top:16px">Wybierz scenariusz — symulacja otworzy się z halą
+  „{{ target_model.name }}” wybraną w formularzu.</p>
+{% endif %}
 {% if scenarios %}
 <div class="sc-list">
   {% for s in scenarios %}
-  <a class="sc-card" href="{% url 'scenario:detail' s.pk %}">
+  <a class="sc-card" href="{% url 'scenario:detail' s.pk %}{% if model_pk %}?model={{ model_pk }}#sc-sim-h{% endif %}">
     <h3>{{ s.name }}</h3>
     {% if s.description %}<div class="text-sm">{{ s.description|truncatechars:120 }}</div>{% endif %}
     <div class="sc-meta">Mnożnik wzrostu ×{{ s.growth|floatformat:"-2" }} · zmiana {{ s.shift_h|floatformat:"-1" }} h</div>
@@ -47,6 +51,11 @@
   {% endfor %}
 </div>
 {% else %}
-<div class="card" style="margin-top:24px"><div class="empty-state">Brak scenariuszy. Utwórz pierwszy albo uruchom <code>manage.py demo_scenariusz</code>.</div></div>
+<div class="card" style="margin-top:24px"><div class="empty-state">
+  <p>Brak scenariuszy. Utwórz pierwszy powyżej{% if is_designer %} albo wczytaj scenariusz demo (dane syntetyczne
+    i hala do symulacji){% endif %}.</p>
+  {% if is_designer %}<form method="post" action="{% url 'scenario:demo' %}">{% csrf_token %}
+    <button type="submit" class="btn btn-secondary">Wczytaj demo</button></form>{% endif %}
+</div></div>
 {% endif %}
 {% endblock %}
