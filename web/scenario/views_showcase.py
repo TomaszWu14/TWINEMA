@@ -60,7 +60,7 @@ def _context(sc):
         view = _sim_view(run)
         bns = [{**b, **bottleneck_focus(b, places)} for b in run.result.get("bottlenecks", [])]
         peak = peak_index(run.result.get("rep", {}).get("timeline") or {"t": []}) * 900
-    cards = kpi_cards(view["groups"] if view else (), view and view["capacity"], site)
+    cards = kpi_cards(view["groups"] if view else (), view and view["capacity"], site, view and view["costs"])
     return {"wm": wm, "racks": racks, "features": features, "floor": floor, "places": places, "site_kpi": site,
             "run": run, "view": view, "bottlenecks": bns, "peak": peak, "cards": cards}
 

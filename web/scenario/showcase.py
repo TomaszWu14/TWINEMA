@@ -12,7 +12,7 @@ import math
 
 TYPES = ("camera", "kpi", "bottleneck", "anim", "text")
 CARDS = {"throughput": "Przepustowość dnia", "docks": "Doki i pole odkładcze", "staff": "Obsada i flota",
-         "capacity": "Pojemność vs potrzeba", "site": "Działka"}
+         "capacity": "Pojemność vs potrzeba", "site": "Działka", "costs": "Koszty (widełki)"}
 PRESETS = ("site", "iso", "top", "docks")
 SPEEDS = (10, 30, 60, 120, 300)
 MAX_SLIDES, TITLE_MAX, CAPTION_MAX, CARD_ROWS = 60, 120, 400, 6
@@ -94,9 +94,14 @@ def _fmt(x, digits=0):
     return f"{x:,.{digits}f}".replace(",", " ").replace(".", ",")     # twarda spacja: liczba się nie łamie
 
 
-def kpi_cards(groups=(), capacity=None, site=None):
+def _range(c, k=1000, digits=0):
+    return f"{_fmt(c['low'] / k, digits)}–{_fmt(c['high'] / k, digits)}"
+
+
+def kpi_cards(groups=(), capacity=None, site=None, costs=None):
     """groups: [(tytuł, [{label, unit, mean, worst}])] z `views_sim._sim_view` (kolejność: przepustowość, doki,
-    obsada i flota); capacity: `placement.capacity`; site: `twin.site.site_kpi`. → {klucz: {title, rows}}."""
+    obsada i flota); capacity: `placement.capacity`; site: `twin.site.site_kpi`; costs: `costs.compute`.
+    → {klucz: {title, rows}}."""
     cards = {}
     pl = lambda s: str(s).replace(".", ",")                          # noqa: E731 — „917.5” → „917,5”
     for key, (_, cells) in zip(("throughput", "docks", "staff"), groups, strict=False):
@@ -115,6 +120,12 @@ def kpi_cards(groups=(), capacity=None, site=None):
             {"label": "Biologicznie czynna", "value": _fmt(site["bio_pct"], 1), "unit": "%"},
             {"label": "Rezerwa pod rozbudowę", "value": _fmt(site["reserve_m2"]), "unit": "m²"},
             {"label": "Wysokość budynku", "value": _fmt(site["building_height_m"], 1), "unit": "m"}]}
+    if costs:
+        cards["costs"] = {"title": CARDS["costs"], "rows": [
+            {"label": "CAPEX (layout i flota)", "value": _range(costs["capex"]), "unit": "tys. zł"},
+            {"label": "OPEX roczny", "value": _range(costs["opex"]), "unit": "tys. zł/rok"},
+            *({"label": f"OPEX na {u['label']}", "value": _range(u, 1, 2), "unit": "zł"}
+              for u in costs["per_unit"].values())][:CARD_ROWS]}
     return cards
 
 
@@ -170,7 +181,7 @@ def template_slides(*, title, floor, racks, places, site_kpi_=None, cards=(), ru
                   "caption": f"{n_in} doków przyjęć, {len(docks) - n_in} wydań i wspólnych."})
     # Maks. 3 karty na planszy (czytelność): wyniki dnia osobno, pojemność i działka osobno.
     for keys, name in ((["throughput", "docks", "staff"], f"Wyniki — {run['day']}" if run else "Wyniki"),
-                       (["capacity", "site"], "Pojemność i działka")):
+                       (["capacity", "site", "costs"], "Pojemność, działka i koszty")):
         keys = [k for k in keys if k in cards]
         if keys:
             s.append({"type": "kpi", "cam": {"preset": "iso"}, "cards": keys, "title": name, "caption": ""})
