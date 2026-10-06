@@ -17,6 +17,7 @@ pozostałe „od sąsiadów”; wjazd (strona + pozycja jak dla prostokąta) dos
 Problemy jak w `twin.layout` + klucze `areas` (indeksy elementów terenu) i `hall` (dotyczy całej hali).
 """
 import math
+from collections import deque
 
 from .blender_containers import outward
 from .blender_route import overlap_depth, rack_axes, rack_corners
@@ -305,9 +306,38 @@ def _issue(code, severity, message, features=(), areas=(), hall=False):
             "areas": sorted(set(areas)), "hall": hall}
 
 
-def _segment(a, b):
-    n = max(1, int(math.dist(a, b) // STEP_M))
-    return [(a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n) for k in range(n + 1)]
+ROUTE_CELL_M = 2.0      # siatka trasowania jak site-route.js (CELL_M) — ta sama reguła przejezdności `ok`
+
+
+def _reachable(site, ok, starts):
+    """D4: komórki siatki działki osiągalne od wjazdów (BFS po 8 sąsiadach, bez ścinania narożników — jak A*
+    w `site-route.js`) → predykat „punkt osiągalny” (najbliższa wolna komórka w promieniu 6 komórek)."""
+    pts = plot_polygon(site)
+    x0, y0 = min(p[0] for p in pts), min(p[1] for p in pts)
+    nx = int((max(p[0] for p in pts) - x0) // ROUTE_CELL_M) + 2
+    ny = int((max(p[1] for p in pts) - y0) // ROUTE_CELL_M) + 2
+    free = [[ok((x0 + ix * ROUTE_CELL_M, y0 + iy * ROUTE_CELL_M)) for ix in range(nx)] for iy in range(ny)]
+
+    def cell(p):
+        cx, cy = round((p[0] - x0) / ROUTE_CELL_M), round((p[1] - y0) / ROUTE_CELL_M)
+        near = [(dx * dx + dy * dy, cx + dx, cy + dy) for dx in range(-6, 7) for dy in range(-6, 7)
+                if 0 <= cx + dx < nx and 0 <= cy + dy < ny and free[cy + dy][cx + dx]]
+        return min(near)[1:] if near else None
+
+    seen = {c for c in map(cell, starts) if c}
+    todo = deque(seen)
+    while todo:
+        ix, iy = todo.popleft()
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                jx, jy = ix + dx, iy + dy
+                if (jx, jy) in seen or not (0 <= jx < nx and 0 <= jy < ny) or not free[jy][jx]:
+                    continue
+                if dx and dy and not (free[iy][jx] and free[jy][ix]):
+                    continue
+                seen.add((jx, jy))
+                todo.append((jx, jy))
+    return lambda p: cell(p) in seen
 
 
 def check_site(site, floor, racks, features):
@@ -381,7 +411,7 @@ def _dock_issues(site, floor, features, plot):
         return (in_plot(site, p) and not _inside(hall, p, -0.01) and not any(_inside(a, p) for a in blocked)
                 and (not paved or any(_inside(a, p, 0.5) for a in paved)))
 
-    out, no_yard, bad_route = [], [], []
+    out, no_yard, bad_route, reach = [], [], [], None
     for j, f in enumerate(features):
         if f["kind"] not in ("dock", "gate"):
             continue
@@ -396,18 +426,16 @@ def _dock_issues(site, floor, features, plot):
         if not all(ok(p) for p in pts):
             no_yard.append(j)
         elif trucks and role in TRUCK_ROLES:
-            # ponytail: droga = odcinek prosty od najbliższego wjazdu do końca placu; przy krętych drogach
-            # wewnętrznych — trasowanie po obszarach „road/yard” (graf siatki jak blender_route).
-            far = pts[-1]
-            route = _segment(min(trucks, key=lambda t: math.dist(t, far)), far)
-            if any(any(_inside(a, p) for a in blocked) for p in route):
+            reach = reach or _reachable(site, ok, trucks)
+            if not reach(pts[-1]):
                 bad_route.append(j)
     if no_yard:
         out.append(_issue("dock_yard", "warning", f"{len(no_yard)} dok(ów) bez wolnego placu przed bramą "
                                                   f"(tir: {YARD_M:g} m, bus: {VAN_YARD_M:g} m na działce, bez zieleni i parkingu).",
                           features=no_yard))
     if bad_route:
-        out.append(_issue("route", "warning", f"Droga od wjazdu do {len(bad_route)} dok(ów) przecina zieleń albo parking.",
+        out.append(_issue("route", "warning", f"Brak przejazdu od wjazdu tirów do {len(bad_route)} dok(ów) — po drogach "
+                                              f"i placach działki drogę zamyka zieleń, parking albo hala.",
                           features=bad_route))
     return out
 

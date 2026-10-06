@@ -102,12 +102,15 @@ class RuleTests(TestCase):
         self.assertIn("dock_yard", codes(issues))
         self.assertEqual(next(i for i in issues if i["code"] == "dock_yard")["features"], [0])
 
-    def test_route_through_green(self):
+    def test_route_goes_around_green_but_not_through_full_strip(self):
         s = site()
         e = s["entries"][0]
         s["areas"].append({"kind": "green", "label": "Skwer", "x": e["pos"] - 8, "y": s["depth"] - 20, "width": 16,
-                           "depth": 19, "angle": 0})
-        self.assertIn("route", codes(check_site(s, FLOOR, [], [dock(0, 20, "in_container")])))
+                           "depth": 12, "angle": 0})
+        self.assertNotIn("route", codes(check_site(s, FLOOR, [], [dock(0, 20, "in_container")])))   # D4: objazd
+        s["areas"][-1].update(x=0, width=s["width"])                    # pas zieleni przez całą działkę
+        issues = check_site(s, FLOOR, [], [dock(0, 20, "in_container")])
+        self.assertEqual(next(i for i in issues if i["code"] == "route")["features"], [0])
 
     def test_area_under_hall_warns(self):
         s = site()
