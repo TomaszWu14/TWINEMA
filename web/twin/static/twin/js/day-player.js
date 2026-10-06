@@ -4,7 +4,7 @@
 import * as THREE from 'three';
 import { QUEUE_M, QUEUE_PITCH_M, TRAVEL_S, VEHICLES, buildTracks, countersAt, crewAt, dayRange, dockPose, hashId,
   hhmm, lPath, lPathYaw, orderedSlot, palletAt, queueSides, rackFront, rectCenter, seriesAt, slotOrder,
-  stationSpots, vehicleAt, vehiclePose, yawOut, ENTER_S } from './day-timeline.js';
+  stationSpots, vehicleAt, vehiclePose, walkAt, yawOut, ENTER_S } from './day-timeline.js';
 import { localToWorld, nearestEntry, sitePlan } from './scene-data.js';
 import { routePath } from './site-route.js';
 import { CARRY, modelForEquipment, modelParts } from './equipment-models.js';
@@ -92,7 +92,7 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
   const asked = new URLSearchParams(globalThis.location?.search).get('sprzet'), fk = asked ? {} : (data.fleet_kinds || {});
   const carrier = modelForEquipment(asked || fk.rack || fk.transport || data.fleet_kind) || 'reach';
   const shuttle = fk.vna && fk.transport ? modelForEquipment(fk.transport) : null;
-  const need = { ptruck: nDocks * 2, vna: pallets.length };
+  const need = { ptruck: nDocks * 6, vna: pallets.length };       // G3: + wózki wożące palety pole ↔ naczepa
   for (const k of [carrier, shuttle]) if (k) need[k] = (need[k] || 0) + pallets.length;
   for (const [k, n] of Object.entries(need)) mesh[k] = fleet(viewer.scene, k, n);
   const M = new THREE.Matrix4(), Q = new THREE.Quaternion(), P = new THREE.Vector3(), S1 = new THREE.Vector3(1, 1, 1);
@@ -231,9 +231,10 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
           put(mesh.pallet, x, y, 0);
         }
       } else {
-        const a = anchor(s.from, tr.obj), b = anchor(s.to, tr.obj), [x, y] = lPath(a, b, s.p), yaw = lPathYaw(a, b, s.p);
+        const end = (k) => (s.dock && k.startsWith('dock:') && places.docks[k.slice(5)] ? inside(places.docks[k.slice(5)], -2) : anchor(k, tr.obj));
+        const a = end(s.from), b = end(s.to), [x, y] = lPath(a, b, s.p), yaw = lPathYaw(a, b, s.p);
         const r = rackOf(tr.obj), onShuttle = s.from === 'rack' ? s.p >= 0.5 : s.p < 0.5;   // połowa drogi po stronie pola = pojazd transportowy
-        const kind = (r?.rack_class ?? r?.equipment) !== 'vna' ? carrier : shuttle && onShuttle ? shuttle : 'vna', c = CARRY[kind];
+        const kind = s.dock ? 'ptruck' : (r?.rack_class ?? r?.equipment) !== 'vna' ? carrier : shuttle && onShuttle ? shuttle : 'vna', c = CARRY[kind];
         put(mesh.pallet, x, y, c.z, yaw);
         put(mesh[kind], x - Math.cos(yaw) * c.dx, y + Math.sin(yaw) * c.dx, 0, yaw);
       }
@@ -241,22 +242,31 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
     // ludzie i wózki paletowe: zajęci w tej chwili wg osi czasu obsady S3a (co 15 min)
     const crew = crewAt(people, step, t);
     const man = ([x, y], yaw = 0) => put(mesh.person, x, y, 0, yaw);
-    const atDocks = (n, list) => list.forEach((it, i) => {
-      for (let j = i; j < n; j += list.length) man(inside(it.d, 2.2 + Math.floor(j / list.length) * 1.3, j % 2 ? 0.9 : -0.9), yawOut(it.d.out));
+    const walker = (a, b, j) => { const w = walkAt(a, b, t, { phase: hashId(`w${j}`) % 97 / 97 }); man([w.x, w.y], w.yaw); };
+    // G3: przy doku pierwsza osoba obsługuje bramę, kolejne chodzą dok ↔ pole odkładcze swojej strony
+    const atDocks = (n, list, field) => list.forEach((it, i) => {
+      for (let j = i; j < n; j += list.length) {
+        const spot = inside(it.d, 2.2 + Math.floor(j / list.length) * 1.3, j % 2 ? 0.9 : -0.9);
+        if (j >= list.length && rectList(field).length) walker(spot, anchor(field), j);
+        else man(spot, yawOut(it.d.out));
+      }
       if (it.kind === 'container') put(mesh.conveyor, it.d.wall[0], it.d.wall[1], 0, yawOut(it.d.out));
       else if (i < n) { const [x, y] = inside(it.d, 4.5, 1.6); put(mesh.ptruck, x, y, 0, yawOut(it.d.out)); }
     });
     const isIn = (it) => it.d.role.startsWith('in_') || (it.d.role === 'shared' && it.kind !== 'truck');
-    atDocks(crew.unload || 0, docked.filter(isIn));
-    atDocks(crew.load || 0, docked.filter((it) => !isIn(it)));
+    atDocks(crew.unload || 0, docked.filter(isIn), 'staging_in');
+    atDocks(crew.load || 0, docked.filter((it) => !isIn(it)), 'staging_out');
     stationSpots(rectList('palletize'), crew.palletize || 0).forEach((p) => man(p));
     stationSpots(rectList('pack'), crew.pack || 0).forEach((p) => man(p));
     stationSpots(rectList('returns'), crew.returns || 0).forEach((p) => man(p));
     const si = rectList('staging_in');
-    for (let i = 0; i < (crew.inspect || 0) && si.length; i++) { const [x, y] = slotFor('staging_in', si[0], 0, i * 3); man([x + 0.8, y]); }
-    for (let i = 0; i < (crew.pick || 0) && racks.length; i++) {   // kompletujący idą wzdłuż frontu regału
-      const r = racks[hashId(`picker${i}`) % racks.length], k = 0.5 + 0.42 * Math.sin(t / 150 + i * 1.7);
-      man(localToWorld(r, [r.width * k, -1.1]), ((r.angle || 0) * Math.PI) / 180);
+    for (let i = 0; i < (crew.inspect || 0) && si.length; i++) {   // kontrola idzie wzdłuż rzędu palet na polu
+      const [x, y] = slotFor('staging_in', si[0], 0, i * 3), [x2, y2] = slotFor('staging_in', si[0], 0, i * 3 + 6);
+      walker([x + 0.8, y], [x2 + 0.8, y2], `i${i}`);
+    }
+    for (let i = 0; i < (crew.pick || 0) && racks.length; i++) {   // kompletujący idą wzdłuż całego frontu regału
+      const r = racks[hashId(`picker${i}`) % racks.length];
+      walker(localToWorld(r, [0.6, -1.1]), localToWorld(r, [r.width - 0.6, -1.1]), `p${i}`);
     }
     // paczki czekające na kuriera: stos przy stanowisku pakowania (1 kostka ≈ 20 paczek)
     const c = countersAt(tracks, t);
