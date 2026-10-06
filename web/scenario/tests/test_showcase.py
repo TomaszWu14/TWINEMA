@@ -49,6 +49,14 @@ class SlideTests(PureTestCase):
         self.assertEqual(cards["site"]["rows"][1]["value"], "41,2")
         self.assertEqual(kpi_cards(), {})
 
+    def test_costs_card(self):
+        costs = {"capex": {"low": 1_200_000, "high": 1_850_000}, "opex": {"low": 640_600, "high": 910_000},
+                 "per_unit": {"pallets": {"label": "paletę", "low": 3.2, "high": 4.55}}}
+        rows = kpi_cards(costs=costs)["costs"]["rows"]
+        self.assertEqual([(r["label"], r["value"].replace("\xa0", " "), r["unit"]) for r in rows], [
+            ("CAPEX (layout i flota)", "1 200–1 850", "tys. zł"), ("OPEX roczny", "641–910", "tys. zł/rok"),
+            ("OPEX na paletę", "3,20–4,55", "zł")])
+
     def test_summary_and_template_without_run(self):
         self.assertIn("Hala mieści 1 200 miejsc paletowych (wypełnienie 75,0 %).",
                       summary_caption({"positions": 1200, "need": 900, "fill_pct": 75.0}))
@@ -122,6 +130,7 @@ class ShowcaseViewTests(TestCase):
         self.assertEqual(data["format"], "twinema.showcase")
         self.assertEqual(len(data["slides"]), len(sc.slides))
         self.assertTrue(data["has_events"] and data["places"]["docks"] and data["cards"])
+        self.assertIn("costs", data["cards"])                                # P2: plansza kosztów z wyniku symulacji
         self.assertNotIn("materials", json.dumps(data))
         for url, body in ((reverse("scenario:showcase_save", args=[sc.pk]), {"content_type": "application/json"}),
                           (reverse("scenario:showcase_reset", args=[sc.pk]), {}),
