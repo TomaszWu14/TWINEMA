@@ -108,9 +108,8 @@ class InstancingGuardTests(TestCase):
         # Stara ścieżka (Mesh per element stali) nie może wrócić: stal tylko jako macierze instancji.
         self.assertNotIn("new THREE.Mesh(new THREE.BoxGeometry(sx", builder)
         self.assertNotIn("group.add(m); return m;", builder)
-        # G5: każda klatka przez postprocessing (AO w jakości „wysokiej”) — bez gołego renderer.render.
-        self.assertNotIn("renderer.render(scene, camera)", builder)
-        self.assertIn("post.render(quality === 'high')", builder)
+        # SSAO/GTAO odrzucone dwa razy (szum, ~2× koszt) — bez postprocessingu (cofnięte G5 #55).
+        self.assertNotIn("scene-post", builder)
         # G6: każdy model z listy equipment-glb.js ma plik .glb (budowany tools/blender/twinema_models.py).
         import re
         kinds = re.search(r"GLB_KINDS = \[([^\]]+)\]", (js / "equipment-glb.js").read_text(encoding="utf-8")).group(1)
