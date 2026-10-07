@@ -108,3 +108,6 @@ class InstancingGuardTests(TestCase):
         # Stara ścieżka (Mesh per element stali) nie może wrócić: stal tylko jako macierze instancji.
         self.assertNotIn("new THREE.Mesh(new THREE.BoxGeometry(sx", builder)
         self.assertNotIn("group.add(m); return m;", builder)
+        # G5: każda klatka przez postprocessing (AO w jakości „wysokiej”) — bez gołego renderer.render.
+        self.assertNotIn("renderer.render(scene, camera)", builder)
+        self.assertIn("post.render(quality === 'high')", builder)
