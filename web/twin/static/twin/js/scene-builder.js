@@ -64,7 +64,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
   scene.add(fillLight);
 
   // Słupki grafitowe, kratownice ocynk; kolor trybu (typ / strefa / wypełnienie) niosą belki — instancje, bez przebudowy.
-  const matUp = steelMat(0x3b4452, 0.42), matBeam = steelMat(0xffffff, 0.38), matBrace = steelMat(0x9aa0a6, 0.5);
+  const matUp = steelMat(0x3d6189, 0.45, 0.15), matBeam = steelMat(0xffffff, 0.4, 0.15), matBrace = steelMat(0x9aa0a6, 0.5);
   const matShadow = new THREE.MeshBasicMaterial({ color: 0x000000, map: shadowTex(), transparent: true, opacity: 0.38,
     depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
   const matOutline = new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: 0.85 });

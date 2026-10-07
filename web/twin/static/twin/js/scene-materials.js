@@ -119,5 +119,7 @@ export function makeLabel(text, color, screen = false) {
   return spr;
 }
 
-export const steelMat = (color, rough) => new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: 0.82, roughnessMap: steelRough() });
+// metal: 0.82 = goła/ocynkowana stal; malowana proszkowo (słupy, belki) to dielektryk ~0.15 — metal z ciemnym kolorem wychodzi czarny.
+export const steelMat = (color, rough, metal = 0.82) => new THREE.MeshStandardMaterial({ color, roughness: rough, metalness: metal,
+  roughnessMap: steelRough() });
 export const stdMat = (o) => new THREE.MeshStandardMaterial({ roughness: 0.8, metalness: 0.05, ...o });
