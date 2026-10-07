@@ -8,6 +8,7 @@ import { QUEUE_M, QUEUE_PITCH_M, TRAVEL_S, VEHICLES, buildTracks, countersAt, cr
 import { localToWorld, nearestEntry, sitePlan } from './scene-data.js';
 import { alongPath, hallRouter, routePath } from './site-route.js';
 import { CARRY, modelForEquipment, modelParts } from './equipment-models.js';
+import { GLB } from './equipment-glb.js';
 
 const MAX_PARCEL_STACK = 120;
 
@@ -32,12 +33,13 @@ const PARTS = {
 };
 const NO_SHADOW = new Set(['parcel', 'conveyor']);
 
-/** Jeden rodzaj obiektu = po jednej siatce instancyjnej na część; wspólny licznik `count`. */
+/** Jeden rodzaj obiektu = po jednej siatce instancyjnej na część (model .glb: na materiał); wspólny licznik `count`. */
 function fleet(scene, kind, n) {
-  const parts = (PARTS[kind] || modelParts(kind)).map(([l, h, w, x, y, color, z = 0]) => {
-    const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(l, h, w).translate(x, y + h / 2, z),
-      new THREE.MeshStandardMaterial({ color, roughness: color === 0x0f172a ? 0.15 : 0.6, metalness: color === 0x0f172a ? 0.6 : 0.15 }),
-      Math.max(1, n));
+  const glb = GLB[kind], src = glb ? [...glb.body, ...glb.lift] : (PARTS[kind] || modelParts(kind)).map(([l, h, w, x, y, color, z = 0]) =>
+    [new THREE.BoxGeometry(l, h, w).translate(x, y + h / 2, z),
+      new THREE.MeshStandardMaterial({ color, roughness: color === 0x0f172a ? 0.15 : 0.6, metalness: color === 0x0f172a ? 0.6 : 0.15 })]);
+  const parts = src.map(([geometry, material]) => {
+    const mesh = new THREE.InstancedMesh(geometry, material, Math.max(1, n));
     mesh.count = 0;
     mesh.castShadow = !NO_SHADOW.has(kind);
     mesh.frustumCulled = false;
