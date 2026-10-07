@@ -10,6 +10,7 @@ import { COLOR_MODES, EDGE_KINDS, FLAT_KINDS, camAt, colorLegend, contactShadowP
   hallWalls, isoView, localToWorld, outward, rackMatrices, rackOutline, rackTint, sitePlan, stackLayer, steelMatrices,
   steelMode, wallHidden } from './scene-data.js';
 import { buildSite } from './scene-site.js';
+import { buildInterior } from './hall-interior.js';
 import { asphaltTex, cartonTex, doorTex, hatchTex, LABEL_NEAR_M, makeLabel, panelTex, signTex, slabTex, slotTex,
   shadowTex, stdMat, steelMat, woodTex } from './scene-materials.js';
 
@@ -49,8 +50,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
 
   const camera = new THREE.PerspectiveCamera(42, (wrap.clientWidth || 1) / (wrap.clientHeight || 1), 0.05, 4000);
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true; controls.dampingFactor = 0.08;
-  controls.maxPolarAngle = Math.PI * 0.495;
+  controls.enableDamping = true; controls.dampingFactor = 0.08; controls.maxPolarAngle = Math.PI * 0.495;
   controls.minDistance = 1.5;
 
   scene.add(new THREE.HemisphereLight(0xf4f7fb, 0x7d8388, 0.5));
@@ -81,7 +81,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
   let content = new THREE.Group(), hiGroup = new THREE.Group(), decorGroup = new THREE.Group(), disposables = [], nearLabels = [];
   let ext = extents([], { width: 50, depth: 30 }), boxes = new Map(), walls = [], last = null;
   let quality = 'high', decorOn = decor, colorMode = COLOR_MODES[readPref(CKEY)] ? readPref(CKEY) : 'type';
-  let tinted = [], outline = null;                   // tinted: [InstancedMesh, właściciele instancji, rodzaj, kolory bazowe]
+  let tinted = [], outline = null, interior = null;  // tinted: [InstancedMesh, właściciele instancji, rodzaj, kolory bazowe]
   scene.add(content, hiGroup);
 
   function track(obj) { disposables.push(obj); return obj; }
@@ -192,6 +192,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
       return { w, m };
     });
     wallMat.map.repeat.set(Math.max(floor.width, floor.depth) / 8, 1);
+    return h;
   }
 
   function buildFeature(f, floor) {
@@ -300,7 +301,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
     if (racks.length) buildShadowsAndOutline(racks);
     if (high) buildDecor(racks);
     recolor();
-    buildHall(floor, racks, site);
+    content.add(interior = buildInterior(floor, buildHall(floor, racks, site), features, track));   // G10: kratownice, lampy
     features.forEach((f) => buildFeature(f, floor));
     key.castShadow = high;
     placeLights();
@@ -366,6 +367,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
     if (z.near !== camera.near || z.far !== camera.far) Object.assign(camera, z).updateProjectionMatrix();
     matOutline.opacity = Math.max(0.25, Math.min(0.85, 0.85 - (d - 120) / 600));
     for (const { w, m } of walls) m.visible = !wallHidden(w, camera.position.x, camera.position.z);
+    if (interior) interior.visible = camera.position.y < interior.userData.showBelow;
     for (const l of nearLabels) l.visible = camera.position.distanceTo(l.getWorldPosition(_lw)) < LABEL_NEAR_M;
   }
 
