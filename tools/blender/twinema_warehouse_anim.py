@@ -16,6 +16,8 @@ Uruchomienie:
   • ręcznie: Scripting → Open → Run Script, z ustawioną zmienną SCENE_PATH poniżej.
 
 Działa na Blender 4.2+ (także 5.x). Nie wymaga niczego spoza bpy.
+Wózki, ludzie i spody palet w ruchu = modele .glb z `web/twin/static/twin/models/` (te same co w przeglądarce,
+budowane `tools/blender/twinema_models.py`; inny katalog: env TWINEMA_MODELS); brak pliku → proste bryły.
 """
 import json
 import math
@@ -34,6 +36,19 @@ PALLET_WOOD = "#b45309"
 LOAD = "#c8a26a"
 FORK = "#27272a"
 SKIN = "#f2c9a0"
+try:
+    _HERE = os.path.dirname(os.path.abspath(__file__))
+except NameError:                                      # „Run Script” z edytora tekstu Blendera
+    _HERE = ""
+AGENT_MODEL = {"forklift": "reach", "kombi": "vna", "agv": "agv", "ept": "ptruck"}   # jak flow-agents.js
+_GLB_LIB = os.path.join(_HERE, "twinema_glb.py")
+if os.path.isfile(_GLB_LIB):
+    import runpy
+    _G = runpy.run_path(_GLB_LIB, run_name="twinema_glb")
+    _glb, _pallet_base, _glb_clear = _G["glb"], _G["pallet_base"], _G["clear"]
+else:                                                  # sam plik bez katalogu repo → proste bryły
+    _glb = _pallet_base = lambda *a: None              # noqa: E731
+    _glb_clear = lambda: None                          # noqa: E731
 
 
 # ─── narzędzia ─────────────────────────────────────────────────────────────────
@@ -207,7 +222,21 @@ def _build_feature(f, coll):
 
 # ─── agenci i ładunki ─────────────────────────────────────────────────────────
 
+def _glb_agent(a, coll, kind):
+    g = _glb(kind)
+    if not g:
+        return None, None
+    root = _obj(a["label"], None, coll)
+    root.empty_display_type = "ARROWS"
+    _obj(f"{a['label']} · korpus", g["body"], coll, parent=root)
+    carriage = _obj(f"{a['label']} · widły", g["lift"], coll, parent=root) if g["lift"] else None
+    return root, carriage
+
+
 def _forklift(a, coll):
+    root, carriage = _glb_agent(a, coll, AGENT_MODEL.get(a["kind"], "reach"))
+    if root:
+        return root, carriage
     root = _obj(a["label"], None, coll)
     root.empty_display_type = "ARROWS"
     body = _box_mesh("wozek", [(-0.2, 0, 0.45, 1.5, 0.95, 0.6, 0),      # podwozie
@@ -225,6 +254,16 @@ def _forklift(a, coll):
 def _person(a, coll):
     root = _obj(a["label"], None, coll)
     root.empty_display_type = "PLAIN_AXES"
+    g = _glb("person")
+    if g:
+        x = -1.0 if a["kind"] == "ept" else 0.0                 # operator za dyszlem wózka paletowego
+        ob = _obj(f"{a['label']} · sylwetka", g["body"], coll, parent=root, loc=(x, 0, 0))
+        for slot in ob.material_slots:                           # kamizelka w kolorze agenta
+            if slot.material and slot.material.name.startswith("vest"):
+                slot.link, slot.material = "OBJECT", _mat(a["color"])
+        if a["kind"] == "ept" and _glb("ptruck"):
+            _obj(f"{a['label']} · wózek", _glb("ptruck")["body"], coll, parent=root)
+        return root
     body = _box_mesh("pracownik", [(0, 0, 0.45, 0.22, 0.3, 0.9, 1),       # nogi
                                    (0, 0, 1.2, 0.26, 0.46, 0.62, 0),      # tułów (kamizelka)
                                    (0, 0, 1.66, 0.22, 0.2, 0.26, 2),      # głowa
@@ -236,7 +275,7 @@ def _person(a, coll):
 
 def _animate_agent(a, coll, fr):
     carriage = None
-    if a["kind"] in ("forklift", "kombi", "agv"):     # kombi/AGV: na razie bryła wózka
+    if a["kind"] in ("forklift", "kombi", "agv"):     # ept = pracownik z wózkiem paletowym (_person)
         root, carriage = _forklift(a, coll)
     else:
         root = _person(a, coll)
@@ -258,7 +297,12 @@ def _animate_item(it, coll, fr):
     root = _obj(it["id"], None, coll)
     root.empty_display_size = 0.3
     L, W, H = it["size"]
-    if it["kind"] == "pallet":
+    base = _pallet_base() if it["kind"] == "pallet" else None
+    if base:                                                     # spód europalety z .glb + ładunek
+        _obj(f"{it['id']} · spód", base, coll, parent=root, rot_z=0.0 if L >= W else math.pi / 2)
+        me = _box_mesh("ładunek", [(0, 0, 0.144 + (H - 0.144) / 2, L - 0.04, W - 0.04, H - 0.144, 0)])
+        mats = [_mat(LOAD)]
+    elif it["kind"] == "pallet":
         me = _box_mesh("paleta", [(0, 0, 0.075, L, W, 0.15, 0), (0, 0, 0.15 + (H - 0.15) / 2, L - 0.1, W - 0.1, H - 0.15, 1)])
         mats = [_mat(PALLET_WOOD), _mat(LOAD)]
     else:
@@ -503,6 +547,7 @@ def build(scene_path, *, fps=24, speed=4.0, flows=True, agents=True, color_by="s
     if scene.get("format") != "twinema.scene":
         raise ValueError("To nie jest scena twinema.scene (eksport z TWINEMA).")
     _MATS.clear()
+    _glb_clear()
     _FLOOR.update(scene["floor"])
     subs = _fresh_collection()
     fr = lambda t: 1 + round(t * fps / max(speed, 1e-3))  # noqa: E731
