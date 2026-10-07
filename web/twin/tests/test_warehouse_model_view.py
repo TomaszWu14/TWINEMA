@@ -111,3 +111,9 @@ class InstancingGuardTests(TestCase):
         # G5: każda klatka przez postprocessing (AO w jakości „wysokiej”) — bez gołego renderer.render.
         self.assertNotIn("renderer.render(scene, camera)", builder)
         self.assertIn("post.render(quality === 'high')", builder)
+        # G6: każdy model z listy equipment-glb.js ma plik .glb (budowany tools/blender/twinema_models.py).
+        import re
+        kinds = re.search(r"GLB_KINDS = \[([^\]]+)\]", (js / "equipment-glb.js").read_text(encoding="utf-8")).group(1)
+        for k in re.findall(r"'(\w+)'", kinds):
+            glb = js.parent / "models" / f"{k}.glb"
+            self.assertTrue(glb.is_file() and glb.read_bytes()[:4] == b"glTF", glb)

@@ -2,6 +2,7 @@
 // Układ lokalny: X do przodu, Y w górę, Z w bok; `carriage` = część ruchoma (wózek wideł / kabina VNA).
 import * as THREE from 'three';
 import { MODELS, STEEL, WHEEL, SENSOR, modelHeight } from './equipment-models.js';
+import { GLB } from './equipment-glb.js';
 
 export const UNIT_BOX = new THREE.BoxGeometry(1, 1, 1);
 const SKIN = 0xf2c9a0, TROUSERS = 0x374151;
@@ -51,11 +52,21 @@ export function buildAgent(a) {
   const obj = new THREE.Group();
   const model = AGENT_MODEL[a.kind];
   let carriage = null;
+  const glb = model && GLB[model], meshes = (list, parent) => list.forEach(([g, m]) => {
+    const mesh = new THREE.Mesh(g, m); mesh.castShadow = true; parent.add(mesh);
+  });
   if (model) {
-    parts(MODELS[model].body, obj);
-    if (MODELS[model].lift.length) { carriage = new THREE.Group(); parts(MODELS[model].lift, carriage); obj.add(carriage); }
+    if (glb) meshes(glb.body, obj); else parts(MODELS[model].body, obj);
+    if (glb ? glb.lift.length : MODELS[model].lift.length) {
+      carriage = new THREE.Group(); if (glb) meshes(glb.lift, carriage); else parts(MODELS[model].lift, carriage); obj.add(carriage);
+    }
   }
-  if (!model || a.kind === 'ept') {
+  if ((!model || a.kind === 'ept') && GLB.person) {
+    const man = new THREE.Group(), vest = (m) => m.name === 'vest' ? Object.assign(m.clone(), { color: new THREE.Color(a.color) }) : m;
+    meshes(GLB.person.body.map(([g, m]) => [g, vest(m)]), man);   // kamizelka w kolorze agenta jak w bryłach
+    if (a.kind === 'ept') man.position.x = -1.0;                // operator za dyszlem wózka paletowego
+    obj.add(man);
+  } else if (!model || a.kind === 'ept') {
     const x = a.kind === 'ept' ? -1.0 : 0;                   // operator za dyszlem wózka paletowego
     boxes([[x, 0, 0.45, 0.22, 0.3, 0.9, 1], [x, 0, 1.2, 0.26, 0.46, 0.62, 0],
            [x, 0, 1.66, 0.22, 0.2, 0.26, 2], [x + 0.14, 0, 1.2, 0.05, 0.3, 0.05, 0]],

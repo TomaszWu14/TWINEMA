@@ -26,6 +26,8 @@ b3c6128340eaa37e40a6a2f1b738e894c855239417d50959759b34a2b5e89f92  addons/postpro
 3dab419b23529f8fd59e2713458502f9f51d2dd3af3e1285dc671fcc451d49fb  addons/shaders/PoissonDenoiseShader.js
 749b0c6db135541d1be183c8845a901af3a8bd45a013e84da0b1583c24b1ce4c  addons/shaders/OutputShader.js
 9b8d541b77b0ddc79afaa6a1de8941452c191b8b9006f04e7b8fc422e2b263f7  addons/math/SimplexNoise.js
+e85a5018a689867ae6ee60211956fa59ec5260d70d2cb58316f1ddc4afae637c  addons/loaders/GLTFLoader.js
+b0c64fe6f3b9907262921b73fafc4ade874c07ba6b4876e164c87a830c2c2113  addons/utils/BufferGeometryUtils.js
 '
 
 fetch() {  # url  plik(może mieć podkatalogi)
@@ -45,8 +47,8 @@ fetch "https://cdn.jsdelivr.net/npm/three@${TJS}/examples/jsm/controls/OrbitCont
 fetch "https://cdn.jsdelivr.net/npm/three@${TJS}/examples/jsm/environments/RoomEnvironment.js" "addons/environments/RoomEnvironment.js"
 # RoomEnvironment importuje 'three' gołym specyfikatorem — działa z importmap, ale ścieżka względna jest pewniejsza.
 sed -i.bak "s#} from 'three';#} from '../../three.module.js';#" "$DIR/addons/environments/RoomEnvironment.js" && rm -f "$DIR/addons/environments/RoomEnvironment.js.bak"
-# Postprocessing (AO w scene-post.js) — importują 'three' gołym specyfikatorem; każda strona ze sceną ma importmap.
-for f in postprocessing/EffectComposer.js postprocessing/RenderPass.js postprocessing/Pass.js postprocessing/ShaderPass.js postprocessing/MaskPass.js postprocessing/GTAOPass.js postprocessing/OutputPass.js shaders/CopyShader.js shaders/GTAOShader.js shaders/PoissonDenoiseShader.js shaders/OutputShader.js math/SimplexNoise.js; do
+# Postprocessing (AO w scene-post.js) i GLTFLoader (modele .glb, equipment-glb.js) — importują 'three' gołym specyfikatorem; każda strona ze sceną ma importmap.
+for f in postprocessing/EffectComposer.js postprocessing/RenderPass.js postprocessing/Pass.js postprocessing/ShaderPass.js postprocessing/MaskPass.js postprocessing/GTAOPass.js postprocessing/OutputPass.js shaders/CopyShader.js shaders/GTAOShader.js shaders/PoissonDenoiseShader.js shaders/OutputShader.js math/SimplexNoise.js loaders/GLTFLoader.js utils/BufferGeometryUtils.js; do
   fetch "https://cdn.jsdelivr.net/npm/three@${TJS}/examples/jsm/$f" "addons/$f"
 done
 fetch "https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"                         "echarts.min.js"
