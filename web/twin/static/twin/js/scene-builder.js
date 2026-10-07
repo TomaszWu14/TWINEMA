@@ -10,6 +10,7 @@ import { COLOR_MODES, EDGE_KINDS, FLAT_KINDS, camAt, colorLegend, contactShadowP
   hallWalls, isoView, localToWorld, outward, rackMatrices, rackOutline, rackTint, sitePlan, stackLayer, steelMatrices,
   steelMode, wallHidden } from './scene-data.js';
 import { buildSite } from './scene-site.js';
+import { makePost } from './scene-post.js';
 import { asphaltTex, cartonTex, doorTex, hatchTex, LABEL_NEAR_M, makeLabel, panelTex, signTex, slabTex, slotTex,
   shadowTex, stdMat, steelMat, woodTex } from './scene-materials.js';
 
@@ -39,8 +40,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
   renderer.setSize(wrap.clientWidth || 1, wrap.clientHeight || 1);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
 
   const scene = new THREE.Scene();
@@ -50,10 +50,10 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
 
   const camera = new THREE.PerspectiveCamera(42, (wrap.clientWidth || 1) / (wrap.clientHeight || 1), 0.05, 4000);
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.dampingFactor = 0.08;
+  controls.enableDamping = true; controls.dampingFactor = 0.08;
   controls.maxPolarAngle = Math.PI * 0.495;
   controls.minDistance = 1.5;
+  const post = makePost(renderer, scene, camera);   // AO tylko w jakości „wysokiej”
 
   scene.add(new THREE.HemisphereLight(0xf4f7fb, 0x7d8388, 0.5));
   const key = new THREE.DirectionalLight(0xfff1dc, 2.4);
@@ -383,7 +383,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
     }
     const moving = controls.update();
     cameraDependent();
-    renderer.render(scene, camera);
+    post.render(quality === 'high');
     if (moving || fly) requestRender();
   }
   function requestRender() {
@@ -396,7 +396,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
     if (!w || !h) return;                      // panel ukryty albo bez layoutu — poczekaj na obserwatora
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
-    renderer.setSize(w, h);
+    renderer.setSize(w, h); post.setSize(w, h);
     requestRender();
   }
   controls.addEventListener('change', requestRender);
@@ -494,7 +494,7 @@ export function createViewer({ canvas, wrap, labels = true, fill = true, decor =
     colorMode: () => colorMode,
     setQuality, quality: () => quality, look, pose, setFlyMs: (ms) => { flyMs = ms; },
     renderNow: () => { fly && (camera.position.set(...fly.b.pos), controls.target.set(...fly.b.target), fly = null);
-      controls.update(); cameraDependent(); renderer.render(scene, camera); } };
+      controls.update(); cameraDependent(); post.render(quality === 'high'); } };
   if (debug) window.__tw3d = api;              // diagnostyka: ?debug3d=1 (zachowany bufor do readPixels)
   return api;
 }
