@@ -9,6 +9,7 @@ import { localToWorld, nearestEntry, sitePlan } from './scene-data.js';
 import { alongPath, hallRouter, routePath } from './site-route.js';
 import { CARRY, modelForEquipment, modelParts } from './equipment-models.js';
 import { GLB } from './equipment-glb.js';
+import { addPath, heatGrid, heatRGBA } from './traffic-heat.js';
 
 const MAX_PARCEL_STACK = 120;
 
@@ -201,6 +202,13 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
     }
   }
 
+  /** Przejazd palety {from, to} → końce i trasa alejkami (G4; null → „w L”) — wspólne dla klatki i heatmapy G9. */
+  function transit(tr, s) {
+    const end = (k) => (s.dock && k.startsWith('dock:') && places.docks[k.slice(5)] ? inside(places.docks[k.slice(5)], -2) : anchor(k, tr.obj));
+    const a = end(s.from), b = end(s.to);
+    return { a, b, path: hall(a, b) };
+  }
+
   let frameMs = 0;
   function update(t) {
     const t0 = performance.now();
@@ -234,8 +242,7 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
           put(mesh.pallet, x, y, 0);
         }
       } else {
-        const end = (k) => (s.dock && k.startsWith('dock:') && places.docks[k.slice(5)] ? inside(places.docks[k.slice(5)], -2) : anchor(k, tr.obj));
-        const a = end(s.from), b = end(s.to), path = hall(a, b), q = path && alongPath(path, s.p);
+        const { a, b, path } = transit(tr, s), q = path && alongPath(path, s.p);
         const [x, y, yaw] = q ? [q.x, q.y, q.yaw] : [...lPath(a, b, s.p), lPathYaw(a, b, s.p)];
         const r = rackOf(tr.obj), onShuttle = s.from === 'rack' ? s.p >= 0.5 : s.p < 0.5;   // połowa drogi po stronie pola = pojazd transportowy
         const kind = s.dock ? 'ptruck' : (r?.rack_class ?? r?.equipment) !== 'vna' ? carrier : shuttle && onShuttle ? shuttle : 'vna', c = CARRY[kind];
@@ -310,6 +317,26 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
     setSpeed(x) { speed = x; ui.onSpeed?.(x); },
     get t() { return t; }, get playing() { return playing; }, get speed() { return speed; },
     get frameMs() { return frameMs; },
+    /** G9: heatmapa przejazdów wózków z paletami z całego dnia — każdy przejazd dokłada swoją trasę (liczona raz). */
+    heatmap(on) {
+      if (on && !heat) {
+        const g = heatGrid(data.floor);
+        for (const tr of pallets) {
+          const seen = new Set();
+          for (let i = 1; i < tr.t.length; i++) {
+            const s = palletAt(tr, tr.t[i] - 0.5), key = s && !s.at && `${s.from}>${s.to}`;
+            if (!key || seen.has(key)) continue;
+            seen.add(key);
+            const { a, b, path } = transit(tr, s);
+            addPath(g, path || [a, [b[0], a[1]], b]);
+          }
+        }
+        heat = heatMesh(g);
+        viewer.scene.add(heat);
+      }
+      if (heat) heat.visible = on;
+      update(t);
+    },
     /** Prezentacja (P1): obiekty animacji (auta, ludzie, palety, plac, podświetlenia) ukryte poza jej slajdami. */
     setVisible(on) {
       [yard, hi, ...Object.values(mesh).flatMap((m) => m.parts)].forEach((o) => { o.visible = on; });
@@ -326,6 +353,20 @@ export function createDayPlayer({ viewer, data, events, ui = {} }) {
     home,
     hhmm,
   };
+  let heat = null;
+  function heatMesh(g) {
+    const tex = new THREE.DataTexture(heatRGBA(g), g.nx, g.ny);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.magFilter = tex.minFilter = THREE.LinearFilter;
+    tex.repeat.set(1, -1); tex.offset.set(0, 1);           // wiersz 0 siatki = y 0 (płaszczyzna po obrocie ma v w −z)
+    tex.needsUpdate = true;
+    const w = g.nx * g.cell, d = g.ny * g.cell;
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({
+      map: tex, transparent: true, depthWrite: false, toneMapped: false, polygonOffset: true, polygonOffsetFactor: -4 }));
+    m.position.set(w / 2, 0.06, d / 2);
+    m.renderOrder = 3;
+    return m;
+  }
   function look(px, py, pz, tx, ty, tz) {
     viewer.camera.position.set(px, py, pz);
     viewer.controls.target.set(tx, ty, tz);

@@ -62,6 +62,7 @@
       </span>
       <button type="button" class="btn btn-ghost btn-sm" id="dp-peak">Skok do szczytu</button>
       <button type="button" class="btn btn-ghost btn-sm" id="dp-read">Odczytaj liczniki</button>
+      <button type="button" class="btn btn-ghost btn-sm" id="dp-heat" aria-pressed="false" title="Gdzie w ciągu całego dnia jeździły wózki i chodzili ludzie (żółty — rzadko, czerwony — najczęściej)">Heatmapa ruchu</button>
       <button type="button" class="btn btn-secondary btn-sm" id="dp-fs" aria-pressed="false" title="Pełny ekran (F, wyjście Esc)">Pełny ekran</button>
     </div>
     <div id="dp-wrap">
@@ -196,6 +197,12 @@ range.addEventListener('input', () => player.seek(+range.value));
 document.querySelectorAll('[data-speed]').forEach((b) => b.addEventListener('click', () => player.setSpeed(+b.dataset.speed)));
 $('dp-peak').addEventListener('click', () => player.seek(DATA.peak_t));
 $('dp-read').addEventListener('click', () => say(player.t, counters));
+$('dp-heat').addEventListener('click', (e) => {
+  const btn = e.currentTarget, on = btn.getAttribute('aria-pressed') !== 'true';
+  btn.setAttribute('aria-pressed', String(on));
+  btn.textContent = on ? 'Liczę heatmapę…' : 'Heatmapa ruchu';
+  requestAnimationFrame(() => setTimeout(() => { player.heatmap(on); btn.textContent = 'Heatmapa ruchu'; }));   // napis zdąży się narysować
+});
 btns.forEach((el) => el.addEventListener('click', () => {
   const b = DATA.bottlenecks[+el.dataset.i];
   player.pause();
