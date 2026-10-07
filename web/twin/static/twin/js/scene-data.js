@@ -357,3 +357,15 @@ export function nearestEntry(plan, [x, y], kind = 'truck') {
   for (const e of list) if (!best || Math.hypot(e.at[0] - x, e.at[1] - y) < Math.hypot(best.at[0] - x, best.at[1] - y)) best = e;
   return best;
 }
+
+/** G10: wnętrze hali — osie kratownic dachu (x, rozpięte wzdłuż głębokości) i lampy high-bay [x, z].
+ *  Osie = x słupów z modelu (≥ 2 osie), inaczej co ~`span` m od ściany do ściany; lampy w siatce ~`lamp` m. */
+export function interiorLayout(floor, features = [], { span = 12, lamp = 8 } = {}) {
+  const cols = [...new Set(features.filter((f) => f.kind === 'column')
+    .map((f) => Math.round((f.x + (f.width || 0) / 2) * 10) / 10))].sort((a, b) => a - b);
+  const n = Math.max(1, Math.round(floor.width / span));
+  const trusses = cols.length >= 2 ? cols : Array.from({ length: n + 1 }, (_, i) => (floor.width * i) / n);
+  const nx = Math.max(1, Math.round(floor.width / lamp)), nz = Math.max(1, Math.round(floor.depth / lamp)), lamps = [];
+  for (let i = 0; i < nx; i++) for (let j = 0; j < nz; j++) lamps.push([((i + 0.5) * floor.width) / nx, ((j + 0.5) * floor.depth) / nz]);
+  return { trusses, lamps };
+}

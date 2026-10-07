@@ -70,3 +70,14 @@ test('extents: hala albo dalej, gdy regał wystaje', () => {
   const e = extents([{ x: 45, y: 5, width: 10, depth: 1 }], { width: 40, depth: 20 });
   assert.deepEqual([e.x, e.z], [57, 20]);
 });
+
+test('G10 interiorLayout: osie kratownic ze słupów, bez słupów co ~12 m; lampy w siatce na całej hali', async () => {
+  const { interiorLayout } = await import('../../static/twin/js/scene-data.js');
+  const floor = { width: 60, depth: 24 };
+  const cols = [10, 22, 34, 22].map((x) => ({ kind: 'column', x: x - 0.3, y: 5, width: 0.6 }));
+  assert.deepEqual(interiorLayout(floor, [...cols, { kind: 'dock', x: 0, y: 0 }]).trusses, [10, 22, 34]);
+  const plain = interiorLayout(floor, []);
+  assert.deepEqual(plain.trusses, [0, 12, 24, 36, 48, 60]);
+  assert.equal(plain.lamps.length, 8 * 3);
+  assert.ok(plain.lamps.every(([x, z]) => x > 0 && x < 60 && z > 0 && z < 24));
+});
