@@ -1,10 +1,11 @@
-// Modele .glb sprzętu, ludzi i palety (G6) — budowane skryptem tools/blender/twinema_models.py do ../models/.
+// Modele .glb sprzętu, aut przy dokach, ludzi i palety (G6, G7) — budowane skryptem tools/blender/twinema_models.py do ../models/.
 // Ładowane raz (top-level await — moduły odtwarzaczy czekają) i rozbite na [geometria, materiał] z wypaloną
 // transformacją: odtwarzacz robi jedną siatkę instancyjną na materiał. Brak pliku / błąd / limit czasu →
 // brak klucza w GLB i odtwarzacz zostaje przy bryłach z equipment-models.js.
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const GLB_KINDS = ['reach', 'vna', 'ptruck', 'counterbalance', 'agv', 'amr', 'person', 'pallet'];
+export const GLB_KINDS = ['reach', 'vna', 'ptruck', 'counterbalance', 'agv', 'amr', 'person', 'pallet', 'truck', 'container',
+  'courier'];
 const LOAD_TIMEOUT_MS = 6000;
 
 /** gltf.scene → {body: [[geometry, material]], lift: [...]} (grupa = nazwa węzła-przodka body/lift). */
