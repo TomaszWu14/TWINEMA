@@ -12,7 +12,7 @@ import { GLB } from './equipment-glb.js';
 
 const MAX_PARCEL_STACK = 120;
 
-// Pojazdy i ładunki z prostych brył (bez cudzych modeli): [długość, wysokość, szerokość, x środka, y dołu, kolor, z].
+// Zapas, gdy nie doszedł model .glb (equipment-glb.js): bryły [długość, wysokość, szerokość, x środka, y dołu, kolor, z].
 // Sprzęt magazynowy (reach, VNA, paletowy, AGV…) — equipment-models.js.
 // Oś +x pojazdu = od doku na zewnątrz (kabina z dala od hali), środek naczepy jak dotąd ~7 m przed dokiem.
 const WHEEL = 0x1f2329, CHASSIS = 0x30353a;

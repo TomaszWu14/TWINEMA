@@ -1,4 +1,4 @@
-"""TWINEMA → modele 3D sprzętu, ludzi i palety (.glb) dla sceny w przeglądarce (G6).
+"""TWINEMA → modele 3D sprzętu, aut przy dokach, ludzi i palety (.glb) dla sceny w przeglądarce (G6, G7).
 
 Uruchomienie (bez GUI):
     blender -b --factory-startup -P tools/blender/twinema_models.py -- web/twin/static/twin/models [--preview DIR]
@@ -14,14 +14,16 @@ import os
 import sys
 
 import bpy
+from mathutils import Vector
 
 PAINT = {"reach": 0xc9a227, "vna": 0x4f7cac, "ptruck": 0x5b8c5a, "counterbalance": 0xb5532f,
-         "agv": 0x7a6aa8, "amr": 0x3a9ca0}
+         "agv": 0x7a6aa8, "amr": 0x3a9ca0, "truck": 0xe5e7eb, "container": 0xb45309, "courier": 0xf8fafc}
 SWATCH = {"steel": (0x30353a, 0.45, 0.6), "rubber": (0x1f2329, 0.85, 0.0), "glass": (0x1e293b, 0.1, 0.3),
           "seat": (0x111827, 0.7, 0.0), "chrome": (0xb8bec4, 0.3, 0.9), "amber": (0xf59e0b, 0.4, 0.0),
           "mark": (0xe5e7eb, 0.5, 0.0), "sensor": (0x111827, 0.3, 0.2), "wood": (0xa87d4a, 0.85, 0.0),
           "load": (0xb4874f, 0.55, 0.0), "vest": (0xf97316, 0.6, 0.0), "trousers": (0x374151, 0.8, 0.0),
-          "skin": (0xe0b48a, 0.7, 0.0), "helmet": (0xfacc15, 0.35, 0.0)}
+          "skin": (0xe0b48a, 0.7, 0.0), "helmet": (0xfacc15, 0.35, 0.0), "cab_blue": (0x1d4ed8, 0.35, 0.2),
+          "cab_grey": (0x374151, 0.35, 0.2), "red": (0xb91c1c, 0.4, 0.0)}
 
 
 def srgb(h):
@@ -55,13 +57,16 @@ class Model:
         self.parts[group].append(ob)
         return ob
 
-    def box(self, size, at, m="paint", bevel=0.02, group="body", rot_y=0.0):
-        """size = (dł. X, szer. Y, wys. Z); at = (x, y, z dołu)."""
+    def box(self, size, at, m="paint", bevel=0.02, group="body", rot_y=0.0, slant=0.0):
+        """size = (dł. X, szer. Y, wys. Z); at = (x, y, z dołu); slant = cofnięcie górnej przedniej krawędzi [m]."""
         bpy.ops.mesh.primitive_cube_add(size=1, location=(at[0], at[1], at[2] + size[2] / 2))
         ob = bpy.context.object
         ob.scale = size
         ob.rotation_euler[1] = rot_y
         bpy.ops.object.transform_apply(location=False, rotation=True, scale=True)
+        for v in ob.data.vertices if slant else ():
+            if v.co.z > 0 and v.co.x > 0:
+                v.co.x -= slant
         if bevel:
             mod = ob.modifiers.new("b", "BEVEL")
             mod.width, mod.segments, mod.limit_method = min(bevel, min(size) * 0.45), 2, "NONE"
@@ -277,8 +282,106 @@ def pallet():
     return m
 
 
+# ── auta przy dokach (G7): przód = +X (kabina z dala od hali), tył naczepy ~ −6,8 m, wymiary jak PARTS w day-player.js
+def axle(m, x, r=0.5, half=1.0, w=0.5):
+    for s in (1, -1):
+        m.wheel(r, w, x, s * half)
+
+
+def tractor(m, front, cab, z_cab=0.75, cab_h=2.9):
+    """Ciągnik siodłowy: kabina z szybą, oknami, lusterkami, atrapą, zderzakiem, zbiornikiem i 2 osiami."""
+    L, x0 = 2.3, front - 2.3
+    m.box((L, 2.5, cab_h), (x0 + L / 2, 0, z_cab), cab, 0.18)
+    m.box((0.04, 2.2, 1.0), (front + 0.01, 0, z_cab + 1.45), "glass", 0.0)            # szyba czołowa
+    for s in (1, -1):
+        m.box((0.9, 0.04, 0.75), (front - 0.6, s * 1.26, z_cab + 1.55), "glass", 0.0)  # okna drzwi
+        m.box((0.05, 0.05, 0.35), (front + 0.15, s * 1.35, z_cab + 1.6), "steel", 0.01)  # lusterka
+        m.box((0.08, 0.06, 0.4), (front + 0.15, s * 1.38, z_cab + 1.25), "glass", 0.01)
+        m.box((0.05, 0.3, 0.14), (front + 0.02, s * 0.9, 0.62), "mark", 0.02)           # reflektory
+        m.box((0.05, 0.12, 0.08), (front + 0.02, s * 1.15, 0.64), "amber", 0.01)
+    m.box((0.05, 1.3, 0.75), (front + 0.01, 0, z_cab + 0.3), "steel", 0.02)              # atrapa
+    m.box((0.25, 2.5, 0.35), (front - 0.05, 0, 0.35), "steel", 0.05)                     # zderzak
+    m.box((x0 - (front - 6.5), 0.9, 0.3), ((x0 + front - 6.5) / 2, 0, 0.75), "steel", 0.02)   # rama ciągnika
+    m.cyl(0.3, 1.1, (x0 + 0.55, 1.0, 0.75), "chrome", "X")                              # zbiornik paliwa
+    m.cyl(0.6, 0.12, (x0 - 0.5, 0, 1.12), "steel", "Z", verts=20)                       # siodło
+    axle(m, front - 0.5)
+    axle(m, front - 1.9)
+
+
+def trailer_box(m, x0, x1, z, h, w=2.55):
+    """Spód naczepy: podłużnice, osłony boczne, zderzak przeciwnajazdowy, światła, nogi podporowe."""
+    L = x1 - x0
+    m.pair(m.box, w / 2 - 0.35, (L, 0.15, 0.3), ((x0 + x1) / 2, 0, z - 0.3), "steel", 0.02)
+    m.pair(m.box, w / 2 - 0.02, (L * 0.35, 0.03, 0.35), ((x0 + x1) / 2 + L * 0.05, 0, z - 0.55), "steel", 0.0)
+    m.box((0.1, w - 0.2, 0.15), (x0 - 0.15, 0, 0.45), "steel", 0.02)                      # zderzak tylny
+    for s in (1, -1):
+        m.box((0.04, 0.3, 0.12), (x0 - 0.02, s * (w / 2 - 0.25), z - 0.25), "red", 0.01)
+        m.box((0.12, 0.12, z - 0.3), (x1 - 2.5, s * 0.85, 0.0), "steel", 0.02)           # nogi podporowe
+
+
+def truck():
+    """Ciężarówka: ciągnik + naczepa firanka 13,6 m (biała z niebieskim pasem, słupki)."""
+    m = Model("truck", PAINT["truck"])
+    x0, x1, z, h = -6.8, 6.8, 1.25, 2.75
+    m.box((x1 - x0, 2.55, h), (0, 0, z), bevel=0.05)
+    m.box((x1 - x0 - 0.1, 2.57, 0.5), (0, 0, z + h - 0.75), "cab_blue", 0.02)           # pas
+    for k in range(11):
+        m.pair(m.box, 1.29, (0.06, 0.03, h - 0.1), (x0 + 0.3 + k * (x1 - x0 - 0.6) / 10, 0, z + 0.05), "steel", 0.0)
+    m.box((0.05, 2.45, h - 0.1), (x0 - 0.02, 0, z + 0.05), "steel", 0.02)               # drzwi tylne
+    m.box((0.06, 0.04, h - 0.2), (x0 - 0.05, 0, z + 0.1), "steel", 0.0)
+    trailer_box(m, x0, x1, z, h)
+    for x in (-4.6, -3.3, -2.0):
+        axle(m, x)
+    tractor(m, 9.3, "cab_blue")
+    return m
+
+
+def container():
+    """Ciągnik + podwozie kontenerowe + kontener 40' z przetłoczeniami i ryglami drzwi."""
+    m = Model("container", PAINT["container"])
+    x0, x1, z, h = -6.1, 6.1, 1.25, 2.6
+    m.box((x1 - x0, 2.42, h), (0, 0, z), bevel=0.03)
+    for k in range(16):           # przetłoczenia ścian — mało i szerokie: gęste paski dają z daleka mory
+        m.pair(m.box, 1.215, (0.34, 0.03, h - 0.2), (x0 + 0.4 + k * (x1 - x0 - 0.8) / 15, 0, z + 0.1), bevel=0.01)
+    for x in (x0, x1):
+        for s in (1, -1):
+            for zz in (z, z + h - 0.16):
+                m.box((0.18, 0.18, 0.16), (x, s * 1.13, zz), "steel", 0.01)              # naroża ISO
+    for k in range(4):
+        m.cyl(0.03, h - 0.3, (x0 - 0.04, -0.9 + k * 0.6, z + h / 2), "steel", "Z", verts=8)   # rygle drzwi
+    m.pair(m.box, 0.45, (13.0, 0.18, 0.28), (0.45, 0, z - 0.3), "steel", 0.02)           # podwozie szkieletowe
+    for x in (-5.5, -2.5, 0.5, 3.5, 6.0):
+        m.box((0.15, 2.3, 0.15), (x, 0, z - 0.25), "steel", 0.0)
+    m.box((0.1, 2.3, 0.15), (x0 - 0.15, 0, 0.45), "steel", 0.02)
+    for s in (1, -1):
+        m.box((0.04, 0.3, 0.12), (x0 - 0.02, s * 0.95, z - 0.25), "red", 0.01)
+    for x in (-4.2, -2.9, -1.6):
+        axle(m, x)
+    tractor(m, 8.6, "cab_grey")
+    return m
+
+
+def courier():
+    """Bus kurierski (furgon): skrzynia ładunkowa, kabina ze skośną szybą i maską, 2 osie."""
+    m = Model("courier", PAINT["courier"])
+    m.box((4.0, 2.0, 2.2), (-0.8, 0, 0.45), bevel=0.12)
+    m.box((1.65, 2.0, 1.75), (2.025, 0, 0.45), bevel=0.12, slant=0.75)                   # kabina ze skośnym przodem
+    m.box((0.04, 1.8, 0.87), (2.335, 0, 1.265), "glass", 0.0, rot_y=-0.405)             # szyba na skosie
+    for s in (1, -1):
+        m.box((0.7, 0.03, 0.55), (1.75, s * 1.0, 1.35), "glass", 0.0)
+        m.box((0.04, 0.35, 0.12), (2.86, s * 0.7, 0.75), "mark", 0.02)
+        m.box((0.04, 0.12, 0.25), (-2.81, s * 0.85, 1.2), "red", 0.01)
+        m.box((0.05, 0.05, 0.25), (2.1, s * 1.08, 1.4), "steel", 0.01)                   # lusterka
+    m.box((0.2, 2.05, 0.25), (2.8, 0, 0.35), "steel", 0.05)                              # zderzaki
+    m.box((0.2, 2.05, 0.25), (-2.85, 0, 0.35), "steel", 0.05)
+    m.box((0.03, 0.04, 2.0), (-2.81, 0, 0.55), "steel", 0.0)                             # szczelina drzwi tylnych
+    for x in (1.9, -1.9):
+        axle(m, x, r=0.375, half=0.85, w=0.25)
+    return m
+
+
 BUILDERS = {"reach": reach, "vna": vna, "ptruck": ptruck, "counterbalance": counterbalance, "agv": agv,
-            "amr": amr, "person": person, "pallet": pallet}
+            "amr": amr, "person": person, "pallet": pallet, "truck": truck, "container": container, "courier": courier}
 
 
 def export(name, objs, out):
@@ -303,22 +406,20 @@ def preview(objs, path):
     sc.display.shading.show_cavity = True
     sc.render.resolution_x, sc.render.resolution_y = 640, 480
     sc.render.filepath = path
-    zs = [v[2] for ob in objs for v in ob.bound_box]
-    h = max(zs)
+    pts = [ob.matrix_world @ Vector(v) for ob in objs for v in ob.bound_box]
+    lo = [min(p[i] for p in pts) for i in range(3)]
+    hi = [max(p[i] for p in pts) for i in range(3)]
+    c = [(lo[i] + hi[i]) / 2 for i in range(3)]
+    d = max(3.0, math.dist(lo, hi) * 1.1)
     cam_data = bpy.data.cameras.new("c")
     cam = bpy.data.objects.new("c", cam_data)
     sc.collection.objects.link(cam)
-    d = max(3.5, h * 1.6)
-    cam.location = (d * 0.8, -d * 0.9, h * 0.6 + d * 0.35)
-    target = bpy.data.objects.new("t", None)
-    sc.collection.objects.link(target)
-    target.location = (0, 0, h * 0.4)
-    con = cam.constraints.new("TRACK_TO")
-    con.target = target
+    cam.location = (c[0] + d * 0.55, c[1] - d * 0.75, c[2] + d * 0.4)                  # z przodu-boku, z góry
+    look = Vector(c) - cam.location
+    cam.rotation_euler = look.to_track_quat("-Z", "Y").to_euler()
     sc.camera = cam
     bpy.ops.render.render(write_still=True)
     bpy.data.objects.remove(cam)
-    bpy.data.objects.remove(target)
 
 
 def main():
