@@ -53,19 +53,27 @@ export function hallRouter(racks, floor, { cell = 1, pad = 0.3 } = {}) {
     return x >= 0 && y >= 0 && x <= floor.width && y <= floor.depth && !blocked[iy * nx + ix];
   };
   const cache = new Map();
+  let free = null;                                      // siatka wolnych pól liczona raz (trasa na każdą paletę, G9)
   return (a, b) => {
     const key = `${a[0].toFixed(1)},${a[1].toFixed(1)}>${b[0].toFixed(1)},${b[1].toFixed(1)}`;
-    if (!cache.has(key)) cache.set(key, gridRoute(ok, [0, 0, floor.width, floor.depth], cell, a, b));
+    free ??= freeCells(ok, [0, 0, floor.width, floor.depth], cell);
+    if (!cache.has(key)) cache.set(key, gridRoute(ok, [0, 0, floor.width, floor.depth], cell, a, b, free));
     return cache.get(key);
   };
 }
 
-/** A* po siatce `cell` w prostokącie [x0, y0, x1, y1] po punktach spełniających `ok` → [a, …, b] albo null. */
-export function gridRoute(ok, [bx0, by0, bx1, by1], cell, a, b) {
+/** Wolne pola siatki `cell` w prostokącie (1 = `ok`) — ten sam układ co w gridRoute. */
+export function freeCells(ok, [bx0, by0, bx1, by1], cell) {
+  const nx = Math.ceil((bx1 - bx0) / cell) + 1, ny = Math.ceil((by1 - by0) / cell) + 1, free = new Uint8Array(nx * ny);
+  for (let i = 0; i < nx * ny; i++) free[i] = ok([bx0 + (i % nx) * cell, by0 + Math.floor(i / nx) * cell]) ? 1 : 0;
+  return free;
+}
+
+/** A* po siatce `cell` w prostokącie [x0, y0, x1, y1] po punktach spełniających `ok` → [a, …, b] albo null.
+ *  `free` = gotowe freeCells dla tego prostokąta (wiele tras po tym samym terenie). */
+export function gridRoute(ok, [bx0, by0, bx1, by1], cell, a, b, free = freeCells(ok, [bx0, by0, bx1, by1], cell)) {
   const g = { x0: bx0, y0: by0, nx: Math.ceil((bx1 - bx0) / cell) + 1, ny: Math.ceil((by1 - by0) / cell) + 1 }, N = g.nx * g.ny;
   const at = (i) => [g.x0 + (i % g.nx) * cell, g.y0 + Math.floor(i / g.nx) * cell];
-  const free = new Uint8Array(N);
-  for (let i = 0; i < N; i++) free[i] = ok(at(i)) ? 1 : 0;
   const cellOf = ([x, y]) => {                         // najbliższa wolna komórka (punkt bywa na granicy / w bramie)
     const cx = Math.round((x - g.x0) / cell), cy = Math.round((y - g.y0) / cell);
     let best = -1, bd = Infinity;
@@ -86,12 +94,11 @@ export function gridRoute(ok, [bx0, by0, bx1, by1], cell, a, b) {
   const gScore = new Float64Array(N).fill(Infinity), from = new Int32Array(N).fill(-1), closed = new Uint8Array(N);
   const [tx, ty] = [t % g.nx, Math.floor(t / g.nx)];
   const h = (i) => Math.hypot((i % g.nx) - tx, Math.floor(i / g.nx) - ty);
-  const open = [[h(s), s]];
+  const open = heap();
+  open.push(h(s), s);
   gScore[s] = 0;
-  // ponytail: kolejka priorytetowa jako tablica sortowana wstawianiem — wystarcza dla siatki ~30 tys. komórek
-  // (jedna trasa na dok przy wczytaniu); kopiec binarny, gdy działki zaczną mieć setki tysięcy komórek.
-  while (open.length) {
-    const [, i] = open.shift();
+  while (open.size) {
+    const i = open.pop();
     if (i === t) break;
     if (closed[i]) continue;
     closed[i] = 1;
@@ -105,10 +112,7 @@ export function gridRoute(ok, [bx0, by0, bx1, by1], cell, a, b) {
         const ng = gScore[i] + (dx && dy ? SQRT2 : 1);
         if (ng >= gScore[j]) continue;
         gScore[j] = ng; from[j] = i;
-        const f = ng + h(j);
-        let k = open.length;
-        while (k > 0 && open[k - 1][0] > f) k--;
-        open.splice(k, 0, [f, j]);
+        open.push(ng + h(j), j);
       }
     }
   }
@@ -116,6 +120,40 @@ export function gridRoute(ok, [bx0, by0, bx1, by1], cell, a, b) {
   const cells = [];
   for (let i = t; i >= 0; i = i === s ? -1 : from[i]) cells.push(at(i));
   return smooth([a, ...cells.reverse(), b], ok);
+}
+
+/** Kopiec binarny (min po f) na [f, i] — kolejka A* (trasa na każdą paletę, nie tylko na dok). */
+function heap() {
+  const f = [], v = [];
+  return {
+    get size() { return v.length; },
+    push(k, x) {
+      let i = v.length;
+      f.push(k); v.push(x);
+      while (i > 0) {
+        const p = (i - 1) >> 1;
+        if (f[p] <= f[i]) break;
+        [f[p], f[i]] = [f[i], f[p]]; [v[p], v[i]] = [v[i], v[p]];
+        i = p;
+      }
+    },
+    pop() {
+      const top = v[0], lf = f.pop(), lv = v.pop();
+      if (v.length) {
+        f[0] = lf; v[0] = lv;
+        for (let i = 0; ;) {
+          const l = 2 * i + 1, r = l + 1;
+          let m = i;
+          if (l < v.length && f[l] < f[m]) m = l;
+          if (r < v.length && f[r] < f[m]) m = r;
+          if (m === i) break;
+          [f[m], f[i]] = [f[i], f[m]]; [v[m], v[i]] = [v[i], v[m]];
+          i = m;
+        }
+      }
+      return top;
+    },
+  };
 }
 
 /** Wygładzenie: z każdego punktu skok do najdalszego widocznego (odcinek próbkowany co 1 m po terenie). */
