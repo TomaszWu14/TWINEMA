@@ -10,8 +10,6 @@ web/media/
 .coverage
 .coverage.*
 htmlcov/
-.claude/*
-!.claude/settings.json
 
 # Rendery i pliki Blendera robocze — duże, odtwarzalne
 *.blend1
@@ -20,3 +18,12 @@ renders/
 # Biblioteki JS pobierane skryptem web/scripts/fetch_vendor.sh (build Dockera / raz lokalnie)
 web/twin/static/twin/vendor/
 .idea/
+
+# Pliki robocze autora (asystent AI, graf wiedzy, notatki sesji) — tylko lokalnie
+CLAUDE.md
+.claude/
+graphify-out/
+docs/HANDOFF.md
+docs/PROMPT_NASTEPNA_SESJA.md
+.githooks/
+.graphifyignore
