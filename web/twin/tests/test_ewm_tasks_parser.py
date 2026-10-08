@@ -95,7 +95,7 @@ class RowTests(SimpleTestCase):
     def _row(self, **over):
         base = dict(zip(PL_HEADERS, ["000100200300", "1010", "GR-ZONE", "B0-01-100A", "M1", "L1", "12,5",
                                      "KAR", "", "HU1", "180001", "02.03.2026", "06:00:00", "02.03.2026",
-                                     "06:10:00", "JKOWAL", "WOZEK01", "ZP02/PUTAWAY"], strict=True))
+                                     "06:10:00", "JKOWAL", "WOZEK01", "ZQ01/PUTAWAY"], strict=True))
         base.update(over)
         return [base[h] for h in PL_HEADERS]
 
@@ -123,8 +123,8 @@ class RowTests(SimpleTestCase):
 
 class KindMappingTests(SimpleTestCase):
     def test_default_mapping(self):
-        cases = [(("1010",), "putaway"), (("2010", "ZP02/EXPOPICK1"), "picking"),
-                 (("2010", "ZP02/STAGING"), "outbound"), (("21GL",), "outbound"),
+        cases = [(("1010",), "putaway"), (("2010", "ZQ01/PICK1"), "picking"),
+                 (("2010", "ZQ01/STAGING"), "outbound"), (("21GL",), "outbound"),
                  (("3010",), "replenishment"), (("301D",), "replenishment"), (("3030",), "move"),
                  (("4010",), "move"), (("9010",), "putaway"), (("9999",), "move"),
                  (("X020",), "outbound"), (("", "", "PICK"), "picking"), (("", "", "", "1"), "putaway"),

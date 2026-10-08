@@ -1,9 +1,0 @@
-# Stan graphify zależny od maszyny / regenerowalny — nie do repo
-cache/
-.graphify_python
-.graphify_root
-.needs_update
-
-# Datowane migawki grafu (RRRR-MM-DD/) — regenerowalne przez `graphify update .`.
-# Kanoniczny graf to top-level graphify-out/graph.* + wiki/ (śledzone, patrz graph-freshness.yml).
-/[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]/
