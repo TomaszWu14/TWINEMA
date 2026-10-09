@@ -1,6 +1,6 @@
 # Hooki pre-commit — lint i strażnicy PRZED commitem, nie tylko w CI.
 # Instalacja:  pip install pre-commit && pre-commit install
-#   (wyklucza się z `git config core.hooksPath .githooks` — patrz README „Git hooks i graf wiedzy”)
+#   (alternatywne lokalne hooki przez core.hooksPath blokują `pre-commit install`)
 # Na całości:  pre-commit run --all-files
 # Konfiguracja ruffa żyje w pyproject.toml ([tool.ruff]) — ta sama co w CI.
 # ruff-format celowo pominięty: repo nie jest sformatowane ruffem (masowy reformat = osobny PR).

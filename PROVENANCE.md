@@ -1,11 +1,11 @@
 # Pochodzenie kodu
 
-Kod skopiowany z innych repozytoriów autora. Każdy wpis: źródło, commit, ścieżki, data.
+Kod skopiowany z innych repozytoriów autora. Każdy wpis: źródło, ścieżki, data.
 
-| Data | Źródło | Commit | Ścieżki | Uwagi |
-|---|---|---|---|---|
-| 2026-10-05 | PalViz | `284bcab4` | wzorce fundamentu: `config.py`, `roles.py`, `middleware.py`, `health_urls.py`, workflowy, Dockerfile | odchudzone, przepisane |
-| 2026-10-05 | PalViz | `284bcab4` | `web/wh3d/` (modele, generator, symulacja, kalibracja, prognoza, warianty, eksport sceny, import zadań, widoki i szablony), `tools/blender/`, `tools/ewm_demo_tasks.py`, tokeny i komponenty CSS, sprite ikon | moduł `twin`; bez mapy operacyjnej, heatmapy, migawek i stanów HU; nazwy firm/lokalizacji usunięte, próbka mastera i hala demo syntetyczne |
+| Data | Źródło | Ścieżki | Uwagi |
+|---|---|---|---|
+| 2026-10-05 | PalViz (prywatne repo autora) | wzorce fundamentu: `config.py`, `roles.py`, `middleware.py`, `health_urls.py`, workflowy, Dockerfile | odchudzone, przepisane |
+| 2026-10-05 | PalViz (prywatne repo autora) | `web/wh3d/` (modele, generator, symulacja, kalibracja, prognoza, warianty, eksport sceny, import zadań, widoki i szablony), `tools/blender/`, `tools/ewm_demo_tasks.py`, tokeny i komponenty CSS, sprite ikon | moduł `twin`; bez mapy operacyjnej, heatmapy, migawek i stanów HU; nazwy firm/lokalizacji usunięte, próbka mastera i hala demo syntetyczne |
 
 ## Zasoby zewnętrzne
 

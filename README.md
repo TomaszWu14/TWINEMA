@@ -1,6 +1,13 @@
 # TWINEMA
 
+> **What it is:** TWINEMA is a warehouse digital twin you can present like a film. It lets you design
+> a distribution centre in 3D (hall, racks, docks, plot), simulate a design day on that layout and turn
+> the result into a browser presentation, a Blender-rendered video with voice-over and a PDF deck.
+> Django 5.2 + three.js + Blender; all demo data is synthetic. UI and docs are in Polish.
+
 <img src="web/core/static/core/brand/logo.svg" alt="TWINEMA — digital twin, 3D motion" width="420">
+
+![Widok 3D hali demo: regały z paletami, doki, działka](docs/img/hala-3d.png)
 
 **Cyfrowy bliźniak magazynu, który da się pokazać jak film.**
 
@@ -8,7 +15,7 @@ TWINEMA łączy projektowanie centrum dystrybucyjnego w 3D z symulacją pracy i 
 prezentacji: układ hali i regałów → symulacja dnia projektowego → animacja przepływów
 w Blenderze → film z lektorem (ElevenLabs) i deck PDF.
 
-> Status: **P1 — prezentacja 3D w przeglądarce: pokaz projektu dla zarządu (przeloty po hali i działce, wyniki dnia, szczyt animacji, wąskie gardła, wnioski) zamiast filmu.** Wcześniej: edytor layoutu z działką, scenariusze z symulacją i animacją dnia, katalog sprzętu, F5 Studio (film + deck PDF), F4 ML (prognoza, segmentacja), F3 render w Blenderze przez kolejkę i workera, F2 dane z plików, F1 rdzeń modelowania i symulacji. Mapa drogi i decyzje: [`docs/PLAN.md`](docs/PLAN.md), stan: [`docs/HANDOFF.md`](docs/HANDOFF.md).
+> **Stan:** działa pełna ścieżka od danych do pokazu — import danych (materiały, lokalizacje, stany), model i edytor hali z działką, scenariusze z symulacją i animacją dnia, katalog sprzętu, prognozy i segmentacja ML, render w Blenderze przez kolejkę i workera, Studio (film z lektorem + deck PDF) oraz prezentacja 3D w przeglądarce dla zarządu (przeloty po hali, wyniki dnia, szczyt, wąskie gardła, wnioski). Mapa drogi i decyzje: [`docs/PLAN.md`](docs/PLAN.md).
 
 ## Moduły
 
@@ -70,35 +77,36 @@ inaczej `TWINEMA_FONT`). Bez ffmpeg rendery działają, a montaże czekają w ko
 
 Ręcznie: `blender -b -P tools/blender/twinema_render.py -- scena.json wynik.mp4 --preset orbita --seconds 10`.
 
-Testy: `python manage.py test` (z katalogu `web/`, z tym samym env).
+## Testy
 
-## Git hooks i graf wiedzy (Obsidian)
-
-Dwie powierzchnie hooków git — wzajemnie się wykluczają, więc wybierz świadomie:
-
-1. **`pre-commit install`** (zalecane dla każdego dewelopera) — ruff, `makemigrations --check`
-   przy zmianach modeli i gitleaks z [`.pre-commit-config.yaml`](.pre-commit-config.yaml).
-2. **`git config core.hooksPath .githooks`** — aktywuje [`.githooks/pre-push`](.githooks/pre-push):
-   nieblokującą synchronizację wiki grafu (`graphify-out/wiki/`) do vaulta Obsidian. Działa tylko
-   tam, gdzie istnieje `~/graphify-workspace/sync-knowledge-graph.sh`; wszędzie indziej cicho nic
-   nie robi. **Uwaga:** ustawiony `core.hooksPath` blokuje `pre-commit install` — na tej maszynie
-   lintery odpalaj ręcznie (`pre-commit run --all-files`) albo polegaj na CI.
-
-Graf wiedzy (`graphify-out/`: `graph.json`, `GRAPH_REPORT.md`, `wiki/`) jest **generowany lokalnie**
-(graphify nie działa w CI) i commitowany — korzysta z niego `graphify query` (patrz `CLAUDE.md`).
-Odświeżenie po zmianach w kodzie:
+663 testy (Django `TestCase`/`SimpleTestCase`; logika symulacji, ML i geometrii testowana bez bazy) + ruff:
 
 ```bash
-graphify update .        # przyrostowo, bez LLM; pełny rebuild: graphify . --code-only
-graphify export wiki     # strony wiki (update ich nie odświeża)
-# zacommituj zmienione graphify-out/ i wypchnij (PR)
+cd web
+export DJANGO_DEBUG=true DJANGO_ALLOWED_HOSTS='*'
+python manage.py check && python manage.py test && ruff check ..
 ```
 
-Workflow [`graph-freshness.yml`](.github/workflows/graph-freshness.yml) (poniedziałki 06:00 UTC
-+ ręcznie) otwiera issue `graf-wiedzy`, gdy graf odstaje od `main` (≥ 30 commitów albo ≥ 7 dni
-i ≥ 5 commitów).
+Lokalne hooki: `pre-commit install` (ruff, `makemigrations --check`, gitleaks — [`.pre-commit-config.yaml`](.pre-commit-config.yaml)).
+
+![Edytor layoutu: plan 2D, podgląd 3D i KPI na żywo](docs/img/edytor-layoutu.png)
+
+## Ograniczenia i co dalej
+
+- **Studio (film + deck PDF)** — kod gotowy i przetestowany, ale pierwszy prawdziwy film wymaga podpięcia
+  kluczy ElevenLabs/Claude i ffmpeg u workera; bez nich działają rendery, a montaże czekają w kolejce.
+- **Render** wymaga Blendera 4.x na osobnym PC z workerem (`tools/render_worker.py`) — serwer sam nie renderuje.
+- **Dane wyłącznie z plików** (xlsx/csv) — brak integracji na żywo z systemem magazynowym; dane demo są syntetyczne.
+- **ML v1**: prognoza (Holt-Winters i spółka vs baseline, MAPE) i segmentacja k-means; model czasu cyklu (ML3) — w planie F6.
+- **Dalej (F6 Szlif, do wyboru):** plansza kosztów w prezentacji, grafika 3D (ruch ludzi, ładowanie aut),
+  działka-wielokąt i trasy po drogach, porównania wariantów, katalog rynku.
 
 ## Stack
 
 Python 3.13 · Django 5.2 LTS · PostgreSQL 17 · Docker + Coolify · Blender 4.x (headless) ·
 ElevenLabs (TTS) · ffmpeg.
+
+## Licencja
+
+Kod jest udostępniony do wglądu (portfolio) — wszelkie prawa zastrzeżone, bez licencji na użycie;
+szczegóły w [`LICENSE`](LICENSE).
