@@ -46,6 +46,10 @@ class AppEnv(BaseSettings):
     ELEVENLABS_VOICE_ID: str = ""      # domyślny głos (Voice Design); prezentacja może mieć własny
     ELEVENLABS_MODEL: str = "eleven_multilingual_v2"
 
+    # ── Publiczne demo (manage.py seed_demo) ────────────────────────────────
+    DEMO_PASSWORD: str = ""            # hasło konta `demo` (rola Podgląd); puste = konto nie powstaje
+    DEMO_SEED: bool = False            # True = docker-entrypoint.sh odpala seed_demo przy każdym starcie
+
     # ── Obserwowalność ──────────────────────────────────────────────────────
     SENTRY_DSN: str = ""
     SENTRY_ENVIRONMENT: str = "production"
@@ -58,6 +62,8 @@ class AppEnv(BaseSettings):
             raise ValueError("DJANGO_SECRET_KEY musi być ustawiony, gdy DJANGO_DEBUG=false.")
         if self.RENDER_WORKER_TOKEN and len(self.RENDER_WORKER_TOKEN) < 32:
             raise ValueError("RENDER_WORKER_TOKEN musi mieć co najmniej 32 znaki (np. secrets.token_urlsafe(32)).")
+        if self.DEMO_PASSWORD and len(self.DEMO_PASSWORD) < 8:
+            raise ValueError("DEMO_PASSWORD musi mieć co najmniej 8 znaków.")
         return self
 
 

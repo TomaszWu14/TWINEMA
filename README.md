@@ -77,6 +77,20 @@ inaczej `TWINEMA_FONT`). Bez ffmpeg rendery działają, a montaże czekają w ko
 
 Ręcznie: `blender -b -P tools/blender/twinema_render.py -- scena.json wynik.mp4 --preset orbita --seconds 10`.
 
+## Publiczne demo (Coolify)
+
+Obraz z `Dockerfile`, port 8000, healthcheck `/health/`. Zmienne (poza `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS`,
+`DJANGO_CSRF_TRUSTED_ORIGINS` i `DB_PATH=/app/data/db.sqlite3` z wolumenem `/app/data`):
+
+| Zmienna | Do czego |
+|---|---|
+| `DEMO_SEED=1` | przy każdym starcie `manage.py seed_demo`: hala, scenariusz, stany demo (idempotentnie) |
+| `DEMO_PASSWORD` | hasło konta `demo` w roli Podgląd (min. 8 znaków); puste = konto nie powstaje |
+| `DJANGO_SUPERUSER_USERNAME` / `_EMAIL` / `_PASSWORD` | konto administratora tworzone przy pierwszym starcie |
+
+Reset danych demo: `python manage.py seed_demo --reset` (np. Scheduled Task w Coolify) — usuwa tylko halę,
+scenariusz i stany demo. Klucze Anthropic/ElevenLabs i `RENDER_WORKER_TOKEN` zostaw puste (Studio i worker wyłączone).
+
 ## Testy
 
 663 testy (Django `TestCase`/`SimpleTestCase`; logika symulacji, ML i geometrii testowana bez bazy) + ruff:

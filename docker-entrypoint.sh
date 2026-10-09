@@ -15,6 +15,14 @@ fi
 echo "Migracje..."
 $RUN python manage.py migrate --noinput
 $RUN python manage.py create_roles
+# Konto administratora z env (DJANGO_SUPERUSER_USERNAME/EMAIL/PASSWORD) — tylko przy pierwszym starcie.
+if [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
+    $RUN python manage.py createsuperuser --noinput 2>/dev/null || echo "Superuser już istnieje."
+fi
+# Publiczne demo: hala, scenariusz, stany i konto `demo` (Podgląd) — idempotentnie.
+if [ "$DEMO_SEED" = "1" ] || [ "$DEMO_SEED" = "true" ]; then
+    $RUN python manage.py seed_demo
+fi
 
 exec $RUN gunicorn twinema.wsgi:application \
     --bind 0.0.0.0:8000 \
